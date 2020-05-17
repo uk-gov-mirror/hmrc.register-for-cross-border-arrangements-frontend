@@ -50,7 +50,7 @@ class BusinessMatchingConnectorSpec extends SpecBase
 
       forAll(arbitrary[Nino], arbitrary[IndividualMatchingSubmission]) {
         (nino, ims) =>
-          stubResponse(s"/register-for-cross-border-arrangements/registration/individual/nino/$nino", OK)
+          stubResponse(s"/register-for-cross-border-arrangements/matching/individual/$nino", OK)
 
           val result = connector.sendIndividualMatchingInformation(nino, ims)
           result.futureValue.status mustBe OK
@@ -62,7 +62,7 @@ class BusinessMatchingConnectorSpec extends SpecBase
 
       forAll(arbitrary[Nino], arbitrary[IndividualMatchingSubmission]) {
         (nino, ims) =>
-          stubResponse(s"/register-for-cross-border-arrangements/registration/individual/nino/$nino", BAD_REQUEST)
+          stubResponse(s"/register-for-cross-border-arrangements/matching/individual/$nino", BAD_REQUEST)
 
           val result = connector.sendIndividualMatchingInformation(nino, ims)
           result.futureValue.status mustBe BAD_REQUEST
@@ -74,7 +74,7 @@ class BusinessMatchingConnectorSpec extends SpecBase
 
       forAll(arbitrary[Nino], arbitrary[IndividualMatchingSubmission]) {
         (nino, ims) =>
-          stubResponse(s"/register-for-cross-border-arrangements/registration/individual/nino/$nino", INTERNAL_SERVER_ERROR)
+          stubResponse(s"/register-for-cross-border-arrangements/matching/individual/$nino", INTERNAL_SERVER_ERROR)
 
           val result = connector.sendIndividualMatchingInformation(nino, ims)
           result.futureValue.status mustBe INTERNAL_SERVER_ERROR
