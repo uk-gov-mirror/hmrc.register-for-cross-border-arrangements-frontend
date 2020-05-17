@@ -1,13 +1,99 @@
 # microservice specific routes
 
-GET        /                                            controllers.IndexController.onPageLoad
+GET        /                                              controllers.IndexController.onPageLoad
 
-GET        /assets/*file                                controllers.Assets.versioned(path="/public", file: Asset)
+GET        /assets/*file                                  controllers.Assets.versioned(path="/public", file: Asset)
 
-GET        /language/:lang                              controllers.LanguageSwitchController.switchToLanguage(lang: String)
+GET        /language/:lang                                controllers.LanguageSwitchController.switchToLanguage(lang: String)
 
-GET        /this-service-has-been-reset                 controllers.SessionExpiredController.onPageLoad
+GET        /this-service-has-been-reset                   controllers.SessionExpiredController.onPageLoad
 
-GET        /check-your-answers                          controllers.CheckYourAnswersController.onPageLoad
+GET        /check-your-answers                            controllers.CheckYourAnswersController.onPageLoad
 
-GET        /unauthorised                                controllers.UnauthorisedController.onPageLoad
+GET        /unauthorised                                  controllers.UnauthorisedController.onPageLoad
+
+GET        /accessibility-statement                       controllers.AccessibilityController.onPageLoad
+
+GET        /register/what-are-you-registering-as        controllers.RegistrationTypeController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/what-are-you-registering-as        controllers.RegistrationTypeController.onSubmit(mode: Mode = NormalMode)
+GET        /register/edit-what-are-you-registering-as   controllers.RegistrationTypeController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/edit-what-are-you-registering-as   controllers.RegistrationTypeController.onSubmit(mode: Mode = CheckMode)
+
+GET        /register/do-you-have-a-utr                   controllers.DoYouHaveUTRController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/do-you-have-a-utr                   controllers.DoYouHaveUTRController.onSubmit(mode: Mode = NormalMode)
+GET        /register/edit-do-you-have-a-utr              controllers.DoYouHaveUTRController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/edit-do-you-have-a-utr              controllers.DoYouHaveUTRController.onSubmit(mode: Mode = CheckMode)
+
+GET        /register/individual/do-you-have-a-nino      controllers.DoYouHaveANationalInsuranceNumberController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/individual/do-you-have-a-nino      controllers.DoYouHaveANationalInsuranceNumberController.onSubmit(mode: Mode = NormalMode)
+GET        /changeDoYouHaveANationalInsuranceNumber     controllers.DoYouHaveANationalInsuranceNumberController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeDoYouHaveANationalInsuranceNumber     controllers.DoYouHaveANationalInsuranceNumberController.onSubmit(mode: Mode = CheckMode)
+
+GET        /register/individual/with-id/nino            controllers.NinoController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/individual/with-id/nino            controllers.NinoController.onSubmit(mode: Mode = NormalMode)
+GET        /changeNino                                  controllers.NinoController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeNino                                  controllers.NinoController.onSubmit(mode: Mode = CheckMode)
+
+GET        /register/individual/with-id/name            controllers.NameController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/individual/with-id/name            controllers.NameController.onSubmit(mode: Mode = NormalMode)
+GET        /changeName                                  controllers.NameController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeName                                  controllers.NameController.onSubmit(mode: Mode = CheckMode)
+
+GET        /register/business/with-id/type              controllers.BusinessTypeController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/business/with-id/type              controllers.BusinessTypeController.onSubmit(mode: Mode = NormalMode)
+GET        /register/business/with-id/change-type       controllers.BusinessTypeController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/business/with-id/change-type       controllers.BusinessTypeController.onSubmit(mode: Mode = CheckMode)
+
+GET        /register/business/with-id/utr               controllers.UniqueTaxpayerReferenceController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/business/with-id/utr               controllers.UniqueTaxpayerReferenceController.onSubmit(mode: Mode = NormalMode)
+GET        /register/business/with-id/change-utr        controllers.UniqueTaxpayerReferenceController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/business/with-id/change-utr        controllers.UniqueTaxpayerReferenceController.onSubmit(mode: Mode = CheckMode)
+
+GET        /register/business/with-id/postCode          controllers.PostCodeController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/business/with-id/postCode          controllers.PostCodeController.onSubmit(mode: Mode = NormalMode)
+GET        /register/business/with-id/change-postcode   controllers.PostCodeController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/business/with-id/change-Postcode   controllers.PostCodeController.onSubmit(mode: Mode = CheckMode)
+
+GET        /register/individual/with-id/date-of-birth   controllers.DateOfBirthController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/individual/with-id/date-of-birth   controllers.DateOfBirthController.onSubmit(mode: Mode = NormalMode)
+GET        /changeDateOfBirth                           controllers.DateOfBirthController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeDateOfBirth                           controllers.DateOfBirthController.onSubmit(mode: Mode = CheckMode)
+
+GET        /match-business  controllers.BusinessMatchingController.matchIndividual(mode: Mode = NormalMode)
+
+GET        /register/business-type                        controllers.BusinessTypeController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/business-type                        controllers.BusinessTypeController.onSubmit(mode: Mode = NormalMode)
+GET        /register/change-business-type                 controllers.BusinessTypeController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/change-business-type                 controllers.BusinessTypeController.onSubmit(mode: Mode = CheckMode)
+
+GET        /register/utr                                  controllers.UniqueTaxpayerReferenceController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/utr                                  controllers.UniqueTaxpayerReferenceController.onSubmit(mode: Mode = NormalMode)
+GET        /register/changeUniqueTaxpayerReference        controllers.UniqueTaxpayerReferenceController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/changeUniqueTaxpayerReference        controllers.UniqueTaxpayerReferenceController.onSubmit(mode: Mode = CheckMode)
+
+GET        /postCode                        controllers.PostCodeController.onPageLoad(mode: Mode = NormalMode)
+POST       /postCode                        controllers.PostCodeController.onSubmit(mode: Mode = NormalMode)
+GET        /changePostCode                  controllers.PostCodeController.onPageLoad(mode: Mode = CheckMode)
+POST       /changePostCode                  controllers.PostCodeController.onSubmit(mode: Mode = CheckMode)
+
+GET        /register/could-not-confirm-identity           controllers.IdentityController.couldntConfirmIdentity()
+
+GET        /register/individual/without-id/name           controllers.NonUkNameController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/individual/without-id/name           controllers.NonUkNameController.onSubmit(mode: Mode = NormalMode)
+GET        /register/individual/without-id/change-name    controllers.NonUkNameController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/individual/without-id/change-name    controllers.NonUkNameController.onSubmit(mode: Mode = CheckMode)
+
+GET        /register/individual/without-id/live-in-uk           controllers.DoYouLiveInTheUKController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/individual/without-id/live-in-uk           controllers.DoYouLiveInTheUKController.onSubmit(mode: Mode = NormalMode)
+GET        /register/individual/without-id/live-in-uk-change    controllers.DoYouLiveInTheUKController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/individual/without-id/live-in-uk-change    controllers.DoYouLiveInTheUKController.onSubmit(mode: Mode = CheckMode)
+
+GET        /register/individual/without-id/uk-postcode        controllers.IndividualUKPostcodeController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/individual/without-id/uk-postcode        controllers.IndividualUKPostcodeController.onSubmit(mode: Mode = NormalMode)
+GET        /register/individual/without-id/change-uk-postcode controllers.IndividualUKPostcodeController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/individual/without-id/change-uk-postcode controllers.IndividualUKPostcodeController.onSubmit(mode: Mode = CheckMode)
+
+GET        /register/individual/without-id/address              controllers.WhatIsYourAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/individual/without-id/address              controllers.WhatIsYourAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /register/individual/without-id/change-address       controllers.WhatIsYourAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/individual/without-id/change-address       controllers.WhatIsYourAddressController.onSubmit(mode: Mode = CheckMode)

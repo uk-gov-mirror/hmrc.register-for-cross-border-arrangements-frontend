@@ -1,0 +1,49 @@
+{% extends "govuk/template.njk" %}
+{%- set assetPath = "/assets/lib/govuk-frontend/govuk/assets" -%}
+{%- set htmlLang = request.language -%}
+
+{% block head %}
+  {% include "includes/head.njk" %}
+{% endblock %}
+
+{% block header %}
+  {% macro phaseBanner() %}
+      {{ messages("phaseBanner.1") }} <a class="govuk-link" href="{{ config.betaFeedbackUnauthenticatedUrl }}">{{ messages("phaseBanner.2") }}</a> {{ messages("phaseBanner.3") }}
+  {% endmacro %}
+
+  {{ govukHeader({
+    homepageUrl: "https://www.gov.uk",
+    serviceName: messages("site.service_name"),
+    serviceUrl: "/register-for-cross-border-arrangements-frontend",
+    containerClasses: "govuk-width-container",
+    assetsPath: "/assets",
+    phaseBanner: {
+      show: true,
+      text: 'alpha',
+      html: phaseBanner()
+    },
+    languageToggle: {
+      inBody: true
+    },
+    signOutHref: config.signOutUrl
+  }) }}
+
+{% endblock %}
+
+{% block beforeContent %}
+{% endblock %}
+
+{% block content %}
+  {% block mainContent %}{% endblock %}
+{% endblock %}
+
+{% block bodyEnd %}
+  {% block scripts %}
+    {% block pageScripts %}{% endblock %}
+    {% include "includes/scripts.njk" %}
+  {% endblock %}
+{% endblock %}
+
+{% block footer %}
+  {% include "includes/footer.njk" %}
+{% endblock %}
