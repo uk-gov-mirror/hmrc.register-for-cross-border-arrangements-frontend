@@ -19,6 +19,7 @@ package controllers
 import base.SpecBase
 import forms.WhatIsYourAddressFormProvider
 import matchers.JsonMatchers
+import models.Address._
 import models.{Address, Country, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
@@ -35,7 +36,6 @@ import play.twirl.api.Html
 import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 import utils.CountryListFactory
-import models.Address._
 
 import scala.concurrent.Future
 

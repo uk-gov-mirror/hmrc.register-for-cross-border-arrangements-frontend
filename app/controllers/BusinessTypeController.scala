@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.BusinessTypeFormProvider
 import javax.inject.Inject
-import models.{BusinessType, Mode, UserAnswers}
+import models.{BusinessType, Mode}
 import navigation.Navigator
 import pages.BusinessTypePage
 import play.api.i18n.{I18nSupport, MessagesApi}

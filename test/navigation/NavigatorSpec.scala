@@ -17,13 +17,13 @@
 package navigation
 
 import base.SpecBase
-import controllers.routes
 import generators.Generators
-import models.RegistrationType.{Business, Individual}
-import pages._
+import models.RegistrationType.Individual
 import models._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import pages._
+import controllers.routes
 
 class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 

@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import forms.UniqueTaxpayerReferenceFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UniqueTaxpayerReference, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -33,8 +33,9 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
-import uk.gov.hmrc.viewmodels.NunjucksSupport
 import uk.gov.hmrc.domain.SaUtrGenerator
+import uk.gov.hmrc.viewmodels.NunjucksSupport
+
 import scala.concurrent.Future
 
 class UniqueTaxpayerReferenceControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {

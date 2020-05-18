@@ -16,10 +16,7 @@
 
 package models
 
-import java.time.LocalDate
-
 import generators.Generators
-import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.{FreeSpec, MustMatchers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks

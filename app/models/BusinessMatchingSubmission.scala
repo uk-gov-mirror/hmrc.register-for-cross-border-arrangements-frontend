@@ -19,8 +19,7 @@ package models
 import java.time.LocalDate
 
 import pages.{DateOfBirthPage, NamePage}
-import play.api.libs.json.{Json, OWrites, Reads}
-import play.api.libs.json._
+import play.api.libs.json.{Json, OWrites, Reads, _}
 
 trait BusinessMatchingSubmission
 

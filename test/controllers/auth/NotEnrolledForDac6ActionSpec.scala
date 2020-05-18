@@ -19,8 +19,8 @@ package controllers.auth
 import config.FrontendAppConfig
 import controllers.auth
 import models.requests.UserRequest
-import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.{FreeSpec, MustMatchers}
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.mvc.Results.Ok
 import play.api.mvc.{AnyContent, MessagesControllerComponents, Result}
