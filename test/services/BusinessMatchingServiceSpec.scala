@@ -22,16 +22,15 @@ import base.SpecBase
 import connectors.BusinessMatchingConnector
 import generators.Generators
 import models.{Name, UserAnswers}
-import org.mockito.Mockito.reset
 import org.mockito.Matchers._
-import org.mockito.Mockito._
+import org.mockito.Mockito.{reset, _}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.{DateOfBirthPage, NamePage, NinoPage}
 import play.api.Application
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.inject._
+import play.api.inject.guice.GuiceApplicationBuilder
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HttpResponse
 

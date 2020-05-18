@@ -19,8 +19,8 @@ package generators
 import java.time.LocalDate
 
 import models._
-import org.scalacheck.{Arbitrary, Gen}
 import org.scalacheck.Arbitrary.arbitrary
+import org.scalacheck.{Arbitrary, Gen}
 import pages._
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.domain.Nino

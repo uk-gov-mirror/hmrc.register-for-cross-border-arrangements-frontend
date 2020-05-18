@@ -35,7 +35,6 @@ import uk.gov.hmrc.auth.core.retrieve.{Retrieval, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.FrontendController
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 
@@ -122,6 +121,7 @@ class AuthActionSpec extends SpecBase with MustMatchers with MockitoSugar with G
       }
     }
   }
+
   class FakeFailingAuthConnector(exceptionToReturn: Throwable) extends AuthConnector {
     val serviceUrl: String = ""
 

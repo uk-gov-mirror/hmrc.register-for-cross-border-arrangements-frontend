@@ -21,13 +21,10 @@ import java.io.ByteArrayInputStream
 import base.SpecBase
 import config.FrontendAppConfig
 import models.Country
-import play.api.Environment
-import play.api.inject.bind
-import play.api.libs.json.Json
 import org.mockito.Matchers.any
-import org.mockito.Mockito.{times, verify, when}
-import play.api.inject.guice.GuiceApplicationBuilder
-import play.modules.reactivemongo.ReactiveMongoApi
+import org.mockito.Mockito.when
+import play.api.Environment
+import play.api.libs.json.Json
 
 class CountryListFactorySpec extends SpecBase {
   "Factory  must " - {

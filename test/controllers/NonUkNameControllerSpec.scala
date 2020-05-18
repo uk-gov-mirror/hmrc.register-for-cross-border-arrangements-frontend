@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import forms.NonUkNameFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, Name, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any

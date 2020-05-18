@@ -21,14 +21,14 @@ import java.time.LocalDate
 import base.SpecBase
 import matchers.JsonMatchers
 import models.{Name, UserAnswers}
-import org.scalatestplus.mockito.MockitoSugar
-import pages.{DateOfBirthPage, NamePage, NinoPage}
-import play.api.mvc.AnyContentAsEmpty
-import play.api.inject._
-import play.api.test.FakeRequest
-import play.api.test.Helpers._
 import org.mockito.Matchers._
 import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
+import pages.{DateOfBirthPage, NamePage, NinoPage}
+import play.api.inject._
+import play.api.mvc.AnyContentAsEmpty
+import play.api.test.FakeRequest
+import play.api.test.Helpers._
 import services.BusinessMatchingService
 import uk.gov.hmrc.domain.Generator
 import uk.gov.hmrc.http.HttpResponse
