@@ -29,7 +29,7 @@ class BusinessMatchingConnector @Inject()(val config: FrontendAppConfig, val htt
 
   def sendIndividualMatchingInformation(nino: Nino, individualSubmission: IndividualMatchingSubmission)
                                        (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
-      val submissionUrl = s"${config.businessMatchingUrl}/registration/individual/nino/$nino"
+      val submissionUrl = s"${config.businessMatchingUrl}/matching/individual/$nino"
       http.POST[IndividualMatchingSubmission, HttpResponse](submissionUrl, individualSubmission)
   }
 
