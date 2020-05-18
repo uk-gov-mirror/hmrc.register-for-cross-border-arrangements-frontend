@@ -213,6 +213,23 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
               .mustBe(routes.IndividualUKPostcodeController.onPageLoad(NormalMode))
         }
       }
+
+      "must go from the Do You Live in the UK page for people who do to the What is your address page" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers
+                .set(DoYouLiveInTheUKPage, false)
+                .success
+                .value
+
+            navigator
+              .nextPage(DoYouLiveInTheUKPage, NormalMode, updatedAnswers)
+              .mustBe(routes.WhatIsYourAddressController.onPageLoad(NormalMode))
+        }
+      }
+
     }
 
 

@@ -256,9 +256,9 @@ whatIsYourAddress.title = What is your address?
 whatIsYourAddress.heading = What is your address?
 whatIsYourAddress.addressLine1 = Address line 1
 whatIsYourAddress.addressLine2 = Address line 2
-whatIsYourAddress.addressLine3 = Address line 3
-whatIsYourAddress.addressLine4 = Address line 4
-whatIsYourAddress.postCode = Postcode
+whatIsYourAddress.addressLine3 = Address line 3 (optional)
+whatIsYourAddress.addressLine4 = Address line 4 (optional)
+whatIsYourAddress.postCode = Postal code (optional)
 whatIsYourAddress.countryCode = Country
 
 
