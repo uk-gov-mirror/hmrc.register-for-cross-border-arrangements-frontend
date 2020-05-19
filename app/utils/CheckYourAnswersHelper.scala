@@ -29,6 +29,21 @@ import utils.CheckYourAnswersHelper._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messages) {
 
+  def businessAddress: Option[Row] = userAnswers.get(BusinessAddressPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"businessAddress.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.BusinessAddressController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"businessAddress.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
   def individualUKPostcode: Option[Row] = userAnswers.get(IndividualUKPostcodePage) map {
     answer =>
       Row(

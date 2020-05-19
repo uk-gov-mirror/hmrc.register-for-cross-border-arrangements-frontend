@@ -26,7 +26,16 @@ import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.domain.Nino
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
+
   self: Generators =>
+
+  implicit lazy val arbitraryBusinessAddressUserAnswersEntry: Arbitrary[(BusinessAddressPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[BusinessAddressPage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
 
   implicit lazy val arbitraryWhatIsYourAddressUserAnswersEntry: Arbitrary[(WhatIsYourAddressPage.type, JsValue)] =
       Arbitrary {
