@@ -71,7 +71,7 @@ class Navigator @Inject()() {
   private def registrationTypeRoutes(ua: UserAnswers): Option[Call] =
     ua.get(RegistrationTypePage) map {
       case Individual => routes.DoYouHaveANationalInsuranceNumberController.onPageLoad(NormalMode)
-      case Business => ??? //TODO: Direct to legal business name
+      case Business => routes.BusinessNameController.onPageLoad(NormalMode)
     }
 
 

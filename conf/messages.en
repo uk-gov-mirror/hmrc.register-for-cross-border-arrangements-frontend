@@ -271,3 +271,13 @@ whatIsYourAddress.error.addressLine2.length = Address Line 2 must be 35 characte
 whatIsYourAddress.error.addressLine3.length = Address Line 3 must be 35 characters or less
 whatIsYourAddress.error.addressLine4.length = Address Line 4 must be 35 characters or less
 WhatIsYourAddress.error.postcode.length = Postcode must be 10 characters or less
+
+businessName.title = businessName
+businessName.heading = businessName
+businessName.businessName = businessName
+businessName.field2 = field2
+businessName.checkYourAnswersLabel = businessName
+businessName.error.businessName.required = Enter businessName
+businessName.error.field2.required = Enter field2
+businessName.error.businessName.length = businessName must be 105 characters or less
+businessName.error.field2.length = field2 must be 100 characters or less
