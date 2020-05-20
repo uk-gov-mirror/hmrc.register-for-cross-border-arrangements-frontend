@@ -27,9 +27,13 @@ class BusinessAddressFormProvider @Inject() extends Mappings {
   def apply(countryList: Seq[Country]): Form[Address] = Form(
     mapping(
       "addressLine1" -> text("businessAddress.error.addressLine1.required")
-        .verifying(maxLength(35, "businessAddress.error.addressLine1.length")),
+        .verifying(maxLength(35, "businessAddress.error.addressLine1.length"),
+          regexp(".*\\S.*", "businessAddress.error.addressLine1.required")),
+
       "addressLine2" -> text("businessAddress.error.addressLine2.required")
-        .verifying(maxLength(35, "businessAddress.error.addressLine2.length")),
+        .verifying(maxLength(35, "businessAddress.error.addressLine2.length"),
+          regexp(".*\\S.*", "businessAddress.error.addressLine2.required")),
+
       "addressLine3" -> optionalText().verifying(maxLength(35, "businessAddress.error.addressLine3.length")),
       "addressLine4" -> optionalText().verifying(maxLength(35, "businessAddress.error.addressLine4.length")),
       "postCode" -> optionalText().verifying(maxLength(10,"businessAddress.error.postcode.length")),
