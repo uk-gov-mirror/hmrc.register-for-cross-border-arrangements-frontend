@@ -14,9 +14,11 @@
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
 
-            {{ govukPanel({
-              titleText:  {{ messages("registrationSuccessful.panel") }}
-            }) }}
+
+
+        {{ govukPanel({
+            titleText: messages("registrationSuccessful.panel")
+        }) }}
 
         <h2 class="govuk-heading-l">
           {{ messages("registrationSuccessful.heading") }}
@@ -25,7 +27,7 @@
         <p class="govuk-body">{{ messages("registrationSuccessful.email") }}</p>
 
         <p class="govuk-body">{{ messages("registrationSuccessful.submission.text") }} 
-        <a href="//Todo" class="govuk-link">{{messages("registrationSuccessful.submission.link")}}</a></p>
+        <a href={{submissionUrl}} class="govuk-link">{{messages("registrationSuccessful.submission.link")}}</a></p>
 
       </div>
     </div>
