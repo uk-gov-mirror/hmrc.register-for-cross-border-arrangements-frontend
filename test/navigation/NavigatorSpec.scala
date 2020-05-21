@@ -182,6 +182,16 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
+      "must go from business name page to making the business match check" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            navigator
+              .nextPage(BusinessNamePage, NormalMode, answers)
+              //.mustBe(routes.BusinessMatchingController.matchBusiness()) TODO add when ready
+        }
+      }
+
       "must go from Do you have a national insurance number to Non Uk Name page when I respond No" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
