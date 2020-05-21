@@ -98,6 +98,11 @@ POST       /register/individual/without-id/address              controllers.What
 GET        /register/individual/without-id/change-address       controllers.WhatIsYourAddressController.onPageLoad(mode: Mode = CheckMode)
 POST       /register/individual/without-id/change-address       controllers.WhatIsYourAddressController.onSubmit(mode: Mode = CheckMode)
 
+GET        /register/business/without-id/address                controllers.BusinessAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/business/without-id/address                controllers.BusinessAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /register/business/without-id/change-address         controllers.BusinessAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/business/without-id/change-address         controllers.BusinessAddressController.onSubmit(mode: Mode = CheckMode)
+
 GET        /register/business/without-id/name                   controllers.BusinessNameController.onPageLoad(mode: Mode = NormalMode)
 POST       /register/business/without-id/name                   controllers.BusinessNameController.onSubmit(mode: Mode = NormalMode)
 GET        /register/business/without-id/change-name            controllers.BusinessNameController.onPageLoad(mode: Mode = CheckMode)

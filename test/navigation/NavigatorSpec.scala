@@ -133,6 +133,15 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
+      "must go from businessAddress page to Check your answers page" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            navigator
+              .nextPage(BusinessAddressPage, NormalMode, answers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+        }
+      }
+
       "must go from DOB page for an Individual with ID to the business matching check" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>

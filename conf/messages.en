@@ -253,8 +253,8 @@ individualUKPostcode.checkYourAnswersLabel = What is your postcode?
 individualUKPostcode.error.required = Enter your postcode
 individualUKPostcode.error.length = Your postcode must be 8 characters or less
 
-whatIsYourAddress.title = What is your address?
-whatIsYourAddress.heading = What is your address?
+whatIsYourAddress.title = What is your home address?
+whatIsYourAddress.heading = What is your home address?
 whatIsYourAddress.addressLine1 = Address line 1
 whatIsYourAddress.addressLine2 = Address line 2
 whatIsYourAddress.addressLine3 = Address line 3 (optional)
@@ -263,7 +263,7 @@ whatIsYourAddress.postCode = Postal code (optional)
 whatIsYourAddress.countryCode = Country
 
 
-whatIsYourAddress.checkYourAnswersLabel = What is your address?
+whatIsYourAddress.checkYourAnswersLabel = What is your home address?
 whatIsYourAddress.error.addressLine1.required = Enter address line 1
 whatIsYourAddress.error.addressLine2.required = Enter address line 2
 whatIsYourAddress.error.country.required = Select country
@@ -272,6 +272,25 @@ whatIsYourAddress.error.addressLine2.length = Address Line 2 must be 35 characte
 whatIsYourAddress.error.addressLine3.length = Address Line 3 must be 35 characters or less
 whatIsYourAddress.error.addressLine4.length = Address Line 4 must be 35 characters or less
 WhatIsYourAddress.error.postcode.length = Postcode must be 10 characters or less
+
+businessAddress.title = What is the main address of your business?
+businessAddress.heading = What is the main address of your business?
+businessAddress.addressLine1 = Address line 1
+businessAddress.addressLine2 = Address line 2
+businessAddress.addressLine3 = Address line 3 (optional)
+businessAddress.addressLine4 = Address line 4 (optional)
+businessAddress.postCode = Postal code (optional)
+businessAddress.countryCode = Country
+
+businessAddress.checkYourAnswersLabel = What is the main address of your business?
+businessAddress.error.addressLine1.required = Enter address line 1
+businessAddress.error.addressLine2.required = Enter address line 2
+businessAddress.error.country.required = Select country
+businessAddress.error.addressLine1.length = Address line 1 must be 35 characters or less
+businessAddress.error.addressLine2.length = Address Line 2 must be 35 characters or less
+businessAddress.error.addressLine3.length = Address Line 3 must be 35 characters or less
+businessAddress.error.addressLine4.length = Address Line 4 must be 35 characters or less
+businessAddress.error.postcode.length = Postcode must be 10 characters or less
 
 businessName.title = What is the name of your business?
 businessName.heading = What is the name of your business?
