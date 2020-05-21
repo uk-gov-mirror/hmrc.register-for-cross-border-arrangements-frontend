@@ -35,7 +35,7 @@ class Navigator @Inject()() {
     case DateOfBirthPage => dateOfBirthRoutes
     case DoYouLiveInTheUKPage => doYouLiveInTheUKRoutes
     case BusinessTypePage => _ => Some(routes.UniqueTaxpayerReferenceController.onPageLoad(NormalMode))
-    case UniqueTaxpayerReferencePage => _ => Some(routes.PostCodeController.onPageLoad(NormalMode))
+    case UniqueTaxpayerReferencePage => _ => Some(routes.BusinessNameController.onPageLoad(NormalMode))
     case NonUkNamePage => _ => Some(routes.DateOfBirthController.onPageLoad(NormalMode))
     case BusinessAddressPage => _ =>   Some(routes.CheckYourAnswersController.onPageLoad())
     case BusinessWithoutIDNamePage => _ => Some(routes.BusinessAddressController.onPageLoad(NormalMode))

@@ -172,13 +172,13 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
-      "must go from unique tax reference to postcode page" in {
+      "must go from unique tax reference to business name page" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
 
             navigator
               .nextPage(UniqueTaxpayerReferencePage, NormalMode, answers)
-              .mustBe(routes.PostCodeController.onPageLoad(NormalMode))
+              .mustBe(routes.BusinessNameController.onPageLoad(NormalMode))
         }
       }
 

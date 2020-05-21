@@ -305,3 +305,10 @@ registrationSuccessful.heading = What happens next
 registrationSuccessful.email = We have sent you a confirmation email.
 registrationSuccessful.submission.text = You can now
 registrationSuccessful.submission.link = disclose cross-border arrangements.
+
+businessName.title = What is {0}?
+businessName.heading = What is {0}?
+businessName.checkYourAnswersLabel = What is {0}?
+businessName.error.required = Enter Business Name
+businessName.error.length = Business Name must be 105 characters or less
+businessName.error.invalid = Business Name must include only valid characters

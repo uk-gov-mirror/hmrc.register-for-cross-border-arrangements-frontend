@@ -58,6 +58,21 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
       )
   }
 
+  def businessNamePage: Option[Row] = userAnswers.get(BusinessNamePage) map {
+    answer =>
+      Row(
+        key     = Key(msg"businessNamePage.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.BusinessNameController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"businessNamePage.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
   def individualUKPostcode: Option[Row] = userAnswers.get(IndividualUKPostcodePage) map {
     answer =>
       Row(
