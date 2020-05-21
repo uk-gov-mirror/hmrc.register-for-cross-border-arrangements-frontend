@@ -93,7 +93,6 @@ trait ModelGenerators {
     Arbitrary {
       for {
         businessName <- arbitrary[String]
-        field2 <- arbitrary[String]
-      } yield BusinessName(businessName, field2)
+      } yield BusinessName(businessName)
     }
 }

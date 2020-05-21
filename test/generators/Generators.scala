@@ -137,4 +137,19 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
     }
   }
 
+  def validBusinessName: Gen[String] =
+    for {
+      length1 <- choose(1, 50)
+      length2 <- choose(1, 50)
+      length3 <- choose(1, 5)
+
+      validSymbols <- Gen.atLeastOne("&", "\\", "/", "'").map(_.mkString)
+
+      word <- Gen.alphaStr
+      numbers <- listOfN(length2, Gen.choose(0, 9)).map(_.mkString)
+      symbols <- listOfN(length3, validSymbols).map(_.mkString)
+    } yield {
+      s"${word.take(length1)} $numbers $symbols"
+    }
+
 }

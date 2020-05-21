@@ -21,5 +21,5 @@ import play.api.libs.json._
 case class BusinessName (businessName: String)
 
 object BusinessName {
-  implicit val format = Json.format[BusinessName]
+  implicit val format: OFormat[BusinessName] = Json.format[BusinessName]
 }

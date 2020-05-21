@@ -79,7 +79,7 @@ class BusinessNameController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(BusinessNamePage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(BusinessNamePage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(BusinessNamePage, mode, updatedAnswers)) //TODO Need to redirect to /register/without-id/address when it's ready
       )
   }
 }
