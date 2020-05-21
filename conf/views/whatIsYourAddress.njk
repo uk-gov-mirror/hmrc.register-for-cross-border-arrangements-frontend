@@ -80,7 +80,7 @@
            label: {
               text: messages('whatIsYourAddress.postCode')
            },
-           id: "postCode",
+           id: "postalCode",
            name: "postCode",
            value: form.postCode.value,
            errorMessage: form.postCode.error
@@ -98,7 +98,8 @@
           }) }}
 
           {{ govukButton({
-            text: messages("site.continue")
+            text: messages("site.continue"),
+            attributes:{"id": "submit"}
           }) }}
 
         </form>
