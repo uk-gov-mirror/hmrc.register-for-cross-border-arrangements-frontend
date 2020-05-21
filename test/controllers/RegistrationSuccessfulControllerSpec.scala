@@ -31,12 +31,12 @@ class RegistrationSuccessfulControllerSpec extends SpecBase with MockitoSugar {
 
   "RegistrationSuccessful Controller" - {
 
-    "return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET without requiring data" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = None).build()
       val request = FakeRequest(GET, routes.RegistrationSuccessfulController.onPageLoad().url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
