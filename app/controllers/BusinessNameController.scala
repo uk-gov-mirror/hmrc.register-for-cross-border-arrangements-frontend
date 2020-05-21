@@ -19,9 +19,10 @@ package controllers
 import controllers.actions._
 import forms.BusinessNameFormProvider
 import javax.inject.Inject
+import models.BusinessType.{CorporateBody, LimitedLiability, Other, Partnership, UnIncorporatedBody}
 import models.Mode
 import navigation.Navigator
-import pages.BusinessNamePage
+import pages.{BusinessNamePage, BusinessTypePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -54,12 +55,19 @@ class BusinessNameController @Inject()(
         case Some(value) => form.fill(value)
       }
 
+      val titleQuestion: String = request.userAnswers.get(BusinessTypePage) match {
+        case Some(Partnership) => "businessName.question.partnership"
+        case Some(LimitedLiability) | Some(CorporateBody) => "businessName.question.limited"
+        case Some(UnIncorporatedBody) | Some(Other) => "businessName.question.unincorporated"
+      }
+
       val json = Json.obj(
         "form" -> preparedForm,
-        "mode" -> mode
+        "mode" -> mode,
+        "titleQuestion" -> titleQuestion
       )
 
-      renderer.render("businessNamePage.njk", json).map(Ok(_))
+      renderer.render("businessName.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -73,7 +81,7 @@ class BusinessNameController @Inject()(
             "mode" -> mode
           )
 
-          renderer.render("businessNamePage.njk", json).map(BadRequest(_))
+          renderer.render("businessName.njk", json).map(BadRequest(_))
         },
         value =>
           for {

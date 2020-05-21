@@ -312,3 +312,6 @@ businessName.checkYourAnswersLabel = What is {0}?
 businessName.error.required = Enter Business Name
 businessName.error.length = Business Name must be 105 characters or less
 businessName.error.invalid = Business Name must include only valid characters
+businessName.question.partnership = the partnership name
+businessName.question.limited = the registered name of your business
+businessName.question.unincorporated = the name of your organisation

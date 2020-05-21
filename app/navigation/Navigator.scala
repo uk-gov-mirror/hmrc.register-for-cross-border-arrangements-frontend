@@ -32,7 +32,7 @@ class Navigator @Inject()() {
     case DoYouHaveANationalInsuranceNumberPage =>   doYouHaveANationalInsuranceNumberRoutes
     case NinoPage => _ => Some(routes.NameController.onPageLoad(NormalMode))
     case NamePage => _ => Some(routes.DateOfBirthController.onPageLoad(NormalMode))
-    case BusinessNamePage => _ => ??? //Some(routes.BusinessMatchingController.matchBusiness()) TODO Add when ready
+    case BusinessNamePage => _ => Some(routes.IndexController.onPageLoad()) //Some(routes.BusinessMatchingController.matchBusiness()) TODO Add when ready
     case DateOfBirthPage => dateOfBirthRoutes
     case DoYouLiveInTheUKPage => doYouLiveInTheUKRoutes
     case BusinessTypePage => _ => Some(routes.UniqueTaxpayerReferenceController.onPageLoad(NormalMode))
