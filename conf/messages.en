@@ -252,8 +252,8 @@ individualUKPostcode.checkYourAnswersLabel = What is your postcode?
 individualUKPostcode.error.required = Enter your postcode
 individualUKPostcode.error.length = Your postcode must be 8 characters or less
 
-whatIsYourAddress.title = What is your address?
-whatIsYourAddress.heading = What is your address?
+whatIsYourAddress.title = What is your home address?
+whatIsYourAddress.heading = What is your home address?
 whatIsYourAddress.addressLine1 = Address line 1
 whatIsYourAddress.addressLine2 = Address line 2
 whatIsYourAddress.addressLine3 = Address line 3 (optional)
@@ -262,7 +262,7 @@ whatIsYourAddress.postCode = Postal code (optional)
 whatIsYourAddress.countryCode = Country
 
 
-whatIsYourAddress.checkYourAnswersLabel = What is your address?
+whatIsYourAddress.checkYourAnswersLabel = What is your home address?
 whatIsYourAddress.error.addressLine1.required = Enter address line 1
 whatIsYourAddress.error.addressLine2.required = Enter address line 2
 whatIsYourAddress.error.country.required = Select country

@@ -26,9 +26,9 @@ class WhatIsYourAddressFormProvider @Inject() extends Mappings {
 
    def apply(countryList: Seq[Country]): Form[Address] = Form(
      mapping(
-      "addressLine1" -> text("whatIsYourAddress.error.addressLine1.required")
+      "addressLine1" -> textNonWhitespaceOnly("whatIsYourAddress.error.addressLine1.required")
         .verifying(maxLength(35, "whatIsYourAddress.error.addressLine1.length")),
-      "addressLine2" -> text("whatIsYourAddress.error.addressLine2.required")
+      "addressLine2" -> textNonWhitespaceOnly("whatIsYourAddress.error.addressLine2.required")
         .verifying(maxLength(35, "whatIsYourAddress.error.addressLine2.length")),
        "addressLine3" -> optionalText().verifying(maxLength(35, "whatIsYourAddress.error.addressLine3.length")),
        "addressLine4" -> optionalText().verifying(maxLength(35, "whatIsYourAddress.error.addressLine4.length")),
