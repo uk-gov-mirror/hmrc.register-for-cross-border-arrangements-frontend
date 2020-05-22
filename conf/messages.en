@@ -290,3 +290,8 @@ businessAddress.error.addressLine2.length = Address Line 2 must be 35 characters
 businessAddress.error.addressLine3.length = Address Line 3 must be 35 characters or less
 businessAddress.error.addressLine4.length = Address Line 4 must be 35 characters or less
 businessAddress.error.postcode.length = Postcode must be 10 characters or less
+
+identityNotConfirmed.title = We could not find your business
+identityNotConfirmed.heading = We could not find your business
+identityNotConfirmed.p = The information you have entered does not match our records.
+identityNotConfirmed.button = Try again

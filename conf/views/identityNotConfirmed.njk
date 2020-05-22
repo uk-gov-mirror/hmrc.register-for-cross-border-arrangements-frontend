@@ -1,0 +1,39 @@
+{% extends "includes/layout.njk" %}
+
+{% from "macros/title.njk"                         import title %}
+{% from "govuk/components/button/macro.njk"        import govukButton %}
+{% from "govuk/components/back-link/macro.njk"     import govukBackLink %}
+
+{% block pageTitle %}
+  {{ title(messages("identityNotConfirmed.title")) }}
+{% endblock %}
+
+{% block beforeContent %}
+  {{ govukBackLink({
+      text: messages("site.back"),
+      href: "#"
+    })
+  }}
+{% endblock %}
+
+{% block mainContent %}
+
+  <!-- <div class="govuk-main-wrapper"> TODO Removes top and bottom padding. Put it back?-->
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+
+        <h1 class="govuk-heading-xl">
+          {{ messages("identityNotConfirmed.heading") }}
+        </h1>
+
+        <p class="govuk-body">{{ messages("identityNotConfirmed.p") }}</p>
+
+        {{ govukButton({
+            text: messages("identityNotConfirmed.button")
+        }) }}
+
+      </div>
+    </div>
+  <!-- </div> -->
+
+{% endblock %}
