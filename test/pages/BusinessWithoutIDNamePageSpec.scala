@@ -14,12 +14,18 @@
  * limitations under the License.
  */
 
-package models
+package pages
 
-import play.api.libs.json._
+import pages.behaviours.PageBehaviours
 
-case class BusinessName (businessName: String)
+class BusinessWithoutIDNamePageSpec extends PageBehaviours {
 
-object BusinessName {
-  implicit val format: OFormat[BusinessName] = Json.format[BusinessName]
+  "BusinessWithoutIDNamePage" - {
+
+    beRetrievable[String](BusinessWithoutIDNamePage)
+
+    beSettable[String](BusinessWithoutIDNamePage)
+
+    beRemovable[String](BusinessWithoutIDNamePage)
+  }
 }

@@ -16,17 +16,11 @@
 
 package pages
 
-import models.BusinessName
-import pages.behaviours.PageBehaviours
+import play.api.libs.json.JsPath
 
-class BusinessNamePageSpec extends PageBehaviours {
+case object BusinessWithoutIDNamePage extends QuestionPage[String] {
 
-  "BusinessNamePage" - {
+  override def path: JsPath = JsPath \ toString
 
-    beRetrievable[BusinessName](BusinessNamePage)
-
-    beSettable[BusinessName](BusinessNamePage)
-
-    beRemovable[BusinessName](BusinessNamePage)
-  }
+  override def toString: String = "businessWithoutIDName"
 }

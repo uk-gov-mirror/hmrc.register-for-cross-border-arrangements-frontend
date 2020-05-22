@@ -245,12 +245,12 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             val updatedAnswers =
               answers
-                .set(BusinessNamePage, BusinessName("Business name"))
+                .set(BusinessWithoutIDNamePage, "Business name")
                 .success
                 .value
 
             navigator
-              .nextPage(BusinessNamePage, NormalMode, updatedAnswers)
+              .nextPage(BusinessWithoutIDNamePage, NormalMode, updatedAnswers)
               .mustBe(routes.WhatIsYourAddressController.onPageLoad(NormalMode))
         }
       }

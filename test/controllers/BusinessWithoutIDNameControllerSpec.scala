@@ -17,15 +17,15 @@
 package controllers
 
 import base.SpecBase
-import forms.BusinessNameFormProvider
+import forms.BusinessWithoutIDNameFormProvider
 import matchers.JsonMatchers
-import models.{BusinessName, NormalMode, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.BusinessNamePage
+import pages.BusinessWithoutIDNamePage
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
@@ -38,27 +38,21 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class BusinessNameControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class BusinessWithoutIDNameControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
   def onwardRoute: Call = Call("GET", "/foo")
 
-  val formProvider = new BusinessNameFormProvider()
-  val form: Form[BusinessName] = formProvider()
+  val formProvider = new BusinessWithoutIDNameFormProvider()
+  val form: Form[String] = formProvider()
 
-  lazy val businessNameRoute: String = routes.BusinessNameController.onPageLoad(NormalMode).url
+  lazy val businessNameRoute: String = routes.BusinessWithoutIDNameController.onPageLoad(NormalMode).url
   val validBusinessName = """Business name 10&\\\/'"""
   val invalidBusinessName = "++ invalid name ++"
 
-  val userAnswers: UserAnswers = UserAnswers(
-    userAnswersId,
-    Json.obj(
-      BusinessNamePage.toString -> Json.obj(
-        "businessName" -> validBusinessName
-      )
-    )
-  )
+  val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+    .set(BusinessWithoutIDNamePage, validBusinessName).success.value
 
-  "BusinessName Controller" - {
+  "BusinessWithoutIDName Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
@@ -81,7 +75,7 @@ class BusinessNameControllerSpec extends SpecBase with MockitoSugar with Nunjuck
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "businessName.njk"
+      templateCaptor.getValue mustEqual "businessWithoutIDName.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -105,7 +99,7 @@ class BusinessNameControllerSpec extends SpecBase with MockitoSugar with Nunjuck
 
       val filledForm = form.bind(
         Map(
-          "businessName" -> validBusinessName
+          "businessWithoutIDName" -> validBusinessName
         )
       )
 
@@ -114,7 +108,7 @@ class BusinessNameControllerSpec extends SpecBase with MockitoSugar with Nunjuck
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "businessName.njk"
+      templateCaptor.getValue mustEqual "businessWithoutIDName.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -137,7 +131,7 @@ class BusinessNameControllerSpec extends SpecBase with MockitoSugar with Nunjuck
 
       val request =
         FakeRequest(POST, businessNameRoute)
-          .withFormUrlEncodedBody(("businessName", validBusinessName))
+          .withFormUrlEncodedBody(("businessWithoutIDName", validBusinessName))
 
       val result = route(application, request).value
 
@@ -154,10 +148,10 @@ class BusinessNameControllerSpec extends SpecBase with MockitoSugar with Nunjuck
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, businessNameRoute).withFormUrlEncodedBody(("businessName", invalidBusinessName))
+      val request = FakeRequest(POST, businessNameRoute).withFormUrlEncodedBody(("businessWithoutIDName", invalidBusinessName))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
-      val boundForm = form.bind(Map("businessName" -> invalidBusinessName))
+      val boundForm = form.bind(Map("businessWithoutIDName" -> invalidBusinessName))
 
       val result = route(application, request).value
 
@@ -170,7 +164,7 @@ class BusinessNameControllerSpec extends SpecBase with MockitoSugar with Nunjuck
         "mode"   -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "businessName.njk"
+      templateCaptor.getValue mustEqual "businessWithoutIDName.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -198,7 +192,7 @@ class BusinessNameControllerSpec extends SpecBase with MockitoSugar with Nunjuck
         "mode"   -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "businessName.njk"
+      templateCaptor.getValue mustEqual "businessWithoutIDName.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
        application.stop()
@@ -224,7 +218,7 @@ class BusinessNameControllerSpec extends SpecBase with MockitoSugar with Nunjuck
 
       val request =
         FakeRequest(POST, businessNameRoute)
-          .withFormUrlEncodedBody(("businessName", "value 1"))
+          .withFormUrlEncodedBody(("businessWithoutIDName", "value 1"))
 
       val result = route(application, request).value
 

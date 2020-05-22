@@ -7,7 +7,7 @@
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(messages("businessName.title"), form.errors) }}
+  {{ title(messages("businessWithoutIDName.title"), form.errors) }}
 {% endblock %}
 
 {% block mainContent %}
@@ -27,28 +27,29 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.BusinessNameController.onSubmit(mode).url }}" method="post">
+        <form action="{{ routes.controllers.BusinessWithoutIDNameController.onSubmit(mode).url }}" method="post">
 
           {{ csrf() | safe }}
 
         <h1 class="govuk-heading-xl">
-          {{ messages("businessName.heading") }}
+          {{ messages("businessWithoutIDName.heading") }}
         </h1>
 
           {{ govukInput({
             label: {
               classes: "govuk-label govuk-visually-hidden",
-              text: messages('businessName.checkYourAnswersLabel')
+              text: messages('businessWithoutIDName.checkYourAnswersLabel')
             },
             classes: "govuk-!-width-three-quarters",
-            id: "businessName",
-            name: "businessName",
-            value: form.businessName.value,
-            errorMessage: form.businessName.error
+            id: "businessWithoutIDName",
+            name: "businessWithoutIDName",
+            value: form.businessWithoutIDName.value,
+            errorMessage: form.businessWithoutIDName.error
           }) }}
 
           {{ govukButton({
-            text: messages("site.saveAndContinue")
+            text: messages("site.saveAndContinue"),
+            attributes:{"id": "submit"}
           }) }}
 
         </form>

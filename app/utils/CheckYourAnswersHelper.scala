@@ -21,13 +21,12 @@ import java.time.format.DateTimeFormatter
 import controllers.routes
 import models.{CheckMode, UserAnswers}
 import pages._
-import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels.Text.Literal
 import uk.gov.hmrc.viewmodels._
 import utils.CheckYourAnswersHelper._
 
-class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messages) {
+class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
   def businessAddress: Option[Row] = userAnswers.get(BusinessAddressPage) map {
     answer =>
@@ -44,16 +43,16 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers)(implicit messages: Messag
       )
   }
 
-  def businessName: Option[Row] = userAnswers.get(BusinessNamePage) map {
+  def businessWithoutIDName: Option[Row] = userAnswers.get(BusinessWithoutIDNamePage) map {
     answer =>
       Row(
-        key     = Key(msg"businessName.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(lit"${answer.businessName}"),
+        key     = Key(msg"businessWithoutIDName.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(lit"$answer"),
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.BusinessNameController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"businessName.checkYourAnswersLabel"))
+            href               = routes.BusinessWithoutIDNameController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"businessWithoutIDName.checkYourAnswersLabel"))
           )
         )
       )

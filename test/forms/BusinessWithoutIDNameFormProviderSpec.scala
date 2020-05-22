@@ -19,16 +19,16 @@ package forms
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
 
-class BusinessNameFormProviderSpec extends StringFieldBehaviours {
+class BusinessWithoutIDNameFormProviderSpec extends StringFieldBehaviours {
 
-  val form = new BusinessNameFormProvider()()
+  val form = new BusinessWithoutIDNameFormProvider()()
 
-  ".businessName" - {
+  ".businessWithoutIDName" - {
 
-    val fieldName = "businessName"
-    val requiredKey = "businessName.error.businessName.required"
-    val lengthKey = "businessName.error.businessName.length"
-    val invalidKey = "businessName.error.businessName.invalid"
+    val fieldName = "businessWithoutIDName"
+    val requiredKey = "businessWithoutIDName.error.businessName.required"
+    val lengthKey = "businessWithoutIDName.error.businessName.length"
+    val invalidKey = "businessWithoutIDName.error.businessName.invalid"
     val maxLength = 105
     val businessNameRegex = """^[A-Za-z0-9&\/\\'\s]*$"""
 

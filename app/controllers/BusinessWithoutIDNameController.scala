@@ -17,11 +17,11 @@
 package controllers
 
 import controllers.actions._
-import forms.BusinessNameFormProvider
+import forms.BusinessWithoutIDNameFormProvider
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
-import pages.BusinessNamePage
+import pages.BusinessWithoutIDNamePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -32,16 +32,16 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class BusinessNameController @Inject()(
-    override val messagesApi: MessagesApi,
-    sessionRepository: SessionRepository,
-    navigator: Navigator,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    formProvider: BusinessNameFormProvider,
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
+class BusinessWithoutIDNameController @Inject()(
+                                                 override val messagesApi: MessagesApi,
+                                                 sessionRepository: SessionRepository,
+                                                 navigator: Navigator,
+                                                 identify: IdentifierAction,
+                                                 getData: DataRetrievalAction,
+                                                 requireData: DataRequiredAction,
+                                                 formProvider: BusinessWithoutIDNameFormProvider,
+                                                 val controllerComponents: MessagesControllerComponents,
+                                                 renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
   private val form = formProvider()
@@ -49,7 +49,7 @@ class BusinessNameController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(BusinessNamePage) match {
+      val preparedForm = request.userAnswers.get(BusinessWithoutIDNamePage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -59,7 +59,7 @@ class BusinessNameController @Inject()(
         "mode"   -> mode
       )
 
-      renderer.render("businessName.njk", json).map(Ok(_))
+      renderer.render("businessWithoutIDName.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -73,13 +73,13 @@ class BusinessNameController @Inject()(
             "mode"   -> mode
           )
 
-          renderer.render("businessName.njk", json).map(BadRequest(_))
+          renderer.render("businessWithoutIDName.njk", json).map(BadRequest(_))
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(BusinessNamePage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(BusinessWithoutIDNamePage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(BusinessNamePage, mode, updatedAnswers)) //TODO Need to redirect to /register/without-id/address when it's ready
+          } yield Redirect(navigator.nextPage(BusinessWithoutIDNamePage, mode, updatedAnswers)) //TODO Need to redirect to /register/without-id/address when it's ready
       )
   }
 }

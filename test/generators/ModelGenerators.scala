@@ -89,10 +89,4 @@ trait ModelGenerators {
       Gen.oneOf(BusinessType.values.toSeq)
     }
 
-  implicit lazy val arbitraryBusinessName: Arbitrary[BusinessName] =
-    Arbitrary {
-      for {
-        businessName <- arbitrary[String]
-      } yield BusinessName(businessName)
-    }
 }

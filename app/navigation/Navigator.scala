@@ -38,7 +38,7 @@ class Navigator @Inject()() {
     case UniqueTaxpayerReferencePage => _ => Some(routes.PostCodeController.onPageLoad(NormalMode))
     case NonUkNamePage => _ => Some(routes.DateOfBirthController.onPageLoad(NormalMode))
     case BusinessAddressPage => _ =>   Some(routes.CheckYourAnswersController.onPageLoad())
-    case BusinessNamePage => _ => Some(routes.WhatIsYourAddressController.onPageLoad(NormalMode))
+    case BusinessWithoutIDNamePage => _ => Some(routes.WhatIsYourAddressController.onPageLoad(NormalMode))
     case _ => _ => Some(routes.IndexController.onPageLoad())
   }
 
@@ -73,7 +73,7 @@ class Navigator @Inject()() {
   private def registrationTypeRoutes(ua: UserAnswers): Option[Call] =
     ua.get(RegistrationTypePage) map {
       case Individual => routes.DoYouHaveANationalInsuranceNumberController.onPageLoad(NormalMode)
-      case Business => routes.BusinessNameController.onPageLoad(NormalMode)
+      case Business => routes.BusinessWithoutIDNameController.onPageLoad(NormalMode)
     }
 
 

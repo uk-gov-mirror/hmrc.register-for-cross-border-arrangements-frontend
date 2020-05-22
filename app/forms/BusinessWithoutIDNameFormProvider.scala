@@ -16,21 +16,16 @@
 
 package forms
 
-import javax.inject.Inject
-
 import forms.mappings.Mappings
+import javax.inject.Inject
 import play.api.data.Form
-import play.api.data.Forms._
-import models.BusinessName
 
-class BusinessNameFormProvider @Inject() extends Mappings {
+class BusinessWithoutIDNameFormProvider @Inject() extends Mappings {
     val businessNameRegex = """^[A-Za-z0-9&\/\\'\s]*$"""
 
-   def apply(): Form[BusinessName] = Form(
-     mapping(
-      "businessName" -> text("businessName.error.businessName.required")
-        .verifying(regexp(businessNameRegex, "businessName.error.businessName.invalid"))
-        .verifying(maxLength(105, "businessName.error.businessName.length"))
-    )(BusinessName.apply)(BusinessName.unapply)
+   def apply(): Form[String] = Form(
+      "businessWithoutIDName" -> text("businessWithoutIDName.error.businessName.required")
+        .verifying(regexp(businessNameRegex, "businessWithoutIDName.error.businessName.invalid"))
+        .verifying(maxLength(105, "businessWithoutIDName.error.businessName.length"))
    )
  }

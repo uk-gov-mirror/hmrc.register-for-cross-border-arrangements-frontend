@@ -292,9 +292,9 @@ businessAddress.error.addressLine3.length = Address Line 3 must be 35 characters
 businessAddress.error.addressLine4.length = Address Line 4 must be 35 characters or less
 businessAddress.error.postcode.length = Postcode must be 10 characters or less
 
-businessName.title = What is the name of your business?
-businessName.heading = What is the name of your business?
-businessName.checkYourAnswersLabel = What is the name of your business?
-businessName.error.businessName.required = Enter the name of your business
-businessName.error.businessName.length = The name of your business must be 105 characters or less
-businessName.error.businessName.invalid = The name of your business must only include letters a to z, numbers 0 to 9, spaces, apostrophes, ampersands, forward slash and backslash
+businessWithoutIDName.title = What is the name of your business?
+businessWithoutIDName.heading = What is the name of your business?
+businessWithoutIDName.checkYourAnswersLabel = What is the name of your business?
+businessWithoutIDName.error.businessName.required = Enter the name of your business
+businessWithoutIDName.error.businessName.length = The name of your business must be 105 characters or less
+businessWithoutIDName.error.businessName.invalid = The name of your business must only include letters a to z, numbers 0 to 9, spaces, apostrophes, ampersands, forward slash and backslash
