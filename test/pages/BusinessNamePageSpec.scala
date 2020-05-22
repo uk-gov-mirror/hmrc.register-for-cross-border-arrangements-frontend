@@ -21,7 +21,7 @@ import pages.behaviours.PageBehaviours
 
 class BusinessNamePageSpec extends PageBehaviours {
 
-  "BusinessNamePagePage" - {
+  "BusinessNamePage" - {
 
     beRetrievable[String](BusinessNamePage)
 

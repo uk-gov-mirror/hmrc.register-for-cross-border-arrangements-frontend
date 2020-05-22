@@ -61,10 +61,18 @@ class BusinessNameController @Inject()(
         case Some(UnIncorporatedBody) => "businessName.question.unincorporated"
       }
 
+      val hintKey: String = request.userAnswers.get(BusinessTypePage) match {
+        case Some(Partnership) => "businessName.partnership.hint"
+        case Some(CorporateBody) | Some(LimitedLiability) => "businessName.registered.hint"
+        case Some(UnIncorporatedBody) => "businessName.unincorporated.hint"
+        case _ => ""
+      }
+
       val json = Json.obj(
         "form" -> preparedForm,
         "mode" -> mode,
-        "titleQuestion" -> titleQuestion
+        "titleQuestion" -> titleQuestion,
+        "hintKey" -> hintKey
       )
 
       renderer.render("businessName.njk", json).map(Ok(_))
