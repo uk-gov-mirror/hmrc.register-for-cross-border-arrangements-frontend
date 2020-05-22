@@ -114,3 +114,8 @@ GET        /register/business-name                        controllers.BusinessNa
 POST       /register/business-name                        controllers.BusinessNameController.onSubmit(mode: Mode = NormalMode)
 GET        /register/change-business-name                 controllers.BusinessNameController.onPageLoad(mode: Mode = CheckMode)
 POST       /register/change-business-name                 controllers.BusinessNameController.onSubmit(mode: Mode = CheckMode)
+
+GET        /register/sole-proprietor-business-name        controllers.SoleTraderNameController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/sole-proprietor-business-name        controllers.SoleTraderNameController.onSubmit(mode: Mode = NormalMode)
+GET        /register/change-sole-proprietor-business-name controllers.SoleTraderNameController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/change-sole-proprietor-business-name controllers.SoleTraderNameController.onSubmit(mode: Mode = CheckMode)

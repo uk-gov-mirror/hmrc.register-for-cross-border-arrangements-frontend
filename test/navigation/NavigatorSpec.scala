@@ -24,6 +24,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
 import controllers.routes
+import models.BusinessType._
 
 class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
@@ -172,12 +173,32 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
+      "must go from unique tax reference to business name page when not unspecified" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(BusinessTypePage, BusinessType.NotSpecified)
+                .success
+                .value
+
+            navigator
+              .nextPage(UniqueTaxpayerReferencePage, NormalMode, updatedAnswers)
+              .mustBe(routes.SoleTraderNameController.onPageLoad(NormalMode))
+        }
+      }
+
       "must go from unique tax reference to business name page" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
+            val updatedAnswers =
+              answers
+                .set(BusinessTypePage, UnIncorporatedBody)
+                .success
+                .value
 
             navigator
-              .nextPage(UniqueTaxpayerReferencePage, NormalMode, answers)
+              .nextPage(UniqueTaxpayerReferencePage, NormalMode, updatedAnswers)
               .mustBe(routes.BusinessNameController.onPageLoad(NormalMode))
         }
       }

@@ -185,7 +185,7 @@ businessType.partnerShip = Partnership
 businessType.limitedLiability = Limited Liability Partnership
 businessType.corporateBody = Corporate Body
 businessType.unIncorporatedBody = Unincorporated body
-businessType.other = Other
+businessType.notSpecified = Not Specified
 businessType.checkYourAnswersLabel = What type of business do you have?
 businessType.error.required = Select businessType
 
@@ -315,3 +315,13 @@ businessName.error.invalid = Business Name must include only valid characters
 businessName.question.partnership = the partnership name
 businessName.question.limited = the registered name of your business
 businessName.question.unincorporated = the name of your organisation
+
+soleTraderName.title = What is your name?
+soleTraderName.heading = What is your name?
+soleTraderName.checkYourAnswersLabel = What is your name?
+soleTraderName.firstName = First name
+soleTraderName.secondName = Last name
+soleTraderName.error.firstName.required = Enter your first name
+soleTraderName.error.firstName.length = First name must be 50 characters or less
+soleTraderName.error.secondName.required = Enter your last name
+soleTraderName.error.secondName.length = Last name must be 50 characters or less

@@ -17,12 +17,12 @@
 package controllers
 
 import controllers.actions._
-import forms.BusinessNameFormProvider
+import forms.{BusinessNameFormProvider, SoleTraderNameFormProvider}
 import javax.inject.Inject
 import models.BusinessType.{CorporateBody, LimitedLiability, Partnership, UnIncorporatedBody}
 import models.Mode
 import navigation.Navigator
-import pages.{BusinessNamePage, BusinessTypePage}
+import pages.{BusinessNamePage, BusinessTypePage, SoleTraderNamePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -33,14 +33,14 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class BusinessNameController @Inject()(
+class SoleTraderNameController @Inject()(
                                         override val messagesApi: MessagesApi,
                                         sessionRepository: SessionRepository,
                                         navigator: Navigator,
                                         identify: IdentifierAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
-                                        formProvider: BusinessNameFormProvider,
+                                        formProvider: SoleTraderNameFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
                                         renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
@@ -50,24 +50,17 @@ class BusinessNameController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(BusinessNamePage) match {
+      val preparedForm = request.userAnswers.get(SoleTraderNamePage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
-      val titleQuestion: String = request.userAnswers.get(BusinessTypePage) match {
-        case Some(Partnership) => "businessName.question.partnership"
-        case Some(LimitedLiability) | Some(CorporateBody) => "businessName.question.limited"
-        case Some(UnIncorporatedBody) => "businessName.question.unincorporated"
-      }
-
       val json = Json.obj(
         "form" -> preparedForm,
-        "mode" -> mode,
-        "titleQuestion" -> titleQuestion
+        "mode" -> mode
       )
 
-      renderer.render("businessName.njk", json).map(Ok(_))
+      renderer.render("soleTraderName.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -81,13 +74,13 @@ class BusinessNameController @Inject()(
             "mode" -> mode
           )
 
-          renderer.render("businessName.njk", json).map(BadRequest(_))
+          renderer.render("soleTraderName.njk", json).map(BadRequest(_))
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(BusinessNamePage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(SoleTraderNamePage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(BusinessNamePage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(SoleTraderNamePage, mode, updatedAnswers))
       )
   }
 }
