@@ -22,10 +22,11 @@ import play.api.data.Form
 
 class BusinessWithoutIDNameFormProvider @Inject() extends Mappings {
     val businessNameRegex = """^[A-Za-z0-9&\/\\'\s]*$"""
+    val maxLength: Int = 105
 
    def apply(): Form[String] = Form(
-      "businessWithoutIDName" -> text("businessWithoutIDName.error.businessName.required")
+      "businessWithoutIDName" -> textNonWhitespaceOnly("businessWithoutIDName.error.businessName.required")
         .verifying(regexp(businessNameRegex, "businessWithoutIDName.error.businessName.invalid"))
-        .verifying(maxLength(105, "businessWithoutIDName.error.businessName.length"))
+        .verifying(maxLength(maxLength, "businessWithoutIDName.error.businessName.length"))
    )
  }

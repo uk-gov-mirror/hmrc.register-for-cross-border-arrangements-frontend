@@ -239,7 +239,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
-      "must go from the What is your business name page to the What is your business address page" in {
+      "must go from the What is your business name page (without-id) to the What is your business address page" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
 
@@ -251,7 +251,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(BusinessWithoutIDNamePage, NormalMode, updatedAnswers)
-              .mustBe(routes.WhatIsYourAddressController.onPageLoad(NormalMode))
+              .mustBe(routes.BusinessAddressController.onPageLoad(NormalMode))
         }
       }
 
