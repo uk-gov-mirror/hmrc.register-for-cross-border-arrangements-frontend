@@ -182,10 +182,10 @@ dateOfBirth.error.invalid = Enter a real date of birth
 businessType.title = What type of business do you have?
 businessType.heading = What type of business do you have?
 businessType.partnerShip = Partnership
-businessType.limitedLiability = Limited Liability Partnership
-businessType.corporateBody = Corporate Body
-businessType.unIncorporatedBody = Unincorporated body
-businessType.notSpecified = Not Specified
+businessType.limitedLiability = Limited partnership or limited liability partnership
+businessType.corporateBody = Limited company
+businessType.unIncorporatedBody = Unincorporated association or trust
+businessType.notSpecified = Sole proprietor
 businessType.checkYourAnswersLabel = What type of business do you have?
 businessType.error.required = Select businessType
 

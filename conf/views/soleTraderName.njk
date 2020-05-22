@@ -7,7 +7,7 @@
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(messages("name.title"), form.errors) }}
+  {{ title(messages("soleTraderName.title"), form.errors) }}
 {% endblock %}
 
 {% block mainContent %}
@@ -27,7 +27,7 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.NameController.onSubmit(mode).url }}" method="post">
+        <form action="{{ routes.controllers.SoleTraderNameController.onSubmit(mode).url }}" method="post">
 
           {{ csrf() | safe }}
 
@@ -37,7 +37,7 @@
 
           {{ govukInput({
             label: {
-              text: messages('name.firstName')
+              text: messages('soleTraderName.firstName')
             },
             id: "firstName",
             name: "firstName",
@@ -47,7 +47,7 @@
           
           {{ govukInput({
               label: {
-                text: messages('name.secondName')
+                text: messages('soleTraderName.secondName')
               },
               id: "secondName",
               name: "secondName",
