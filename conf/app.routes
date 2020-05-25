@@ -102,3 +102,8 @@ GET        /register/business/without-id/address                controllers.Busi
 POST       /register/business/without-id/address                controllers.BusinessAddressController.onSubmit(mode: Mode = NormalMode)
 GET        /register/business/without-id/change-address         controllers.BusinessAddressController.onPageLoad(mode: Mode = CheckMode)
 POST       /register/business/without-id/change-address         controllers.BusinessAddressController.onSubmit(mode: Mode = CheckMode)
+
+GET        /register/without-id/business-name                   controllers.BusinessWithoutIDNameController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/without-id/business-name                   controllers.BusinessWithoutIDNameController.onSubmit(mode: Mode = NormalMode)
+GET        /register/without-id/business-change-name            controllers.BusinessWithoutIDNameController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/without-id/business-change-name            controllers.BusinessWithoutIDNameController.onSubmit(mode: Mode = CheckMode)
