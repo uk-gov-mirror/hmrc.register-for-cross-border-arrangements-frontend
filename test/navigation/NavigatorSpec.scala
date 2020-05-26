@@ -188,7 +188,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
-      "must go from unique tax reference to business name page" in {
+      "must go from unique tax reference to organisation business name page" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
@@ -199,7 +199,52 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(UniqueTaxpayerReferencePage, NormalMode, updatedAnswers)
-              .mustBe(routes.BusinessNameController.onPageLoad(NormalMode))
+              .mustBe(routes.BusinessNameOrganisationController.onPageLoad(NormalMode))
+        }
+      }
+
+      "as a limited liabilty business must go from unique tax reference to registered business name page" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(BusinessTypePage, LimitedLiability)
+                .success
+                .value
+
+            navigator
+              .nextPage(UniqueTaxpayerReferencePage, NormalMode, updatedAnswers)
+              .mustBe(routes.BusinessNameRegisteredBusinessController.onPageLoad(NormalMode))
+        }
+      }
+
+      "as a corporate body business must go from unique tax reference to registered business name page" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(BusinessTypePage, BusinessType.CorporateBody)
+                .success
+                .value
+
+            navigator
+              .nextPage(UniqueTaxpayerReferencePage, NormalMode, updatedAnswers)
+              .mustBe(routes.BusinessNameRegisteredBusinessController.onPageLoad(NormalMode))
+        }
+      }
+
+      "as a partnership must go from unique tax reference to partnership name page" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(BusinessTypePage, BusinessType.Partnership)
+                .success
+                .value
+
+            navigator
+              .nextPage(UniqueTaxpayerReferencePage, NormalMode, updatedAnswers)
+              .mustBe(routes.BusinessNamePartnershipController.onPageLoad(NormalMode))
         }
       }
 

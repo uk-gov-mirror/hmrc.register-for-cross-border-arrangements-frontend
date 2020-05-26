@@ -17,12 +17,11 @@
 package controllers
 
 import controllers.actions._
-import forms.BusinessNameFormProvider
+import forms.BusinessNameOrganisationFormProvider
 import javax.inject.Inject
-import models.BusinessType.{CorporateBody, LimitedLiability, Partnership, UnIncorporatedBody}
 import models.Mode
 import navigation.Navigator
-import pages.{BusinessNamePage, BusinessTypePage}
+import pages.BusinessNamePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -33,14 +32,14 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class BusinessNameController @Inject()(
+class BusinessNameOrganisationController @Inject()(
                                         override val messagesApi: MessagesApi,
                                         sessionRepository: SessionRepository,
                                         navigator: Navigator,
                                         identify: IdentifierAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
-                                        formProvider: BusinessNameFormProvider,
+                                        formProvider: BusinessNameOrganisationFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
                                         renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
@@ -55,18 +54,9 @@ class BusinessNameController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      val titleQuestion: String = request.userAnswers.get(BusinessTypePage) match {
-        case Some(Partnership) => "businessName.question.partnership"
-        case Some(LimitedLiability) | Some(CorporateBody) => "businessName.question.limited"
-        case Some(UnIncorporatedBody) => "businessName.question.unincorporated"
-      }
+      val titleQuestion: String = "businessName.question.unincorporated"
 
-      val hintKey: String = request.userAnswers.get(BusinessTypePage) match {
-        case Some(Partnership) => "businessName.partnership.hint"
-        case Some(CorporateBody) | Some(LimitedLiability) => "businessName.registered.hint"
-        case Some(UnIncorporatedBody) => "businessName.unincorporated.hint"
-        case _ => ""
-      }
+      val hintKey: String = "businessName.unincorporated.hint"
 
       val json = Json.obj(
         "form" -> preparedForm,

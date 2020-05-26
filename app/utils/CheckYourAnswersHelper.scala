@@ -19,7 +19,7 @@ package utils
 import java.time.format.DateTimeFormatter
 
 import controllers.routes
-import models.{CheckMode, UserAnswers}
+import models.{BusinessType, CheckMode, NormalMode, UserAnswers}
 import pages._
 import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels.Text.Literal
@@ -58,19 +58,28 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
       )
   }
 
-  def businessNamePage: Option[Row] = userAnswers.get(BusinessNamePage) map {
-    answer =>
-      Row(
-        key     = Key(msg"businessNamePage.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(lit"$answer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = routes.BusinessNameController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"businessNamePage.checkYourAnswersLabel"))
+  def businessNamePage: Option[Row] = {
+    val returnUrl = userAnswers.get(BusinessTypePage) map {
+      case BusinessType.NotSpecified => routes.SoleTraderNameController.onPageLoad(CheckMode).url
+      case BusinessType.Partnership => routes.BusinessNamePartnershipController.onPageLoad(CheckMode).url
+      case BusinessType.LimitedLiability | BusinessType.CorporateBody => routes.BusinessNameRegisteredBusinessController.onPageLoad(CheckMode).url
+      case BusinessType.UnIncorporatedBody => routes.BusinessNameOrganisationController.onPageLoad(CheckMode).url
+    } getOrElse("")
+
+    userAnswers.get(BusinessNamePage) map {
+      answer =>
+        Row(
+          key     = Key(msg"businessNamePage.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+          value   = Value(lit"$answer"),
+          actions = List(
+            Action(
+              content            = msg"site.edit",
+              href               = returnUrl,
+              visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"businessNamePage.checkYourAnswersLabel"))
+            )
           )
         )
-      )
+    }
   }
 
   def individualUKPostcode: Option[Row] = userAnswers.get(IndividualUKPostcodePage) map {

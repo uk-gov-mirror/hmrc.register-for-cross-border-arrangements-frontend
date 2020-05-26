@@ -40,7 +40,7 @@
             hint: {
                 text: messages(hintKey)
             },
-            id: "value",
+            id: "businessName",
             name: "value",
             value: form.value.value,
             errorMessage: form.value.error,
@@ -48,7 +48,8 @@
           }) }}
 
           {{ govukButton({
-            text: messages("site.continue")
+            text: messages("site.continue"),
+            attributes:{"id": "submit"}
           }) }}
 
         </form>

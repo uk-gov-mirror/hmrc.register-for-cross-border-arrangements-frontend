@@ -18,7 +18,7 @@ package navigation
 
 import controllers.routes
 import javax.inject.{Inject, Singleton}
-import models.BusinessType.NotSpecified
+import models.BusinessType._
 import models.RegistrationType.{Business, Individual}
 import models._
 import pages._
@@ -51,8 +51,10 @@ class Navigator @Inject()() {
 
   private def businessNameRoutes(ua: UserAnswers): Option[Call] = {
     ua.get(BusinessTypePage) map {
-      case NotSpecified => routes.SoleTraderNameController.onPageLoad(NormalMode)
-      case _ => routes.BusinessNameController.onPageLoad(NormalMode)
+      case BusinessType.NotSpecified => routes.SoleTraderNameController.onPageLoad(NormalMode)
+      case BusinessType.Partnership => routes.BusinessNamePartnershipController.onPageLoad(NormalMode)
+      case BusinessType.LimitedLiability | BusinessType.CorporateBody => routes.BusinessNameRegisteredBusinessController.onPageLoad(NormalMode)
+      case BusinessType.UnIncorporatedBody => routes.BusinessNameOrganisationController.onPageLoad(NormalMode)
     }
   }
 

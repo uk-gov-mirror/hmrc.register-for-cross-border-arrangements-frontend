@@ -17,10 +17,10 @@
 package controllers
 
 import base.SpecBase
-import forms.BusinessNameFormProvider
+import forms.BusinessNameOrganisationFormProvider
 import matchers.JsonMatchers
 import models.BusinessType.Partnership
-import models.{BusinessType, NormalMode, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -28,7 +28,7 @@ import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.{BusinessNamePage, BusinessTypePage}
 import play.api.inject.bind
-import play.api.libs.json.{JsObject, JsString, Json}
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -38,14 +38,14 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class BusinessNameControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class BusinessNameOrganisationControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new BusinessNameFormProvider()
+  val formProvider = new BusinessNameOrganisationFormProvider()
   val form = formProvider()
 
-  lazy val businessNamePageRoute = routes.BusinessNameController.onPageLoad(NormalMode).url
+  lazy val businessNamePageRoute = routes.BusinessNameOrganisationController.onPageLoad(NormalMode).url
 
   "BusinessNamePage Controller" - {
 

@@ -23,14 +23,19 @@ import play.api.data.Form
 import play.api.data.Forms._
 
 class SoleTraderNameFormProvider @Inject() extends Mappings {
+    val firstNameRegex = "^[a-zA-Z &`\\-\\'^]{1,35}$"
+    val lastNameRegex =  "^[a-zA-Z &`\\-\\'^]{1,35}$"
+
 
   def apply(): Form[Name] =
     Form(
       mapping(
-      "firstName" -> text("name.error.firstName.required")
-        .verifying(maxLength(50, "name.error.firstName.length")),
-      "secondName" -> text("name.error.secondName.required")
-        .verifying(maxLength(50, "name.error.secondName.length"))
+      "firstName" -> textNonWhitespaceOnly("soleTraderName.error.firstName.required")
+        .verifying(regexp(firstNameRegex,"soleTraderName.error.firstName.invalid"))
+        .verifying(maxLength(35, "soleTraderName.error.firstName.length")),
+      "secondName" -> textNonWhitespaceOnly("soleTraderName.error.secondName.required")
+        .verifying(regexp(lastNameRegex,"soleTraderName.error.secondName.invalid"))
+        .verifying(maxLength(35, "soleTraderName.error.secondName.length"))
       )(Name.apply)(Name.unapply)
     )
 }

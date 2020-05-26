@@ -19,15 +19,15 @@ package forms
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
 
-class BusinessNameFormProviderSpec extends StringFieldBehaviours {
+class BusinessNameOrganisationFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "businessName.error.required"
-  val lengthKey = "businessName.error.length"
-  val invalidKey = "businessName.error.invalid"
+  val requiredKey = "businessName.organisation.error.required"
+  val lengthKey = "businessName.organisation.error.length"
+  val invalidKey = "businessName.organisation.error.invalid"
   val businessNameRegex = "^[a-zA-Z0-9 '&\\\\/]{1,105}$"
   val maxLength = 105
 
-  val form = new BusinessNameFormProvider()()
+  val form = new BusinessNameOrganisationFormProvider()()
 
   ".value" - {
 
@@ -45,6 +45,12 @@ class BusinessNameFormProviderSpec extends StringFieldBehaviours {
       maxLength = maxLength,
       invalidError = FormError(fieldName, invalidKey, Seq(businessNameRegex)),
       lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+    )
+
+    behave like fieldWithNonEmptyWhitespace(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
     )
 
     behave like mandatoryField(
