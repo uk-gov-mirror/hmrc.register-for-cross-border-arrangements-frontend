@@ -21,6 +21,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
+import play.api.libs.json.{JsObject, JsString}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -36,17 +37,21 @@ class IdentityNotConfirmedControllerSpec extends SpecBase with MockitoSugar {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
+      val expectedData = Some("tryAgainLink" -> JsString("/register-for-cross-border-arrangements-frontend/register/business/with-id/utr"))
+
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       val request = FakeRequest(GET, routes.IdentityNotConfirmedController.onPageLoad().url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(application, request).value
 
       status(result) mustEqual OK
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       templateCaptor.getValue mustEqual "identityNotConfirmed.njk"
+      jsonCaptor.getValue.value.find(_._1.contains("tryAgainLink")) mustEqual expectedData
 
       application.stop()
     }

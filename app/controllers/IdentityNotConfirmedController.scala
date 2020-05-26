@@ -18,7 +18,9 @@ package controllers
 
 import controllers.actions._
 import javax.inject.Inject
+import models.NormalMode
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
@@ -37,6 +39,10 @@ class IdentityNotConfirmedController @Inject()(
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      renderer.render("identityNotConfirmed.njk").map(Ok(_))
+      val json = Json.obj(
+        "tryAgainLink" -> routes.UniqueTaxpayerReferenceController.onSubmit(NormalMode).url
+      )
+
+      renderer.render("identityNotConfirmed.njk", json).map(Ok(_))
   }
 }
