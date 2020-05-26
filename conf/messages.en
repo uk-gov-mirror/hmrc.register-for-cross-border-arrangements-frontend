@@ -299,8 +299,8 @@ businessWithoutIDName.error.businessName.required = Enter the name of your busin
 businessWithoutIDName.error.businessName.length = The name of your business must be 105 characters or less
 businessWithoutIDName.error.businessName.invalid = The name of your business must only include letters a to z, numbers 0 to 9, spaces, apostrophes, ampersands, forward slash and backslash
 
-registrationSuccessful.title = Registration Successful
-registrationSuccessful.panel = Registration Successful
+registrationSuccessful.title = Registration successful
+registrationSuccessful.panel = Registration successful
 registrationSuccessful.heading = What happens next
 registrationSuccessful.email = We have sent you a confirmation email.
 registrationSuccessful.submission.text = You can now

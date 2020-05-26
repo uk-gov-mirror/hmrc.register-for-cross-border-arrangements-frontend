@@ -20,13 +20,13 @@
             titleText: messages("registrationSuccessful.panel")
         }) }}
 
-        <h2 class="govuk-heading-l">
+        <p class="govuk-body">{{ messages("registrationSuccessful.email") }}</p>
+
+        <h2 class="govuk-heading-m">
           {{ messages("registrationSuccessful.heading") }}
         </h2>
 
-        <p class="govuk-body">{{ messages("registrationSuccessful.email") }}</p>
-
-        <p class="govuk-body">{{ messages("registrationSuccessful.submission.text") }} 
+        <p class="govuk-body">{{ messages("registrationSuccessful.submission.text") }}
         <a href={{submissionUrl}} class="govuk-link">{{messages("registrationSuccessful.submission.link")}}</a></p>
 
       </div>
