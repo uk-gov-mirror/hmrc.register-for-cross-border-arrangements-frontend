@@ -10,6 +10,7 @@ site.edit.hidden = Change {0}
 site.no = No
 site.yes = Yes
 site.continue = Continue
+site.saveAndContinue = Save and continue
 site.service_name = register-for-cross-border-arrangements-frontend
 site.textarea.char_limit = (Limit is {0} characters)
 site.title.suffix = - register-for-cross-border-arrangements-frontend - GOV.UK
@@ -290,6 +291,13 @@ businessAddress.error.addressLine2.length = Address Line 2 must be 35 characters
 businessAddress.error.addressLine3.length = Address Line 3 must be 35 characters or less
 businessAddress.error.addressLine4.length = Address Line 4 must be 35 characters or less
 businessAddress.error.postcode.length = Postcode must be 10 characters or less
+
+businessWithoutIDName.title = What is the name of your business?
+businessWithoutIDName.heading = What is the name of your business?
+businessWithoutIDName.checkYourAnswersLabel = What is the name of your business?
+businessWithoutIDName.error.businessName.required = Enter the name of your business
+businessWithoutIDName.error.businessName.length = The name of your business must be 105 characters or less
+businessWithoutIDName.error.businessName.invalid = The name of your business must only include letters a to z, numbers 0 to 9, spaces, apostrophes, ampersands, forward slash and backslash
 
 identityNotConfirmed.title = We could not find your business
 identityNotConfirmed.heading = We could not find your business
