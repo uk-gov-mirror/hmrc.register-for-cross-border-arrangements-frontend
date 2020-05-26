@@ -107,3 +107,5 @@ GET        /register/without-id/business-name                   controllers.Busi
 POST       /register/without-id/business-name                   controllers.BusinessWithoutIDNameController.onSubmit(mode: Mode = NormalMode)
 GET        /register/without-id/business-change-name            controllers.BusinessWithoutIDNameController.onPageLoad(mode: Mode = CheckMode)
 POST       /register/without-id/business-change-name            controllers.BusinessWithoutIDNameController.onSubmit(mode: Mode = CheckMode)
+
+GET        /register/confirm-registration                       controllers.RegistrationSuccessfulController.onPageLoad

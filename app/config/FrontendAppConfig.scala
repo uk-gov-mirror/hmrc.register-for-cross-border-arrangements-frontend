@@ -44,6 +44,8 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   //TODO: Correctly rename when available decided
   lazy val dacFrontendUrl: String = s"${configuration.get[Service]("microservice.services.dac-frontend").baseUrl}${configuration.get[String]("microservice.services.dac-frontend.startUrl")}"
 
+  lazy val dacSubmissionsUrl: String = s"${configuration.get[Service]("microservice.services.dac-submissions").baseUrl}${configuration.get[String]("microservice.services.dac-submissions.startUrl")}"
+  
   lazy val languageTranslationEnabled: Boolean =
     configuration.get[Boolean]("microservice.services.features.welsh-translation")
 
