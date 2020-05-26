@@ -271,7 +271,7 @@ whatIsYourAddress.error.addressLine1.length = Address line 1 must be 35 characte
 whatIsYourAddress.error.addressLine2.length = Address Line 2 must be 35 characters or less
 whatIsYourAddress.error.addressLine3.length = Address Line 3 must be 35 characters or less
 whatIsYourAddress.error.addressLine4.length = Address Line 4 must be 35 characters or less
-WhatIsYourAddress.error.postcode.length = Postcode must be 10 characters or less
+whatIsYourAddress.error.postcode.length = Postcode must be 10 characters or less
 
 businessAddress.title = What is the main address of your business?
 businessAddress.heading = What is the main address of your business?
@@ -298,6 +298,13 @@ businessWithoutIDName.checkYourAnswersLabel = What is the name of your business?
 businessWithoutIDName.error.businessName.required = Enter the name of your business
 businessWithoutIDName.error.businessName.length = The name of your business must be 105 characters or less
 businessWithoutIDName.error.businessName.invalid = The name of your business must only include letters a to z, numbers 0 to 9, spaces, apostrophes, ampersands, forward slash and backslash
+
+registrationSuccessful.title = Registration successful
+registrationSuccessful.panel = Registration successful
+registrationSuccessful.heading = What happens next
+registrationSuccessful.email = We have sent you a confirmation email.
+registrationSuccessful.submission.text = You can now
+registrationSuccessful.submission.link = disclose cross-border arrangements.
 
 identityNotConfirmed.business.title = We could not find your business
 identityNotConfirmed.business.heading = We could not find your business
