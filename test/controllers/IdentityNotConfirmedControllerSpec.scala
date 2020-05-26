@@ -52,7 +52,7 @@ class IdentityNotConfirmedControllerSpec extends SpecBase with MockitoSugar with
       val expectedJson = Json.obj(
         "pageTitle" -> "identityNotConfirmed.business.title",
         "pageHeading" -> "identityNotConfirmed.business.heading",
-        "tryAgainLink" -> routes.UniqueTaxpayerReferenceController.onSubmit(NormalMode).url
+        "tryAgainLink" -> "/register-for-cross-border-arrangements-frontend/register/do-you-have-a-utr"
       )
 
       status(result) mustEqual OK
@@ -82,7 +82,7 @@ class IdentityNotConfirmedControllerSpec extends SpecBase with MockitoSugar with
       val expectedJson = Json.obj(
         "pageTitle" -> "identityNotConfirmed.identity.title",
         "pageHeading" -> "identityNotConfirmed.identity.heading",
-        "tryAgainLink" -> routes.UniqueTaxpayerReferenceController.onSubmit(NormalMode).url
+        "tryAgainLink" -> "/register-for-cross-border-arrangements-frontend/register/do-you-have-a-utr"
       )
 
       status(result) mustEqual OK

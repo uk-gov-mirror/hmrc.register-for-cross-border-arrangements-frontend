@@ -53,7 +53,7 @@ class IdentityNotConfirmedController @Inject()(
       val json = Json.obj(
         "pageTitle" -> title,
         "pageHeading" -> heading,
-        "tryAgainLink" -> routes.UniqueTaxpayerReferenceController.onSubmit(NormalMode).url
+        "tryAgainLink" -> routes.DoYouHaveUTRController.onSubmit(NormalMode).url
       )
 
       renderer.render("identityNotConfirmed.njk", json).map(Ok(_))
