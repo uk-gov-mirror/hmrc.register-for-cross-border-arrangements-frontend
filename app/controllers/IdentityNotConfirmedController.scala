@@ -19,6 +19,7 @@ package controllers
 import controllers.actions._
 import javax.inject.Inject
 import models.NormalMode
+import pages.BusinessTypePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -39,7 +40,19 @@ class IdentityNotConfirmedController @Inject()(
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
+      val title = request.userAnswers.get(BusinessTypePage) match {
+        case Some(_) => "identityNotConfirmed.business.title"
+        case _ => "identityNotConfirmed.identity.title"
+      }
+
+      val heading = request.userAnswers.get(BusinessTypePage) match {
+        case Some(_) => "identityNotConfirmed.business.heading"
+        case _ => "identityNotConfirmed.identity.heading"
+      }
+
       val json = Json.obj(
+        "pageTitle" -> title,
+        "pageHeading" -> heading,
         "tryAgainLink" -> routes.UniqueTaxpayerReferenceController.onSubmit(NormalMode).url
       )
 

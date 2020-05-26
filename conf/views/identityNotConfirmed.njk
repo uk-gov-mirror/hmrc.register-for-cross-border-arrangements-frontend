@@ -5,7 +5,7 @@
 {% from "govuk/components/back-link/macro.njk"     import govukBackLink %}
 
 {% block pageTitle %}
-  {{ title(messages("identityNotConfirmed.title")) }}
+  {{ title(messages(pageTitle)) }}
 {% endblock %}
 
 
@@ -22,7 +22,7 @@
       <div class="govuk-grid-column-two-thirds">
 
         <h1 class="govuk-heading-xl">
-          {{ messages("identityNotConfirmed.heading") }}
+          {{ messages(pageHeading) }}
         </h1>
 
         <p class="govuk-body">{{ messages("identityNotConfirmed.p") }}</p>

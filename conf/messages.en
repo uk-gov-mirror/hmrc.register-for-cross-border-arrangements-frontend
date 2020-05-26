@@ -299,7 +299,9 @@ businessWithoutIDName.error.businessName.required = Enter the name of your busin
 businessWithoutIDName.error.businessName.length = The name of your business must be 105 characters or less
 businessWithoutIDName.error.businessName.invalid = The name of your business must only include letters a to z, numbers 0 to 9, spaces, apostrophes, ampersands, forward slash and backslash
 
-identityNotConfirmed.title = We could not find your business
-identityNotConfirmed.heading = We could not find your business
+identityNotConfirmed.business.title = We could not find your business
+identityNotConfirmed.business.heading = We could not find your business
+identityNotConfirmed.identity.title = We could not confirm your identity
+identityNotConfirmed.identity.heading = We could not confirm your identity
 identityNotConfirmed.p = The information you have entered does not match our records.
 identityNotConfirmed.button = Try again
