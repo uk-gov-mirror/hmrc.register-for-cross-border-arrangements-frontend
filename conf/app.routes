@@ -78,6 +78,7 @@ POST       /changePostCode                  controllers.PostCodeController.onSub
 
 GET        /register/business-identity-not-confirmed      controllers.BusinessNotConfirmedController.onPageLoad()
 GET        /register/individual-identity-not-confirmed    controllers.IndividualNotConfirmedController.onPageLoad()
+GET        /register/identity-confirmed                   controllers.IdentityConfirmedController.onPageLoad()
 
 GET        /register/individual/without-id/name           controllers.NonUkNameController.onPageLoad(mode: Mode = NormalMode)
 POST       /register/individual/without-id/name           controllers.NonUkNameController.onSubmit(mode: Mode = NormalMode)
