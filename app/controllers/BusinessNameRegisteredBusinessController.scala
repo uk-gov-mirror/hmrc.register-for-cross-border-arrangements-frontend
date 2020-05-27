@@ -54,15 +54,9 @@ class BusinessNameRegisteredBusinessController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      val titleQuestion: String = "businessName.question.limited"
-
-      val hintKey: String = "businessName.registered.hint"
-
       val json = Json.obj(
         "form" -> preparedForm,
-        "mode" -> mode,
-        "titleQuestion" -> titleQuestion,
-        "hintKey" -> hintKey
+        "mode" -> mode
       )
 
       renderer.render("businessNameRegisteredBusiness.njk", json).map(Ok(_))
