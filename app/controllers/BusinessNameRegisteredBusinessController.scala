@@ -65,7 +65,7 @@ class BusinessNameRegisteredBusinessController @Inject()(
         "hintKey" -> hintKey
       )
 
-      renderer.render("businessName.njk", json).map(Ok(_))
+      renderer.render("businessNameRegisteredBusiness.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -79,7 +79,7 @@ class BusinessNameRegisteredBusinessController @Inject()(
             "mode" -> mode
           )
 
-          renderer.render("businessName.njk", json).map(BadRequest(_))
+          renderer.render("businessNameRegisteredBusiness.njk", json).map(BadRequest(_))
         },
         value =>
           for {

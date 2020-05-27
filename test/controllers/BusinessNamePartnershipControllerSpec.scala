@@ -71,7 +71,7 @@ class BusinessNamePartnershipControllerSpec extends SpecBase with MockitoSugar w
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "businessName.njk"
+      templateCaptor.getValue mustEqual "businessNamePartnership.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -103,7 +103,7 @@ class BusinessNamePartnershipControllerSpec extends SpecBase with MockitoSugar w
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "businessName.njk"
+      templateCaptor.getValue mustEqual "businessNamePartnership.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -157,7 +157,7 @@ class BusinessNamePartnershipControllerSpec extends SpecBase with MockitoSugar w
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "businessName.njk"
+      templateCaptor.getValue mustEqual "businessNamePartnership.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()

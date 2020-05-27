@@ -71,7 +71,7 @@ class BusinessNameRegisteredBusinessControllerSpec extends SpecBase with Mockito
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "businessName.njk"
+      templateCaptor.getValue mustEqual "businessNameRegisteredBusiness.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -103,7 +103,7 @@ class BusinessNameRegisteredBusinessControllerSpec extends SpecBase with Mockito
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "businessName.njk"
+      templateCaptor.getValue mustEqual "businessNameRegisteredBusiness.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -157,7 +157,7 @@ class BusinessNameRegisteredBusinessControllerSpec extends SpecBase with Mockito
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "businessName.njk"
+      templateCaptor.getValue mustEqual "businessNameRegisteredBusiness.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
