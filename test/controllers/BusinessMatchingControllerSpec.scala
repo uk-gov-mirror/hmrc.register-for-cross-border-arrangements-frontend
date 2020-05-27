@@ -104,7 +104,7 @@ class BusinessMatchingControllerSpec extends SpecBase with MockitoSugar with Nun
         val result = route(application, getRequest).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements-frontend/register/could-not-confirm-identity")
+        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements-frontend/register/identity-not-confirmed")
       }
     }
   }
