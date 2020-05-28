@@ -18,6 +18,8 @@ package controllers
 
 import controllers.actions._
 import javax.inject.Inject
+import models.NormalMode
+import pages.BusinessTypePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -38,6 +40,15 @@ class IdentityConfirmedController @Inject()(
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      renderer.render("identityConfirmed.njk").map(Ok(_))
+      val nextPage: String = request.userAnswers.get(BusinessTypePage) match {
+        case Some(_) => routes.BusinessTypeController.onPageLoad(NormalMode).url //TODO Go to /register/contact-name once page is ready
+        case None => routes.NinoController.onPageLoad(NormalMode).url //TODO Go to /register/email once page is ready
+      }
+
+      val json = Json.obj(
+        "nextPage" -> nextPage
+      )
+
+      renderer.render("identityConfirmed.njk", json).map(Ok(_))
   }
 }
