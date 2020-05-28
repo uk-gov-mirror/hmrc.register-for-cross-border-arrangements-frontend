@@ -17,36 +17,96 @@
 package controllers
 
 import base.SpecBase
+import matchers.JsonMatchers
+import models.{BusinessType, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
+import pages.{BusinessTypePage, NinoPage}
+import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import uk.gov.hmrc.domain.Generator
 
 import scala.concurrent.Future
 
-class IdentityConfirmedControllerSpec extends SpecBase with MockitoSugar {
+class IdentityConfirmedControllerSpec extends SpecBase with MockitoSugar with JsonMatchers {
+
+  lazy val identityConfirmedRoute: String = routes.IdentityConfirmedController.onPageLoad().url
 
   "IdentityConfirmed Controller" - {
 
-    "return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET - individual journey" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(GET, routes.IdentityConfirmedController.onPageLoad().url)
+      val nino = new Generator().nextNino
+      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+        .set(NinoPage, nino).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val request = FakeRequest(GET, identityConfirmedRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(application, request).value
 
       status(result) mustEqual OK
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      val expectedJson = Json.obj(
+        "nextPage" -> "/register-for-cross-border-arrangements-frontend/register/individual/with-id/nino"
+      )
 
       templateCaptor.getValue mustEqual "identityConfirmed.njk"
+      jsonCaptor.getValue must containJson(expectedJson)
+
+      application.stop()
+    }
+
+    "return OK and the correct view for a GET - business journey" in {
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+        .set(BusinessTypePage, BusinessType.LimitedLiability).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val request = FakeRequest(GET, identityConfirmedRoute)
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+
+      val result = route(application, request).value
+
+      status(result) mustEqual OK
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      val expectedJson = Json.obj(
+        "nextPage" -> "/register-for-cross-border-arrangements-frontend/register/business/with-id/type"
+      )
+
+      templateCaptor.getValue mustEqual "identityConfirmed.njk"
+      jsonCaptor.getValue must containJson(expectedJson)
+
+      application.stop()
+    }
+
+    "must redirect to Session Expired for a GET if no existing data is found" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+
+      val request = FakeRequest(GET, identityConfirmedRoute)
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
     }
