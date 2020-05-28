@@ -315,3 +315,11 @@ businessNotConfirmed.title = We could not find your business
 businessNotConfirmed.heading = We could not find your business
 businessNotConfirmed.p = The information you have entered does not match our records.
 businessNotConfirmed.button = Try again
+
+contactName.title = Who should we contact if we have any questions about your disclosures?
+contactName.heading = Who should we contact if we have any questions about your disclosures?
+contactName.firstName = First name
+contactName.lastName = Last name
+contactName.checkYourAnswersLabel = contactName
+contactName.error.required = Enter contactName
+contactName.error.length = ContactName must be 50 characters or less
