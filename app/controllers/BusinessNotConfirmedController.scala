@@ -17,7 +17,9 @@
 package controllers
 
 import javax.inject.Inject
+import models.NormalMode
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
@@ -25,14 +27,19 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.ExecutionContext
 
-class IdentityController @Inject()(
+class BusinessNotConfirmedController @Inject()(
                                     override val messagesApi: MessagesApi,
                                     val controllerComponents: MessagesControllerComponents,
                                     renderer: Renderer
                                   )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
-  def couldntConfirmIdentity(): Action[AnyContent] = Action.async { implicit request =>
-    renderer.render("cant-confirm-identity.njk").map(Ok(_))
+  def onPageLoad(): Action[AnyContent] = Action.async {
+    implicit request =>
+      val json = Json.obj(
+        "tryAgainLink" -> routes.DoYouHaveUTRController.onSubmit(NormalMode).url
+      )
+
+      renderer.render("businessNotConfirmed.njk", json).map(Ok(_))
   }
 
 
