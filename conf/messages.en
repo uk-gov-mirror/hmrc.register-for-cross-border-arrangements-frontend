@@ -261,7 +261,6 @@ whatIsYourAddress.addressLine4 = Address line 4 (optional)
 whatIsYourAddress.postCode = Postal code (optional)
 whatIsYourAddress.countryCode = Country
 
-
 whatIsYourAddress.checkYourAnswersLabel = What is your home address?
 whatIsYourAddress.error.addressLine1.required = Enter address line 1
 whatIsYourAddress.error.addressLine2.required = Enter address line 2
@@ -335,3 +334,13 @@ soleTraderName.error.firstName.invalid = First name must only include letters a 
 soleTraderName.error.secondName.required = Enter your last name
 soleTraderName.error.secondName.length = Last name must be 35 characters or less
 soleTraderName.error.secondName.invalid = Last name must only include letters a to z, numbers 0-9, apostrophes, commas, dashes, hyphens, quotation marks, slashes, ampersands and spaces
+
+individualNotConfirmed.title = We could not confirm your identity
+individualNotConfirmed.heading = We could not confirm your identity
+individualNotConfirmed.p = The information you have entered does not match our records.
+individualNotConfirmed.button = Try again
+
+businessNotConfirmed.title = We could not find your business
+businessNotConfirmed.heading = We could not find your business
+businessNotConfirmed.p = The information you have entered does not match our records.
+businessNotConfirmed.button = Try again

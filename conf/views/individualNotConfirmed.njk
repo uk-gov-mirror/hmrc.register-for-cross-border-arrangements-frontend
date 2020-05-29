@@ -1,0 +1,40 @@
+{% extends "includes/layout.njk" %}
+
+{% from "macros/title.njk"                         import title %}
+{% from "govuk/components/button/macro.njk"        import govukButton %}
+{% from "govuk/components/back-link/macro.njk"     import govukBackLink %}
+
+{% block pageTitle %}
+  {{ title(messages("individualNotConfirmed.title")) }}
+{% endblock %}
+
+
+{% block mainContent %}
+
+  {{ govukBackLink({
+      text: messages("site.back"),
+      href: tryAgainLink
+    })
+  }}
+
+  <div class="govuk-main-wrapper">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+
+        <h1 class="govuk-heading-xl">
+          {{ messages("individualNotConfirmed.heading") }}
+        </h1>
+
+        <p class="govuk-body">{{ messages("businessNotConfirmed.p") }}</p>
+
+        {{ govukButton({
+            text: messages("individualNotConfirmed.button"),
+            href: tryAgainLink,
+            attributes: {"id": "tryAgainButton"}
+        }) }}
+
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

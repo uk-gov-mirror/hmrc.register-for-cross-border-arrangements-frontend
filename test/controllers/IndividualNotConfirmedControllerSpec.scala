@@ -22,37 +22,39 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
+import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{GET, route, status, _}
+import play.api.test.Helpers._
 import play.twirl.api.Html
-import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class IdentityControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
-  "Identity Controller" - {
+class IndividualNotConfirmedControllerSpec extends SpecBase with MockitoSugar with JsonMatchers {
 
-    "must return OK and the correct view for a GET" in {
+  "Individual not confirmed Controller" - {
 
-      when(mockRenderer.render(any())(any()))
-        .thenReturn(Future.successful(Html("")))
+    "return OK and the correct view for a GET if individual isn't confirmed" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      lazy val cantConfirmIdentityRoute = routes.IdentityController.couldntConfirmIdentity().url
-
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(GET, cantConfirmIdentityRoute)
+      val request = FakeRequest(GET, routes.IndividualNotConfirmedController.onPageLoad().url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(application, request).value
 
+      val expectedJson = Json.obj(
+        "tryAgainLink" -> "/register-for-cross-border-arrangements-frontend/register/do-you-have-a-utr"
+      )
+
       status(result) mustEqual OK
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      templateCaptor.getValue mustEqual "cant-confirm-identity.njk"
+      templateCaptor.getValue mustEqual "individualNotConfirmed.njk"
+      jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
     }

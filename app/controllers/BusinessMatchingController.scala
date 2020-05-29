@@ -47,7 +47,7 @@ class BusinessMatchingController @Inject()(
       businessMatchingService.sendIndividualMatchingInformation(request.userAnswers) map {
         case Some(response) => response.status match {
           case OK => Redirect(routes.CheckYourAnswersController.onPageLoad()) //TODO: may need more data collected for Cardiff team
-          case NOT_FOUND => Redirect(routes.IdentityController.couldntConfirmIdentity())
+          case NOT_FOUND => Redirect(routes.IndividualNotConfirmedController.onPageLoad())
           case _ => Redirect(routes.IndexController.onPageLoad())
         }
 
