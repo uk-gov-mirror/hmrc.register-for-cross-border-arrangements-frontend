@@ -28,7 +28,22 @@ import utils.CheckYourAnswersHelper._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
-  def businessAddress: Option[Row] = userAnswers.get(BusinessAddressPage) map {
+  def whatIsYourAddressUk: Option[Row] = userAnswers.get(WhatIsYourAddressUkPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"whatIsYourAddressUk.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(lit"$answer.lines"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.WhatIsYourAddressUkController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whatIsYourAddressUk.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
+   def businessAddress: Option[Row] = userAnswers.get(BusinessAddressPage) map {
     answer =>
       Row(
         key     = Key(msg"businessAddress.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),

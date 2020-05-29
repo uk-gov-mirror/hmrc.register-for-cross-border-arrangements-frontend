@@ -21,8 +21,9 @@ import play.api.data.FormError
 import play.api.data.format.Formatter
 
 import scala.util.control.Exception.nonFatalCatch
+import play.api.Logger
 
-trait Formatters {
+trait Formatters extends Transforms {
 
   private[mappings] def stringFormatter(errorKey: String): Formatter[String] = new Formatter[String] {
 
@@ -120,6 +121,30 @@ trait Formatters {
         baseFormatter.unbind(key, value.toString)
     }
 
+  protected def addressPostcodeFormatter(invalidKey: String, emptyKey: String = "postCode.error.required"): Formatter[Option[String]] = new Formatter[Option[String]] {
+
+    private val regexPostcode = """^[A-Za-z]{1,2}[0-9Rr][0-9A-Za-z]?\s?[0-9][ABD-HJLNP-UW-Zabd-hjlnp-uw-z]{2}$"""
+
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[String]] = {
+      val keydata = data.get(key)
+      keydata match {
+        case Some(s)
+          if s.trim == "" =>
+          Left(Seq(FormError(key, emptyKey)))
+        case Some(s)
+          if ! stripSpaces (s).matches (regexPostcode) =>
+          Left (Seq (FormError (key, invalidKey) ) )
+        case Some(s)
+          if stripSpaces(s).matches(regexPostcode) => 
+            Right(Some(validPostCodeFormat(stripSpaces(s))))
+        case _ => Left(Seq(FormError(key, emptyKey)))
+      }
+    }
+
+    override def unbind(key: String, value: Option[String]): Map[String, String] = {
+      Map(key -> value.getOrElse(""))
+    }
+  }
 
 
 }

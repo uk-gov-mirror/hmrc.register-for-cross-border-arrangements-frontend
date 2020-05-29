@@ -33,7 +33,7 @@ class WhatIsYourAddressFormProvider @Inject() extends Mappings {
        "addressLine3" -> optionalText().verifying(maxLength(35, "whatIsYourAddress.error.addressLine3.length")),
        "addressLine4" -> optionalText().verifying(maxLength(35, "whatIsYourAddress.error.addressLine4.length")),
        "postCode" -> optionalText().verifying(maxLength(10,"WhatIsYourAddress.error.postcode.length")),
-  "country" ->  text("whatIsYourAddress.error.country.required")
+    "country" ->  text("whatIsYourAddress.error.country.required")
     .verifying("whatIsYourAddress.error.country.required", value => countryList.exists(_.code == value))
     .transform[Country](value => countryList.find(_.code == value).get, _.code)
     )(Address.apply)(Address.unapply)

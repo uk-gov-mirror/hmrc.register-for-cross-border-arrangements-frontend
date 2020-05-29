@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package forms
+package forms.mappings
 
-import javax.inject.Inject
+trait Transforms {
+  protected def stripSpaces(string: String): String = {
+    string.trim.replaceAll(" ", "")
+  }
 
-import forms.mappings.Mappings
-import play.api.data.Form
-
-class PostCodeFormProvider @Inject() extends Mappings {
-
-  val regexPostCode = """^[A-Za-z]{1,2}[0-9Rr][0-9A-Za-z]?\s?[0-9][ABD-HJLNP-UW-Zabd-hjlnp-uw-z]{2}$"""
-
-  def apply(): Form[String] =
-    Form(
-      "value" -> text("postCode.error.required").verifying(regexp(regexPostCode,"postCode.error.invalid"))
-        .verifying(maxLength(10, "postCode.error.length"))
-    )
+  protected def validPostCodeFormat(validPostCode: String): String = {
+    if (!validPostCode.contains(" ")) {
+      val tail = validPostCode.substring(validPostCode.length - 3)
+      val head = validPostCode.substring(0, validPostCode.length - 3)
+      s"$head $tail".toUpperCase
+    } else {validPostCode.toUpperCase}
+  }
 }
