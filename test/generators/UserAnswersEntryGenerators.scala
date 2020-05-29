@@ -24,6 +24,7 @@ import org.scalacheck.{Arbitrary, Gen}
 import pages._
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.domain.Nino
+import wolfendale.scalacheck.regexp.RegexpGen
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
 
@@ -34,6 +35,16 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       for {
         page  <- arbitrary[BusinessAddressPage.type]
         value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryBusinessNamePageUserAnswersEntry: Arbitrary[(BusinessNamePage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[BusinessNamePage.type]
+        value <- RegexpGen.from("^[a-zA-Z0-9 '&\\\\/]{1,105}$")
+          .suchThat(_.nonEmpty)
+          .map(Json.toJson(_))
       } yield (page, value)
     }
 

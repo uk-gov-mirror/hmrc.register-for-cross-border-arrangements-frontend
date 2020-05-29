@@ -182,10 +182,10 @@ dateOfBirth.error.invalid = Enter a real date of birth
 businessType.title = What type of business do you have?
 businessType.heading = What type of business do you have?
 businessType.partnerShip = Partnership
-businessType.limitedLiability = Limited Liability Partnership
-businessType.corporateBody = Corporate Body
-businessType.unIncorporatedBody = Unincorporated body
-businessType.other = Other
+businessType.limitedLiability = Limited partnership or limited liability partnership
+businessType.corporateBody = Limited company
+businessType.unIncorporatedBody = Unincorporated association or trust
+businessType.notSpecified = Sole proprietor
 businessType.checkYourAnswersLabel = What type of business do you have?
 businessType.error.required = Select businessType
 
@@ -216,7 +216,6 @@ nino.heading = What is your National Insurance number?
 nino.checkYourAnswersLabel = What is your National Insurance number?
 nino.error.required = Enter National Insurance number
 nino.error.length = Nino must be 9 characters or less
-
 
 name.title = What is your name?
 name.heading = What is your name?
@@ -262,7 +261,6 @@ whatIsYourAddress.addressLine4 = Address line 4 (optional)
 whatIsYourAddress.postCode = Postal code (optional)
 whatIsYourAddress.countryCode = Country
 
-
 whatIsYourAddress.checkYourAnswersLabel = What is your home address?
 whatIsYourAddress.error.addressLine1.required = Enter address line 1
 whatIsYourAddress.error.addressLine2.required = Enter address line 2
@@ -305,6 +303,37 @@ registrationSuccessful.heading = What happens next
 registrationSuccessful.email = We have sent you a confirmation email.
 registrationSuccessful.submission.text = You can now
 registrationSuccessful.submission.link = disclose cross-border arrangements.
+
+businessName.registered.hint = This is the registered name on your incorporation certificate.
+businessName.partnership.hint = This is the name that you registered with HMRC
+businessName.unincorporated.hint = This is the name on your governing document.
+businessName.title = What is {0}?
+businessName.heading = What is {0}?
+businessName.checkYourAnswersLabel = What is {0}?
+businessName.partnership.error.required = Enter the partnership name
+businessName.partnership.error.length = Partnership name must be 105 characters or less
+businessName.partnership.error.invalid = Partnership name must only include letters a to z, numbers 0-9, apostrophes, commas, dashes, hyphens, quotation marks, slashes, ampersands and spaces
+businessName.organisation.error.required = Enter the name of your organisation
+businessName.organisation.error.length = Organisation name must be 105 characters or less
+businessName.organisation.error.invalid = Organisation name must only include letters a to z, numbers 0-9, apostrophes, commas, dashes, quotation marks, slashes, ampersands and spaces
+businessName.registered.error.required = Enter the registered name of your business
+businessName.registered.error.length = Registered name of your business must be 105 characters or less
+businessName.registered.error.invalid = Registered name of your business must only include letters a to z, numbers 0-9, apostrophes, commas, dashes, quotation marks, slashes, ampersands and spaces
+businessName.question.partnership = the partnership name
+businessName.question.limited = the registered name of your business
+businessName.question.unincorporated = the name of your organisation
+
+soleTraderName.title = What is your name?
+soleTraderName.heading = What is your name?
+soleTraderName.checkYourAnswersLabel = What is your name?
+soleTraderName.firstName = First name
+soleTraderName.secondName = Last name
+soleTraderName.error.firstName.required = Enter your first name
+soleTraderName.error.firstName.length = First name must be 35 characters or less
+soleTraderName.error.firstName.invalid = First name must only include letters a to z, numbers 0-9, apostrophes, commas, dashes, hyphens, quotation marks, slashes, ampersands and spaces
+soleTraderName.error.secondName.required = Enter your last name
+soleTraderName.error.secondName.length = Last name must be 35 characters or less
+soleTraderName.error.secondName.invalid = Last name must only include letters a to z, numbers 0-9, apostrophes, commas, dashes, hyphens, quotation marks, slashes, ampersands and spaces
 
 individualNotConfirmed.title = We could not confirm your identity
 individualNotConfirmed.heading = We could not confirm your identity

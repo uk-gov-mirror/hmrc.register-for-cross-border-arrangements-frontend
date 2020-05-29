@@ -28,25 +28,25 @@ object BusinessType extends Enumerable.Implicits {
   case object LimitedLiability extends WithName("limitedLiability") with BusinessType
   case object CorporateBody extends WithName("corporateBody") with BusinessType
   case object UnIncorporatedBody extends WithName("unIncorporatedBody") with BusinessType
-  case object Other extends WithName("other") with BusinessType
+  case object NotSpecified extends WithName("notSpecified") with BusinessType
 
   val values: Seq[BusinessType] = Seq(
+    CorporateBody,
+    NotSpecified,
     Partnership,
     LimitedLiability,
-    CorporateBody,
-    UnIncorporatedBody,
-    Other
+    UnIncorporatedBody
   )
 
   def radios(form: Form[_])(implicit messages: Messages): Seq[Radios.Item] = {
 
     val field = form("value")
     val items = Seq(
+      Radios.Radio(msg"businessType.corporateBody", CorporateBody.toString),
+      Radios.Radio(msg"businessType.notSpecified", NotSpecified.toString),
       Radios.Radio(msg"businessType.partnerShip", Partnership.toString),
       Radios.Radio(msg"businessType.limitedLiability", LimitedLiability.toString),
-      Radios.Radio(msg"businessType.corporateBody", CorporateBody.toString),
-      Radios.Radio(msg"businessType.unIncorporatedBody", UnIncorporatedBody.toString),
-      Radios.Radio(msg"businessType.other", Other.toString)
+      Radios.Radio(msg"businessType.unIncorporatedBody", UnIncorporatedBody.toString)
     )
 
     Radios(field, items)

@@ -27,7 +27,7 @@ class OrganisationTypeSpec extends FreeSpec with MustMatchers {
       OrganisationType(BusinessType.CorporateBody).value mustBe("Corporate Body")
       OrganisationType(BusinessType.UnIncorporatedBody).value mustBe("Unincorporated Body")
       OrganisationType(BusinessType.LimitedLiability).value mustBe "LLP"
-      OrganisationType(BusinessType.Other).value mustBe "Not Specified"
+      OrganisationType(BusinessType.NotSpecified).value mustBe "Not Specified"
     }
   }
   "OrganisationType.formats.reads" - {
@@ -37,7 +37,7 @@ class OrganisationTypeSpec extends FreeSpec with MustMatchers {
         JsString("LLP").as[OrganisationType](OrganisationType.formats) mustBe LLP
         JsString("Corporate Body").as[OrganisationType](OrganisationType.formats) mustBe CorporateBody
         JsString("Unincorporated Body").as[OrganisationType](OrganisationType.formats) mustBe UnincorporatedBody
-        JsString("Not Specified").as[OrganisationType](OrganisationType.formats) mustBe Unknown
+        JsString("Not Specified").as[OrganisationType](OrganisationType.formats) mustBe NotSpecified
       }
     }
     "must throw an JsResultException in response to an invalid string value" in {
@@ -52,7 +52,7 @@ class OrganisationTypeSpec extends FreeSpec with MustMatchers {
         Json.toJson(LLP) mustBe JsString("LLP")
         Json.toJson(CorporateBody) mustBe JsString("Corporate Body")
         Json.toJson(UnincorporatedBody) mustBe JsString("Unincorporated Body")
-        Json.toJson(Unknown) mustBe JsString("Not Specified")
+        Json.toJson(NotSpecified) mustBe JsString("Not Specified")
       }
     }
   }

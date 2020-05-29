@@ -24,6 +24,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
 import controllers.routes
+import models.BusinessType._
 
 class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
@@ -172,13 +173,88 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
-      "must go from unique tax reference to postcode page" in {
+      "must go from unique tax reference to business name page when not unspecified" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(BusinessTypePage, BusinessType.NotSpecified)
+                .success
+                .value
+
+            navigator
+              .nextPage(UniqueTaxpayerReferencePage, NormalMode, updatedAnswers)
+              .mustBe(routes.SoleTraderNameController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from unique tax reference to organisation business name page" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(BusinessTypePage, UnIncorporatedBody)
+                .success
+                .value
+
+            navigator
+              .nextPage(UniqueTaxpayerReferencePage, NormalMode, updatedAnswers)
+              .mustBe(routes.BusinessNameOrganisationController.onPageLoad(NormalMode))
+        }
+      }
+
+      "as a limited liabilty business must go from unique tax reference to registered business name page" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(BusinessTypePage, LimitedLiability)
+                .success
+                .value
+
+            navigator
+              .nextPage(UniqueTaxpayerReferencePage, NormalMode, updatedAnswers)
+              .mustBe(routes.BusinessNameRegisteredBusinessController.onPageLoad(NormalMode))
+        }
+      }
+
+      "as a corporate body business must go from unique tax reference to registered business name page" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(BusinessTypePage, BusinessType.CorporateBody)
+                .success
+                .value
+
+            navigator
+              .nextPage(UniqueTaxpayerReferencePage, NormalMode, updatedAnswers)
+              .mustBe(routes.BusinessNameRegisteredBusinessController.onPageLoad(NormalMode))
+        }
+      }
+
+      "as a partnership must go from unique tax reference to partnership name page" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(BusinessTypePage, BusinessType.Partnership)
+                .success
+                .value
+
+            navigator
+              .nextPage(UniqueTaxpayerReferencePage, NormalMode, updatedAnswers)
+              .mustBe(routes.BusinessNamePartnershipController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from business name page to making the business match check" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
 
             navigator
-              .nextPage(UniqueTaxpayerReferencePage, NormalMode, answers)
-              .mustBe(routes.PostCodeController.onPageLoad(NormalMode))
+              .nextPage(BusinessNamePage, NormalMode, answers)
+              //.mustBe(routes.BusinessMatchingController.matchBusiness()) TODO add when ready
         }
       }
 

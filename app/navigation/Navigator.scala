@@ -18,6 +18,7 @@ package navigation
 
 import controllers.routes
 import javax.inject.{Inject, Singleton}
+import models.BusinessType._
 import models.RegistrationType.{Business, Individual}
 import models._
 import pages._
@@ -32,10 +33,12 @@ class Navigator @Inject()() {
     case DoYouHaveANationalInsuranceNumberPage =>   doYouHaveANationalInsuranceNumberRoutes
     case NinoPage => _ => Some(routes.NameController.onPageLoad(NormalMode))
     case NamePage => _ => Some(routes.DateOfBirthController.onPageLoad(NormalMode))
+    case BusinessNamePage => _ => Some(routes.IndexController.onPageLoad()) //Some(routes.BusinessMatchingController.matchBusiness()) TODO Add when ready
+    case SoleTraderNamePage => _ => Some(routes.IndexController.onPageLoad()) //Some(routes.BusinessMatchingController.matchBusiness()) TODO Add when ready
     case DateOfBirthPage => dateOfBirthRoutes
     case DoYouLiveInTheUKPage => doYouLiveInTheUKRoutes
     case BusinessTypePage => _ => Some(routes.UniqueTaxpayerReferenceController.onPageLoad(NormalMode))
-    case UniqueTaxpayerReferencePage => _ => Some(routes.PostCodeController.onPageLoad(NormalMode))
+    case UniqueTaxpayerReferencePage => businessNameRoutes
     case NonUkNamePage => _ => Some(routes.DateOfBirthController.onPageLoad(NormalMode))
     case BusinessAddressPage => _ =>   Some(routes.CheckYourAnswersController.onPageLoad())
     case BusinessWithoutIDNamePage => _ => Some(routes.BusinessAddressController.onPageLoad(NormalMode))
@@ -44,6 +47,15 @@ class Navigator @Inject()() {
 
   private val checkRouteMap: Page => UserAnswers => Call = {
     case _ => _ => routes.CheckYourAnswersController.onPageLoad()
+  }
+
+  private def businessNameRoutes(ua: UserAnswers): Option[Call] = {
+    ua.get(BusinessTypePage) map {
+      case BusinessType.NotSpecified => routes.SoleTraderNameController.onPageLoad(NormalMode)
+      case BusinessType.Partnership => routes.BusinessNamePartnershipController.onPageLoad(NormalMode)
+      case BusinessType.LimitedLiability | BusinessType.CorporateBody => routes.BusinessNameRegisteredBusinessController.onPageLoad(NormalMode)
+      case BusinessType.UnIncorporatedBody => routes.BusinessNameOrganisationController.onPageLoad(NormalMode)
+    }
   }
 
   private def doYouHaveUTRPage(ua: UserAnswers): Option[Call] =

@@ -110,3 +110,23 @@ GET        /register/without-id/business-change-name            controllers.Busi
 POST       /register/without-id/business-change-name            controllers.BusinessWithoutIDNameController.onSubmit(mode: Mode = CheckMode)
 
 GET        /register/confirm-registration                       controllers.RegistrationSuccessfulController.onPageLoad
+
+GET        /register/partnership-name                        controllers.BusinessNamePartnershipController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/partnership-name                        controllers.BusinessNamePartnershipController.onSubmit(mode: Mode = NormalMode)
+GET        /register/change-partnership-name                 controllers.BusinessNamePartnershipController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/change-partnership-name                 controllers.BusinessNamePartnershipController.onSubmit(mode: Mode = CheckMode)
+
+GET        /register/organisation-name                        controllers.BusinessNameOrganisationController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/organisation-name                        controllers.BusinessNameOrganisationController.onSubmit(mode: Mode = NormalMode)
+GET        /register/change-organisation-name                 controllers.BusinessNameOrganisationController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/change-organisation-name                 controllers.BusinessNameOrganisationController.onSubmit(mode: Mode = CheckMode)
+
+GET        /register/registered-business-name                        controllers.BusinessNameRegisteredBusinessController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/registered-business-name                        controllers.BusinessNameRegisteredBusinessController.onSubmit(mode: Mode = NormalMode)
+GET        /register/change-registered-business-name                 controllers.BusinessNameRegisteredBusinessController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/change-registered-business-name                 controllers.BusinessNameRegisteredBusinessController.onSubmit(mode: Mode = CheckMode)
+
+GET        /register/your-name        controllers.SoleTraderNameController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/your-name        controllers.SoleTraderNameController.onSubmit(mode: Mode = NormalMode)
+GET        /register/change-your-name controllers.SoleTraderNameController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/change-your-name controllers.SoleTraderNameController.onSubmit(mode: Mode = CheckMode)

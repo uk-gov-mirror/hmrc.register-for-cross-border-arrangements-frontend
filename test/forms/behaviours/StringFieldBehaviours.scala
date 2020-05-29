@@ -50,4 +50,15 @@ trait StringFieldBehaviours extends FieldBehaviours {
       }
     }
   }
+
+  def fieldWithNonEmptyWhitespace(form: Form[_],
+                                   fieldName: String,
+                                   requiredError: FormError): Unit = {
+
+    s"must not bind strings of only whitespace" in {
+
+      val result = form.bind(Map(fieldName -> " ")).apply(fieldName)
+      result.errors shouldEqual Seq(requiredError)
+    }
+  }
 }

@@ -30,7 +30,7 @@ object OrganisationType {
         case Some("LLP") => JsSuccess(LLP)
         case Some("Corporate Body") => JsSuccess(CorporateBody)
         case Some("Unincorporated Body") => JsSuccess(UnincorporatedBody)
-        case Some("Not Specified") => JsSuccess(Unknown)
+        case Some("Not Specified") => JsSuccess(NotSpecified)
         case _ => JsError("Invalid OrganisationType value")
       }
     }
@@ -42,7 +42,7 @@ object OrganisationType {
     case BusinessType.LimitedLiability => LLP
     case BusinessType.Partnership => Partnership
     case BusinessType.UnIncorporatedBody => UnincorporatedBody
-    case BusinessType.Other => Unknown
+    case BusinessType.NotSpecified => NotSpecified
   }
 }
 
@@ -58,6 +58,6 @@ case object Partnership extends OrganisationType {
 case object UnincorporatedBody extends OrganisationType {
   def value = "Unincorporated Body"
 }
-case object Unknown extends OrganisationType {
+case object NotSpecified extends OrganisationType {
   def value = "Not Specified"
 }
