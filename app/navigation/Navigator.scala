@@ -39,6 +39,7 @@ class Navigator @Inject()() {
     case NonUkNamePage => _ => Some(routes.DateOfBirthController.onPageLoad(NormalMode))
     case BusinessAddressPage => _ =>   Some(routes.CheckYourAnswersController.onPageLoad())
     case BusinessWithoutIDNamePage => _ => Some(routes.BusinessAddressController.onPageLoad(NormalMode))
+    case ContactNamePage => _ => Some(routes.BusinessAddressController.onPageLoad(NormalMode)) //TODO Redirect to email page
     case _ => _ => Some(routes.IndexController.onPageLoad())
   }
 

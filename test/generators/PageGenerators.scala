@@ -23,9 +23,6 @@ import pages._
 
 trait PageGenerators {
 
-  implicit lazy val arbitraryContactNamePage: Arbitrary[ContactNamePage.type] =
-    Arbitrary(ContactNamePage)
-
   self: Generators =>
 
   implicit lazy val arbitraryBusinessAddressPage: Arbitrary[BusinessAddressPage.type] =
@@ -76,5 +73,8 @@ trait PageGenerators {
 
   implicit lazy val arbitraryBusinessNamePage: Arbitrary[BusinessWithoutIDNamePage.type] =
     Arbitrary(BusinessWithoutIDNamePage)
+
+  implicit lazy val arbitraryContactNamePage: Arbitrary[ContactNamePage.type] =
+    Arbitrary(ContactNamePage)
 
 }
