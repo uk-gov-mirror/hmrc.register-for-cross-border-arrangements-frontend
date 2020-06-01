@@ -18,17 +18,18 @@ package controllers
 
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import javax.inject.Inject
-import models.{Mode, NormalMode}
+import models.{BusinessType, Mode, NormalMode}
 import navigation.Navigator
+import pages.{BusinessNamePage, BusinessTypePage, IsThisYourBusinessPage, UniqueTaxpayerReferencePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import services.BusinessMatchingService
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class BusinessMatchingController @Inject()(
                                             override val messagesApi: MessagesApi,
@@ -46,13 +47,37 @@ class BusinessMatchingController @Inject()(
     implicit request =>
       businessMatchingService.sendIndividualMatchingInformation(request.userAnswers) map {
         case Some(response) => response.status match {
-          case OK => Redirect(routes.CheckYourAnswersController.onPageLoad()) //TODO: may need more data collected for Cardiff team
+          case OK => Redirect(routes.IdentityConfirmedController.onPageLoad()) //TODO: may need more data collected for Cardiff team
           case NOT_FOUND => Redirect(routes.IndividualNotConfirmedController.onPageLoad())
           case _ => Redirect(routes.IndexController.onPageLoad())
         }
 
         //we are missing a name or a date of birth take them back to fill it in
         case None => Redirect(routes.NameController.onPageLoad(NormalMode))
+      }
+  }
+
+  def matchBusiness(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+    implicit request =>
+
+      /*Note: Needs business type, name and utr to business match
+      * Checking UTR page only because /registered-business-name uses the business type before calling this method
+      */
+      request.userAnswers.get(UniqueTaxpayerReferencePage) match {
+        case Some(_) =>
+          businessMatchingService.sendBusinessMatchingInformation(request.userAnswers) flatMap {
+            case Some(address) =>
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(IsThisYourBusinessPage, address))
+                _              <- sessionRepository.set(updatedAnswers)
+              } yield {
+                Redirect(navigator.nextPage(IsThisYourBusinessPage, mode, updatedAnswers))
+              }
+            case None => Future.successful(Redirect(routes.BusinessNotConfirmedController.onPageLoad()))
+          } recover {
+            case _ => Redirect(routes.BusinessNotConfirmedController.onPageLoad()) //TODO Redirect to error page when it's ready
+          }
+        case _ => Future.successful(Redirect(routes.UniqueTaxpayerReferenceController.onPageLoad(NormalMode)))
       }
   }
 }
