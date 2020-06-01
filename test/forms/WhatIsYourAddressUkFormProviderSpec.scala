@@ -88,10 +88,8 @@ class WhatIsYourAddressUkFormProviderSpec extends StringFieldBehaviours {
 
     val fieldName = "postCode"
     val requiredKey = "whatIsYourUkAddress.error.postcode.required"
-    val lengthKey = "whatIsYourUkAddress.error.postcode.length"
     val invalidKey = "whatIsYourUkAddress.error.postcode.invalid"
     val maxLength = 8
-    val regexPostCode = """^[A-Za-z]{1,2}[0-9Rr][0-9A-Za-z]?\s?[0-9][ABD-HJLNP-UW-Zabd-hjlnp-uw-z]{2}$"""
 
     behave like fieldThatBindsValidData(
       form,
