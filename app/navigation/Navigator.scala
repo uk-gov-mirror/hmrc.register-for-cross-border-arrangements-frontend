@@ -44,6 +44,7 @@ class Navigator @Inject()() {
     case BusinessAddressPage => _ =>   Some(routes.CheckYourAnswersController.onPageLoad())
     case BusinessWithoutIDNamePage => _ => Some(routes.BusinessAddressController.onPageLoad(NormalMode))
     case IsThisYourBusinessPage => _ => Some(routes.IdentityConfirmedController.onPageLoad())
+    case ContactNamePage => _ => Some(routes.BusinessAddressController.onPageLoad(NormalMode)) //TODO Redirect to email page
     case _ => _ => Some(routes.IndexController.onPageLoad())
   }
 
