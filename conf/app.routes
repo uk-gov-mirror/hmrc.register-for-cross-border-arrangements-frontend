@@ -142,3 +142,8 @@ GET        /register/contact-name                         controllers.ContactNam
 POST       /register/contact-name                         controllers.ContactNameController.onSubmit(mode: Mode = NormalMode)
 GET        /register/change-contact-name                  controllers.ContactNameController.onPageLoad(mode: Mode = CheckMode)
 POST       /register/change-contact-name                  controllers.ContactNameController.onSubmit(mode: Mode = CheckMode)
+
+GET        /register/email                                controllers.WhatIsYourEmailAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/email                                controllers.WhatIsYourEmailAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /register/change-email                         controllers.WhatIsYourEmailAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/change-email                         controllers.WhatIsYourEmailAddressController.onSubmit(mode: Mode = CheckMode)
