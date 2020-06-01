@@ -132,7 +132,7 @@ POST       /register/your-name        controllers.SoleTraderNameController.onSub
 GET        /register/change-your-name controllers.SoleTraderNameController.onPageLoad(mode: Mode = CheckMode)
 POST       /register/change-your-name controllers.SoleTraderNameController.onSubmit(mode: Mode = CheckMode)
 
-GET        /register/individual/with-id/address                   controllers.WhatIsYourAddressUkController.onPageLoad(mode: Mode = NormalMode)
-POST       /register/individual/with-id/address                   controllers.WhatIsYourAddressUkController.onSubmit(mode: Mode = NormalMode)
-GET        /register/individual/with-id/change-address            controllers.WhatIsYourAddressUkController.onPageLoad(mode: Mode = CheckMode)
-POST       /register/individual/with-id/change-address            controllers.WhatIsYourAddressUkController.onSubmit(mode: Mode = CheckMode)
+GET        /register/without-id/address                   controllers.WhatIsYourAddressUkController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/without-id/address                   controllers.WhatIsYourAddressUkController.onSubmit(mode: Mode = NormalMode)
+GET        /register/without-id/change-address            controllers.WhatIsYourAddressUkController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/without-id/change-address            controllers.WhatIsYourAddressUkController.onSubmit(mode: Mode = CheckMode)

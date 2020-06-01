@@ -24,6 +24,7 @@ import play.api.libs.json.Json
 
 class CountryListFactory @Inject()(environment: Environment, appConfig: FrontendAppConfig) {
 
-  def getCountyList(): Option[Seq[Country]] = environment.resourceAsStream(appConfig.countryCodeJson) map (Json.parse(_)) map (_.as[Seq[Country]])
+  def UK: Country = Country("valid","GB","United Kingdom")
 
+  def getCountyList(): Option[Seq[Country]] = environment.resourceAsStream(appConfig.countryCodeJson) map (Json.parse(_)) map (_.as[Seq[Country]])
 }

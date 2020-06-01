@@ -49,7 +49,7 @@ class WhatIsYourAddressUkController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val countries = countryListFactory.getCountyList().getOrElse(throw new Exception("Cannot retrieve country list"))
+      val countries = Seq(countryListFactory.UK)
       val form = formProvider(countries)
 
       val preparedForm = request.userAnswers.get(WhatIsYourAddressUkPage) match {
@@ -60,32 +60,22 @@ class WhatIsYourAddressUkController @Inject()(
       val json = Json.obj(
         "form" -> preparedForm,
         "mode" -> mode,
-        "countries" -> countryJsonList(preparedForm.data, countries)
+        "countries" -> countryJsonList
       )
 
       renderer.render("whatIsYourAddressUk.njk", json).map(Ok(_))
   }
 
-    private def countryJsonList(value: Map[String, String], countries: Seq[Country]): Seq[JsObject] = {
-    def containsCountry(country: Country): Boolean =
-      value.get("country") match {
-        case Some(countrycode) => countrycode == country.code
-        case _ => false
-      }
 
-    val countryJsonList = countries.map {
-      country =>
-        Json.obj("text" -> country.description, "value" -> country.code, "selected" -> containsCountry(country))
-    }
-
-    Json.obj("value" -> "", "text" -> "") +: countryJsonList
-  }
+  private def countryJsonList: Seq[JsObject] = Seq(Json.obj("text" -> countryListFactory.UK.description,
+    "value" -> countryListFactory.UK.code,
+    "selected" -> true))
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
 
-      val countries = countryListFactory.getCountyList().getOrElse(throw new Exception("Cannot retrieve country list"))
+      val countries = Seq(countryListFactory.UK)
       val form = formProvider(countries)
 
 
@@ -96,7 +86,7 @@ class WhatIsYourAddressUkController @Inject()(
           val json = Json.obj(
             "form" -> formWithErrors,
             "mode" -> mode,
-            "countries" -> countryJsonList(formWithErrors.data, countries)
+            "countries" -> countryJsonList
           )
 
           renderer.render("whatIsYourAddressUk.njk", json).map(BadRequest(_))

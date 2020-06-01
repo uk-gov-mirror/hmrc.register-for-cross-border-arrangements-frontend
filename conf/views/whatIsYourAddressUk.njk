@@ -88,13 +88,11 @@
 
           {{ govukSelect({
             classes: "govuk-input--width-20 autocomplete",
-            label: {
-              text: messages('whatIsYourUkAddress.countryCode')
-            },
             id: "country",
             name: "country",
             errorMessage: form.country.error,
-            items: countries
+            items: countries,
+            attributes:{"hidden" : ""}
           }) }}
 
           {{ govukButton({
