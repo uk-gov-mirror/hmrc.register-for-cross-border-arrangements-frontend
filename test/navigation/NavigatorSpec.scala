@@ -331,6 +331,15 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
+      "must go from what is your address uk page to enter your email page" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            navigator
+              .nextPage(WhatIsYourAddressUkPage, NormalMode, answers)
+          //email controller TODO add when ready
+        }
+      }
     }
 
 

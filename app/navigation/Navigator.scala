@@ -42,6 +42,7 @@ class Navigator @Inject()() {
     case NonUkNamePage => _ => Some(routes.DateOfBirthController.onPageLoad(NormalMode))
     case BusinessAddressPage => _ =>   Some(routes.CheckYourAnswersController.onPageLoad())
     case BusinessWithoutIDNamePage => _ => Some(routes.BusinessAddressController.onPageLoad(NormalMode))
+    case WhatIsYourAddressUkPage => _ => Some(routes.IndexController.onPageLoad()) //Email controller TODO Add when ready
     case _ => _ => Some(routes.IndexController.onPageLoad())
   }
 

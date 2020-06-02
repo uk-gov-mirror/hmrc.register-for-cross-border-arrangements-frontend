@@ -370,4 +370,4 @@ whatIsYourUkAddress.error.addressLine3.length = Address Line 3 must be 35 charac
 whatIsYourUkAddress.error.addressLine4.length = Address Line 4 must be 35 characters or less
 whatIsYourUkAddress.error.postcode.required = Enter postcode
 whatIsYourUkAddress.error.postcode.length = Postcode must be 8 characters or less
-whatIsYourUkAddress.error.postcode.invalid = Enter a valid UK postcode
+whatIsYourUkAddress.error.postcode.invalid = Enter a postcode, like AA1 1AA
