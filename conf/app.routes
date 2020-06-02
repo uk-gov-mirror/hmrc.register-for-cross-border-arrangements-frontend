@@ -147,3 +147,7 @@ GET        /register/email                                controllers.WhatIsYour
 POST       /register/email                                controllers.WhatIsYourEmailAddressController.onSubmit(mode: Mode = NormalMode)
 GET        /register/change-email                         controllers.WhatIsYourEmailAddressController.onPageLoad(mode: Mode = CheckMode)
 POST       /register/change-email                         controllers.WhatIsYourEmailAddressController.onSubmit(mode: Mode = CheckMode)
+GET        /register/email-address                           controllers.WhatIsYourEmailAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/email-address                           controllers.WhatIsYourEmailAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /register/change-email-address                    controllers.WhatIsYourEmailAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/change-email-address                    controllers.WhatIsYourEmailAddressController.onSubmit(mode: Mode = CheckMode)

@@ -23,9 +23,12 @@ import play.api.data.Form
 
 class WhatIsYourEmailAddressFormProvider @Inject() extends Mappings {
 
+  private val emailRegex = """^[^@'<>"]+@[^@'<>"]+$"""
+
   def apply(): Form[String] =
     Form(
       "email" -> text("whatIsYourEmailAddress.error.required")
+          .verifying(regexp(emailRegex, "whatIsYourEmailAddress.error.email.invalid"))
         .verifying(maxLength(254, "whatIsYourEmailAddress.error.length"))
     )
 }

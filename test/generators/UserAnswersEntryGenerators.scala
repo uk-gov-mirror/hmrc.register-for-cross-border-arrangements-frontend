@@ -34,7 +34,9 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
     Arbitrary {
       for {
         page  <- arbitrary[WhatIsYourEmailAddressPage.type]
-        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+        value <- RegexpGen.from("""^[^@'<>"]+@[^@'<>"]+$""")
+          .suchThat(_.nonEmpty)
+          .map(Json.toJson(_))
       } yield (page, value)
     }
 

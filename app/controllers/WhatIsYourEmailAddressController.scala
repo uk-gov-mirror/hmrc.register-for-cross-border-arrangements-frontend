@@ -21,7 +21,7 @@ import forms.WhatIsYourEmailAddressFormProvider
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
-import pages.{BusinessTypePage, NamePage, WhatIsYourEmailAddressPage}
+import pages.{BusinessTypePage, WhatIsYourEmailAddressPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -56,13 +56,10 @@ class WhatIsYourEmailAddressController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      val contactName = request.userAnswers.get(NamePage)
-
       val json = Json.obj(
         "form" -> preparedForm,
         "mode" -> mode,
-        "businessType" -> businessType,
-        "contactName" -> contactName
+        "businessType" -> businessType
       )
 
       renderer.render("whatIsYourEmailAddress.njk", json).map(Ok(_))
@@ -75,14 +72,11 @@ class WhatIsYourEmailAddressController @Inject()(
         formWithErrors => {
 
           val businessType = request.userAnswers.get(BusinessTypePage)
-          val contactName = request.userAnswers.get(NamePage)
 
           val json = Json.obj(
             "form" -> formWithErrors,
             "mode" -> mode,
-            "businessType"-> businessType,
-            "contactName" -> contactName
-          )
+            "businessType"-> businessType)
 
           renderer.render("whatIsYourEmailAddress.njk", json).map(BadRequest(_))
         },
