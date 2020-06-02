@@ -21,7 +21,7 @@ import forms.WhatIsYourEmailAddressFormProvider
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
-import pages.{BusinessTypePage, WhatIsYourEmailAddressPage}
+import pages.{ContactNamePage, WhatIsYourEmailAddressPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -49,7 +49,10 @@ class WhatIsYourEmailAddressController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val businessType = request.userAnswers.get(BusinessTypePage)
+      val contactName = request.userAnswers.get(ContactNamePage) match {
+        case None => "your"
+        case Some(contactName) => s"${contactName.firstName} ${contactName.secondName}’s"
+      }
 
       val preparedForm = request.userAnswers.get(WhatIsYourEmailAddressPage) match {
         case None => form
@@ -59,7 +62,7 @@ class WhatIsYourEmailAddressController @Inject()(
       val json = Json.obj(
         "form" -> preparedForm,
         "mode" -> mode,
-        "businessType" -> businessType
+        "contactName" -> contactName
       )
 
       renderer.render("whatIsYourEmailAddress.njk", json).map(Ok(_))
@@ -68,15 +71,17 @@ class WhatIsYourEmailAddressController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
+      val contactName = request.userAnswers.get(ContactNamePage) match {
+        case None => "your"
+        case Some(contactName) => s"${contactName.firstName} ${contactName.secondName}’s"
+      }
+
       form.bindFromRequest().fold(
         formWithErrors => {
-
-          val businessType = request.userAnswers.get(BusinessTypePage)
-
           val json = Json.obj(
             "form" -> formWithErrors,
             "mode" -> mode,
-            "businessType"-> businessType)
+            "contactName"-> contactName)
 
           renderer.render("whatIsYourEmailAddress.njk", json).map(BadRequest(_))
         },
@@ -84,7 +89,7 @@ class WhatIsYourEmailAddressController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsYourEmailAddressPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(WhatIsYourEmailAddressPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(WhatIsYourEmailAddressPage, mode, updatedAnswers)) //TODO to be changed once telephone page is created
       )
   }
 }

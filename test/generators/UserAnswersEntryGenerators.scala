@@ -34,7 +34,8 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
     Arbitrary {
       for {
         page  <- arbitrary[WhatIsYourEmailAddressPage.type]
-        value <- RegexpGen.from("""^[^@'<>"]+@[^@'<>"]+$""")
+        value <- RegexpGen.from("^(?:[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+)*)" +
+          "@(?:[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+)*)$")
           .suchThat(_.nonEmpty)
           .map(Json.toJson(_))
       } yield (page, value)

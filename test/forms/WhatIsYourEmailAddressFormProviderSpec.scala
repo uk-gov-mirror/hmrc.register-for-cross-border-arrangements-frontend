@@ -29,7 +29,8 @@ class WhatIsYourEmailAddressFormProviderSpec extends StringFieldBehaviours {
     val requiredKey = "whatIsYourEmailAddress.error.required"
     val lengthKey = "whatIsYourEmailAddress.error.length"
     val invalidKey = "whatIsYourEmailAddress.error.email.invalid"
-    val emailRegex = """^[^@'<>"]+@[^@'<>"]+$"""
+    val emailRegex = "^(?:[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+)*)" +
+      "@(?:[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+)*)$"
     val maxLength = 254
 
     behave like fieldThatBindsValidData(

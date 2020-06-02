@@ -23,7 +23,8 @@ import play.api.data.Form
 
 class WhatIsYourEmailAddressFormProvider @Inject() extends Mappings {
 
-  private val emailRegex = """^[^@'<>"]+@[^@'<>"]+$"""
+  private val emailRegex = "^(?:[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+)*)" +
+    "@(?:[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+)*)$"
 
   def apply(): Form[String] =
     Form(

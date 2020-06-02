@@ -331,22 +331,38 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
-      "must go from the Who should we contact page to the email page" in {
+      "must go from the Who should we contact if we have any questions about your disclosures page" +
+        " to the What is your email address page" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
 
             val updatedAnswers =
               answers
-                .set(ContactNamePage, Name("Business", "Name"))
+                .set(ContactNamePage, Name("firstName", "secondName"))
                 .success
                 .value
 
             navigator
               .nextPage(ContactNamePage, NormalMode, updatedAnswers)
-              .mustBe(routes.ConfirmBusinessController.onPageLoad(NormalMode))//TODO redirect to email page
+              .mustBe(routes.WhatIsYourEmailAddressController.onPageLoad(NormalMode))
         }
       }
 
+      "must go from the What is your email address? page to Do you have a telephone number? page" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers
+                .set(WhatIsYourEmailAddressPage, "example@test.com")
+                .success
+                .value
+
+            navigator
+              .nextPage(WhatIsYourEmailAddressPage, NormalMode, updatedAnswers)
+              .mustBe(routes.WhatIsYourEmailAddressController.onPageLoad(NormalMode)) // TODO - change this to the next pages Controller once created
+        }
+      }
     }
 
 

@@ -31,13 +31,9 @@
 
           {{ csrf() | safe }}
 
-          <h1 class="govuk-heading-xl">
-             {% if businessType == "other" %}
-                  {{ messages("whatIsYourEmailAddress.heading.selfAssessment") }}
-             {% else %}
-                  {{ messages("whatIsYourEmailAddress.heading.business") }}
-             {% endif %}
-          </h1>
+            <h1 class="govuk-heading-xl">
+               {{ messages("whatIsYourEmailAddress.heading", contactName) }}
+            </h1>
 
           {{ govukInput({
             label: {
@@ -53,7 +49,10 @@
           }) }}
 
           {{ govukButton({
-            text: messages("site.continue")
+            text: messages("site.continue"),
+            attributes:{
+            "id": "submit"
+            }
           }) }}
 
         </form>

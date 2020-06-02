@@ -123,7 +123,7 @@ class WhatIsYourEmailAddressControllerSpec extends SpecBase with MockitoSugar wi
 
       val request =
         FakeRequest(POST, whatIsYourEmailAddressRoute)
-          .withFormUrlEncodedBody(("value", "answer"))
+          .withFormUrlEncodedBody(("email", "example@test.com"))
 
       val result = route(application, request).value
 

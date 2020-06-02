@@ -366,11 +366,9 @@ contactName.error.length.lastName = Last name must be 35 characters or less
 contactName.error.invalid.lastName = Last name must only include letters a to z, apostrophes, slashes, ampersands and spaces
 
 whatIsYourEmailAddress.title = What is this person’s email address?
-whatIsYourEmailAddress.heading.selfAssessment = What is your email address?
-whatIsYourEmailAddress.heading.otherContact = What is {0}’s email address?
+whatIsYourEmailAddress.heading = What is {0} email address?
 whatIsYourEmailAddress.checkYourAnswersLabel = We will use this email address to send confirmation of your disclosures.
-whatIsYourEmailAddress.error.required = Enter your email address
-whatIsYourEmailAddress.error.required.otherContact = Enter {0}’s email address
-whatIsYourEmailAddress.error.length = Enter address must be 254 characters or less
+whatIsYourEmailAddress.error.required = Enter an email address
+whatIsYourEmailAddress.error.length = Enter an email address that is 254 characters or less
 whatIsYourEmailAddress.error.email.invalid.otherContact = Enter {0}’s email address in the correct format, like name@example.com
-whatIsYourEmailAddress.error.email.invalid = Enter your email address in the correct format, like name@example.com
+whatIsYourEmailAddress.error.email.invalid = Enter an email address in the correct format, like name@example.com
