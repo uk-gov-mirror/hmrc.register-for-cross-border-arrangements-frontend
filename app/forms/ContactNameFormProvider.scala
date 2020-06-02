@@ -23,7 +23,7 @@ import play.api.data.Form
 import play.api.data.Forms.mapping
 
 class ContactNameFormProvider @Inject() extends Mappings {
-  val validRegex = """^[A-Za-z&`\\'\s]*$"""
+  val validRegex = """^[a-zA-Z &`\\-\\'^]*$"""
   val maxLength: Int = 35
 
   def apply(): Form[Name] =

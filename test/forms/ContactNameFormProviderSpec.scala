@@ -29,7 +29,7 @@ class ContactNameFormProviderSpec extends StringFieldBehaviours {
   val lengthKeyLastName = "contactName.error.length.lastName"
   val invalidKeyLastName = "contactName.error.invalid.lastName"
 
-  val validRegex = """^[A-Za-z&`\\'\s]*$"""
+  val validRegex = """^[a-zA-Z &`\\-\\'^]*$"""
   val maxLength = 35
 
   val form = new ContactNameFormProvider()()
