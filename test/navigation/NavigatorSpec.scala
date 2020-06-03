@@ -457,6 +457,22 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
             .mustBe(routes.CheckYourAnswersController.onPageLoad())
       }
 
+      "must go from Is there someone else we can contact if *name* is not available??" +
+        "to Check your answers? when No is selected" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(HaveSecondContactPage, false)
+                .success
+                .value
+
+            navigator
+              .nextPage(HaveSecondContactPage, NormalMode, updatedAnswers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+        }
+      }
+
     }
 
 

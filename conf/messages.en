@@ -413,3 +413,8 @@ contactTelephoneNumber.checkYourAnswersLabel = What is this person’s telephone
 contactTelephoneNumber.hint = For international numbers include the country code.
 contactTelephoneNumber.error.required = Enter a telephone number
 contactTelephoneNumber.error.invalid = Enter a telephone number, like 01632 960 001, 07700 900 982 or +44 0808 157 0192
+
+haveSecondContact.title = Is there someone else we can contact if {0} is not available?
+haveSecondContact.heading = Is there someone else we can contact if {0} is not available?
+haveSecondContact.checkYourAnswersLabel = Is there someone else we can contact if {0} is not available?
+haveSecondContact.error.required = Select yes if there is someone else we can contact if that person is not available?
