@@ -99,14 +99,14 @@ class Navigator @Inject()() {
       case Business => routes.BusinessWithoutIDNameController.onPageLoad(NormalMode)
     }
 
-  private def doYouHaveTelephoneNumberRoutes(ua: UserAnswers): Option[Call] = {
+  private def telephoneNumberQuestionRoutes(ua: UserAnswers): Option[Call] = {
     val organisationJourney: Boolean = ua.get(BusinessTypePage) match {
       case Some(businessType) if businessType.equals(BusinessType.NotSpecified) => false
       case Some(_) => true
       case None => false
     }
 
-    ua.get(TelephoneNumberPage) map {
+    ua.get(TelephoneNumberQuestionPage) map {
       case true => routes.ConfirmBusinessController.onPageLoad(NormalMode) //TODO Redirect to /register/phone when ready
       case false if organisationJourney => routes.IndexController.onPageLoad()  //TODO Redirect to /register/have-second-contact when ready
       case false => routes.CheckYourAnswersController.onPageLoad()

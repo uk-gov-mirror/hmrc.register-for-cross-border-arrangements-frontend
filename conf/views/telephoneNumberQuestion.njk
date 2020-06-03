@@ -27,7 +27,7 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.TelephoneNumberController.onSubmit(mode).url }}" method="post">
+        <form action="{{ routes.controllers.TelephoneNumberQuestionController.onSubmit(mode).url }}" method="post">
 
           {{ csrf() | safe }}
 
@@ -42,7 +42,19 @@
               }
             },
             items: radios,
-            errorMessage: form.value.error
+            errorMessage: form.value.error,
+            items: [
+              {
+                id: "confirm-yes",
+                value: "true",
+                text: "Yes"
+              },
+              {
+                id: "confirm-no",
+                value: "false",
+                text: "No"
+              }
+            ]
           }) }}
 
           {{ govukButton({
