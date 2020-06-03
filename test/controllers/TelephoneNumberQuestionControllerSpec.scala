@@ -45,9 +45,9 @@ class TelephoneNumberQuestionControllerSpec extends SpecBase with MockitoSugar w
   val formProvider = new TelephoneNumberQuestionFormProvider()
   val form: Form[Boolean] = formProvider()
 
-  lazy val telephoneNumberRoute: String = routes.TelephoneNumberQuestionController.onPageLoad(NormalMode).url
+  lazy val telephoneNumberQuestionRoute: String = routes.TelephoneNumberQuestionController.onPageLoad(NormalMode).url
 
-  "TelephoneNumber Controller" - {
+  "TelephoneNumberQuestion Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
@@ -55,7 +55,7 @@ class TelephoneNumberQuestionControllerSpec extends SpecBase with MockitoSugar w
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(GET, telephoneNumberRoute)
+      val request = FakeRequest(GET, telephoneNumberQuestionRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -84,7 +84,7 @@ class TelephoneNumberQuestionControllerSpec extends SpecBase with MockitoSugar w
 
       val userAnswers = UserAnswers(userAnswersId).set(TelephoneNumberQuestionPage, true).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, telephoneNumberRoute)
+      val request = FakeRequest(GET, telephoneNumberQuestionRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -123,7 +123,7 @@ class TelephoneNumberQuestionControllerSpec extends SpecBase with MockitoSugar w
           .build()
 
       val request =
-        FakeRequest(POST, telephoneNumberRoute)
+        FakeRequest(POST, telephoneNumberQuestionRoute)
           .withFormUrlEncodedBody(("value", "true"))
 
       val result = route(application, request).value
@@ -141,7 +141,7 @@ class TelephoneNumberQuestionControllerSpec extends SpecBase with MockitoSugar w
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, telephoneNumberRoute).withFormUrlEncodedBody(("value", ""))
+      val request = FakeRequest(POST, telephoneNumberQuestionRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
@@ -168,7 +168,7 @@ class TelephoneNumberQuestionControllerSpec extends SpecBase with MockitoSugar w
 
       val application = applicationBuilder(userAnswers = None).build()
 
-      val request = FakeRequest(GET, telephoneNumberRoute)
+      val request = FakeRequest(GET, telephoneNumberQuestionRoute)
 
       val result = route(application, request).value
 
@@ -184,7 +184,7 @@ class TelephoneNumberQuestionControllerSpec extends SpecBase with MockitoSugar w
       val application = applicationBuilder(userAnswers = None).build()
 
       val request =
-        FakeRequest(POST, telephoneNumberRoute)
+        FakeRequest(POST, telephoneNumberQuestionRoute)
           .withFormUrlEncodedBody(("value", "true"))
 
       val result = route(application, request).value
