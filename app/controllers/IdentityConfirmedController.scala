@@ -18,7 +18,7 @@ package controllers
 
 import controllers.actions._
 import javax.inject.Inject
-import models.NormalMode
+import models.{BusinessType, NormalMode}
 import pages.BusinessTypePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -41,6 +41,7 @@ class IdentityConfirmedController @Inject()(
     implicit request =>
 
       val nextPage: String = request.userAnswers.get(BusinessTypePage) match {
+        case Some(businessType) if businessType.equals(BusinessType.NotSpecified)=> routes.NinoController.onPageLoad(NormalMode).url //TODO Go to /register/email once page is ready
         case Some(_) => routes.ContactNameController.onPageLoad(NormalMode).url
         case None => routes.NinoController.onPageLoad(NormalMode).url //TODO Go to /register/email once page is ready
       }

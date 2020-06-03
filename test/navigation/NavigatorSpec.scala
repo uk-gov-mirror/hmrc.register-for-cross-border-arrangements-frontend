@@ -347,6 +347,72 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
+      "must go from the Do you have telephone page to the What is the telephone number page when the answer is 'Yes'" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers
+                .set(TelephoneNumberPage, true)
+                .success
+                .value
+
+            navigator
+              .nextPage(TelephoneNumberPage, NormalMode, updatedAnswers)
+              .mustBe(routes.ConfirmBusinessController.onPageLoad(NormalMode))//TODO redirect to phone number page
+        }
+      }
+
+      "must go from the Do you have telephone page to Have second contact page when the answer is 'No' and " +
+        "the user is an Organisation" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers
+                .set(BusinessTypePage, BusinessType.CorporateBody)
+                .success
+                .value
+                .set(TelephoneNumberPage, false)
+                .success
+                .value
+
+            navigator
+              .nextPage(TelephoneNumberPage, NormalMode, updatedAnswers)
+              .mustBe(routes.IndexController.onPageLoad())//TODO redirect to /have-second-contact page
+        }
+      }
+
+      "must go from the Do you have telephone page to the Check answers page when the answer is 'No' and " +
+        "the business type is Sole proprietor" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers
+                .set(BusinessTypePage, BusinessType.NotSpecified)
+                .success
+                .value
+                .set(TelephoneNumberPage, false)
+                .success
+                .value
+
+            navigator
+              .nextPage(TelephoneNumberPage, NormalMode, updatedAnswers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+        }
+      }
+
+      "must go from the Do you have telephone page to the Check answers page when the answer is 'No' and " +
+        "the user is an Individual" in {
+
+          val userAnswers = UserAnswers(userAnswersId).set(TelephoneNumberPage, false).success.value
+
+          navigator
+            .nextPage(TelephoneNumberPage, NormalMode, userAnswers)
+            .mustBe(routes.CheckYourAnswersController.onPageLoad())
+      }
+
     }
 
 
