@@ -28,7 +28,6 @@ import wolfendale.scalacheck.regexp.RegexpGen
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
 
-
   self: Generators =>
 
   implicit lazy val arbitraryContactTelephoneNumberUserAnswersEntry: Arbitrary[(ContactTelephoneNumberPage.type, JsValue)] =
