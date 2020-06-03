@@ -365,8 +365,9 @@ contactName.error.required.lastName = Enter the last name of the person we shoul
 contactName.error.length.lastName = Last name must be 35 characters or less
 contactName.error.invalid.lastName = Last name must only include letters a to z, apostrophes, slashes, ampersands and spaces
 
-contactTelephoneNumber.title = contactTelephoneNumber
-contactTelephoneNumber.heading = contactTelephoneNumber
+contactTelephoneNumber.title = What is this person’s telephone number?
+contactTelephoneNumber.heading = What is {0} telephone number?
 contactTelephoneNumber.checkYourAnswersLabel = contactTelephoneNumber
-contactTelephoneNumber.error.required = Enter contactTelephoneNumber
-contactTelephoneNumber.error.length = ContactTelephoneNumber must be 50 characters or less
+contactTelephoneNumber.error.required = Enter a telephone number
+contactTelephoneNumber.error.length = Enter a telephone number, like 01632 960 001, 07700 900 982 or +44 0808 157 0192
+contactTelephoneNumber.error.invalid = Telephone numbers must only include numbers 0 to 9

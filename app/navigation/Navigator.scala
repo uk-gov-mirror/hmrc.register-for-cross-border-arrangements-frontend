@@ -45,6 +45,7 @@ class Navigator @Inject()() {
     case BusinessWithoutIDNamePage => _ => Some(routes.BusinessAddressController.onPageLoad(NormalMode))
     case IsThisYourBusinessPage => _ => Some(routes.IdentityConfirmedController.onPageLoad())
     case ContactNamePage => _ => Some(routes.ConfirmBusinessController.onPageLoad(NormalMode)) //TODO Redirect to email page and fix test
+    case ContactTelephoneNumberPage => _ => Some(routes.ConfirmBusinessController.onPageLoad(NormalMode)) //TODO Redirect to Secondary Contact Page when created & fix test
     case _ => _ => Some(routes.IndexController.onPageLoad())
   }
 
