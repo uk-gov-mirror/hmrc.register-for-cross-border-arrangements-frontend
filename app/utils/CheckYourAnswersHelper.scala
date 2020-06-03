@@ -28,6 +28,21 @@ import utils.CheckYourAnswersHelper._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
+  def contactTelephoneNumber: Option[Row] = userAnswers.get(ContactTelephoneNumberPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"contactTelephoneNumber.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.ContactTelephoneNumberController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"contactTelephoneNumber.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
   def confirmBusiness: Option[Row] = userAnswers.get(ConfirmBusinessPage) map {
     answer =>
       Row(
