@@ -370,5 +370,4 @@ whatIsYourEmailAddress.heading = What is {0} email address?
 whatIsYourEmailAddress.checkYourAnswersLabel = We will use this email address to send confirmation of your disclosures.
 whatIsYourEmailAddress.error.required = Enter an email address
 whatIsYourEmailAddress.error.length = Enter an email address that is 254 characters or less
-whatIsYourEmailAddress.error.email.invalid.otherContact = Enter {0}’s email address in the correct format, like name@example.com
 whatIsYourEmailAddress.error.email.invalid = Enter an email address in the correct format, like name@example.com
