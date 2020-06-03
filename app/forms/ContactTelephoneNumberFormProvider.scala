@@ -23,12 +23,12 @@ import play.api.data.Form
 
 class ContactTelephoneNumberFormProvider @Inject() extends Mappings {
 
-  val telephoneRegex = """^\+[0-9]{1,18}$|^[0-9 ]{1,19}$"""
+  val digitsOnlyRegex = """^\+?[0-9]*$"""
 
   def apply(): Form[String] =
     Form(
-      "value" -> text("contactTelephoneNumber.error.required")
+      "telephoneNumber" -> text("contactTelephoneNumber.error.required")
+        .verifying(regexp(digitsOnlyRegex, "contactTelephoneNumber.error.invalid"))
         .verifying(maxLength(50, "contactTelephoneNumber.error.length"))
-        .verifying(regexp(telephoneRegex, "contactTelephoneNumber.error.invalid"))
     )
 }
