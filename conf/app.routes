@@ -152,3 +152,8 @@ GET        /register/have-telephone                         controllers.Telephon
 POST       /register/have-telephone                         controllers.TelephoneNumberQuestionController.onSubmit(mode: Mode = NormalMode)
 GET        /register/change-have-telephone                  controllers.TelephoneNumberQuestionController.onPageLoad(mode: Mode = CheckMode)
 POST       /register/change-have-telephone                  controllers.TelephoneNumberQuestionController.onSubmit(mode: Mode = CheckMode)
+
+GET        /register/telephone-number                           controllers.ContactTelephoneNumberController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/telephone-number                           controllers.ContactTelephoneNumberController.onSubmit(mode: Mode = NormalMode)
+GET        /register/change-telephone-number                    controllers.ContactTelephoneNumberController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/change-telephone-number                    controllers.ContactTelephoneNumberController.onSubmit(mode: Mode = CheckMode)
