@@ -344,7 +344,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(ContactNamePage, NormalMode, updatedAnswers)
-              .mustBe(routes.WhatIsYourEmailAddressController.onPageLoad(NormalMode))
+              .mustBe(routes.ContactEmailAddressController.onPageLoad(NormalMode))
         }
       }
 
@@ -354,13 +354,13 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             val updatedAnswers =
               answers
-                .set(WhatIsYourEmailAddressPage, "example@test.com")
+                .set(ContactEmailAddressPage, "example@test.com")
                 .success
                 .value
 
             navigator
-              .nextPage(WhatIsYourEmailAddressPage, NormalMode, updatedAnswers)
-              .mustBe(routes.WhatIsYourEmailAddressController.onPageLoad(NormalMode)) // TODO - change this to the next pages Controller once created
+              .nextPage(ContactEmailAddressPage, NormalMode, updatedAnswers)
+              .mustBe(routes.ContactEmailAddressController.onPageLoad(NormalMode)) // TODO - change this to the next pages Controller once created
         }
       }
     }

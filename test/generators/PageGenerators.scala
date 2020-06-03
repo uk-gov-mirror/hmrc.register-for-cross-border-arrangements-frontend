@@ -25,8 +25,8 @@ trait PageGenerators {
 
   self: Generators =>
 
-  implicit lazy val arbitraryWhatIsYourEmailAddressPage: Arbitrary[WhatIsYourEmailAddressPage.type] =
-    Arbitrary(WhatIsYourEmailAddressPage)
+  implicit lazy val arbitraryContactEmailAddressPage: Arbitrary[ContactEmailAddressPage.type] =
+    Arbitrary(ContactEmailAddressPage)
 
   implicit lazy val arbitraryBusinessAddressPage: Arbitrary[BusinessAddressPage.type] =
     Arbitrary(BusinessAddressPage)

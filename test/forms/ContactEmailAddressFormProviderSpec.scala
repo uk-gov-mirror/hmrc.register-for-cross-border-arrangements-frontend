@@ -19,16 +19,16 @@ package forms
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
 
-class WhatIsYourEmailAddressFormProviderSpec extends StringFieldBehaviours {
+class ContactEmailAddressFormProviderSpec extends StringFieldBehaviours {
 
-  val form = new WhatIsYourEmailAddressFormProvider()()
+  val form = new ContactEmailAddressFormProvider()()
 
   ".email" - {
 
     val fieldName = "email"
-    val requiredKey = "whatIsYourEmailAddress.error.required"
-    val lengthKey = "whatIsYourEmailAddress.error.length"
-    val invalidKey = "whatIsYourEmailAddress.error.email.invalid"
+    val requiredKey = "contactEmailAddress.error.required"
+    val lengthKey = "contactEmailAddress.error.length"
+    val invalidKey = "contactEmailAddress.error.email.invalid"
     val emailRegex = "^(?:[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+)*)" +
       "@(?:[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+)*)$"
     val maxLength = 254

@@ -19,14 +19,14 @@ package pages
 import pages.behaviours.PageBehaviours
 
 
-class WhatIsYourEmailAddressPageSpec extends PageBehaviours {
+class ContactEmailAddressPageSpec extends PageBehaviours {
 
-  "WhatIsYourEmailAddressPage" - {
+  "ContactEmailAddressPage" - {
 
-    beRetrievable[String](WhatIsYourEmailAddressPage)
+    beRetrievable[String](ContactEmailAddressPage)
 
-    beSettable[String](WhatIsYourEmailAddressPage)
+    beSettable[String](ContactEmailAddressPage)
 
-    beRemovable[String](WhatIsYourEmailAddressPage)
+    beRemovable[String](ContactEmailAddressPage)
   }
 }

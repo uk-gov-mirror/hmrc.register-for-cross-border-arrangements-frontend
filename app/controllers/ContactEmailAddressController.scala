@@ -17,11 +17,11 @@
 package controllers
 
 import controllers.actions._
-import forms.WhatIsYourEmailAddressFormProvider
+import forms.ContactEmailAddressFormProvider
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
-import pages.{ContactNamePage, WhatIsYourEmailAddressPage}
+import pages.{ContactNamePage, ContactEmailAddressPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -32,16 +32,16 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class WhatIsYourEmailAddressController @Inject()(
-    override val messagesApi: MessagesApi,
-    sessionRepository: SessionRepository,
-    navigator: Navigator,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    formProvider: WhatIsYourEmailAddressFormProvider,
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
+class ContactEmailAddressController @Inject()(
+                                               override val messagesApi: MessagesApi,
+                                               sessionRepository: SessionRepository,
+                                               navigator: Navigator,
+                                               identify: IdentifierAction,
+                                               getData: DataRetrievalAction,
+                                               requireData: DataRequiredAction,
+                                               formProvider: ContactEmailAddressFormProvider,
+                                               val controllerComponents: MessagesControllerComponents,
+                                               renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
   private val form = formProvider()
@@ -54,7 +54,7 @@ class WhatIsYourEmailAddressController @Inject()(
         case Some(contactName) => s"${contactName.firstName} ${contactName.secondName}’s"
       }
 
-      val preparedForm = request.userAnswers.get(WhatIsYourEmailAddressPage) match {
+      val preparedForm = request.userAnswers.get(ContactEmailAddressPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -65,7 +65,7 @@ class WhatIsYourEmailAddressController @Inject()(
         "contactName" -> contactName
       )
 
-      renderer.render("whatIsYourEmailAddress.njk", json).map(Ok(_))
+      renderer.render("contactEmailAddress.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -83,13 +83,13 @@ class WhatIsYourEmailAddressController @Inject()(
             "mode" -> mode,
             "contactName"-> contactName)
 
-          renderer.render("whatIsYourEmailAddress.njk", json).map(BadRequest(_))
+          renderer.render("contactEmailAddress.njk", json).map(BadRequest(_))
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsYourEmailAddressPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactEmailAddressPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(WhatIsYourEmailAddressPage, mode, updatedAnswers)) //TODO to be changed once telephone page is created
+          } yield Redirect(navigator.nextPage(ContactEmailAddressPage, mode, updatedAnswers)) //TODO to be changed once telephone page is created
       )
   }
 }

@@ -30,10 +30,10 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
 
   self: Generators =>
 
-  implicit lazy val arbitraryWhatIsYourEmailAddressUserAnswersEntry: Arbitrary[(WhatIsYourEmailAddressPage.type, JsValue)] =
+  implicit lazy val arbitraryContactEmailAddressUserAnswersEntry: Arbitrary[(ContactEmailAddressPage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[WhatIsYourEmailAddressPage.type]
+        page  <- arbitrary[ContactEmailAddressPage.type]
         value <- RegexpGen.from("^(?:[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+)*)" +
           "@(?:[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+)*)$")
           .suchThat(_.nonEmpty)

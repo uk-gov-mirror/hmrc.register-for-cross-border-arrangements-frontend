@@ -17,7 +17,7 @@
 package controllers
 
 import base.SpecBase
-import forms.WhatIsYourEmailAddressFormProvider
+import forms.ContactEmailAddressFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -25,7 +25,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.WhatIsYourEmailAddressPage
+import pages.ContactEmailAddressPage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -37,16 +37,16 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class WhatIsYourEmailAddressControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class ContactEmailAddressControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new WhatIsYourEmailAddressFormProvider()
+  val formProvider = new ContactEmailAddressFormProvider()
   val form = formProvider()
 
-  lazy val whatIsYourEmailAddressRoute = routes.WhatIsYourEmailAddressController.onPageLoad(NormalMode).url
+  lazy val ContactEmailAddressRoute = routes.ContactEmailAddressController.onPageLoad(NormalMode).url
 
-  "WhatIsYourEmailAddress Controller" - {
+  "ContactEmailAddress Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
@@ -54,7 +54,7 @@ class WhatIsYourEmailAddressControllerSpec extends SpecBase with MockitoSugar wi
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(GET, whatIsYourEmailAddressRoute)
+      val request = FakeRequest(GET, ContactEmailAddressRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -69,7 +69,7 @@ class WhatIsYourEmailAddressControllerSpec extends SpecBase with MockitoSugar wi
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "whatIsYourEmailAddress.njk"
+      templateCaptor.getValue mustEqual "contactEmailAddress.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -80,9 +80,9 @@ class WhatIsYourEmailAddressControllerSpec extends SpecBase with MockitoSugar wi
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(WhatIsYourEmailAddressPage, "test@email.com").success.value
+      val userAnswers = UserAnswers(userAnswersId).set(ContactEmailAddressPage, "test@email.com").success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, whatIsYourEmailAddressRoute)
+      val request = FakeRequest(GET, ContactEmailAddressRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -101,7 +101,7 @@ class WhatIsYourEmailAddressControllerSpec extends SpecBase with MockitoSugar wi
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "whatIsYourEmailAddress.njk"
+      templateCaptor.getValue mustEqual "contactEmailAddress.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -122,7 +122,7 @@ class WhatIsYourEmailAddressControllerSpec extends SpecBase with MockitoSugar wi
           .build()
 
       val request =
-        FakeRequest(POST, whatIsYourEmailAddressRoute)
+        FakeRequest(POST, ContactEmailAddressRoute)
           .withFormUrlEncodedBody(("email", "example@test.com"))
 
       val result = route(application, request).value
@@ -139,7 +139,7 @@ class WhatIsYourEmailAddressControllerSpec extends SpecBase with MockitoSugar wi
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, whatIsYourEmailAddressRoute).withFormUrlEncodedBody(("value", ""))
+      val request = FakeRequest(POST, ContactEmailAddressRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
@@ -155,7 +155,7 @@ class WhatIsYourEmailAddressControllerSpec extends SpecBase with MockitoSugar wi
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "whatIsYourEmailAddress.njk"
+      templateCaptor.getValue mustEqual "contactEmailAddress.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -165,7 +165,7 @@ class WhatIsYourEmailAddressControllerSpec extends SpecBase with MockitoSugar wi
 
       val application = applicationBuilder(userAnswers = None).build()
 
-      val request = FakeRequest(GET, whatIsYourEmailAddressRoute)
+      val request = FakeRequest(GET, ContactEmailAddressRoute)
 
       val result = route(application, request).value
 
@@ -181,7 +181,7 @@ class WhatIsYourEmailAddressControllerSpec extends SpecBase with MockitoSugar wi
       val application = applicationBuilder(userAnswers = None).build()
 
       val request =
-        FakeRequest(POST, whatIsYourEmailAddressRoute)
+        FakeRequest(POST, ContactEmailAddressRoute)
           .withFormUrlEncodedBody(("value", "answer"))
 
       val result = route(application, request).value
