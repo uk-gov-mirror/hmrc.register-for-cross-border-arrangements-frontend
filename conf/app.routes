@@ -143,7 +143,7 @@ POST       /register/contact-name                         controllers.ContactNam
 GET        /register/change-contact-name                  controllers.ContactNameController.onPageLoad(mode: Mode = CheckMode)
 POST       /register/change-contact-name                  controllers.ContactNameController.onSubmit(mode: Mode = CheckMode)
 
-GET        /register/have-telephone                         controllers.TelephoneNumberController.onPageLoad(mode: Mode = NormalMode)
-POST       /register/have-telephone                         controllers.TelephoneNumberController.onSubmit(mode: Mode = NormalMode)
-GET        /register/change-have-telephone                  controllers.TelephoneNumberController.onPageLoad(mode: Mode = CheckMode)
-POST       /register/change-have-telephone                  controllers.TelephoneNumberController.onSubmit(mode: Mode = CheckMode)
+GET        /register/have-telephone                         controllers.TelephoneNumberQuestionController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/have-telephone                         controllers.TelephoneNumberQuestionController.onSubmit(mode: Mode = NormalMode)
+GET        /register/change-have-telephone                  controllers.TelephoneNumberQuestionController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/change-have-telephone                  controllers.TelephoneNumberQuestionController.onSubmit(mode: Mode = CheckMode)

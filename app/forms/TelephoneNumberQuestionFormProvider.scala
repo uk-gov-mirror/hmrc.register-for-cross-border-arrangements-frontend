@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
-package pages
+package forms
 
-import play.api.libs.json.JsPath
+import javax.inject.Inject
 
-case object TelephoneNumberPage extends QuestionPage[Boolean] {
+import forms.mappings.Mappings
+import play.api.data.Form
 
-  override def path: JsPath = JsPath \ toString
+class TelephoneNumberQuestionFormProvider @Inject() extends Mappings {
 
-  override def toString: String = "telephoneNumber"
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("telephoneNumberQuestion.error.required")
+    )
 }

@@ -365,9 +365,9 @@ contactName.error.required.lastName = Enter the last name of the person we shoul
 contactName.error.length.lastName = Last name must be 35 characters or less
 contactName.error.invalid.lastName = Last name must only include letters a to z, apostrophes, slashes, ampersands and spaces
 
-telephoneNumber.business.title = Does {0} have a telephone number?
-telephoneNumber.business.heading = Does {0} have a telephone number?
-telephoneNumber.individual.title = Do you have a telephone number?
-telephoneNumber.individual.heading = Do you have a telephone number?
-telephoneNumber.checkYourAnswersLabel = Do you have a telephone number?
-telephoneNumber.error.required = Select yes if you have a telephone number
+telephoneNumberQuestion.business.title = Does {0} have a telephone number?
+telephoneNumberQuestion.business.heading = Does {0} have a telephone number?
+telephoneNumberQuestion.individual.title = Do you have a telephone number?
+telephoneNumberQuestion.individual.heading = Do you have a telephone number?
+telephoneNumberQuestion.checkYourAnswersLabel = Do you have a telephone number?
+telephoneNumberQuestion.error.required = Select yes if you have a telephone number

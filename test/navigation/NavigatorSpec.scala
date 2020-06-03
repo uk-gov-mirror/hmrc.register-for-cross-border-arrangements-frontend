@@ -353,12 +353,12 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             val updatedAnswers =
               answers
-                .set(TelephoneNumberPage, true)
+                .set(TelephoneNumberQuestionPage, true)
                 .success
                 .value
 
             navigator
-              .nextPage(TelephoneNumberPage, NormalMode, updatedAnswers)
+              .nextPage(TelephoneNumberQuestionPage, NormalMode, updatedAnswers)
               .mustBe(routes.ConfirmBusinessController.onPageLoad(NormalMode))//TODO redirect to phone number page
         }
       }
@@ -373,12 +373,12 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                 .set(BusinessTypePage, BusinessType.CorporateBody)
                 .success
                 .value
-                .set(TelephoneNumberPage, false)
+                .set(TelephoneNumberQuestionPage, false)
                 .success
                 .value
 
             navigator
-              .nextPage(TelephoneNumberPage, NormalMode, updatedAnswers)
+              .nextPage(TelephoneNumberQuestionPage, NormalMode, updatedAnswers)
               .mustBe(routes.IndexController.onPageLoad())//TODO redirect to /have-second-contact page
         }
       }
@@ -393,12 +393,12 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                 .set(BusinessTypePage, BusinessType.NotSpecified)
                 .success
                 .value
-                .set(TelephoneNumberPage, false)
+                .set(TelephoneNumberQuestionPage, false)
                 .success
                 .value
 
             navigator
-              .nextPage(TelephoneNumberPage, NormalMode, updatedAnswers)
+              .nextPage(TelephoneNumberQuestionPage, NormalMode, updatedAnswers)
               .mustBe(routes.CheckYourAnswersController.onPageLoad())
         }
       }
@@ -406,10 +406,10 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
       "must go from the Do you have telephone page to the Check answers page when the answer is 'No' and " +
         "the user is an Individual" in {
 
-          val userAnswers = UserAnswers(userAnswersId).set(TelephoneNumberPage, false).success.value
+          val userAnswers = UserAnswers(userAnswersId).set(TelephoneNumberQuestionPage, false).success.value
 
           navigator
-            .nextPage(TelephoneNumberPage, NormalMode, userAnswers)
+            .nextPage(TelephoneNumberQuestionPage, NormalMode, userAnswers)
             .mustBe(routes.CheckYourAnswersController.onPageLoad())
       }
 

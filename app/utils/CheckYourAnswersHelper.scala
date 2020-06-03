@@ -28,16 +28,16 @@ import utils.CheckYourAnswersHelper._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
-  def telephoneNumber: Option[Row] = userAnswers.get(TelephoneNumberPage) map {
+  def telephoneNumberQuestion: Option[Row] = userAnswers.get(TelephoneNumberQuestionPage) map {
     answer =>
       Row(
-        key     = Key(msg"telephoneNumber.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        key     = Key(msg"telephoneNumberQuestion.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
         value   = Value(yesOrNo(answer)),
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.TelephoneNumberController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"telephoneNumber.checkYourAnswersLabel"))
+            href               = routes.TelephoneNumberQuestionController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"telephoneNumberQuestion.checkYourAnswersLabel"))
           )
         )
       )
