@@ -32,21 +32,30 @@
           {{ csrf() | safe }}
 
            <h1 class="govuk-heading-xl">
-                         {{ messages("contactTelephoneNumber.heading", contactName) }}
+             {{ messages("contactTelephoneNumber.heading", contactName) }}
           </h1>
 
           {{ govukInput({
             label: {
               text: ""
             },
-            id: "value",
-            name: "value",
-            value: form.value.value,
-            errorMessage: form.value.error
+            hint: {
+                text: messages('contactTelephoneNumber.hint')
+            },
+            id: "telephoneNumber",
+            name: "telephoneNumber",
+            type: "tel",
+            autocomplete: "tel",
+            classes: "govuk-input--width-20",
+            value: form.telephoneNumber.value,
+            errorMessage: form.telephoneNumber.error
           }) }}
 
           {{ govukButton({
-            text: messages("site.continue")
+            text: messages("site.continue"),
+            attributes:{
+                "id": "submit"
+            }
           }) }}
 
         </form>
