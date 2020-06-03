@@ -31,11 +31,13 @@
 
           {{ csrf() | safe }}
 
+           <h1 class="govuk-heading-xl">
+                         {{ messages("contactTelephoneNumber.heading", contactName) }}
+          </h1>
+
           {{ govukInput({
             label: {
-              text: messages('contactTelephoneNumber.title'),
-              isPageHeading: true,
-              classes: "govuk-label--xl"
+              text: ""
             },
             id: "value",
             name: "value",
