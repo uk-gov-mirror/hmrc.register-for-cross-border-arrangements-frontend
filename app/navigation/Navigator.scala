@@ -33,8 +33,9 @@ class Navigator @Inject()() {
     case DoYouHaveANationalInsuranceNumberPage =>   doYouHaveANationalInsuranceNumberRoutes
     case NinoPage => _ => Some(routes.NameController.onPageLoad(NormalMode))
     case NamePage => _ => Some(routes.DateOfBirthController.onPageLoad(NormalMode))
-    case BusinessNamePage => _ => Some(routes.IndexController.onPageLoad()) //Some(routes.BusinessMatchingController.matchBusiness()) TODO Add when ready
-    case SoleTraderNamePage => _ => Some(routes.IndexController.onPageLoad()) //Some(routes.BusinessMatchingController.matchBusiness()) TODO Add when ready
+    case BusinessNamePage => _ => Some(routes.BusinessMatchingController.matchBusiness())
+    case SoleTraderNamePage => _ => Some(routes.BusinessMatchingController.matchBusiness())
+    case ConfirmBusinessPage => confirmBusinessRoutes
     case DateOfBirthPage => dateOfBirthRoutes
     case DoYouLiveInTheUKPage => doYouLiveInTheUKRoutes
     case BusinessTypePage => _ => Some(routes.UniqueTaxpayerReferenceController.onPageLoad(NormalMode))
@@ -43,6 +44,9 @@ class Navigator @Inject()() {
     case BusinessAddressPage => _ =>   Some(routes.CheckYourAnswersController.onPageLoad())
     case BusinessWithoutIDNamePage => _ => Some(routes.BusinessAddressController.onPageLoad(NormalMode))
     case WhatIsYourAddressUkPage => _ => Some(routes.IndexController.onPageLoad()) //Email controller TODO Add when ready
+    case IsThisYourBusinessPage => _ => Some(routes.IdentityConfirmedController.onPageLoad())
+    case ContactNamePage => _ => Some(routes.ContactEmailAddressController.onPageLoad(NormalMode))
+    case ContactEmailAddressPage => _ => Some(routes.ContactEmailAddressController.onPageLoad(NormalMode)) // TODO redirect to telephone page once created
     case _ => _ => Some(routes.IndexController.onPageLoad())
   }
 
@@ -58,6 +62,12 @@ class Navigator @Inject()() {
       case BusinessType.UnIncorporatedBody => routes.BusinessNameOrganisationController.onPageLoad(NormalMode)
     }
   }
+
+  private def confirmBusinessRoutes(ua: UserAnswers): Option[Call] =
+    ua.get(ConfirmBusinessPage) map {
+      case true  => routes.IdentityConfirmedController.onPageLoad()
+      case false  => routes.BusinessNotConfirmedController.onPageLoad()
+    }
 
   private def doYouHaveUTRPage(ua: UserAnswers): Option[Call] =
     ua.get(DoYouHaveUTRPage) map {

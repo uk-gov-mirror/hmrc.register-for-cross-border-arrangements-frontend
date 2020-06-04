@@ -19,7 +19,7 @@ package utils
 import java.time.format.DateTimeFormatter
 
 import controllers.routes
-import models.{BusinessType, CheckMode, NormalMode, UserAnswers}
+import models.{BusinessType, CheckMode, UserAnswers}
 import pages._
 import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels.Text.Literal
@@ -43,7 +43,52 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
       )
   }
 
-   def businessAddress: Option[Row] = userAnswers.get(BusinessAddressPage) map {
+  def confirmBusiness: Option[Row] = userAnswers.get(ConfirmBusinessPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"confirmBusiness.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(yesOrNo(answer)),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.ConfirmBusinessController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"confirmBusiness.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
+  def contactName: Option[Row] = userAnswers.get(ContactNamePage) map {
+    answer =>
+      Row(
+        key     = Key(msg"contactName.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.ContactNameController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"contactName.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
+  def contactEmailAddress: Option[Row] = userAnswers.get(ContactEmailAddressPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"contactEmailAddress.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.ContactEmailAddressController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"contactEmailAddress.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
+  def businessAddress: Option[Row] = userAnswers.get(BusinessAddressPage) map {
     answer =>
       Row(
         key     = Key(msg"businessAddress.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),

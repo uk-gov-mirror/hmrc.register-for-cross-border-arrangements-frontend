@@ -19,12 +19,13 @@ package controllers
 import java.time.LocalDate
 
 import base.SpecBase
+import generators.Generators
 import matchers.JsonMatchers
-import models.{Name, UserAnswers}
+import models.{BusinessAddress, BusinessType, Name, UniqueTaxpayerReference, UserAnswers}
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
-import pages.{DateOfBirthPage, NamePage, NinoPage}
+import pages._
 import play.api.inject._
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
@@ -36,19 +37,34 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class BusinessMatchingControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class BusinessMatchingControllerSpec extends SpecBase
+  with MockitoSugar
+  with NunjucksSupport
+  with JsonMatchers
+  with Generators {
 
-  lazy val businessMatchingRoute = routes.BusinessMatchingController.matchIndividual().url
+  lazy val individualMatchingRoute: String = routes.BusinessMatchingController.matchIndividual().url
+  lazy val businessMatchingRoute: String = routes.BusinessMatchingController.matchBusiness().url
 
-  def getRequest(): FakeRequest[AnyContentAsEmpty.type] =
-    FakeRequest(GET, businessMatchingRoute)
+  def getRequest(route: String): FakeRequest[AnyContentAsEmpty.type] =
+    FakeRequest(GET, route)
 
-  val mockBusinessMatchingService = mock[BusinessMatchingService]
+  val mockBusinessMatchingService: BusinessMatchingService = mock[BusinessMatchingService]
 
+  val businessUserAnswers: UserAnswers = UserAnswers(userAnswersId)
+    .set(BusinessTypePage, BusinessType.CorporateBody)
+    .success
+    .value
+    .set(UniqueTaxpayerReferencePage, UniqueTaxpayerReference("0123456789"))
+    .success
+    .value
+    .set(BusinessNamePage, "Business Name")
+    .success
+    .value
 
 
   "BusinessMatching Controller" - {
-    "when a correct submission can be created and returns a match" - {
+    "when a correct submission can be created and returns an individual match" - {
 
       "must redirect the user to the check your answers page" in {
 
@@ -69,16 +85,16 @@ class BusinessMatchingControllerSpec extends SpecBase with MockitoSugar with Nun
           ).build()
 
         when(mockBusinessMatchingService.sendIndividualMatchingInformation(any())(any(), any()))
-          .thenReturn(Future.successful(Some(HttpResponse(200, None))))
+          .thenReturn(Future.successful(Some(HttpResponse(OK, None))))
 
-        val result = route(application, getRequest).value
+        val result = route(application, getRequest(individualMatchingRoute)).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements-frontend/check-your-answers")
+        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements-frontend/register/identity-confirmed")
       }
     }
 
-    "when a correct submission can be created and returns no match" - {
+    "when a correct submission can be created and returns no individual match" - {
 
       "must redirect the user to the cant find identity page" in {
 
@@ -99,12 +115,100 @@ class BusinessMatchingControllerSpec extends SpecBase with MockitoSugar with Nun
           ).build()
 
         when(mockBusinessMatchingService.sendIndividualMatchingInformation(any())(any(), any()))
-          .thenReturn(Future.successful(Some(HttpResponse(404, None))))
+          .thenReturn(Future.successful(Some(HttpResponse(NOT_FOUND, None))))
 
-        val result = route(application, getRequest).value
+        val result = route(application, getRequest(individualMatchingRoute)).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements-frontend/register/individual-identity-not-confirmed")
+      }
+    }
+
+    "when a correct submission can be created and returns a business match" - {
+
+      "must redirect the user to /is-this-your-business page" in {
+
+        val application = applicationBuilder(userAnswers = Some(businessUserAnswers))
+          .overrides(
+            bind[BusinessMatchingService].toInstance(mockBusinessMatchingService)
+          ).build()
+
+        val businessAddress = BusinessAddress("1 Address Street", None, None, None, "NE11 1BB", "GB")
+
+        when(mockBusinessMatchingService.sendBusinessMatchingInformation(any())(any(), any()))
+          .thenReturn(Future.successful(Some(businessAddress)))
+
+        val result = route(application, getRequest(businessMatchingRoute)).value
+
+        status(result) mustEqual SEE_OTHER
+        //TODO Uncomment below once /is-this-your-business is ready
+//        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements-frontend/is-this-your-business")
+      }
+    }
+
+    "when a correct submission can be created and returns no business match" - {
+
+      "must redirect the user to the can't find business page" in {
+
+        val application = applicationBuilder(userAnswers = Some(businessUserAnswers))
+          .overrides(
+            bind[BusinessMatchingService].toInstance(mockBusinessMatchingService)
+          ).build()
+
+        when(mockBusinessMatchingService.sendBusinessMatchingInformation(any())(any(), any()))
+          .thenReturn(Future.successful(None))
+
+        val result = route(application, getRequest(businessMatchingRoute)).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements-frontend/register/business-identity-not-confirmed")
+      }
+    }
+
+    "when a correct submission can be created and returns a business match" - {
+
+      "must redirect to the error page if validation fails" in {
+
+        val application = applicationBuilder(userAnswers = Some(businessUserAnswers))
+          .overrides(
+            bind[BusinessMatchingService].toInstance(mockBusinessMatchingService)
+          ).build()
+
+        when(mockBusinessMatchingService.sendBusinessMatchingInformation(any())(any(), any()))
+          .thenReturn(Future.failed(new Exception))
+
+        val result = route(application, getRequest(businessMatchingRoute)).value
+
+        status(result) mustEqual SEE_OTHER
+        //TODO Redirect to error page when it's ready
+        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements-frontend/register/business-identity-not-confirmed")
+      }
+    }
+
+    "when a correct submission can't be created due to missing data required to business match" - {
+
+      "must redirect the user to the utr page if it's missing" in {
+
+        val businessUserAnswers: UserAnswers = UserAnswers(userAnswersId)
+          .set(BusinessTypePage, BusinessType.CorporateBody)
+          .success
+          .value
+          .set(BusinessNamePage, "Business Name")
+          .success
+          .value
+
+        val application = applicationBuilder(userAnswers = Some(businessUserAnswers))
+          .overrides(
+            bind[BusinessMatchingService].toInstance(mockBusinessMatchingService)
+          ).build()
+
+        when(mockBusinessMatchingService.sendBusinessMatchingInformation(any())(any(), any()))
+          .thenReturn(Future.successful(None))
+
+        val result = route(application, getRequest(businessMatchingRoute)).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements-frontend/register/business/with-id/utr")
       }
     }
   }

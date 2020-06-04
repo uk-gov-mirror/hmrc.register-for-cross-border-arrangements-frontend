@@ -22,16 +22,23 @@ import org.scalacheck.Arbitrary
 import pages._
 
 trait PageGenerators {
+
   self: Generators =>
 
   implicit lazy val arbitraryWhatIsYourAddressUkPage: Arbitrary[WhatIsYourAddressUkPage.type] =
     Arbitrary(WhatIsYourAddressUkPage)
+
+  implicit lazy val arbitraryContactEmailAddressPage: Arbitrary[ContactEmailAddressPage.type] =
+    Arbitrary(ContactEmailAddressPage)
 
   implicit lazy val arbitraryBusinessAddressPage: Arbitrary[BusinessAddressPage.type] =
     Arbitrary(BusinessAddressPage)
 
   implicit lazy val arbitraryBusinessNamePage: Arbitrary[BusinessNamePage.type] =
     Arbitrary(BusinessNamePage)
+
+  implicit lazy val arbitraryConfirmBusinessPage: Arbitrary[ConfirmBusinessPage.type] =
+    Arbitrary(ConfirmBusinessPage)
 
   implicit lazy val arbitraryWhatIsYourAddressPage: Arbitrary[WhatIsYourAddressPage.type] =
       Arbitrary(WhatIsYourAddressPage)
@@ -78,5 +85,8 @@ trait PageGenerators {
 
   implicit lazy val arbitraryBusinessWithoutIDNamePage: Arbitrary[BusinessWithoutIDNamePage.type] =
     Arbitrary(BusinessWithoutIDNamePage)
+
+  implicit lazy val arbitraryContactNamePage: Arbitrary[ContactNamePage.type] =
+    Arbitrary(ContactNamePage)
 
 }

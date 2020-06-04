@@ -37,6 +37,16 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
         value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
       } yield (page, value)
     }
+  implicit lazy val arbitraryContactEmailAddressUserAnswersEntry: Arbitrary[(ContactEmailAddressPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ContactEmailAddressPage.type]
+        value <- RegexpGen.from("^(?:[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+)*)" +
+          "@(?:[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+)*)$")
+          .suchThat(_.nonEmpty)
+          .map(Json.toJson(_))
+      } yield (page, value)
+    }
 
   implicit lazy val arbitraryBusinessAddressUserAnswersEntry: Arbitrary[(BusinessAddressPage.type, JsValue)] =
     Arbitrary {
@@ -53,6 +63,14 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
         value <- RegexpGen.from("^[a-zA-Z0-9 '&\\\\/]{1,105}$")
           .suchThat(_.nonEmpty)
           .map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryConfirmBusinessUserAnswersEntry: Arbitrary[(ConfirmBusinessPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ConfirmBusinessPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
       } yield (page, value)
     }
 
@@ -162,6 +180,14 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       for {
         page  <- arbitrary[BusinessWithoutIDNamePage.type]
         value <- arbitrary[String].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryContactNameUserAnswersEntry: Arbitrary[(ContactNamePage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[ContactNamePage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
       } yield (page, value)
     }
 }

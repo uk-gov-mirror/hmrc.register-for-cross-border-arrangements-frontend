@@ -59,7 +59,8 @@ POST       /register/individual/with-id/date-of-birth   controllers.DateOfBirthC
 GET        /changeDateOfBirth                           controllers.DateOfBirthController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeDateOfBirth                           controllers.DateOfBirthController.onSubmit(mode: Mode = CheckMode)
 
-GET        /match-business  controllers.BusinessMatchingController.matchIndividual(mode: Mode = NormalMode)
+GET        /match-individual                            controllers.BusinessMatchingController.matchIndividual(mode: Mode = NormalMode)
+GET        /match-business                              controllers.BusinessMatchingController.matchBusiness(mode: Mode = NormalMode)
 
 GET        /register/business-type                        controllers.BusinessTypeController.onPageLoad(mode: Mode = NormalMode)
 POST       /register/business-type                        controllers.BusinessTypeController.onSubmit(mode: Mode = NormalMode)
@@ -107,8 +108,8 @@ POST       /register/business/without-id/change-address         controllers.Busi
 
 GET        /register/without-id/business-name                   controllers.BusinessWithoutIDNameController.onPageLoad(mode: Mode = NormalMode)
 POST       /register/without-id/business-name                   controllers.BusinessWithoutIDNameController.onSubmit(mode: Mode = NormalMode)
-GET        /register/without-id/business-change-name            controllers.BusinessWithoutIDNameController.onPageLoad(mode: Mode = CheckMode)
-POST       /register/without-id/business-change-name            controllers.BusinessWithoutIDNameController.onSubmit(mode: Mode = CheckMode)
+GET        /register/without-id/change-business-name            controllers.BusinessWithoutIDNameController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/without-id/change-business-name            controllers.BusinessWithoutIDNameController.onSubmit(mode: Mode = CheckMode)
 
 GET        /register/confirm-registration                       controllers.RegistrationSuccessfulController.onPageLoad
 
@@ -136,3 +137,18 @@ GET        /register/home-address-uk                   controllers.WhatIsYourAdd
 POST       /register/home-address-uk                   controllers.WhatIsYourAddressUkController.onSubmit(mode: Mode = NormalMode)
 GET        /register/change-home-address-uk            controllers.WhatIsYourAddressUkController.onPageLoad(mode: Mode = CheckMode)
 POST       /register/change-home-address-uk            controllers.WhatIsYourAddressUkController.onSubmit(mode: Mode = CheckMode)
+
+GET        /register/confirm-business                           controllers.ConfirmBusinessController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/confirm-business                           controllers.ConfirmBusinessController.onSubmit(mode: Mode = NormalMode)
+GET        /register/change-confirm-business                    controllers.ConfirmBusinessController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/change-confirm-business                    controllers.ConfirmBusinessController.onSubmit(mode: Mode = CheckMode)
+
+GET        /register/contact-name                         controllers.ContactNameController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/contact-name                         controllers.ContactNameController.onSubmit(mode: Mode = NormalMode)
+GET        /register/change-contact-name                  controllers.ContactNameController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/change-contact-name                  controllers.ContactNameController.onSubmit(mode: Mode = CheckMode)
+
+GET        /register/email-address                           controllers.ContactEmailAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/email-address                           controllers.ContactEmailAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /register/change-email-address                    controllers.ContactEmailAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/change-email-address                    controllers.ContactEmailAddressController.onSubmit(mode: Mode = CheckMode)

@@ -203,7 +203,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
-      "as a limited liabilty business must go from unique tax reference to registered business name page" in {
+      "as a limited liability business must go from unique tax reference to registered business name page" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
@@ -254,7 +254,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(BusinessNamePage, NormalMode, answers)
-              //.mustBe(routes.BusinessMatchingController.matchBusiness()) TODO add when ready
+              .mustBe(routes.BusinessMatchingController.matchBusiness())
         }
       }
 
@@ -331,6 +331,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
+
       "must go from what is your address uk page to enter your email page" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
@@ -338,6 +339,39 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
             navigator
               .nextPage(WhatIsYourAddressUkPage, NormalMode, answers)
           //email controller TODO add when ready
+        }
+      }
+
+      "must go from the Who should we contact if we have any questions about your disclosures page" +
+        " to the What is your email address page" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers
+                .set(ContactNamePage, Name("firstName", "secondName"))
+                .success
+                .value
+
+            navigator
+              .nextPage(ContactNamePage, NormalMode, updatedAnswers)
+              .mustBe(routes.ContactEmailAddressController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from the What is your email address? page to Do you have a telephone number? page" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers
+                .set(ContactEmailAddressPage, "example@test.com")
+                .success
+                .value
+
+            navigator
+              .nextPage(ContactEmailAddressPage, NormalMode, updatedAnswers)
+              .mustBe(routes.ContactEmailAddressController.onPageLoad(NormalMode)) // TODO - change this to the next pages Controller once created
         }
       }
     }

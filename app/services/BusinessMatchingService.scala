@@ -18,8 +18,11 @@ package services
 
 import connectors.BusinessMatchingConnector
 import javax.inject.Inject
-import models.{IndividualMatchingSubmission, UserAnswers}
-import pages.NinoPage
+import models.{BusinessAddress, BusinessMatchingSubmission, IndividualMatchingSubmission, UserAnswers}
+import pages.{NinoPage, UniqueTaxpayerReferencePage}
+import play.api.http.Status._
+import play.api.libs.json.JsResult.Exception
+import play.api.libs.json.{JsError, JsSuccess, JsValue}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -36,4 +39,24 @@ class BusinessMatchingService @Inject()(businessMatchingConnector: BusinessMatch
     }
   }
 
+  def sendBusinessMatchingInformation(userAnswers: UserAnswers)
+                                     (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[BusinessAddress]] = {
+
+      businessMatchingConnector.sendBusinessMatchingInformation(
+        userAnswers.get(UniqueTaxpayerReferencePage).get,BusinessMatchingSubmission(userAnswers).get).map {
+        response =>
+          response.status match {
+            case OK => validateJsonForBusiness(response.json)
+            case NOT_FOUND => None
+            case _ => None
+          }
+    }
+  }
+
+  private def validateJsonForBusiness(value: JsValue): Option[BusinessAddress] = {
+      value.validate[BusinessAddress] match {
+        case JsSuccess(address, _) => Some(address)
+        case JsError(_) => throw Exception(JsError(s"Error encountered retrieving business matching record."))
+      }
+  }
 }
