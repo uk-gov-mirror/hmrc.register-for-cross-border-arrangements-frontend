@@ -22,11 +22,10 @@ import play.api.data.FormError
 class ContactTelephoneNumberFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "contactTelephoneNumber.error.required"
-  val lengthKey = "contactTelephoneNumber.error.length"
+  val lengthKey = "contactTelephoneNumber.error.invalid"
   val invalidKey = "contactTelephoneNumber.error.invalid"
   val maxLength = 50
-  val digitsOnlyRegex = """^\+?[0-9]*$"""
-
+  val digitsAndWhiteSpaceOnly = """^\+?[\d\s]+$"""
 
   val form = new ContactTelephoneNumberFormProvider()()
 
@@ -45,7 +44,7 @@ class ContactTelephoneNumberFormProviderSpec extends StringFieldBehaviours {
       fieldName,
       maxLength = maxLength,
       lengthError = FormError(fieldName, lengthKey, Seq(maxLength)),
-      invalidError = FormError(fieldName, invalidKey, Seq(digitsOnlyRegex))
+      invalidError = FormError(fieldName, invalidKey, Seq(digitsAndWhiteSpaceOnly))
     )
 
     behave like mandatoryField(

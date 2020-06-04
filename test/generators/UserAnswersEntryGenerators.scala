@@ -35,7 +35,7 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
     Arbitrary {
       for {
         page  <- arbitrary[ContactTelephoneNumberPage.type]
-        value <- RegexpGen.from("""^\+?[0-9]*$""")
+        value <- RegexpGen.from("""^\+?[\d\s]+$""")
           .suchThat(_.nonEmpty).map(Json.toJson(_))
       } yield (page, value)
     }

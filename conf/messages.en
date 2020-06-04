@@ -408,5 +408,4 @@ contactTelephoneNumber.heading = What is {0} telephone number?
 contactTelephoneNumber.checkYourAnswersLabel = What is {0} telephone number?
 contactTelephoneNumber.hint = For international numbers include the country code.
 contactTelephoneNumber.error.required = Enter a telephone number
-contactTelephoneNumber.error.length = Enter a telephone number, like 01632 960 001, 07700 900 982 or +44 0808 157 0192
 contactTelephoneNumber.error.invalid = Enter a telephone number, like 01632 960 001, 07700 900 982 or +44 0808 157 0192
