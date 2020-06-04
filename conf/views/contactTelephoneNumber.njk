@@ -7,7 +7,7 @@
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(messages("contactTelephoneNumber.title"), form.errors) }}
+  {{ title(pageTitle, form.errors) }}
 {% endblock %}
 
 {% block mainContent %}
@@ -31,13 +31,11 @@
 
           {{ csrf() | safe }}
 
-           <h1 class="govuk-heading-xl">
-             {{ messages("contactTelephoneNumber.heading", contactName) }}
-          </h1>
-
           {{ govukInput({
             label: {
-              text: ""
+              text: heading,
+              isPageHeading: true,
+              classes: "govuk-label--xl"
             },
             hint: {
                 text: messages('contactTelephoneNumber.hint')

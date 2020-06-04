@@ -18,11 +18,12 @@ package controllers
 
 import controllers.actions._
 import forms.ContactTelephoneNumberFormProvider
+import helpers.JourneyHelpers
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, NormalMode}
 import navigation.Navigator
 import pages.{ContactNamePage, ContactTelephoneNumberPage}
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
@@ -40,6 +41,7 @@ class ContactTelephoneNumberController @Inject()(
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     formProvider: ContactTelephoneNumberFormProvider,
+    journeyHelpers: JourneyHelpers,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
@@ -49,40 +51,54 @@ class ContactTelephoneNumberController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val contactName = request.userAnswers.get(ContactNamePage) match {
-        case None => "your"
-        case Some(contactName) => s"${contactName.firstName} ${contactName.secondName}’s"
+      (journeyHelpers.organisationJourney(request.userAnswers), request.userAnswers.get(ContactNamePage)) match {
+        case (true, None) => Future.successful(Redirect(routes.ContactNameController.onPageLoad(NormalMode)))
+        case _ =>
+          val preparedForm = request.userAnswers.get(ContactTelephoneNumberPage) match {
+            case None => form
+            case Some(value) => form.fill(value)
+          }
+
+          val (pageTitle, heading) = request.userAnswers.get(ContactNamePage) match {
+            case Some(name) =>
+              (Messages("contactTelephoneNumber.business.title", s"${name.firstName} ${name.secondName}"),
+                Messages("contactTelephoneNumber.business.heading", s"${name.firstName} ${name.secondName}"))
+            case None =>
+              (Messages("contactTelephoneNumber.title"),
+                Messages("contactTelephoneNumber.heading"))
+          }
+
+          val json = Json.obj(
+            "form" -> preparedForm,
+            "mode" -> mode,
+            "pageTitle" -> pageTitle,
+            "heading" -> heading
+          )
+
+          renderer.render("contactTelephoneNumber.njk", json).map(Ok(_))
       }
-
-      val preparedForm = request.userAnswers.get(ContactTelephoneNumberPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
-
-      val json = Json.obj(
-        "form" -> preparedForm,
-        "mode" -> mode,
-        "contactName" -> contactName
-      )
-
-      renderer.render("contactTelephoneNumber.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val contactName = request.userAnswers.get(ContactNamePage) match {
-        case None => "your"
-        case Some(contactName) => s"${contactName.firstName} ${contactName.secondName}’s"
-      }
-
       form.bindFromRequest().fold(
         formWithErrors => {
+
+          val (pageTitle, heading) = request.userAnswers.get(ContactNamePage) match {
+            case Some(name) =>
+              (Messages("contactTelephoneNumber.business.title", s"${name.firstName} ${name.secondName}"),
+                Messages("contactTelephoneNumber.business.heading", s"${name.firstName} ${name.secondName}"))
+            case None =>
+              (Messages("contactTelephoneNumber.title"),
+                Messages("contactTelephoneNumber.heading"))
+          }
 
           val json = Json.obj(
             "form" -> formWithErrors,
             "mode" -> mode,
-            "contactName" -> contactName
+            "pageTitle" -> pageTitle,
+            "heading" -> heading
           )
 
           renderer.render("contactTelephoneNumber.njk", json).map(BadRequest(_))

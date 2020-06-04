@@ -380,9 +380,11 @@ telephoneNumberQuestion.individual.heading = Do you have a telephone number?
 telephoneNumberQuestion.checkYourAnswersLabel = Do you have a telephone number?
 telephoneNumberQuestion.error.required = Select yes if there is a telephone number
 
-contactTelephoneNumber.title = What is this person’s telephone number?
-contactTelephoneNumber.heading = What is {0} telephone number?
-contactTelephoneNumber.checkYourAnswersLabel = What is {0} telephone number?
+contactTelephoneNumber.title = What is your telephone number?
+contactTelephoneNumber.heading = What is your telephone number?
+contactTelephoneNumber.business.title = What is {0}’s telephone number?
+contactTelephoneNumber.business.heading = What is {0}’s telephone number?
+contactTelephoneNumber.checkYourAnswersLabel = What is this person’s telephone number?
 contactTelephoneNumber.hint = For international numbers include the country code.
 contactTelephoneNumber.error.required = Enter a telephone number
 contactTelephoneNumber.error.invalid = Enter a telephone number, like 01632 960 001, 07700 900 982 or +44 0808 157 0192
