@@ -7,7 +7,7 @@
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(messages("contactName.title"), form.errors) }}
+  {{ title(messages("contactEmailAddress.title"), form.errors) }}
 {% endblock %}
 
 {% block mainContent %}
@@ -27,39 +27,32 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.ContactNameController.onSubmit(mode).url }}" method="post">
+        <form action="{{ routes.controllers.ContactEmailAddressController.onSubmit(mode).url }}" method="post">
 
           {{ csrf() | safe }}
 
-          <h1 class="govuk-heading-xl">
-            {{ messages("contactName.heading") }}
-          </h1>
+            <h1 class="govuk-heading-xl">
+               {{ messages("contactEmailAddress.heading", contactName) }}
+            </h1>
 
           {{ govukInput({
             label: {
-              text: messages('contactName.firstName')
+              text: ""
             },
-            classes: "govuk-!-width-two-thirds",
-            id: "firstName",
-            name: "firstName",
-            value: form.firstName.value,
-            errorMessage: form.firstName.error
-          }) }}
-
-          {{ govukInput({
-            label: {
-              text: messages('contactName.lastName')
+            hint: {
+                text: messages('contactEmailAddress.hint')
             },
-            classes: "govuk-!-width-two-thirds",
-            id: "lastName",
-            name: "lastName",
-            value: form.lastName.value,
-            errorMessage: form.lastName.error
+            id: "email",
+            name: "email",
+            value: form.email.value,
+            errorMessage: form.email.error
           }) }}
 
           {{ govukButton({
-            text: messages("site.saveAndContinue"),
-            attributes:{"id": "submit"}
+            text: messages("site.continue"),
+            attributes:{
+            "id": "submit"
+            }
           }) }}
 
         </form>

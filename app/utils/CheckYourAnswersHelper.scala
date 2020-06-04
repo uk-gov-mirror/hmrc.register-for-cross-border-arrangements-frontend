@@ -58,6 +58,21 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
       )
   }
 
+  def contactEmailAddress: Option[Row] = userAnswers.get(ContactEmailAddressPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"contactEmailAddress.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.ContactEmailAddressController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"contactEmailAddress.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
   def businessAddress: Option[Row] = userAnswers.get(BusinessAddressPage) map {
     answer =>
       Row(

@@ -364,3 +364,11 @@ contactName.error.invalid.firstName = First name must only include letters a to 
 contactName.error.required.lastName = Enter the last name of the person we should contact if we have any questions about your disclosures
 contactName.error.length.lastName = Last name must be 35 characters or less
 contactName.error.invalid.lastName = Last name must only include letters a to z, apostrophes, slashes, ampersands and spaces
+
+contactEmailAddress.title = What is this person’s email address?
+contactEmailAddress.heading = What is {0} email address?
+contactEmailAddress.hint = We will use this email address to send confirmation of your disclosures.
+contactEmailAddress.checkYourAnswersLabel = What is {0} email address?
+contactEmailAddress.error.required = Enter an email address
+contactEmailAddress.error.length = Enter an email address that is 254 characters or less
+contactEmailAddress.error.email.invalid = Enter an email address in the correct format, like name@example.com
