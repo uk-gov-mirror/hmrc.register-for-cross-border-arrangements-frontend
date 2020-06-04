@@ -49,7 +49,7 @@ class WhatIsYourAddressUkController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val countries = Seq(countryListFactory.UK)
+      val countries = Seq(countryListFactory.uk)
       val form = formProvider(countries)
 
       val preparedForm = request.userAnswers.get(WhatIsYourAddressUkPage) match {
@@ -67,15 +67,15 @@ class WhatIsYourAddressUkController @Inject()(
   }
 
 
-  private def countryJsonList: Seq[JsObject] = Seq(Json.obj("text" -> countryListFactory.UK.description,
-    "value" -> countryListFactory.UK.code,
+  private def countryJsonList: Seq[JsObject] = Seq(Json.obj("text" -> countryListFactory.uk.description,
+    "value" -> countryListFactory.uk.code,
     "selected" -> true))
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
 
-      val countries = Seq(countryListFactory.UK)
+      val countries = Seq(countryListFactory.uk)
       val form = formProvider(countries)
 
 

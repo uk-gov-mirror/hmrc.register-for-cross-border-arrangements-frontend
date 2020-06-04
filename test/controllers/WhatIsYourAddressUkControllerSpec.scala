@@ -83,7 +83,7 @@ class WhatIsYourAddressUkControllerSpec extends SpecBase with MockitoSugar with 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      when(mockCountryFactory.UK).thenReturn(Country("valid","GB","United Kingdom"))
+      when(mockCountryFactory.uk).thenReturn(Country("valid","GB","United Kingdom"))
 
       val address = Address("value 1","value 2",Some("value 3"),Some("value 4"),Some("XX9 9XX"),
         Country("valid","GB","United Kingdom"))
