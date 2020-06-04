@@ -68,6 +68,35 @@ class IdentityConfirmedControllerSpec extends SpecBase with MockitoSugar with Js
       application.stop()
     }
 
+    "return OK and the correct view for a GET - Sole Trader business journey" in {
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+        .set(BusinessTypePage, BusinessType.NotSpecified).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val request = FakeRequest(GET, identityConfirmedRoute)
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+
+      val result = route(application, request).value
+
+      status(result) mustEqual OK
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      val expectedJson = Json.obj(
+        "nextPage" -> "/register-for-cross-border-arrangements-frontend/register/individual/with-id/nino"
+      )
+
+      templateCaptor.getValue mustEqual "identityConfirmed.njk"
+      jsonCaptor.getValue must containJson(expectedJson)
+
+      application.stop()
+    }
+
     "return OK and the correct view for a GET - business journey" in {
 
       when(mockRenderer.render(any(), any())(any()))
