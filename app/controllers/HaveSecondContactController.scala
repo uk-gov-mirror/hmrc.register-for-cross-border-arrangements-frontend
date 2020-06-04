@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.HaveSecondContactFormProvider
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, NormalMode}
 import navigation.Navigator
 import pages.{ContactNamePage, HaveSecondContactPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -49,25 +49,31 @@ class HaveSecondContactController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(HaveSecondContactPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
+
+      if (request.userAnswers.get(ContactNamePage).isEmpty){
+        Future(Redirect(routes.ContactNameController.onPageLoad(NormalMode))) }
+
+        else{
+          val preparedForm = request.userAnswers.get(HaveSecondContactPage) match {
+            case None => form
+            case Some(value) => form.fill(value)
+          }
+
+          val contactName = request.userAnswers.get(ContactNamePage) match {
+            case None => throw new Exception("Cannot retrieve contact name")
+            case Some(contactName) => s"${contactName.firstName + " " +contactName.secondName}"
+          }
+
+          val json = Json.obj(
+            "form"   -> preparedForm,
+            "mode"   -> mode,
+            "radios" -> Radios.yesNo(preparedForm("value")),
+            "contactName" -> contactName
+          )
+
+          renderer.render("haveSecondContact.njk", json).map(Ok(_))
+        }
       }
-
-      val contactName = request.userAnswers.get(ContactNamePage) match {
-        case None => throw new Exception("Cannot retrieve contact name")
-        case Some(contactName) => s"${contactName.firstName + " " +contactName.secondName}"
-      }
-
-      val json = Json.obj(
-        "form"   -> preparedForm,
-        "mode"   -> mode,
-        "radios" -> Radios.yesNo(preparedForm("value")),
-        "contactName" -> contactName
-      )
-
-      renderer.render("haveSecondContact.njk", json).map(Ok(_))
-  }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
