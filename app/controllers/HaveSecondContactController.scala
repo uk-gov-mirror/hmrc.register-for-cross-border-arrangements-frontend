@@ -49,26 +49,26 @@ class HaveSecondContactController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-
       if (request.userAnswers.get(ContactNamePage).isEmpty){
         Future(Redirect(routes.ContactNameController.onPageLoad(NormalMode))) }
 
         else{
+
+        val contactName = request.userAnswers.get(ContactNamePage).get
+        val updatedContactName = s"${contactName.firstName} ${contactName.secondName}"
+
           val preparedForm = request.userAnswers.get(HaveSecondContactPage) match {
             case None => form
-            case Some(value) => form.fill(value)
+            case Some(confirm) => form.fill(confirm)
           }
 
-          val contactName = request.userAnswers.get(ContactNamePage) match {
-            case None => throw new Exception("Cannot retrieve contact name")
-            case Some(contactName) => s"${contactName.firstName + " " +contactName.secondName}"
-          }
+
 
           val json = Json.obj(
             "form"   -> preparedForm,
             "mode"   -> mode,
-            "radios" -> Radios.yesNo(preparedForm("value")),
-            "contactName" -> contactName
+            "radios" -> Radios.yesNo(preparedForm("confirm")),
+            "contactName" -> updatedContactName
           )
 
           renderer.render("haveSecondContact.njk", json).map(Ok(_))
@@ -84,7 +84,7 @@ class HaveSecondContactController @Inject()(
           val json = Json.obj(
             "form"   -> formWithErrors,
             "mode"   -> mode,
-            "radios" -> Radios.yesNo(formWithErrors("value"))
+            "radios" -> Radios.yesNo(formWithErrors("confirm"))
           )
 
           renderer.render("haveSecondContact.njk", json).map(BadRequest(_))

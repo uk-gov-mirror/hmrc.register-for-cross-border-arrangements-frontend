@@ -26,9 +26,9 @@ class HaveSecondContactFormProviderSpec extends BooleanFieldBehaviours {
 
   val form = new HaveSecondContactFormProvider()()
 
-  ".value" - {
+  ".confirm" - {
 
-    val fieldName = "value"
+    val fieldName = "confirm"
 
     behave like booleanField(
       form,

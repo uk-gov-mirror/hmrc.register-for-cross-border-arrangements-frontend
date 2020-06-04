@@ -25,6 +25,6 @@ class HaveSecondContactFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Boolean] =
     Form(
-      "value" -> boolean("haveSecondContact.error.required")
+      "confirm" -> boolean("haveSecondContact.error.required")
     )
 }
