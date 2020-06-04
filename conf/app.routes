@@ -147,3 +147,8 @@ GET        /register/email-address                           controllers.Contact
 POST       /register/email-address                           controllers.ContactEmailAddressController.onSubmit(mode: Mode = NormalMode)
 GET        /register/change-email-address                    controllers.ContactEmailAddressController.onPageLoad(mode: Mode = CheckMode)
 POST       /register/change-email-address                    controllers.ContactEmailAddressController.onSubmit(mode: Mode = CheckMode)
+
+GET        /register/have-telephone                         controllers.TelephoneNumberQuestionController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/have-telephone                         controllers.TelephoneNumberQuestionController.onSubmit(mode: Mode = NormalMode)
+GET        /register/change-have-telephone                  controllers.TelephoneNumberQuestionController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/change-have-telephone                  controllers.TelephoneNumberQuestionController.onSubmit(mode: Mode = CheckMode)

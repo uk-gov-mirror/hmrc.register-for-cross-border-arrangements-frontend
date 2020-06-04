@@ -45,7 +45,8 @@ class Navigator @Inject()() {
     case BusinessWithoutIDNamePage => _ => Some(routes.BusinessAddressController.onPageLoad(NormalMode))
     case IsThisYourBusinessPage => _ => Some(routes.IdentityConfirmedController.onPageLoad())
     case ContactNamePage => _ => Some(routes.ContactEmailAddressController.onPageLoad(NormalMode))
-    case ContactEmailAddressPage => _ => Some(routes.ContactEmailAddressController.onPageLoad(NormalMode)) // TODO redirect to telephone page once created
+    case ContactEmailAddressPage => _ => Some(routes.TelephoneNumberQuestionController.onPageLoad(NormalMode))
+    case TelephoneNumberQuestionPage => telephoneNumberQuestionRoutes
     case _ => _ => Some(routes.IndexController.onPageLoad())
   }
 
@@ -97,6 +98,20 @@ class Navigator @Inject()() {
       case Individual => routes.DoYouHaveANationalInsuranceNumberController.onPageLoad(NormalMode)
       case Business => routes.BusinessWithoutIDNameController.onPageLoad(NormalMode)
     }
+
+  private def telephoneNumberQuestionRoutes(ua: UserAnswers): Option[Call] = {
+    val organisationJourney: Boolean = ua.get(BusinessTypePage) match {
+      case Some(businessType) if businessType.equals(BusinessType.NotSpecified) => false
+      case Some(_) => true
+      case None => false
+    }
+
+    ua.get(TelephoneNumberQuestionPage) map {
+      case true => routes.ContactEmailAddressController.onPageLoad(NormalMode) //TODO Redirect to /register/phone when ready
+      case false if organisationJourney => routes.IndexController.onPageLoad()  //TODO Redirect to /register/have-second-contact when ready
+      case false => routes.CheckYourAnswersController.onPageLoad()
+    }
+  }
 
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
