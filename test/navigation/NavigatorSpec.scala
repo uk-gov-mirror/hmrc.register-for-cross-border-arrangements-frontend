@@ -453,7 +453,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                 .value
 
             navigator
-              .nextPage(ContactEmailAddressPage, NormalMode, updatedAnswers)
+              .nextPage(SecondaryContactNamePage, NormalMode, updatedAnswers)
               .mustBe(routes.ContactEmailAddressController.onPageLoad(NormalMode))
         }
       }

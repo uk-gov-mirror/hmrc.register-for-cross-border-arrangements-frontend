@@ -25,7 +25,7 @@ class SecondaryContactNameFormProviderSpec extends StringFieldBehaviours {
   val lengthKey = "secondaryContactName.error.length"
   val invalidKey = "secondaryContactName.error.invalid"
   val maxLength = 50
-  val secondaryContactNameRegex = """^[a-zA-Z0-9 '&\\\\/]*$"""
+  val secondaryContactNameRegex = """^[a-zA-Z0-9 "'&,\-\\\/]*$"""
 
   val form = new SecondaryContactNameFormProvider()()
 
