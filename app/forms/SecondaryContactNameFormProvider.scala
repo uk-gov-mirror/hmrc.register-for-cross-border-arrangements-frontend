@@ -22,7 +22,7 @@ import forms.mappings.Mappings
 import play.api.data.Form
 
 class SecondaryContactNameFormProvider @Inject() extends Mappings {
-  private val nameRegex = """^[a-zA-Z0-9 '&\\\\/]*$"""
+  private val nameRegex = """^[a-zA-Z0-9 "'&,\-\\\/]*$"""
   private val maxLength = 50
 
   def apply(): Form[String] =
