@@ -373,8 +373,6 @@ contactEmailAddress.error.required = Enter an email address
 contactEmailAddress.error.length = Enter an email address that is 254 characters or less
 contactEmailAddress.error.email.invalid = Enter an email address in the correct format, like name@example.com
 
-contactTelephoneNumber.title = contactTelephoneNumber
-contactTelephoneNumber.heading = contactTelephoneNumber
 contactTelephoneNumber.title = What is this person’s telephone number?
 contactTelephoneNumber.heading = What is {0} telephone number?
 contactTelephoneNumber.checkYourAnswersLabel = What is {0} telephone number?
