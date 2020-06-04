@@ -430,6 +430,22 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
             .mustBe(routes.CheckYourAnswersController.onPageLoad())
       }
 
+
+      "must go from the What is the name of the individual or team we should contact page to How can we contact them page" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers
+                .set(SecondaryContactNamePage, "DAC6 Team")
+                .success
+                .value
+
+            navigator
+              .nextPage(ContactEmailAddressPage, NormalMode, updatedAnswers)
+              .mustBe(routes.ContactEmailAddressController.onPageLoad(NormalMode))
+        }
+      }
     }
 
 
