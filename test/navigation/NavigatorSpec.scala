@@ -338,7 +338,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(WhatIsYourAddressUkPage, NormalMode, answers)
-          //email controller TODO add when ready
+              .mustBe(routes.ContactEmailAddressController.onPageLoad(NormalMode))
         }
       }
 

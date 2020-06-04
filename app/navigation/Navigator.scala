@@ -43,7 +43,7 @@ class Navigator @Inject()() {
     case NonUkNamePage => _ => Some(routes.DateOfBirthController.onPageLoad(NormalMode))
     case BusinessAddressPage => _ =>   Some(routes.CheckYourAnswersController.onPageLoad())
     case BusinessWithoutIDNamePage => _ => Some(routes.BusinessAddressController.onPageLoad(NormalMode))
-    case WhatIsYourAddressUkPage => _ => Some(routes.IndexController.onPageLoad()) //Email controller TODO Add when ready
+    case WhatIsYourAddressUkPage => _ => Some(routes.ContactEmailAddressController.onPageLoad(NormalMode))
     case IsThisYourBusinessPage => _ => Some(routes.IdentityConfirmedController.onPageLoad())
     case ContactNamePage => _ => Some(routes.ContactEmailAddressController.onPageLoad(NormalMode))
     case ContactEmailAddressPage => _ => Some(routes.ContactEmailAddressController.onPageLoad(NormalMode)) // TODO redirect to telephone page once created
