@@ -283,7 +283,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
-      "must go from the Do You Live in the UK page for people who do to the Postcode page" in {
+      "must go from the Do You Live in the UK page for people who answer yes to What is your address Uk?" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
 
@@ -295,7 +295,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(DoYouLiveInTheUKPage, NormalMode, updatedAnswers)
-              .mustBe(routes.IndividualUKPostcodeController.onPageLoad(NormalMode))
+              .mustBe(routes.WhatIsYourAddressUkController.onPageLoad(NormalMode))
         }
       }
 

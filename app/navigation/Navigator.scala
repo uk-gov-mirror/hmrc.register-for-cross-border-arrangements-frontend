@@ -79,7 +79,7 @@ class Navigator @Inject()() {
 
   private def doYouLiveInTheUKRoutes(ua: UserAnswers): Option[Call] =
     ua.get(DoYouLiveInTheUKPage) map {
-      case true  => routes.IndividualUKPostcodeController.onPageLoad(NormalMode)
+      case true  => routes.WhatIsYourAddressUkController.onPageLoad(NormalMode)
       case false => routes.WhatIsYourAddressController.onPageLoad(NormalMode)
     }
 

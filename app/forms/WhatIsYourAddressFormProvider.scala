@@ -24,15 +24,17 @@ import play.api.data.Forms._
 
 class WhatIsYourAddressFormProvider @Inject() extends Mappings {
 
+  val addressLength = 50
+
    def apply(countryList: Seq[Country]): Form[Address] = Form(
      mapping(
       "addressLine1" -> textNonWhitespaceOnly("whatIsYourAddress.error.addressLine1.required")
-        .verifying(maxLength(35, "whatIsYourAddress.error.addressLine1.length")),
+        .verifying(maxLength(addressLength, "whatIsYourAddress.error.addressLine1.length")),
       "addressLine2" -> textNonWhitespaceOnly("whatIsYourAddress.error.addressLine2.required")
-        .verifying(maxLength(35, "whatIsYourAddress.error.addressLine2.length")),
-       "addressLine3" -> optionalText().verifying(maxLength(35, "whatIsYourAddress.error.addressLine3.length")),
-       "addressLine4" -> optionalText().verifying(maxLength(35, "whatIsYourAddress.error.addressLine4.length")),
-       "postCode" -> optionalText().verifying(maxLength(10,"WhatIsYourAddress.error.postcode.length")),
+        .verifying(maxLength(addressLength, "whatIsYourAddress.error.addressLine2.length")),
+       "addressLine3" -> optionalText().verifying(maxLength(addressLength, "whatIsYourAddress.error.addressLine3.length")),
+       "addressLine4" -> optionalText().verifying(maxLength(addressLength, "whatIsYourAddress.error.addressLine4.length")),
+       "postCode" -> optionalText().verifying(maxLength(10,"whatIsYourAddress.error.postcode.length")),
     "country" ->  text("whatIsYourAddress.error.country.required")
     .verifying("whatIsYourAddress.error.country.required", value => countryList.exists(_.code == value))
     .transform[Country](value => countryList.find(_.code == value).get, _.code)

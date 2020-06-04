@@ -22,11 +22,6 @@ import play.api.data.FormError
 
 class WhatIsYourAddressUkFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "whatIsYourAddressUk.error.required"
-  val lengthKey = "whatIsYourAddressUk.error.length"
-  val maxLength = 35
-
-
   val countries = Seq(Country("valid", "AD", "Andorra"))
   val form = new WhatIsYourAddressUkFormProvider()(countries)
 
@@ -35,7 +30,7 @@ class WhatIsYourAddressUkFormProviderSpec extends StringFieldBehaviours {
     val fieldName = "addressLine1"
     val requiredKey = "whatIsYourUkAddress.error.addressLine1.required"
     val lengthKey = "whatIsYourUkAddress.error.addressLine1.length"
-    val maxLength = 35
+    val maxLength = 50
 
     behave like fieldThatBindsValidData(
       form,
@@ -62,7 +57,7 @@ class WhatIsYourAddressUkFormProviderSpec extends StringFieldBehaviours {
     val fieldName = "addressLine2"
     val requiredKey = "whatIsYourUkAddress.error.addressLine2.required"
     val lengthKey = "whatIsYourUkAddress.error.addressLine2.length"
-    val maxLength = 35
+    val maxLength = 50
 
     behave like fieldThatBindsValidData(
       form,
