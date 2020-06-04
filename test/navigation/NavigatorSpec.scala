@@ -360,7 +360,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(ContactEmailAddressPage, NormalMode, updatedAnswers)
-              .mustBe(routes.ContactEmailAddressController.onPageLoad(NormalMode)) // TODO - change this to the next pages Controller once created
+              .mustBe(routes.TelephoneNumberQuestionController.onPageLoad(NormalMode))
         }
       }
 
@@ -376,7 +376,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(TelephoneNumberQuestionPage, NormalMode, updatedAnswers)
-              .mustBe(routes.ConfirmBusinessController.onPageLoad(NormalMode))//TODO redirect to phone number page
+              .mustBe(routes.ContactEmailAddressController.onPageLoad(NormalMode))//TODO redirect to phone number page
         }
       }
 

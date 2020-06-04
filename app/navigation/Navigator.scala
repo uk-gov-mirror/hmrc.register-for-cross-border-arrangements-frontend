@@ -45,7 +45,7 @@ class Navigator @Inject()() {
     case BusinessWithoutIDNamePage => _ => Some(routes.BusinessAddressController.onPageLoad(NormalMode))
     case IsThisYourBusinessPage => _ => Some(routes.IdentityConfirmedController.onPageLoad())
     case ContactNamePage => _ => Some(routes.ContactEmailAddressController.onPageLoad(NormalMode))
-    case ContactEmailAddressPage => _ => Some(routes.ContactEmailAddressController.onPageLoad(NormalMode)) // TODO redirect to telephone page once created
+    case ContactEmailAddressPage => _ => Some(routes.TelephoneNumberQuestionController.onPageLoad(NormalMode))
     case TelephoneNumberQuestionPage => telephoneNumberQuestionRoutes
     case _ => _ => Some(routes.IndexController.onPageLoad())
   }
@@ -107,7 +107,7 @@ class Navigator @Inject()() {
     }
 
     ua.get(TelephoneNumberQuestionPage) map {
-      case true => routes.ConfirmBusinessController.onPageLoad(NormalMode) //TODO Redirect to /register/phone when ready
+      case true => routes.ContactEmailAddressController.onPageLoad(NormalMode) //TODO Redirect to /register/phone when ready
       case false if organisationJourney => routes.IndexController.onPageLoad()  //TODO Redirect to /register/have-second-contact when ready
       case false => routes.CheckYourAnswersController.onPageLoad()
     }
