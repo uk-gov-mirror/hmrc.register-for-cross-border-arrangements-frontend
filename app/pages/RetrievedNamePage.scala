@@ -14,19 +14,13 @@
  * limitations under the License.
  */
 
-package forms
+package pages
 
-import forms.mappings.Mappings
-import javax.inject.Inject
-import play.api.data.Form
+import play.api.libs.json.JsPath
 
-class BusinessNameRegisteredBusinessFormProvider @Inject() extends Mappings {
-  private val nameRegex = "^[a-zA-Z0-9 '&\\/]{1,105}$"
+case object RetrievedNamePage extends QuestionPage[String] {
 
-  def apply(): Form[String] =
-    Form(
-      "value" ->  textNonWhitespaceOnly("businessName.registered.error.required")
-        .verifying(regexp(nameRegex,"businessName.registered.error.invalid"))
-        .verifying(maxLength(105, "businessName.registered.error.length"))
-    )
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "retrievedNamePage"
 }

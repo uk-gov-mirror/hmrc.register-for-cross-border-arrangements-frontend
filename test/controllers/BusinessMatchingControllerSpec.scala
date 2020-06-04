@@ -21,7 +21,7 @@ import java.time.LocalDate
 import base.SpecBase
 import generators.Generators
 import matchers.JsonMatchers
-import models.{BusinessAddress, BusinessType, Name, UniqueTaxpayerReference, UserAnswers}
+import models.{BusinessAddress, BusinessDetails, BusinessType, Name, UniqueTaxpayerReference, UserAnswers}
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
@@ -133,10 +133,12 @@ class BusinessMatchingControllerSpec extends SpecBase
             bind[BusinessMatchingService].toInstance(mockBusinessMatchingService)
           ).build()
 
-        val businessAddress = BusinessAddress("1 Address Street", None, None, None, "NE11 1BB", "GB")
+        val businessDetails = BusinessDetails(
+          name = "My Company",
+          address = BusinessAddress("1 Address Street", None, None, None, "NE11 1BB", "GB"))
 
         when(mockBusinessMatchingService.sendBusinessMatchingInformation(any())(any(), any()))
-          .thenReturn(Future.successful(Some(businessAddress)))
+          .thenReturn(Future.successful(Some(businessDetails)))
 
         val result = route(application, getRequest(businessMatchingRoute)).value
 

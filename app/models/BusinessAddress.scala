@@ -19,6 +19,17 @@ package models
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{JsPath, Json, Reads, Writes}
 
+case class BusinessDetails(name: String, address: BusinessAddress)
+
+object BusinessDetails {
+  implicit lazy val reads: Reads[BusinessDetails] = (
+    (JsPath \ "organisation" \ "organisationName").read[String] and
+      (JsPath \ "address").read[BusinessAddress]
+    )(BusinessDetails.apply _)
+
+  implicit lazy val writes: Writes[BusinessDetails] = Json.writes[BusinessDetails]
+}
+
 case class BusinessAddress(
   addressLine1: String,
   addressLine2: Option[String],
@@ -42,12 +53,12 @@ case class BusinessAddress(
 object BusinessAddress {
 
   implicit lazy val reads: Reads[BusinessAddress] = (
-      (JsPath \ "address" \ "addressLine1").read[String] and
-      (JsPath \ "address" \ "addressLine2").readNullable[String] and
-      (JsPath \ "address" \ "addressLine3").readNullable[String] and
-      (JsPath \ "address" \ "addressLine4").readNullable[String] and
-      (JsPath \ "address" \ "postalCode").read[String] and
-      (JsPath \ "address" \ "countryCode").read[String]
+      (JsPath \ "addressLine1").read[String] and
+      (JsPath \ "addressLine2").readNullable[String] and
+      (JsPath \ "addressLine3").readNullable[String] and
+      (JsPath \ "addressLine4").readNullable[String] and
+      (JsPath \ "postalCode").read[String] and
+      (JsPath \ "countryCode").read[String]
     )(BusinessAddress.apply _)
 
   implicit lazy val writes: Writes[BusinessAddress] = Json.writes[BusinessAddress]

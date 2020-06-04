@@ -24,7 +24,7 @@ class BusinessNameRegisteredBusinessFormProviderSpec extends StringFieldBehaviou
   val requiredKey = "businessName.registered.error.required"
   val lengthKey = "businessName.registered.error.length"
   val invalidKey = "businessName.registered.error.invalid"
-  val businessNameRegex = "^[a-zA-Z0-9 '&\\\\/]{1,105}$"
+  val businessNameRegex = "^[a-zA-Z0-9 '&\\/]{1,105}$"
   val maxLength = 105
 
   val form = new BusinessNameRegisteredBusinessFormProvider()()

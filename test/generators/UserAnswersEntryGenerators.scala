@@ -70,7 +70,7 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
     Arbitrary {
       for {
         page  <- arbitrary[BusinessNamePage.type]
-        value <- RegexpGen.from("^[a-zA-Z0-9 '&\\\\/]{1,105}$")
+        value <- RegexpGen.from("^[a-zA-Z0-9 '&\\/]{1,105}$")
           .suchThat(_.nonEmpty)
           .map(Json.toJson(_))
       } yield (page, value)

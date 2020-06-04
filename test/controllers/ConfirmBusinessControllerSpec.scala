@@ -25,7 +25,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.{BusinessAddressPage, ConfirmBusinessPage}
+import pages.{BusinessAddressPage, ConfirmBusinessPage, RetrievedNamePage}
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -54,7 +54,11 @@ class ConfirmBusinessControllerSpec extends SpecBase with MockitoSugar with Nunj
         .thenReturn(Future.successful(Html("")))
 
       val address = Address("", "", None, None, None, Country("", "", ""))
-      val userAnswers = UserAnswers(userAnswersId).set(BusinessAddressPage, address).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(BusinessAddressPage, address)
+        .success.value
+        .set(RetrievedNamePage, "My Business")
+        .success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, confirmBusinessRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -86,6 +90,8 @@ class ConfirmBusinessControllerSpec extends SpecBase with MockitoSugar with Nunj
       val address = Address("", "", None, None, None, Country("", "", ""))
       val userAnswers = UserAnswers(userAnswersId)
         .set(BusinessAddressPage, address)
+        .success.value
+        .set(RetrievedNamePage, "My Business")
         .success.value
         .set(ConfirmBusinessPage, true)
         .success.value

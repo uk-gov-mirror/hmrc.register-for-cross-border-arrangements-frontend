@@ -21,7 +21,7 @@ import forms.ConfirmBusinessFormProvider
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
-import pages.{BusinessAddressPage, ConfirmBusinessPage}
+import pages.{BusinessAddressPage, ConfirmBusinessPage, RetrievedNamePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -53,9 +53,13 @@ class ConfirmBusinessController @Inject()(
         case None => form
         case Some(value) => form.fill(value)
       }
+
+      val businessName = request.userAnswers.get(RetrievedNamePage).getOrElse(throw new Exception("Cannot retrieve business name"))
       val addressModel = request.userAnswers.get(BusinessAddressPage).getOrElse(throw new Exception("Cannot retrieve business address"))
 
-      val address = s"""<div><p>${addressModel.addressLine1}</p>
+      val address = s"""<div>
+                       |<p>$businessName</p>
+                       |<p>${addressModel.addressLine1}</p>
                        |<p>${addressModel.addressLine2}</p>
                        |<p>${addressModel.addressLine3.getOrElse("")}</p>
                        |<p>${addressModel.addressLine4.getOrElse("")}</p>

@@ -18,11 +18,11 @@ package controllers
 
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import javax.inject.Inject
-import models.{BusinessType, Mode, NormalMode}
+import models.{Mode, NormalMode}
 import navigation.Navigator
-import pages.{BusinessAddressPage, BusinessNamePage, BusinessTypePage, IsThisYourBusinessPage, UniqueTaxpayerReferencePage}
+import pages._
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import services.BusinessMatchingService
@@ -66,10 +66,11 @@ class BusinessMatchingController @Inject()(
       request.userAnswers.get(UniqueTaxpayerReferencePage) match {
         case Some(_) =>
           businessMatchingService.sendBusinessMatchingInformation(request.userAnswers) flatMap {
-            case Some(address) =>
+            case Some(details) =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(BusinessAddressPage, address.toAddress))
-                _              <- sessionRepository.set(updatedAnswers)
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(BusinessAddressPage, details.address.toAddress))
+                updatedNameAnswers <- Future.fromTry(updatedAnswers.set(RetrievedNamePage, details.name))
+                _              <- sessionRepository.set(updatedNameAnswers)
               } yield {
                 Redirect(routes.ConfirmBusinessController.onPageLoad(NormalMode))
               }
