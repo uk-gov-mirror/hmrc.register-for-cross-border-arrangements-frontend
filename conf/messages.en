@@ -378,4 +378,4 @@ telephoneNumber.business.heading = Does {0} have a telephone number?
 telephoneNumber.individual.title = Do you have a telephone number?
 telephoneNumber.individual.heading = Do you have a telephone number?
 telephoneNumber.checkYourAnswersLabel = Do you have a telephone number?
-telephoneNumber.error.required = Select yes if you have a telephone number
+telephoneNumber.error.required = Select yes if there is a telephone number

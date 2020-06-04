@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-package forms
+package helpers
 
-import javax.inject.Inject
+import javax.inject.Singleton
+import models.{BusinessType, UserAnswers}
+import pages.BusinessTypePage
 
-import forms.mappings.Mappings
-import play.api.data.Form
+@Singleton
+class JourneyHelpers {
 
-class TelephoneNumberQuestionFormProvider @Inject() extends Mappings {
+  def organisationJourney(ua: UserAnswers): Boolean = ua.get(BusinessTypePage) match {
+    case Some(businessType) if businessType.equals(BusinessType.NotSpecified) => false
+    case Some(_) => true
+    case None => false
+  }
 
-  def apply(): Form[Boolean] =
-    Form(
-      "confirm" -> boolean("telephoneNumberQuestion.error.required")
-    )
 }

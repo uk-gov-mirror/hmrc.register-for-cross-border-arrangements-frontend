@@ -33,7 +33,7 @@
 
           {{ govukRadios({
             classes: "govuk-radios--inline",
-            name: 'value',
+            name: 'confirm',
             fieldset: {
               legend: {
                 text: heading,
@@ -42,19 +42,7 @@
               }
             },
             items: radios,
-            errorMessage: form.value.error,
-            items: [
-              {
-                id: "confirm-yes",
-                value: "true",
-                text: "Yes"
-              },
-              {
-                id: "confirm-no",
-                value: "false",
-                text: "No"
-              }
-            ]
+            errorMessage: form.confirm.error
           }) }}
 
           {{ govukButton({

@@ -26,9 +26,9 @@ class TelephoneNumberQuestionFormProviderSpec extends BooleanFieldBehaviours {
 
   val form = new TelephoneNumberQuestionFormProvider()()
 
-  ".value" - {
+  ".confirm" - {
 
-    val fieldName = "value"
+    val fieldName = "confirm"
 
     behave like booleanField(
       form,
