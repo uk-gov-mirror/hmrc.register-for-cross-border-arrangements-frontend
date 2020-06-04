@@ -49,6 +49,7 @@ class Navigator @Inject()() {
     case TelephoneNumberQuestionPage => telephoneNumberQuestionRoutes
     case ContactEmailAddressPage => _ => Some(routes.TelephoneNumberQuestionController.onPageLoad(NormalMode))
     case ContactTelephoneNumberPage => _ => Some(routes.ContactTelephoneNumberController.onPageLoad(NormalMode)) //TODO Redirect to Secondary Contact Page when created & fix test
+    case SecondaryContactNamePage => _ => Some(routes.ContactEmailAddressController.onPageLoad(NormalMode)) // TODO redirect to /second-contact-reference and fix test
     case _ => _ => Some(routes.IndexController.onPageLoad())
   }
 

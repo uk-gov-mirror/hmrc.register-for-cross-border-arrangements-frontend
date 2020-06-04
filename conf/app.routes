@@ -162,3 +162,8 @@ GET        /register/telephone-number                           controllers.Cont
 POST       /register/telephone-number                           controllers.ContactTelephoneNumberController.onSubmit(mode: Mode = NormalMode)
 GET        /register/change-telephone-number                    controllers.ContactTelephoneNumberController.onPageLoad(mode: Mode = CheckMode)
 POST       /register/change-telephone-number                    controllers.ContactTelephoneNumberController.onSubmit(mode: Mode = CheckMode)
+
+GET        /register/second-contact-name                         controllers.SecondaryContactNameController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/second-contact-name                         controllers.SecondaryContactNameController.onSubmit(mode: Mode = NormalMode)
+GET        /register/change-second-contact-name                  controllers.SecondaryContactNameController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/change-second-contact-name                  controllers.SecondaryContactNameController.onSubmit(mode: Mode = CheckMode)
