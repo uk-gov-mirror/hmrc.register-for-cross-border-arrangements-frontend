@@ -388,24 +388,26 @@ contactName.error.required.lastName = Enter the last name of the person we shoul
 contactName.error.length.lastName = Last name must be 35 characters or less
 contactName.error.invalid.lastName = Last name must only include letters a to z, apostrophes, slashes, ampersands and spaces
 
-contactEmailAddress.title = What is this person’s email address?
-contactEmailAddress.heading = What is {0} email address?
+contactEmailAddress.individual.title = What is your email address?
+contactEmailAddress.individual.heading = What is your email address?
+contactEmailAddress.business.title = What is their email address?
+contactEmailAddress.business.heading = What is {0}’s email address?
 contactEmailAddress.hint = We will use this email address to send confirmation of your disclosures.
 contactEmailAddress.checkYourAnswersLabel = What is {0} email address?
 contactEmailAddress.error.required = Enter an email address
 contactEmailAddress.error.length = Enter an email address that is 254 characters or less
 contactEmailAddress.error.email.invalid = Enter an email address in the correct format, like name@example.com
 
-telephoneNumberQuestion.business.title = Does {0} have a telephone number?
+telephoneNumberQuestion.business.title = Do they have a telephone number?
 telephoneNumberQuestion.business.heading = Does {0} have a telephone number?
 telephoneNumberQuestion.individual.title = Do you have a telephone number?
 telephoneNumberQuestion.individual.heading = Do you have a telephone number?
 telephoneNumberQuestion.checkYourAnswersLabel = Do you have a telephone number?
 telephoneNumberQuestion.error.required = Select yes if there is a telephone number
 
-contactTelephoneNumber.title = What is your telephone number?
-contactTelephoneNumber.heading = What is your telephone number?
-contactTelephoneNumber.business.title = What is {0}’s telephone number?
+contactTelephoneNumber.individual.title = What is your telephone number?
+contactTelephoneNumber.individual.heading = What is your telephone number?
+contactTelephoneNumber.business.title = What is their telephone number?
 contactTelephoneNumber.business.heading = What is {0}’s telephone number?
 contactTelephoneNumber.checkYourAnswersLabel = What is this person’s telephone number?
 contactTelephoneNumber.hint = For international numbers include the country code.

@@ -61,11 +61,11 @@ class ContactTelephoneNumberController @Inject()(
 
           val (pageTitle, heading) = request.userAnswers.get(ContactNamePage) match {
             case Some(name) =>
-              (Messages("contactTelephoneNumber.business.title", s"${name.firstName} ${name.secondName}"),
+              (Messages("contactTelephoneNumber.business.title"),
                 Messages("contactTelephoneNumber.business.heading", s"${name.firstName} ${name.secondName}"))
             case None =>
-              (Messages("contactTelephoneNumber.title"),
-                Messages("contactTelephoneNumber.heading"))
+              (Messages("contactTelephoneNumber.individual.title"),
+                Messages("contactTelephoneNumber.individual.heading"))
           }
 
           val json = Json.obj(

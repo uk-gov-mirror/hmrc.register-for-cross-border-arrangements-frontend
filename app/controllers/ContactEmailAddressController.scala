@@ -18,11 +18,12 @@ package controllers
 
 import controllers.actions._
 import forms.ContactEmailAddressFormProvider
+import helpers.JourneyHelpers
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, NormalMode}
 import navigation.Navigator
-import pages.{ContactNamePage, ContactEmailAddressPage}
-import play.api.i18n.{I18nSupport, MessagesApi}
+import pages.{ContactEmailAddressPage, ContactNamePage}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
@@ -33,15 +34,16 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 import scala.concurrent.{ExecutionContext, Future}
 
 class ContactEmailAddressController @Inject()(
-                                               override val messagesApi: MessagesApi,
-                                               sessionRepository: SessionRepository,
-                                               navigator: Navigator,
-                                               identify: IdentifierAction,
-                                               getData: DataRetrievalAction,
-                                               requireData: DataRequiredAction,
-                                               formProvider: ContactEmailAddressFormProvider,
-                                               val controllerComponents: MessagesControllerComponents,
-                                               renderer: Renderer
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  navigator: Navigator,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: ContactEmailAddressFormProvider,
+  journeyHelpers: JourneyHelpers,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
   private val form = formProvider()
@@ -49,31 +51,44 @@ class ContactEmailAddressController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val contactName = request.userAnswers.get(ContactNamePage) match {
-        case None => "your"
-        case Some(contactName) => s"${contactName.firstName} ${contactName.secondName}’s"
+      (journeyHelpers.organisationJourney(request.userAnswers), request.userAnswers.get(ContactNamePage)) match {
+        case (true, None) => Future.successful(Redirect(routes.ContactNameController.onPageLoad(NormalMode)))
+        case _ =>
+          val preparedForm = request.userAnswers.get(ContactEmailAddressPage) match {
+            case None => form
+            case Some(value) => form.fill(value)
+          }
+
+          val (pageTitle, heading) = request.userAnswers.get(ContactNamePage) match {
+            case Some(name) =>
+              (Messages("contactEmailAddress.business.title"),
+                Messages("contactEmailAddress.business.heading", s"${name.firstName} ${name.secondName}"))
+            case None =>
+              (Messages("contactEmailAddress.individual.title"),
+                Messages("contactEmailAddress.individual.heading"))
+          }
+
+          val json = Json.obj(
+            "form" -> preparedForm,
+            "mode" -> mode,
+            "pageTitle" -> pageTitle,
+            "heading" -> heading
+          )
+
+          renderer.render("contactEmailAddress.njk", json).map(Ok(_))
       }
-
-      val preparedForm = request.userAnswers.get(ContactEmailAddressPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
-
-      val json = Json.obj(
-        "form" -> preparedForm,
-        "mode" -> mode,
-        "contactName" -> contactName
-      )
-
-      renderer.render("contactEmailAddress.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val contactName = request.userAnswers.get(ContactNamePage) match {
-        case None => "your"
-        case Some(contactName) => s"${contactName.firstName} ${contactName.secondName}’s"
+      val (pageTitle, heading) = request.userAnswers.get(ContactNamePage) match {
+        case Some(name) =>
+          (Messages("contactEmailAddress.business.title"),
+            Messages("contactEmailAddress.business.heading", s"${name.firstName} ${name.secondName}"))
+        case None =>
+          (Messages("contactEmailAddress.individual.title"),
+            Messages("contactEmailAddress.individual.heading"))
       }
 
       form.bindFromRequest().fold(
@@ -81,7 +96,9 @@ class ContactEmailAddressController @Inject()(
           val json = Json.obj(
             "form" -> formWithErrors,
             "mode" -> mode,
-            "contactName"-> contactName)
+            "pageTitle" -> pageTitle,
+            "heading" -> heading
+          )
 
           renderer.render("contactEmailAddress.njk", json).map(BadRequest(_))
         },
