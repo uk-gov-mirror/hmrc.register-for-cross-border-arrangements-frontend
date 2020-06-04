@@ -18,8 +18,9 @@ package controllers
 
 import controllers.actions._
 import forms.TelephoneNumberQuestionFormProvider
+import helpers.JourneyHelpers
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, NormalMode}
 import navigation.Navigator
 import pages.{ContactNamePage, TelephoneNumberQuestionPage}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
@@ -40,6 +41,7 @@ class TelephoneNumberQuestionController @Inject()(
                                                    getData: DataRetrievalAction,
                                                    requireData: DataRequiredAction,
                                                    formProvider: TelephoneNumberQuestionFormProvider,
+                                                   journeyHelpers: JourneyHelpers,
                                                    val controllerComponents: MessagesControllerComponents,
                                                    renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
@@ -49,29 +51,33 @@ class TelephoneNumberQuestionController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(TelephoneNumberQuestionPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
+      (journeyHelpers.organisationJourney(request.userAnswers), request.userAnswers.get(ContactNamePage)) match {
+        case (true, None) => Future.successful(Redirect(routes.ContactNameController.onPageLoad(NormalMode)))
+        case _ =>
+          val preparedForm = request.userAnswers.get(TelephoneNumberQuestionPage) match {
+            case None => form
+            case Some(value) => form.fill(value)
+          }
+
+          val (pageTitle, heading) = request.userAnswers.get(ContactNamePage) match {
+            case Some(name) =>
+              (Messages("telephoneNumberQuestion.business.title", s"${name.firstName} ${name.secondName}"),
+                Messages("telephoneNumberQuestion.business.heading", s"${name.firstName} ${name.secondName}"))
+            case None =>
+              (Messages("telephoneNumberQuestion.individual.title"),
+                Messages("telephoneNumberQuestion.individual.heading"))
+          }
+
+          val json = Json.obj(
+            "form" -> preparedForm,
+            "mode" -> mode,
+            "radios" -> Radios.yesNo(preparedForm("confirm")),
+            "pageTitle" -> pageTitle,
+            "heading" -> heading
+          )
+
+          renderer.render("telephoneNumberQuestion.njk", json).map(Ok(_))
       }
-
-      val (pageTitle, heading) = request.userAnswers.get(ContactNamePage) match {
-        case Some(name) =>
-          (Messages("telephoneNumberQuestion.business.title", s"${name.firstName} ${name.secondName}"),
-            Messages("telephoneNumberQuestion.business.heading", s"${name.firstName} ${name.secondName}"))
-        case None =>
-          (Messages("telephoneNumberQuestion.individual.title"),
-            Messages("telephoneNumberQuestion.individual.heading"))
-      }
-
-      val json = Json.obj(
-        "form"   -> preparedForm,
-        "mode"   -> mode,
-        "radios" -> Radios.yesNo(preparedForm("value")),
-        "pageTitle" -> pageTitle,
-        "heading" -> heading
-      )
-
-      renderer.render("telephoneNumberQuestion.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -92,7 +98,7 @@ class TelephoneNumberQuestionController @Inject()(
           val json = Json.obj(
             "form"   -> formWithErrors,
             "mode"   -> mode,
-            "radios" -> Radios.yesNo(formWithErrors("value")),
+            "radios" -> Radios.yesNo(formWithErrors("confirm")),
             "pageTitle" -> pageTitle,
             "heading" -> heading
           )
