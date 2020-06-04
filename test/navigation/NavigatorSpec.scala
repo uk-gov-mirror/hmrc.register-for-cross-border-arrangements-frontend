@@ -348,22 +348,6 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
-      "must go from the What is your telephone number page? to the Is there someone else we can contact? page" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-
-            val updatedAnswers =
-              answers
-                .set(ContactTelephoneNumberPage, "07540000000")
-                .success
-                .value
-
-            navigator
-              .nextPage(ContactTelephoneNumberPage, NormalMode, updatedAnswers)
-              .mustBe(routes.ConfirmBusinessController.onPageLoad(NormalMode))//TODO redirect is there secondary contact page
-        }
-      }
-
       "must go from the What is your email address? page to Do you have a telephone number? page" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
@@ -376,7 +360,23 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(ContactEmailAddressPage, NormalMode, updatedAnswers)
-              .mustBe(routes.ContactEmailAddressController.onPageLoad(NormalMode)) // TODO - change this to the next pages Controller once created
+              .mustBe(routes.ContactTelephoneNumberController.onPageLoad(NormalMode)) // TODO - change this to the next pages Controller once created
+        }
+      }
+
+      "must go from the What is your telephone number page? to the Is there someone else we can contact? page" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers
+                .set(ContactTelephoneNumberPage, "07540000000")
+                .success
+                .value
+
+            navigator
+              .nextPage(ContactTelephoneNumberPage, NormalMode, updatedAnswers)
+              .mustBe(routes.ContactTelephoneNumberController.onPageLoad(NormalMode))//TODO redirect is there secondary contact page
         }
       }
     }
