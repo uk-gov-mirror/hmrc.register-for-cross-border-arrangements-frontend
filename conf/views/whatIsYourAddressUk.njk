@@ -8,7 +8,7 @@
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(messages("whatIsYourAddress.title"), form.errors) }}
+  {{ title(messages("whatIsYourUkAddress.title"), form.errors) }}
 {% endblock %}
 
 {% block mainContent %}
@@ -28,17 +28,17 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.WhatIsYourAddressController.onSubmit(mode).url }}" method="post">
+        <form action="{{ routes.controllers.WhatIsYourAddressUkController.onSubmit(mode).url }}" method="post">
 
           {{ csrf() | safe }}
 
         <h1 class="govuk-heading-xl">
-          {{ messages("whatIsYourAddress.heading") }}
+          {{ messages("whatIsYourUkAddress.heading") }}
         </h1>
 
           {{ govukInput({
             label: {
-              text: messages('whatIsYourAddress.addressLine1')
+              text: messages('whatIsYourUkAddress.addressLine1')
             },
             id: "addressLine1",
             name: "addressLine1",
@@ -48,7 +48,7 @@
 
           {{ govukInput({
             label: {
-              text: messages('whatIsYourAddress.addressLine2')
+              text: messages('whatIsYourUkAddress.addressLine2')
             },
             id: "addressLine2",
             name: "addressLine2",
@@ -58,7 +58,7 @@
 
           {{ govukInput({
             label: {
-              text: messages('whatIsYourAddress.addressLine3')
+              text: messages('whatIsYourUkAddress.addressLine3')
             },
             id: "addressLine3",
             name: "addressLine3",
@@ -68,7 +68,7 @@
 
           {{ govukInput({
             label: {
-              text: messages('whatIsYourAddress.addressLine4')
+              text: messages('whatIsYourUkAddress.addressLine4')
             },
             id: "addressLine4",
             name: "addressLine4",
@@ -78,7 +78,7 @@
 
           {{ govukInput({
            label: {
-              text: messages('whatIsYourAddress.postCode')
+              text: messages('whatIsYourUkAddress.postCode')
            },
            classes: "govuk-input--width-10",
            id: "postalCode",
@@ -89,13 +89,11 @@
 
           {{ govukSelect({
             classes: "govuk-input--width-20 autocomplete",
-            label: {
-              text: messages('whatIsYourAddress.countryCode')
-            },
             id: "country",
             name: "country",
             errorMessage: form.country.error,
-            items: countries
+            items: countries,
+            attributes:{"hidden" : ""}
           }) }}
 
           {{ govukButton({

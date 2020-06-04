@@ -20,16 +20,16 @@ import forms.behaviours.StringFieldBehaviours
 import models.Country
 import play.api.data.FormError
 
-class WhatIsYourAddressFormProviderSpec extends StringFieldBehaviours {
+class WhatIsYourAddressUkFormProviderSpec extends StringFieldBehaviours {
 
   val countries = Seq(Country("valid", "AD", "Andorra"))
-  val form = new WhatIsYourAddressFormProvider()(countries)
+  val form = new WhatIsYourAddressUkFormProvider()(countries)
 
   ".addressLine1" - {
 
     val fieldName = "addressLine1"
-    val requiredKey = "whatIsYourAddress.error.addressLine1.required"
-    val lengthKey = "whatIsYourAddress.error.addressLine1.length"
+    val requiredKey = "whatIsYourUkAddress.error.addressLine1.required"
+    val lengthKey = "whatIsYourUkAddress.error.addressLine1.length"
     val maxLength = 50
 
     behave like fieldThatBindsValidData(
@@ -55,8 +55,8 @@ class WhatIsYourAddressFormProviderSpec extends StringFieldBehaviours {
   ".addressLine2" - {
 
     val fieldName = "addressLine2"
-    val requiredKey = "whatIsYourAddress.error.addressLine2.required"
-    val lengthKey = "whatIsYourAddress.error.addressLine2.length"
+    val requiredKey = "whatIsYourUkAddress.error.addressLine2.required"
+    val lengthKey = "whatIsYourUkAddress.error.addressLine2.length"
     val maxLength = 50
 
     behave like fieldThatBindsValidData(
@@ -77,5 +77,32 @@ class WhatIsYourAddressFormProviderSpec extends StringFieldBehaviours {
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
     )
+  }
+
+  ".postCode" - {
+
+    val fieldName = "postCode"
+    val requiredKey = "whatIsYourUkAddress.error.postcode.required"
+    val invalidKey = "whatIsYourUkAddress.error.postcode.invalid"
+    val maxLength = 8
+
+    behave like fieldThatBindsValidData(
+      form,
+      fieldName,
+      validPostCodes
+    )
+
+    behave like fieldWithValidatedRegex(
+      form,
+      fieldName,
+      maxLength = maxLength,
+      invalidError = FormError(fieldName, Seq(invalidKey))
+    )
+
+   behave like mandatoryField(
+     form,
+     fieldName,
+     requiredError = FormError(fieldName, requiredKey)
+   )
   }
 }

@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-package forms
+package pages
 
-import javax.inject.Inject
+import play.api.libs.json.JsPath
+import models.Address
 
-import forms.mappings.Mappings
-import play.api.data.Form
+case object WhatIsYourAddressUkPage extends QuestionPage[Address] {
 
-class PostCodeFormProvider @Inject() extends Mappings {
+  override def path: JsPath = JsPath \ toString
 
-  val regexPostCode = """^[A-Za-z]{1,2}[0-9Rr][0-9A-Za-z]?\s?[0-9][ABD-HJLNP-UW-Zabd-hjlnp-uw-z]{2}$"""
-
-  def apply(): Form[String] =
-    Form(
-      "value" -> text("postCode.error.required").verifying(regexp(regexPostCode,"postCode.error.invalid"))
-        .verifying(maxLength(10, "postCode.error.length"))
-    )
+  override def toString: String = "whatIsYourAddressUk"
 }

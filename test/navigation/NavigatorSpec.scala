@@ -283,7 +283,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
-      "must go from the Do You Live in the UK page for people who do to the Postcode page" in {
+      "must go from the Do You Live in the UK page for people who answer yes to What is your address Uk?" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
 
@@ -295,7 +295,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(DoYouLiveInTheUKPage, NormalMode, updatedAnswers)
-              .mustBe(routes.IndividualUKPostcodeController.onPageLoad(NormalMode))
+              .mustBe(routes.WhatIsYourAddressUkController.onPageLoad(NormalMode))
         }
       }
 
@@ -328,6 +328,17 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
             navigator
               .nextPage(BusinessWithoutIDNamePage, NormalMode, updatedAnswers)
               .mustBe(routes.BusinessAddressController.onPageLoad(NormalMode))
+        }
+      }
+
+
+      "must go from what is your address uk page to enter your email page" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            navigator
+              .nextPage(WhatIsYourAddressUkPage, NormalMode, answers)
+              .mustBe(routes.ContactEmailAddressController.onPageLoad(NormalMode))
         }
       }
 

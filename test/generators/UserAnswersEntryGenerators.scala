@@ -30,6 +30,13 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
 
   self: Generators =>
 
+  implicit lazy val arbitraryWhatIsYourAddressUkUserAnswersEntry: Arbitrary[(WhatIsYourAddressUkPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[WhatIsYourAddressUkPage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
   implicit lazy val arbitraryContactEmailAddressUserAnswersEntry: Arbitrary[(ContactEmailAddressPage.type, JsValue)] =
     Arbitrary {
       for {

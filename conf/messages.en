@@ -217,6 +217,7 @@ nino.checkYourAnswersLabel = What is your National Insurance number?
 nino.error.required = Enter National Insurance number
 nino.error.length = Nino must be 9 characters or less
 
+
 name.title = What is your name?
 name.heading = What is your name?
 name.checkYourAnswersLabel = What is your name?
@@ -261,15 +262,16 @@ whatIsYourAddress.addressLine4 = Address line 4 (optional)
 whatIsYourAddress.postCode = Postal code (optional)
 whatIsYourAddress.countryCode = Country
 
+
 whatIsYourAddress.checkYourAnswersLabel = What is your home address?
 whatIsYourAddress.error.addressLine1.required = Enter address line 1
 whatIsYourAddress.error.addressLine2.required = Enter address line 2
-whatIsYourAddress.error.country.required = Select country
-whatIsYourAddress.error.addressLine1.length = Address line 1 must be 35 characters or less
-whatIsYourAddress.error.addressLine2.length = Address Line 2 must be 35 characters or less
-whatIsYourAddress.error.addressLine3.length = Address Line 3 must be 35 characters or less
-whatIsYourAddress.error.addressLine4.length = Address Line 4 must be 35 characters or less
-whatIsYourAddress.error.postcode.length = Postcode must be 10 characters or less
+whatIsYourAddress.error.country.required = Select a country
+whatIsYourAddress.error.addressLine1.length = Address line 1 must be 50 characters or less
+whatIsYourAddress.error.addressLine2.length = Address Line 2 must be 50 characters or less
+whatIsYourAddress.error.addressLine3.length = Address Line 3 (optional) must be 50 characters or less
+whatIsYourAddress.error.addressLine4.length = Address Line 4 (optional) must be 50 characters or less
+whatIsYourAddress.error.postcode.length = Postal code (optional) must be 10 characters or less
 
 businessAddress.title = What is the main address of your business?
 businessAddress.heading = What is the main address of your business?
@@ -347,6 +349,27 @@ businessNotConfirmed.button = Try again
 
 identityConfirmed.title = We have confirmed your identity
 identityConfirmed.heading = We have confirmed your identity
+
+whatIsYourUkAddress.title = What is your home address?
+whatIsYourUkAddress.heading = What is your home address?
+whatIsYourUkAddress.addressLine1 = Address line 1
+whatIsYourUkAddress.addressLine2 = Address line 2
+whatIsYourUkAddress.addressLine3 = Address line 3 (optional)
+whatIsYourUkAddress.addressLine4 = Address line 4 (optional)
+whatIsYourUkAddress.postCode = Postcode
+whatIsYourUkAddress.countryCode = Country
+
+whatIsYourUkAddress.checkYourAnswersLabel = What is your home address?
+whatIsYourUkAddress.error.addressLine1.required = Enter address line 1
+whatIsYourUkAddress.error.addressLine2.required = Enter address line 2
+whatIsYourUkAddress.error.country.required = Select country
+whatIsYourUkAddress.error.addressLine1.length = Address line 1 must be 50 characters or less
+whatIsYourUkAddress.error.addressLine2.length = Address Line 2 must be 50 characters or less
+whatIsYourUkAddress.error.addressLine3.length = Address Line 3 (optional) must be 50 characters or less
+whatIsYourUkAddress.error.addressLine4.length = Address Line 4 (optional) must be 50 characters or less
+whatIsYourUkAddress.error.postcode.required = Enter a postcode
+whatIsYourUkAddress.error.postcode.length = Postcode must be 8 characters or less
+whatIsYourUkAddress.error.postcode.invalid = Enter a postcode, like AA1 1AA
 
 confirmBusiness.title = Is this your business?
 confirmBusiness.heading = Is this your business?

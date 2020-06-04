@@ -54,4 +54,8 @@ trait Mappings extends Formatters with Constraints {
                            requiredKey: String,
                            args: Seq[String] = Seq.empty): FieldMapping[LocalDate] =
     of(new LocalDateFormatter(invalidKey, allRequiredKey, twoRequiredKey, requiredKey, args))
+
+  protected def addressPostcode(invalidKey: String = "error.invalid", requiredKey: String = "postCode.error.required"): FieldMapping[Option[String]] = {
+    of(addressPostcodeFormatter(invalidKey, requiredKey))
+  }
 }

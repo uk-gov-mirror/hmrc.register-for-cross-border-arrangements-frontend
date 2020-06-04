@@ -28,6 +28,22 @@ import utils.CheckYourAnswersHelper._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
+
+  def whatIsYourAddressUk: Option[Row] = userAnswers.get(WhatIsYourAddressUkPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"whatIsYourAddressUk.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(lit"$answer.lines"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.WhatIsYourAddressUkController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whatIsYourAddressUk.checkYourAnswersLabel"))
+                      )
+        )
+      )
+  }
+
   def telephoneNumberQuestion: Option[Row] = userAnswers.get(TelephoneNumberQuestionPage) map {
     answer =>
       Row(
@@ -38,6 +54,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
             content            = msg"site.edit",
             href               = routes.TelephoneNumberQuestionController.onPageLoad(CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"telephoneNumberQuestion.checkYourAnswersLabel"))
+
           )
         )
       )

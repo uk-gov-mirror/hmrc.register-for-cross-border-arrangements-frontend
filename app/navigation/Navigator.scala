@@ -43,6 +43,7 @@ class Navigator @Inject()() {
     case NonUkNamePage => _ => Some(routes.DateOfBirthController.onPageLoad(NormalMode))
     case BusinessAddressPage => _ =>   Some(routes.CheckYourAnswersController.onPageLoad())
     case BusinessWithoutIDNamePage => _ => Some(routes.BusinessAddressController.onPageLoad(NormalMode))
+    case WhatIsYourAddressUkPage => _ => Some(routes.ContactEmailAddressController.onPageLoad(NormalMode))
     case IsThisYourBusinessPage => _ => Some(routes.IdentityConfirmedController.onPageLoad())
     case ContactNamePage => _ => Some(routes.ContactEmailAddressController.onPageLoad(NormalMode))
     case ContactEmailAddressPage => _ => Some(routes.TelephoneNumberQuestionController.onPageLoad(NormalMode))
@@ -89,7 +90,7 @@ class Navigator @Inject()() {
 
   private def doYouLiveInTheUKRoutes(ua: UserAnswers): Option[Call] =
     ua.get(DoYouLiveInTheUKPage) map {
-      case true  => routes.IndividualUKPostcodeController.onPageLoad(NormalMode)
+      case true  => routes.WhatIsYourAddressUkController.onPageLoad(NormalMode)
       case false => routes.WhatIsYourAddressController.onPageLoad(NormalMode)
     }
 

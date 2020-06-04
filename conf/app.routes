@@ -96,10 +96,10 @@ POST       /register/individual/without-id/uk-postcode        controllers.Indivi
 GET        /register/individual/without-id/change-uk-postcode controllers.IndividualUKPostcodeController.onPageLoad(mode: Mode = CheckMode)
 POST       /register/individual/without-id/change-uk-postcode controllers.IndividualUKPostcodeController.onSubmit(mode: Mode = CheckMode)
 
-GET        /register/individual/without-id/address              controllers.WhatIsYourAddressController.onPageLoad(mode: Mode = NormalMode)
-POST       /register/individual/without-id/address              controllers.WhatIsYourAddressController.onSubmit(mode: Mode = NormalMode)
-GET        /register/individual/without-id/change-address       controllers.WhatIsYourAddressController.onPageLoad(mode: Mode = CheckMode)
-POST       /register/individual/without-id/change-address       controllers.WhatIsYourAddressController.onSubmit(mode: Mode = CheckMode)
+GET        /register/home-address-non-uk              controllers.WhatIsYourAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/home-address-non-uk              controllers.WhatIsYourAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /register/change-home-address-non-uk       controllers.WhatIsYourAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/change-home-address-non-uk       controllers.WhatIsYourAddressController.onSubmit(mode: Mode = CheckMode)
 
 GET        /register/business/without-id/address                controllers.BusinessAddressController.onPageLoad(mode: Mode = NormalMode)
 POST       /register/business/without-id/address                controllers.BusinessAddressController.onSubmit(mode: Mode = NormalMode)
@@ -132,6 +132,11 @@ GET        /register/your-name        controllers.SoleTraderNameController.onPag
 POST       /register/your-name        controllers.SoleTraderNameController.onSubmit(mode: Mode = NormalMode)
 GET        /register/change-your-name controllers.SoleTraderNameController.onPageLoad(mode: Mode = CheckMode)
 POST       /register/change-your-name controllers.SoleTraderNameController.onSubmit(mode: Mode = CheckMode)
+
+GET        /register/home-address-uk                   controllers.WhatIsYourAddressUkController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/home-address-uk                   controllers.WhatIsYourAddressUkController.onSubmit(mode: Mode = NormalMode)
+GET        /register/change-home-address-uk            controllers.WhatIsYourAddressUkController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/change-home-address-uk            controllers.WhatIsYourAddressUkController.onSubmit(mode: Mode = CheckMode)
 
 GET        /register/confirm-business                           controllers.ConfirmBusinessController.onPageLoad(mode: Mode = NormalMode)
 POST       /register/confirm-business                           controllers.ConfirmBusinessController.onSubmit(mode: Mode = NormalMode)
