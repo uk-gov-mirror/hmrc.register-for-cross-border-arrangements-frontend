@@ -48,7 +48,7 @@ class Navigator @Inject()() {
     case ContactNamePage => _ => Some(routes.ContactEmailAddressController.onPageLoad(NormalMode))
     case TelephoneNumberQuestionPage => telephoneNumberQuestionRoutes
     case ContactEmailAddressPage => _ => Some(routes.TelephoneNumberQuestionController.onPageLoad(NormalMode))
-    case ContactTelephoneNumberPage => _ => Some(routes.ContactTelephoneNumberController.onPageLoad(NormalMode)) //TODO Redirect to Secondary Contact Page when created & fix test
+    case ContactTelephoneNumberPage => _ => Some(routes.HaveSecondContactController.onPageLoad(NormalMode)) 
     case ContactNamePage => _ => Some(routes.ContactEmailAddressController.onPageLoad(NormalMode))
     case HaveSecondContactPage => haveSecondContactRoutes
     case _ => _ => Some(routes.IndexController.onPageLoad())
@@ -112,7 +112,7 @@ class Navigator @Inject()() {
 
     ua.get(TelephoneNumberQuestionPage) map {
       case true => routes.ContactTelephoneNumberController.onPageLoad(NormalMode) //TODO Redirect to /register/phone when ready
-      case false if organisationJourney => routes.IndexController.onPageLoad()  //TODO Redirect to /register/have-second-contact when ready
+      case false if organisationJourney => routes.HaveSecondContactController.onPageLoad(NormalMode)
       case false => routes.CheckYourAnswersController.onPageLoad()
     }
   }

@@ -7,7 +7,7 @@
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(messages("haveSecondContact.title", contactName), form.errors) }}
+  {{ title(messages("haveSecondContact.title"), form.errors) }}
 {% endblock %}
 
 {% block mainContent %}
@@ -22,7 +22,7 @@
 
         {% if form.errors.length > 0 %}
           {{ govukErrorSummary({
-            "titleText": messages("error.summary.title", contactName),
+            "titleText": messages('error.summary.title'),
             "errorList": form.errors
           }) }}
         {% endif %}
@@ -36,7 +36,7 @@
             name: 'confirm',
             fieldset: {
               legend: {
-                text: messages('haveSecondContact.title', contactName),
+                text: messages('haveSecondContact.heading', contactName),
                 isPageHeading: true,
                 classes: "govuk-fieldset__legend--xl"
               }
@@ -47,7 +47,9 @@
           }) }}
 
           {{ govukButton({
-            text: messages("site.continue")
+            text: messages("site.continue"),
+            attributes:{"id": "submit"}
+
           }) }}
 
         </form>

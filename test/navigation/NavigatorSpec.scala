@@ -387,7 +387,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(ContactTelephoneNumberPage, NormalMode, updatedAnswers)
-              .mustBe(routes.ContactTelephoneNumberController.onPageLoad(NormalMode))//TODO redirect is there secondary contact page
+              .mustBe(routes.HaveSecondContactController.onPageLoad(NormalMode))
         }
       }
 
@@ -423,7 +423,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(TelephoneNumberQuestionPage, NormalMode, updatedAnswers)
-              .mustBe(routes.IndexController.onPageLoad())//TODO redirect to /have-second-contact page
+              .mustBe(routes.HaveSecondContactController.onPageLoad(NormalMode))
         }
       }
 

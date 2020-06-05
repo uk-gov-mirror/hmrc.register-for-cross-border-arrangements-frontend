@@ -146,8 +146,11 @@ class HaveSecondContactControllerSpec extends SpecBase with MockitoSugar with Nu
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
+      val name = Name("test", "test")
+      val userAnswers = UserAnswers(userAnswersId).set(ContactNamePage, name).success.value
+
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
@@ -172,7 +175,10 @@ class HaveSecondContactControllerSpec extends SpecBase with MockitoSugar with Nu
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val name = Name("test", "test")
+      val userAnswers = UserAnswers(userAnswersId).set(ContactNamePage, name).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(POST, haveSecondContactRoute).withFormUrlEncodedBody(("confirm", ""))
       val boundForm = form.bind(Map("confirm" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

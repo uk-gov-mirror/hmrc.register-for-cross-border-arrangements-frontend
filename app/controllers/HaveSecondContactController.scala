@@ -78,13 +78,18 @@ class HaveSecondContactController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
+      val contactName = request.userAnswers.get(ContactNamePage).get
+      val updatedContactName = s"${contactName.firstName} ${contactName.secondName}"
+
       form.bindFromRequest().fold(
         formWithErrors => {
+
 
           val json = Json.obj(
             "form"   -> formWithErrors,
             "mode"   -> mode,
-            "radios" -> Radios.yesNo(formWithErrors("confirm"))
+            "radios" -> Radios.yesNo(formWithErrors("confirm")),
+            "contactName" -> updatedContactName
           )
 
           renderer.render("haveSecondContact.njk", json).map(BadRequest(_))
