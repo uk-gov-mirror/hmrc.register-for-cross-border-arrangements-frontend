@@ -139,7 +139,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
             navigator
               .nextPage(BusinessAddressPage, NormalMode, answers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+              .mustBe(routes.ContactNameController.onPageLoad(NormalMode))
         }
       }
 

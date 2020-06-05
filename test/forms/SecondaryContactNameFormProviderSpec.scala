@@ -29,9 +29,9 @@ class SecondaryContactNameFormProviderSpec extends StringFieldBehaviours {
 
   val form = new SecondaryContactNameFormProvider()()
 
-  ".value" - {
+  ".secondaryContactName" - {
 
-    val fieldName = "value"
+    val fieldName = "secondaryContactName"
 
     behave like fieldThatBindsValidData(
       form,
