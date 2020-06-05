@@ -27,7 +27,7 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.ContactEmailAddressController.onSubmit(mode).url }}" method="post">
+        <form action="{{ routes.controllers.ContactTelephoneNumberController.onSubmit(mode).url }}" method="post">
 
           {{ csrf() | safe }}
 
@@ -38,18 +38,21 @@
               classes: "govuk-label--xl"
             },
             hint: {
-                text: messages('contactEmailAddress.hint')
+                text: messages('contactTelephoneNumber.hint')
             },
-            id: "email",
-            name: "email",
-            value: form.email.value,
-            errorMessage: form.email.error
+            id: "telephoneNumber",
+            name: "telephoneNumber",
+            type: "tel",
+            autocomplete: "tel",
+            classes: "govuk-input--width-20",
+            value: form.telephoneNumber.value,
+            errorMessage: form.telephoneNumber.error
           }) }}
 
           {{ govukButton({
             text: messages("site.continue"),
             attributes:{
-            "id": "submit"
+                "id": "submit"
             }
           }) }}
 

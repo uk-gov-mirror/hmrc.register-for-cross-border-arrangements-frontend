@@ -17,33 +17,33 @@
 package controllers
 
 import controllers.actions._
-import forms.TelephoneNumberQuestionFormProvider
+import forms.ContactTelephoneNumberFormProvider
 import helpers.JourneyHelpers
 import javax.inject.Inject
 import models.{Mode, NormalMode}
 import navigation.Navigator
-import pages.{ContactNamePage, TelephoneNumberQuestionPage}
+import pages.{ContactNamePage, ContactTelephoneNumberPage}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
+import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class TelephoneNumberQuestionController @Inject()(
-                                                   override val messagesApi: MessagesApi,
-                                                   sessionRepository: SessionRepository,
-                                                   navigator: Navigator,
-                                                   identify: IdentifierAction,
-                                                   getData: DataRetrievalAction,
-                                                   requireData: DataRequiredAction,
-                                                   formProvider: TelephoneNumberQuestionFormProvider,
-                                                   journeyHelpers: JourneyHelpers,
-                                                   val controllerComponents: MessagesControllerComponents,
-                                                   renderer: Renderer
+class ContactTelephoneNumberController @Inject()(
+    override val messagesApi: MessagesApi,
+    sessionRepository: SessionRepository,
+    navigator: Navigator,
+    identify: IdentifierAction,
+    getData: DataRetrievalAction,
+    requireData: DataRequiredAction,
+    formProvider: ContactTelephoneNumberFormProvider,
+    journeyHelpers: JourneyHelpers,
+    val controllerComponents: MessagesControllerComponents,
+    renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
   private val form = formProvider()
@@ -54,29 +54,28 @@ class TelephoneNumberQuestionController @Inject()(
       (journeyHelpers.organisationJourney(request.userAnswers), request.userAnswers.get(ContactNamePage)) match {
         case (true, None) => Future.successful(Redirect(routes.ContactNameController.onPageLoad(NormalMode)))
         case _ =>
-          val preparedForm = request.userAnswers.get(TelephoneNumberQuestionPage) match {
+          val preparedForm = request.userAnswers.get(ContactTelephoneNumberPage) match {
             case None => form
             case Some(value) => form.fill(value)
           }
 
           val (pageTitle, heading) = request.userAnswers.get(ContactNamePage) match {
             case Some(name) =>
-              (Messages("telephoneNumberQuestion.business.title"),
-                Messages("telephoneNumberQuestion.business.heading", s"${name.firstName} ${name.secondName}"))
+              (Messages("contactTelephoneNumber.business.title"),
+                Messages("contactTelephoneNumber.business.heading", s"${name.firstName} ${name.secondName}"))
             case None =>
-              (Messages("telephoneNumberQuestion.individual.title"),
-                Messages("telephoneNumberQuestion.individual.heading"))
+              (Messages("contactTelephoneNumber.individual.title"),
+                Messages("contactTelephoneNumber.individual.heading"))
           }
 
           val json = Json.obj(
             "form" -> preparedForm,
             "mode" -> mode,
-            "radios" -> Radios.yesNo(preparedForm("confirm")),
             "pageTitle" -> pageTitle,
             "heading" -> heading
           )
 
-          renderer.render("telephoneNumberQuestion.njk", json).map(Ok(_))
+          renderer.render("contactTelephoneNumber.njk", json).map(Ok(_))
       }
   }
 
@@ -86,30 +85,29 @@ class TelephoneNumberQuestionController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors => {
 
-          val (pageTitle: String, heading: String) = request.userAnswers.get(ContactNamePage) match {
+          val (pageTitle, heading) = request.userAnswers.get(ContactNamePage) match {
             case Some(name) =>
-              (Messages("telephoneNumberQuestion.business.title"),
-                Messages("telephoneNumberQuestion.business.heading", s"${name.firstName} ${name.secondName}"))
+              (Messages("contactTelephoneNumber.business.title"),
+                Messages("contactTelephoneNumber.business.heading", s"${name.firstName} ${name.secondName}"))
             case None =>
-              (Messages("telephoneNumberQuestion.individual.title"),
-                Messages("telephoneNumberQuestion.individual.heading"))
+              (Messages("contactTelephoneNumber.title"),
+                Messages("contactTelephoneNumber.heading"))
           }
 
           val json = Json.obj(
-            "form"   -> formWithErrors,
-            "mode"   -> mode,
-            "radios" -> Radios.yesNo(formWithErrors("confirm")),
+            "form" -> formWithErrors,
+            "mode" -> mode,
             "pageTitle" -> pageTitle,
             "heading" -> heading
           )
 
-          renderer.render("telephoneNumberQuestion.njk", json).map(BadRequest(_))
+          renderer.render("contactTelephoneNumber.njk", json).map(BadRequest(_))
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(TelephoneNumberQuestionPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactTelephoneNumberPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(TelephoneNumberQuestionPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(ContactTelephoneNumberPage, mode, updatedAnswers))//TODO change to second contact page once built
       )
   }
 }

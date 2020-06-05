@@ -375,6 +375,22 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
+      "must go from the What is your telephone number page? to the Is there someone else we can contact? page" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers
+                .set(ContactTelephoneNumberPage, "07540000000")
+                .success
+                .value
+
+            navigator
+              .nextPage(ContactTelephoneNumberPage, NormalMode, updatedAnswers)
+              .mustBe(routes.ContactTelephoneNumberController.onPageLoad(NormalMode))//TODO redirect is there secondary contact page
+        }
+      }
+
       "must go from the Do you have telephone page to the What is the telephone number page when the answer is 'Yes'" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
@@ -387,7 +403,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(TelephoneNumberQuestionPage, NormalMode, updatedAnswers)
-              .mustBe(routes.ContactEmailAddressController.onPageLoad(NormalMode))//TODO redirect to phone number page
+              .mustBe(routes.ContactTelephoneNumberController.onPageLoad(NormalMode))//TODO redirect to phone number page
         }
       }
 

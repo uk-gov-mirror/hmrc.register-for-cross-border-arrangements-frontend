@@ -96,10 +96,10 @@ POST       /register/individual/without-id/uk-postcode        controllers.Indivi
 GET        /register/individual/without-id/change-uk-postcode controllers.IndividualUKPostcodeController.onPageLoad(mode: Mode = CheckMode)
 POST       /register/individual/without-id/change-uk-postcode controllers.IndividualUKPostcodeController.onSubmit(mode: Mode = CheckMode)
 
-GET        /register/home-address-non-uk              controllers.WhatIsYourAddressController.onPageLoad(mode: Mode = NormalMode)
-POST       /register/home-address-non-uk              controllers.WhatIsYourAddressController.onSubmit(mode: Mode = NormalMode)
-GET        /register/change-home-address-non-uk       controllers.WhatIsYourAddressController.onPageLoad(mode: Mode = CheckMode)
-POST       /register/change-home-address-non-uk       controllers.WhatIsYourAddressController.onSubmit(mode: Mode = CheckMode)
+GET        /register/individual/without-id/address              controllers.WhatIsYourAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/individual/without-id/address              controllers.WhatIsYourAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /register/individual/without-id/change-address       controllers.WhatIsYourAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/individual/without-id/change-address       controllers.WhatIsYourAddressController.onSubmit(mode: Mode = CheckMode)
 
 GET        /register/business/without-id/address                controllers.BusinessAddressController.onPageLoad(mode: Mode = NormalMode)
 POST       /register/business/without-id/address                controllers.BusinessAddressController.onSubmit(mode: Mode = NormalMode)
@@ -157,3 +157,8 @@ GET        /register/have-telephone                         controllers.Telephon
 POST       /register/have-telephone                         controllers.TelephoneNumberQuestionController.onSubmit(mode: Mode = NormalMode)
 GET        /register/change-have-telephone                  controllers.TelephoneNumberQuestionController.onPageLoad(mode: Mode = CheckMode)
 POST       /register/change-have-telephone                  controllers.TelephoneNumberQuestionController.onSubmit(mode: Mode = CheckMode)
+
+GET        /register/telephone-number                           controllers.ContactTelephoneNumberController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/telephone-number                           controllers.ContactTelephoneNumberController.onSubmit(mode: Mode = NormalMode)
+GET        /register/change-telephone-number                    controllers.ContactTelephoneNumberController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/change-telephone-number                    controllers.ContactTelephoneNumberController.onSubmit(mode: Mode = CheckMode)
