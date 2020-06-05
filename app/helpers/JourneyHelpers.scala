@@ -16,12 +16,10 @@
 
 package helpers
 
-import javax.inject.Singleton
 import models.{BusinessType, UserAnswers}
 import pages.BusinessTypePage
 
-@Singleton
-class JourneyHelpers {
+object JourneyHelpers {
 
   def organisationJourney(ua: UserAnswers): Boolean = ua.get(BusinessTypePage) match {
     case Some(businessType) if businessType.equals(BusinessType.NotSpecified) => false

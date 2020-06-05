@@ -22,8 +22,6 @@ import pages.BusinessTypePage
 
 class JourneyHelpersSpec extends SpecBase {
 
-  val journeyHelpers: JourneyHelpers = new JourneyHelpers
-
   "JourneyHelpers" - {
 
     "calling organisationJourney" - {
@@ -33,7 +31,7 @@ class JourneyHelpersSpec extends SpecBase {
           .success
           .value
 
-        val result = journeyHelpers.organisationJourney(userAnswers)
+        val result = JourneyHelpers.organisationJourney(userAnswers)
 
         result mustBe true
       }
@@ -44,13 +42,13 @@ class JourneyHelpersSpec extends SpecBase {
           .success
           .value
 
-        val result = journeyHelpers.organisationJourney(userAnswers)
+        val result = JourneyHelpers.organisationJourney(userAnswers)
 
         result mustBe false
       }
 
       "must return false if it's an individual" in {
-        val result = journeyHelpers.organisationJourney(emptyUserAnswers)
+        val result = JourneyHelpers.organisationJourney(emptyUserAnswers)
 
         result mustBe false
       }

@@ -41,7 +41,6 @@ class TelephoneNumberQuestionController @Inject()(
                                                    getData: DataRetrievalAction,
                                                    requireData: DataRequiredAction,
                                                    formProvider: TelephoneNumberQuestionFormProvider,
-                                                   journeyHelpers: JourneyHelpers,
                                                    val controllerComponents: MessagesControllerComponents,
                                                    renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
@@ -51,7 +50,7 @@ class TelephoneNumberQuestionController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      (journeyHelpers.organisationJourney(request.userAnswers), request.userAnswers.get(ContactNamePage)) match {
+      (JourneyHelpers.organisationJourney(request.userAnswers), request.userAnswers.get(ContactNamePage)) match {
         case (true, None) => Future.successful(Redirect(routes.ContactNameController.onPageLoad(NormalMode)))
         case _ =>
           val preparedForm = request.userAnswers.get(TelephoneNumberQuestionPage) match {

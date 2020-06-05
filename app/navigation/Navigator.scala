@@ -17,6 +17,7 @@
 package navigation
 
 import controllers.routes
+import helpers.JourneyHelpers
 import javax.inject.{Inject, Singleton}
 import models.BusinessType._
 import models.RegistrationType.{Business, Individual}
@@ -49,9 +50,8 @@ class Navigator @Inject()() {
     case TelephoneNumberQuestionPage => telephoneNumberQuestionRoutes
     case ContactEmailAddressPage => _ => Some(routes.TelephoneNumberQuestionController.onPageLoad(NormalMode))
     case ContactTelephoneNumberPage => _ => Some(routes.HaveSecondContactController.onPageLoad(NormalMode))
-    case ContactNamePage => _ => Some(routes.ContactEmailAddressController.onPageLoad(NormalMode))
     case HaveSecondContactPage => haveSecondContactRoutes
-    case SecondaryContactNamePage => _ => Some(routes.ContactEmailAddressController.onPageLoad(NormalMode)) // TODO redirect to /second-contact-reference and fix test
+    case SecondaryContactNamePage => _ => Some(routes.IndexController.onPageLoad())// TODO redirect to /second-contact-preference and fix test
     case _ => _ => Some(routes.IndexController.onPageLoad())
   }
 
@@ -105,22 +105,16 @@ class Navigator @Inject()() {
     }
 
   private def telephoneNumberQuestionRoutes(ua: UserAnswers): Option[Call] = {
-    val organisationJourney: Boolean = ua.get(BusinessTypePage) match {
-      case Some(businessType) if businessType.equals(BusinessType.NotSpecified) => false
-      case Some(_) => true
-      case None => false
-    }
-
     ua.get(TelephoneNumberQuestionPage) map {
-      case true => routes.ContactTelephoneNumberController.onPageLoad(NormalMode) //TODO Redirect to /register/phone when ready
-      case false if organisationJourney => routes.HaveSecondContactController.onPageLoad(NormalMode)
+      case true => routes.ContactTelephoneNumberController.onPageLoad(NormalMode)
+      case false if JourneyHelpers.organisationJourney(ua) => routes.HaveSecondContactController.onPageLoad(NormalMode)
       case false => routes.CheckYourAnswersController.onPageLoad()
     }
   }
 
   private def haveSecondContactRoutes(ua: UserAnswers): Option[Call] =
     ua.get(HaveSecondContactPage) map {
-      case true  => ??? //TODO: Direct to 'What is the name of the individual or...?' page when ready
+      case true  => routes.SecondaryContactNameController.onPageLoad(NormalMode)
       case false => routes.CheckYourAnswersController.onPageLoad()
     }
 
