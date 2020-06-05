@@ -227,4 +227,12 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
                 .map(Json.toJson(_))
       } yield (page, value)
     }
+
+  implicit lazy val arbitrarySecondaryContactPreferenceUserAnswersEntry: Arbitrary[(SecondaryContactPreferencePage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[SecondaryContactPreferencePage.type]
+        value <- arbitrary[SecondaryContactPreference].map(Json.toJson(_))
+      } yield (page, value)
+    }
 }
