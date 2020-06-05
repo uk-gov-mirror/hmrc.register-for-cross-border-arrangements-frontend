@@ -148,6 +148,11 @@ POST       /register/contact-name                         controllers.ContactNam
 GET        /register/change-contact-name                  controllers.ContactNameController.onPageLoad(mode: Mode = CheckMode)
 POST       /register/change-contact-name                  controllers.ContactNameController.onSubmit(mode: Mode = CheckMode)
 
+GET        /register/have-second-contact                        controllers.HaveSecondContactController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/have-second-contact                        controllers.HaveSecondContactController.onSubmit(mode: Mode = NormalMode)
+GET        /register/change-have-second-contact                 controllers.HaveSecondContactController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/change-have-second-contact                 controllers.HaveSecondContactController.onSubmit(mode: Mode = CheckMode)
+
 GET        /register/email-address                           controllers.ContactEmailAddressController.onPageLoad(mode: Mode = NormalMode)
 POST       /register/email-address                           controllers.ContactEmailAddressController.onSubmit(mode: Mode = NormalMode)
 GET        /register/change-email-address                    controllers.ContactEmailAddressController.onPageLoad(mode: Mode = CheckMode)

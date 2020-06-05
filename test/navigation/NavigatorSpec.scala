@@ -387,7 +387,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(ContactTelephoneNumberPage, NormalMode, updatedAnswers)
-              .mustBe(routes.ContactTelephoneNumberController.onPageLoad(NormalMode))//TODO redirect is there secondary contact page
+              .mustBe(routes.HaveSecondContactController.onPageLoad(NormalMode))
         }
       }
 
@@ -423,7 +423,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(TelephoneNumberQuestionPage, NormalMode, updatedAnswers)
-              .mustBe(routes.IndexController.onPageLoad())//TODO redirect to /have-second-contact page
+              .mustBe(routes.HaveSecondContactController.onPageLoad(NormalMode))
         }
       }
 
@@ -455,6 +455,22 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           navigator
             .nextPage(TelephoneNumberQuestionPage, NormalMode, userAnswers)
             .mustBe(routes.CheckYourAnswersController.onPageLoad())
+      }
+
+      "must go from Is there someone else we can contact if *name* is not available??" +
+        "to Check your answers? when No is selected" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(HaveSecondContactPage, false)
+                .success
+                .value
+
+            navigator
+              .nextPage(HaveSecondContactPage, NormalMode, updatedAnswers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+        }
       }
 
     }
