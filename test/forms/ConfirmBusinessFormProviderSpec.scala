@@ -26,9 +26,9 @@ class ConfirmBusinessFormProviderSpec extends BooleanFieldBehaviours {
 
   val form = new ConfirmBusinessFormProvider()()
 
-  ".value" - {
+  ".confirm" - {
 
-    val fieldName = "value"
+    val fieldName = "confirm"
 
     behave like booleanField(
       form,

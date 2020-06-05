@@ -36,14 +36,19 @@
                     {{ messages("confirmBusiness.heading") }}
                   </h1>
 
-          {{ govukInsetText({
-          html: address
-             })
-          }}
+          <div>
+              <p>{{businessName}}</p>
+              <p>{{address.addressLine1}}</p>
+              <p>{{address.addressLine2}}</p>
+              <p>{{address.addressLine3}}</p>
+              <p>{{address.addressLine4}}</p>
+              <p>{{address.postCode}}</p>
+              <p>{{address.country.code}}</p>
+          </div>
 
           {{ govukRadios({
             classes: "govuk-radios--inline",
-            name: 'value',
+            name: 'confirm',
             fieldset: {
             },
             items: radios,
