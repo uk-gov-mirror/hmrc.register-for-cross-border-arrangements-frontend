@@ -17,14 +17,14 @@
 package navigation
 
 import base.SpecBase
+import controllers.routes
 import generators.Generators
+import models.BusinessType._
 import models.RegistrationType.Individual
 import models._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
-import controllers.routes
-import models.BusinessType._
 
 class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
@@ -489,7 +489,6 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
-
       "must go from the What is the name of the individual or team we should contact? page " +
         "to How can we contact *name*? page" in {
         forAll(arbitrary[UserAnswers]) {
@@ -503,11 +502,46 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(SecondaryContactNamePage, NormalMode, updatedAnswers)
-              .mustBe(routes.IndexController.onPageLoad())
+              .mustBe(routes.SecondaryContactPreferenceController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from the How can we contact *name*? page " +
+        "to What is the telephone number for *name*? page " +
+          "when checkbox email is selected" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers
+                .set(SecondaryContactPreferencePage, SecondaryContactPreference.enumerable.withName("email").toSet)
+                .success
+                .value
+
+            navigator
+              .nextPage(SecondaryContactPreferencePage, NormalMode, updatedAnswers)
+              .mustBe(routes.ContactEmailAddressController.onPageLoad(NormalMode)) //TODO change to Second Contact Email page when built
+        }
+      }
+
+      "must go from the How can we contact *name*? page " +
+        "to What is the email address for *name*? page " +
+        "when checkbox telephone is selected " in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers
+                .set(SecondaryContactPreferencePage, SecondaryContactPreference.enumerable.withName("telephone").toSet)
+                .success
+                .value
+
+            navigator
+              .nextPage(SecondaryContactPreferencePage, NormalMode, updatedAnswers)
+              .mustBe(routes.ContactTelephoneNumberController.onPageLoad(NormalMode)) //TODO change to Second Contact Telephone page when built
         }
       }
     }
-
 
     "in Check mode" - {
 

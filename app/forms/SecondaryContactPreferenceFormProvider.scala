@@ -27,6 +27,8 @@ class SecondaryContactPreferenceFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Set[SecondaryContactPreference]] =
     Form(
-      "value" -> set(enumerable[SecondaryContactPreference]("secondaryContactPreference.error.required")).verifying(nonEmptySet("secondaryContactPreference.error.required"))
+      "value" -> set(enumerable[SecondaryContactPreference](
+        "secondaryContactPreference.error.required"))
+        .verifying(nonEmptySet("secondaryContactPreference.error.required"))
     )
 }

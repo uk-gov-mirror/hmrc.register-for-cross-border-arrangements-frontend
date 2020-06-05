@@ -21,7 +21,7 @@ import forms.SecondaryContactPreferenceFormProvider
 import javax.inject.Inject
 import models.{Mode, NormalMode, SecondaryContactPreference}
 import navigation.Navigator
-import pages.{ContactNamePage, SecondaryContactPreferencePage}
+import pages.{SecondaryContactNamePage, SecondaryContactPreferencePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -49,9 +49,8 @@ class SecondaryContactPreferenceController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      //TODO change below to SecondaryContactNamePage
-      request.userAnswers.get(ContactNamePage) match {
-        case None => Future.successful(Redirect(routes.HaveSecondContactController.onPageLoad(NormalMode)))
+      request.userAnswers.get(SecondaryContactNamePage) match {
+        case None => Future(Redirect(routes.HaveSecondContactController.onPageLoad(NormalMode)))
         case Some(secondaryContactName) =>
 
           val preparedForm = request.userAnswers.get(SecondaryContactPreferencePage) match {
@@ -63,7 +62,7 @@ class SecondaryContactPreferenceController @Inject()(
             "form"       -> preparedForm,
             "mode"       -> mode,
             "checkboxes" -> SecondaryContactPreference.checkboxes(preparedForm),
-            "secondaryContactName" -> secondaryContactName.firstName
+            "secondaryContactName" -> secondaryContactName
           )
 
           renderer.render("secondaryContactPreference.njk", json).map(Ok(_))
@@ -76,8 +75,7 @@ class SecondaryContactPreferenceController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors => {
 
-          //TODO change below to SecondaryContactNamePage
-          val secondaryContactName: String = request.userAnswers.get(ContactNamePage).fold("them")(_.firstName)
+          val secondaryContactName: String = request.userAnswers.get(SecondaryContactNamePage).getOrElse("them")
 
           val json = Json.obj(
             "form"       -> formWithErrors,

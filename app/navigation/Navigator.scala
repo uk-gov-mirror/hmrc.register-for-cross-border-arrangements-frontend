@@ -52,7 +52,7 @@ class Navigator @Inject()() {
     case ContactEmailAddressPage => _ => Some(routes.TelephoneNumberQuestionController.onPageLoad(NormalMode))
     case ContactTelephoneNumberPage => _ => Some(routes.HaveSecondContactController.onPageLoad(NormalMode))
     case HaveSecondContactPage => haveSecondContactRoutes
-    case SecondaryContactNamePage => _ => Some(routes.IndexController.onPageLoad())// TODO redirect to /second-contact-preference and fix test
+    case SecondaryContactNamePage => _ => Some(routes.SecondaryContactPreferenceController.onPageLoad(NormalMode))
     case SecondaryContactPreferencePage => secondaryContactPreferenceRoutes
     case _ => _ => Some(routes.IndexController.onPageLoad())
   }
@@ -122,8 +122,10 @@ class Navigator @Inject()() {
 
   private def secondaryContactPreferenceRoutes(ua: UserAnswers): Option[Call] =
     ua.get(SecondaryContactPreferencePage) map {
-      case set: Set[SecondaryContactPreference] if set.head == Telephone => routes.ContactTelephoneNumberController.onPageLoad(NormalMode) //TODO change to SecondaryContactTelephone
-      case set: Set[SecondaryContactPreference] if set.head == Email => routes.ContactEmailAddressController.onPageLoad(NormalMode) //TODO change to SecondaryContactEmail
+      case set: Set[SecondaryContactPreference] if set.head == Telephone =>
+        routes.ContactTelephoneNumberController.onPageLoad(NormalMode) //TODO change to SecondaryContactTelephone
+      case set: Set[SecondaryContactPreference] if set.head == Email =>
+        routes.ContactEmailAddressController.onPageLoad(NormalMode) //TODO change to SecondaryContactEmail
     }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
