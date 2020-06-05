@@ -19,9 +19,9 @@ package controllers
 import controllers.actions._
 import forms.SecondaryContactPreferenceFormProvider
 import javax.inject.Inject
-import models.{Mode, SecondaryContactPreference}
+import models.{Mode, NormalMode, SecondaryContactPreference}
 import navigation.Navigator
-import pages.SecondaryContactPreferencePage
+import pages.{ContactNamePage, SecondaryContactPreferencePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -49,18 +49,25 @@ class SecondaryContactPreferenceController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(SecondaryContactPreferencePage) match {
-        case None => form
-        case Some(value) => form.fill(value)
+      //TODO change below to SecondaryContactNamePage
+      request.userAnswers.get(ContactNamePage) match {
+        case None => Future.successful(Redirect(routes.HaveSecondContactController.onPageLoad(NormalMode)))
+        case Some(secondaryContactName) =>
+
+          val preparedForm = request.userAnswers.get(SecondaryContactPreferencePage) match {
+            case None => form
+            case Some(value) => form.fill(value)
+          }
+
+          val json = Json.obj(
+            "form"       -> preparedForm,
+            "mode"       -> mode,
+            "checkboxes" -> SecondaryContactPreference.checkboxes(preparedForm),
+            "secondaryContactName" -> secondaryContactName.firstName
+          )
+
+          renderer.render("secondaryContactPreference.njk", json).map(Ok(_))
       }
-
-      val json = Json.obj(
-        "form"       -> preparedForm,
-        "mode"       -> mode,
-        "checkboxes" -> SecondaryContactPreference.checkboxes(preparedForm)
-      )
-
-      renderer.render("secondaryContactPreference.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -69,10 +76,14 @@ class SecondaryContactPreferenceController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors => {
 
+          //TODO change below to SecondaryContactNamePage
+          val secondaryContactName: String = request.userAnswers.get(ContactNamePage).fold("them")(_.firstName)
+
           val json = Json.obj(
             "form"       -> formWithErrors,
             "mode"       -> mode,
-            "checkboxes" -> SecondaryContactPreference.checkboxes(formWithErrors)
+            "checkboxes" -> SecondaryContactPreference.checkboxes(formWithErrors),
+            "secondaryContactName" -> secondaryContactName
           )
 
           renderer.render("secondaryContactPreference.njk", json).map(BadRequest(_))
@@ -81,7 +92,8 @@ class SecondaryContactPreferenceController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(SecondaryContactPreferencePage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(SecondaryContactPreferencePage, mode, updatedAnswers))
+          } yield
+            Redirect(navigator.nextPage(SecondaryContactPreferencePage, mode, updatedAnswers)) //TODO redirect to telephone or email page depending
       )
   }
 }

@@ -21,6 +21,7 @@ import helpers.JourneyHelpers._
 import javax.inject.{Inject, Singleton}
 import models.BusinessType._
 import models.RegistrationType.{Business, Individual}
+import models.SecondaryContactPreference._
 import models._
 import pages._
 import play.api.mvc.Call
@@ -52,6 +53,7 @@ class Navigator @Inject()() {
     case ContactTelephoneNumberPage => _ => Some(routes.HaveSecondContactController.onPageLoad(NormalMode))
     case HaveSecondContactPage => haveSecondContactRoutes
     case SecondaryContactNamePage => _ => Some(routes.IndexController.onPageLoad())// TODO redirect to /second-contact-preference and fix test
+    case SecondaryContactPreferencePage => secondaryContactPreferenceRoutes
     case _ => _ => Some(routes.IndexController.onPageLoad())
   }
 
@@ -118,6 +120,11 @@ class Navigator @Inject()() {
       case false => routes.CheckYourAnswersController.onPageLoad()
     }
 
+  private def secondaryContactPreferenceRoutes(ua: UserAnswers): Option[Call] =
+    ua.get(SecondaryContactPreferencePage) map {
+      case set: Set[SecondaryContactPreference] if set.head == Telephone => routes.ContactTelephoneNumberController.onPageLoad(NormalMode) //TODO change to SecondaryContactTelephone
+      case set: Set[SecondaryContactPreference] if set.head == Email => routes.ContactEmailAddressController.onPageLoad(NormalMode) //TODO change to SecondaryContactEmail
+    }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
     case NormalMode =>

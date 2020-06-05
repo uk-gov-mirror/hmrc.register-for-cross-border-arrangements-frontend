@@ -16,20 +16,19 @@
 
 package models
 
-import generators.ModelGenerators
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsError, JsString, Json}
 
-class SecondaryContactPreferenceSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with OptionValues with ModelGenerators {
+class SecondaryContactPreferenceSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with OptionValues {
 
   "SecondaryContactPreference" - {
 
     "must deserialise valid values" in {
 
-      val gen = arbitrary[SecondaryContactPreference]
+      val gen = Gen.oneOf(SecondaryContactPreference.values)
 
       forAll(gen) {
         secondaryContactPreference =>
@@ -51,7 +50,7 @@ class SecondaryContactPreferenceSpec extends FreeSpec with MustMatchers with Sca
 
     "must serialise" in {
 
-      val gen = arbitrary[SecondaryContactPreference]
+      val gen = Gen.oneOf(SecondaryContactPreference.values)
 
       forAll(gen) {
         secondaryContactPreference =>

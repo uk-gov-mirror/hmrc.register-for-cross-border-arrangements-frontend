@@ -35,17 +35,23 @@
             name: 'value',
             fieldset: {
               legend: {
-                text: messages('secondaryContactPreference.title'),
+                text: messages('secondaryContactPreference.heading', secondaryContactName),
                 isPageHeading: true,
                 classes: "govuk-fieldset__legend--xl"
               }
+            },
+            hint: {
+                text: messages('secondaryContactPreference.hint')
             },
             items: checkboxes,
             errorMessage: form.value.error
           }) }}
 
           {{ govukButton({
-            text: messages("site.continue")
+            text: messages("site.continue"),
+            attributes: {
+                "id": "submit"
+            }
           }) }}
 
         </form>
