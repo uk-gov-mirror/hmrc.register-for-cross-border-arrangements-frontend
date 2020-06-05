@@ -21,7 +21,7 @@ import pages.BusinessTypePage
 
 object JourneyHelpers {
 
-  def organisationJourney(ua: UserAnswers): Boolean = ua.get(BusinessTypePage) match {
+  def isOrganisationJourney(ua: UserAnswers): Boolean = ua.get(BusinessTypePage) match {
     case Some(businessType) if businessType.equals(BusinessType.NotSpecified) => false
     case Some(_) => true
     case None => false

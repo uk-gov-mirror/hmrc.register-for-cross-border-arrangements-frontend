@@ -17,7 +17,7 @@
 package navigation
 
 import controllers.routes
-import helpers.JourneyHelpers
+import helpers.JourneyHelpers._
 import javax.inject.{Inject, Singleton}
 import models.BusinessType._
 import models.RegistrationType.{Business, Individual}
@@ -107,7 +107,7 @@ class Navigator @Inject()() {
   private def telephoneNumberQuestionRoutes(ua: UserAnswers): Option[Call] = {
     ua.get(TelephoneNumberQuestionPage) map {
       case true => routes.ContactTelephoneNumberController.onPageLoad(NormalMode)
-      case false if JourneyHelpers.organisationJourney(ua) => routes.HaveSecondContactController.onPageLoad(NormalMode)
+      case false if isOrganisationJourney(ua) => routes.HaveSecondContactController.onPageLoad(NormalMode)
       case false => routes.CheckYourAnswersController.onPageLoad()
     }
   }
