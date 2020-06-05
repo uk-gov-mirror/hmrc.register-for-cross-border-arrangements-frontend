@@ -25,7 +25,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.{BusinessAddressPage, ConfirmBusinessPage}
+import pages.{BusinessAddressPage, ConfirmBusinessPage, RetrievedNamePage}
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -54,7 +54,11 @@ class ConfirmBusinessControllerSpec extends SpecBase with MockitoSugar with Nunj
         .thenReturn(Future.successful(Html("")))
 
       val address = Address("", "", None, None, None, Country("", "", ""))
-      val userAnswers = UserAnswers(userAnswersId).set(BusinessAddressPage, address).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(BusinessAddressPage, address)
+        .success.value
+        .set(RetrievedNamePage, "My Business")
+        .success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, confirmBusinessRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -69,7 +73,7 @@ class ConfirmBusinessControllerSpec extends SpecBase with MockitoSugar with Nunj
       val expectedJson = Json.obj(
         "form"   -> form,
         "mode"   -> NormalMode,
-        "radios" -> Radios.yesNo(form("value"))
+        "radios" -> Radios.yesNo(form("confirm"))
       )
 
       templateCaptor.getValue mustEqual "confirmBusiness.njk"
@@ -87,6 +91,8 @@ class ConfirmBusinessControllerSpec extends SpecBase with MockitoSugar with Nunj
       val userAnswers = UserAnswers(userAnswersId)
         .set(BusinessAddressPage, address)
         .success.value
+        .set(RetrievedNamePage, "My Business")
+        .success.value
         .set(ConfirmBusinessPage, true)
         .success.value
 
@@ -101,12 +107,12 @@ class ConfirmBusinessControllerSpec extends SpecBase with MockitoSugar with Nunj
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("value" -> "true"))
+      val filledForm = form.bind(Map("confirm" -> "true"))
 
       val expectedJson = Json.obj(
         "form"   -> filledForm,
         "mode"   -> NormalMode,
-        "radios" -> Radios.yesNo(filledForm("value"))
+        "radios" -> Radios.yesNo(filledForm("confirm"))
       )
 
       templateCaptor.getValue mustEqual "confirmBusiness.njk"
@@ -131,7 +137,7 @@ class ConfirmBusinessControllerSpec extends SpecBase with MockitoSugar with Nunj
 
       val request =
         FakeRequest(POST, confirmBusinessRoute)
-          .withFormUrlEncodedBody(("value", "true"))
+          .withFormUrlEncodedBody(("confirm", "true"))
 
       val result = route(application, request).value
 
@@ -147,9 +153,18 @@ class ConfirmBusinessControllerSpec extends SpecBase with MockitoSugar with Nunj
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, confirmBusinessRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
+      val address = Address("", "", None, None, None, Country("", "", ""))
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(BusinessAddressPage, address)
+        .success.value
+        .set(RetrievedNamePage, "My Business")
+        .success.value
+        .set(ConfirmBusinessPage, true)
+        .success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val request = FakeRequest(POST, confirmBusinessRoute).withFormUrlEncodedBody(("confirm", ""))
+      val boundForm = form.bind(Map("confirm" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -160,9 +175,11 @@ class ConfirmBusinessControllerSpec extends SpecBase with MockitoSugar with Nunj
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
+        "businessName" -> "My Business",
+        "address" -> Json.toJson(address),
         "form"   -> boundForm,
         "mode"   -> NormalMode,
-        "radios" -> Radios.yesNo(boundForm("value"))
+        "radios" -> Radios.yesNo(boundForm("confirm"))
       )
 
       templateCaptor.getValue mustEqual "confirmBusiness.njk"
@@ -192,7 +209,7 @@ class ConfirmBusinessControllerSpec extends SpecBase with MockitoSugar with Nunj
 
       val request =
         FakeRequest(POST, confirmBusinessRoute)
-          .withFormUrlEncodedBody(("value", "true"))
+          .withFormUrlEncodedBody(("confirm", "true"))
 
       val result = route(application, request).value
 

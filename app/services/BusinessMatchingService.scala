@@ -18,7 +18,7 @@ package services
 
 import connectors.BusinessMatchingConnector
 import javax.inject.Inject
-import models.{BusinessAddress, BusinessMatchingSubmission, IndividualMatchingSubmission, UserAnswers}
+import models.{BusinessAddress, BusinessDetails, BusinessMatchingSubmission, IndividualMatchingSubmission, UserAnswers}
 import pages.{NinoPage, UniqueTaxpayerReferencePage}
 import play.api.http.Status._
 import play.api.libs.json.JsResult.Exception
@@ -40,10 +40,12 @@ class BusinessMatchingService @Inject()(businessMatchingConnector: BusinessMatch
   }
 
   def sendBusinessMatchingInformation(userAnswers: UserAnswers)
-                                     (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[BusinessAddress]] = {
+                                     (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[BusinessDetails]] = {
 
       businessMatchingConnector.sendBusinessMatchingInformation(
-        userAnswers.get(UniqueTaxpayerReferencePage).get,BusinessMatchingSubmission(userAnswers).get).map {
+        userAnswers.get(UniqueTaxpayerReferencePage).get,
+        BusinessMatchingSubmission(userAnswers).get
+      ).map {
         response =>
           response.status match {
             case OK => validateJsonForBusiness(response.json)
@@ -53,9 +55,9 @@ class BusinessMatchingService @Inject()(businessMatchingConnector: BusinessMatch
     }
   }
 
-  private def validateJsonForBusiness(value: JsValue): Option[BusinessAddress] = {
-      value.validate[BusinessAddress] match {
-        case JsSuccess(address, _) => Some(address)
+  private def validateJsonForBusiness(value: JsValue): Option[BusinessDetails] = {
+      value.validate[BusinessDetails] match {
+        case JsSuccess(details, _) => Some(details)
         case JsError(_) => throw Exception(JsError(s"Error encountered retrieving business matching record."))
       }
   }

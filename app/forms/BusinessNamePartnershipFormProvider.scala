@@ -21,7 +21,7 @@ import javax.inject.Inject
 import play.api.data.Form
 
 class BusinessNamePartnershipFormProvider @Inject() extends Mappings {
-  private val nameRegex = "^[a-zA-Z0-9 '&\\\\/]{1,105}$"
+  private val nameRegex = "^[a-zA-Z0-9 '&\\/]{1,105}$"
 
   def apply(): Form[String] =
     Form(

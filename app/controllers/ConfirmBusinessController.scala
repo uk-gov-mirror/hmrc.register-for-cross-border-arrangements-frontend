@@ -21,7 +21,7 @@ import forms.ConfirmBusinessFormProvider
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
-import pages.{BusinessAddressPage, ConfirmBusinessPage}
+import pages.{BusinessAddressPage, ConfirmBusinessPage, RetrievedNamePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -53,21 +53,17 @@ class ConfirmBusinessController @Inject()(
         case None => form
         case Some(value) => form.fill(value)
       }
-      val addressModel = request.userAnswers.get(BusinessAddressPage).getOrElse(throw new Exception("Cannot retrieve business address"))
 
-      val address = s"""<div><p>${addressModel.addressLine1}</p>
-                       |<p>${addressModel.addressLine2}</p>
-                       |<p>${addressModel.addressLine3.getOrElse("")}</p>
-                       |<p>${addressModel.addressLine4.getOrElse("")}</p>
-                       |<p>${addressModel.postCode.getOrElse("")}</p>
-                       |<p>${addressModel.country.code}</p></div>""".stripMargin
+      val businessName = request.userAnswers.get(RetrievedNamePage).getOrElse(throw new Exception("Cannot retrieve business name"))
+      val addressModel = request.userAnswers.get(BusinessAddressPage).getOrElse(throw new Exception("Cannot retrieve business address"))
 
 
       val json = Json.obj(
-        "address" -> address,
+        "businessName" -> businessName,
+        "address" -> addressModel,
         "form"   -> preparedForm,
         "mode"   -> mode,
-        "radios" -> Radios.yesNo(preparedForm("value"))
+        "radios" -> Radios.yesNo(preparedForm("confirm"))
       )
 
       renderer.render("confirmBusiness.njk", json).map(Ok(_))
@@ -79,10 +75,15 @@ class ConfirmBusinessController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors => {
 
+          val businessName = request.userAnswers.get(RetrievedNamePage).getOrElse(throw new Exception("Cannot retrieve business name"))
+          val addressModel = request.userAnswers.get(BusinessAddressPage).getOrElse(throw new Exception("Cannot retrieve business address"))
+
           val json = Json.obj(
+            "businessName" -> businessName,
+            "address" -> addressModel,
             "form"   -> formWithErrors,
             "mode"   -> mode,
-            "radios" -> Radios.yesNo(formWithErrors("value"))
+            "radios" -> Radios.yesNo(formWithErrors("confirm"))
           )
 
           renderer.render("confirmBusiness.njk", json).map(BadRequest(_))

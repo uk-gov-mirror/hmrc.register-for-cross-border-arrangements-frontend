@@ -21,7 +21,7 @@ import java.time.LocalDate
 import base.SpecBase
 import connectors.BusinessMatchingConnector
 import generators.Generators
-import models.{BusinessAddress, BusinessType, Name, UniqueTaxpayerReference, UserAnswers}
+import models.{BusinessAddress, BusinessDetails, BusinessType, Name, UniqueTaxpayerReference, UserAnswers}
 import org.mockito.Matchers._
 import org.mockito.Mockito.{reset, _}
 import org.scalacheck.Arbitrary.arbitrary
@@ -35,6 +35,7 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.test.Helpers._
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HttpResponse
+import wolfendale.scalacheck.regexp.RegexpGen
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -110,7 +111,11 @@ class BusinessMatchingServiceSpec extends SpecBase
 
     "when able to construct a business/organisation matching submission" - {
       "must return the validated business name" in {
-        forAll(arbitrary[UserAnswers], arbitrary[BusinessType], arbitrary[UniqueTaxpayerReference], arbitrary[String]){
+        forAll(
+          arbitrary[UserAnswers],
+          arbitrary[BusinessType],
+          arbitrary[UniqueTaxpayerReference],
+          RegexpGen.from("^[a-zA-Z0-9 '&\\/]{1,105}$")){
           (userAnswers, businessType, utr, businessName) =>
             val answers = userAnswers
               .set(BusinessTypePage, businessType)
@@ -123,9 +128,12 @@ class BusinessMatchingServiceSpec extends SpecBase
               .success
               .value
 
-            val responseJson: JsValue = Json.parse("""
+            val responseJson: JsValue = Json.parse(s"""
               {
                 "anotherKey" : "DAC6",
+                "organisation": {
+                  "organisationName": "$businessName"
+                },
                 "address" : {
                   "addressLine1" : "1 TestStreet",
                   "addressLine2" : "Test",
@@ -135,7 +143,10 @@ class BusinessMatchingServiceSpec extends SpecBase
               }
               """)
 
-            val businessAddress = BusinessAddress("1 TestStreet", Some("Test"), None, None, "AA11BB", "GB")
+            val businessDetails = BusinessDetails(
+              businessName,
+              BusinessAddress("1 TestStreet", Some("Test"), None, None, "AA11BB", "GB")
+            )
 
             when(mockBusinessMatchingConnector.sendBusinessMatchingInformation(any(), any())(any(), any()))
               .thenReturn(
@@ -144,7 +155,7 @@ class BusinessMatchingServiceSpec extends SpecBase
             val result = businessMatchingService.sendBusinessMatchingInformation(answers)
 
             whenReady(result){ result =>
-              result mustBe Some(businessAddress)
+              result mustBe Some(businessDetails)
             }
         }
       }
