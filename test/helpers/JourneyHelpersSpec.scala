@@ -19,21 +19,20 @@ package helpers
 import base.SpecBase
 import models.{BusinessType, UserAnswers}
 import pages.BusinessTypePage
+import helpers.JourneyHelpers._
 
 class JourneyHelpersSpec extends SpecBase {
 
-  val journeyHelpers: JourneyHelpers = new JourneyHelpers
-
   "JourneyHelpers" - {
 
-    "calling organisationJourney" - {
+    "calling isOrganisationJourney" - {
       "must return true if it's an organisation (except sole trader)" in {
         val userAnswers = UserAnswers(userAnswersId)
           .set(BusinessTypePage, BusinessType.Partnership)
           .success
           .value
 
-        val result = journeyHelpers.organisationJourney(userAnswers)
+        val result = isOrganisationJourney(userAnswers)
 
         result mustBe true
       }
@@ -44,13 +43,13 @@ class JourneyHelpersSpec extends SpecBase {
           .success
           .value
 
-        val result = journeyHelpers.organisationJourney(userAnswers)
+        val result = isOrganisationJourney(userAnswers)
 
         result mustBe false
       }
 
       "must return false if it's an individual" in {
-        val result = journeyHelpers.organisationJourney(emptyUserAnswers)
+        val result = isOrganisationJourney(emptyUserAnswers)
 
         result mustBe false
       }

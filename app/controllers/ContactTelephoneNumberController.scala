@@ -18,7 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.ContactTelephoneNumberFormProvider
-import helpers.JourneyHelpers
+import helpers.JourneyHelpers._
 import javax.inject.Inject
 import models.{Mode, NormalMode}
 import navigation.Navigator
@@ -41,7 +41,6 @@ class ContactTelephoneNumberController @Inject()(
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     formProvider: ContactTelephoneNumberFormProvider,
-    journeyHelpers: JourneyHelpers,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
@@ -51,7 +50,7 @@ class ContactTelephoneNumberController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      (journeyHelpers.organisationJourney(request.userAnswers), request.userAnswers.get(ContactNamePage)) match {
+      (isOrganisationJourney(request.userAnswers), request.userAnswers.get(ContactNamePage)) match {
         case (true, None) => Future.successful(Redirect(routes.ContactNameController.onPageLoad(NormalMode)))
         case _ =>
           val preparedForm = request.userAnswers.get(ContactTelephoneNumberPage) match {

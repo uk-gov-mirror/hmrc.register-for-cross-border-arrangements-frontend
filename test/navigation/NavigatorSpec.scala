@@ -139,7 +139,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           answers =>
             navigator
               .nextPage(BusinessAddressPage, NormalMode, answers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+              .mustBe(routes.ContactNameController.onPageLoad(NormalMode))
         }
       }
 
@@ -403,7 +403,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(TelephoneNumberQuestionPage, NormalMode, updatedAnswers)
-              .mustBe(routes.ContactTelephoneNumberController.onPageLoad(NormalMode))//TODO redirect to phone number page
+              .mustBe(routes.ContactTelephoneNumberController.onPageLoad(NormalMode))
         }
       }
 
@@ -458,6 +458,22 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
       }
 
       "must go from Is there someone else we can contact if *name* is not available??" +
+        "to What is the name of the individual or team we should contact? when Yes is selected" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(HaveSecondContactPage, true)
+                .success
+                .value
+
+            navigator
+              .nextPage(HaveSecondContactPage, NormalMode, updatedAnswers)
+              .mustBe(routes.SecondaryContactNameController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from Is there someone else we can contact if *name* is not available??" +
         "to Check your answers? when No is selected" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
@@ -473,6 +489,23 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
+
+      "must go from the What is the name of the individual or team we should contact? page " +
+        "to How can we contact *name*? page" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers
+                .set(SecondaryContactNamePage, "DAC6 Team")
+                .success
+                .value
+
+            navigator
+              .nextPage(SecondaryContactNamePage, NormalMode, updatedAnswers)
+              .mustBe(routes.IndexController.onPageLoad())
+        }
+      }
     }
 
 

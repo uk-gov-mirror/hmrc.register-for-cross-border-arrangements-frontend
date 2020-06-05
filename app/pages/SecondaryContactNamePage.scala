@@ -14,17 +14,13 @@
  * limitations under the License.
  */
 
-package helpers
+package pages
 
-import models.{BusinessType, UserAnswers}
-import pages.BusinessTypePage
+import play.api.libs.json.JsPath
 
-object JourneyHelpers {
+case object SecondaryContactNamePage extends QuestionPage[String] {
 
-  def isOrganisationJourney(ua: UserAnswers): Boolean = ua.get(BusinessTypePage) match {
-    case Some(businessType) if businessType.equals(BusinessType.NotSpecified) => false
-    case Some(_) => true
-    case None => false
-  }
+  override def path: JsPath = JsPath \ toString
 
+  override def toString: String = "secondaryContactName"
 }

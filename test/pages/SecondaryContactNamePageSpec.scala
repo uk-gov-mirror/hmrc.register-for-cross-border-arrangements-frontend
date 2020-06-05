@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-package helpers
+package pages
 
-import models.{BusinessType, UserAnswers}
-import pages.BusinessTypePage
+import pages.behaviours.PageBehaviours
 
-object JourneyHelpers {
 
-  def isOrganisationJourney(ua: UserAnswers): Boolean = ua.get(BusinessTypePage) match {
-    case Some(businessType) if businessType.equals(BusinessType.NotSpecified) => false
-    case Some(_) => true
-    case None => false
+class SecondaryContactNamePageSpec extends PageBehaviours {
+
+  "SecondaryContactNamePage" - {
+
+    beRetrievable[String](SecondaryContactNamePage)
+
+    beSettable[String](SecondaryContactNamePage)
+
+    beRemovable[String](SecondaryContactNamePage)
   }
-
 }

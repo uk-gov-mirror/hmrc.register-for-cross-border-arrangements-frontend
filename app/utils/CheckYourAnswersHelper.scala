@@ -28,6 +28,21 @@ import utils.CheckYourAnswersHelper._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
+  def secondaryContactName: Option[Row] = userAnswers.get(SecondaryContactNamePage) map {
+    answer =>
+      Row(
+        key     = Key(msg"secondaryContactName.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.SecondaryContactNameController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"secondaryContactName.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
   def haveSecondContact: Option[Row] = userAnswers.get(HaveSecondContactPage) map {
     answer =>
       Row(
@@ -74,7 +89,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
         )
       )
   }
-  
+
   def contactTelephoneNumber: Option[Row] = userAnswers.get(ContactTelephoneNumberPage) map {
     answer =>
       Row(

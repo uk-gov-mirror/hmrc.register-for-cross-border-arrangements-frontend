@@ -14,17 +14,21 @@
  * limitations under the License.
  */
 
-package helpers
+package forms
 
-import models.{BusinessType, UserAnswers}
-import pages.BusinessTypePage
+import javax.inject.Inject
 
-object JourneyHelpers {
+import forms.mappings.Mappings
+import play.api.data.Form
 
-  def isOrganisationJourney(ua: UserAnswers): Boolean = ua.get(BusinessTypePage) match {
-    case Some(businessType) if businessType.equals(BusinessType.NotSpecified) => false
-    case Some(_) => true
-    case None => false
-  }
+class SecondaryContactNameFormProvider @Inject() extends Mappings {
+  private val nameRegex = """^[a-zA-Z0-9 "'&,\-\\\/]*$"""
+  private val maxLength = 50
 
+  def apply(): Form[String] =
+    Form(
+      "secondaryContactName" -> textNonWhitespaceOnly("secondaryContactName.error.required")
+        .verifying(regexp(nameRegex,"secondaryContactName.error.invalid"))
+        .verifying(maxLength(maxLength, "secondaryContactName.error.length"))
+    )
 }
