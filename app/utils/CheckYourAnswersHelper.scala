@@ -33,7 +33,6 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
       Row(
         key     = Key(msg"secondaryContactPreference.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
         value   = Value(Html(answer.map(a => msg"secondaryContactPreference.$a").mkString(",<br>"))),
-//        value   = Value(Html(answer.map(a => msg"secondaryContactPreference.$a".resolve()).mkString(",<br>"))) ^^ original line above
         actions = List(
           Action(
             content            = msg"site.edit",
