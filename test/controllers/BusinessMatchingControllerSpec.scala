@@ -90,7 +90,7 @@ class BusinessMatchingControllerSpec extends SpecBase
         val result = route(application, getRequest(individualMatchingRoute)).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements-frontend/register/identity-confirmed")
+        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/identity-confirmed")
       }
     }
 
@@ -120,7 +120,7 @@ class BusinessMatchingControllerSpec extends SpecBase
         val result = route(application, getRequest(individualMatchingRoute)).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements-frontend/register/individual-identity-not-confirmed")
+        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/individual-identity-not-confirmed")
       }
     }
 
@@ -163,7 +163,7 @@ class BusinessMatchingControllerSpec extends SpecBase
         val result = route(application, getRequest(businessMatchingRoute)).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements-frontend/register/business-identity-not-confirmed")
+        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/business-identity-not-confirmed")
       }
     }
 
@@ -183,7 +183,7 @@ class BusinessMatchingControllerSpec extends SpecBase
 
         status(result) mustEqual SEE_OTHER
         //TODO Redirect to error page when it's ready
-        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements-frontend/register/business-identity-not-confirmed")
+        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/business-identity-not-confirmed")
       }
     }
 
@@ -210,7 +210,7 @@ class BusinessMatchingControllerSpec extends SpecBase
         val result = route(application, getRequest(businessMatchingRoute)).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements-frontend/register/business/with-id/utr")
+        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/business/with-id/utr")
       }
     }
   }
