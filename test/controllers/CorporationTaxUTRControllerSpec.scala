@@ -17,7 +17,7 @@
 package controllers
 
 import base.SpecBase
-import forms.UniqueTaxpayerReferenceFormProvider
+import forms.CorporationTaxUTRFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -25,7 +25,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.UniqueTaxpayerReferencePage
+import pages.CorporationTaxUTRPage
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -38,27 +38,28 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class UniqueTaxpayerReferenceControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
+class CorporationTaxUTRControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new UniqueTaxpayerReferenceFormProvider()
+  val formProvider = new CorporationTaxUTRFormProvider()
   val form = formProvider()
 
   val utr = new SaUtrGenerator().nextSaUtr.toString()
 
-  lazy val uniqueTaxpayerReferenceRoute = routes.UniqueTaxpayerReferenceController.onPageLoad(NormalMode).url
+
+  lazy val corporationTaxUTRRoute = routes.CorporationTaxUTRController.onPageLoad(NormalMode).url
 
   val userAnswers = UserAnswers(
     userAnswersId,
     Json.obj(
-      UniqueTaxpayerReferencePage.toString -> Json.obj(
+      CorporationTaxUTRPage.toString -> Json.obj(
         "uniqueTaxPayerReference" -> utr
       )
     )
   )
 
-  "UniqueTaxpayerReference Controller" - {
+  "CorporationTaxUTR Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
@@ -66,7 +67,7 @@ class UniqueTaxpayerReferenceControllerSpec extends SpecBase with MockitoSugar w
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(GET, uniqueTaxpayerReferenceRoute)
+      val request = FakeRequest(GET, corporationTaxUTRRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -81,7 +82,7 @@ class UniqueTaxpayerReferenceControllerSpec extends SpecBase with MockitoSugar w
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "uniqueTaxpayerReference.njk"
+      templateCaptor.getValue mustEqual "corporationTaxUTR.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -93,7 +94,7 @@ class UniqueTaxpayerReferenceControllerSpec extends SpecBase with MockitoSugar w
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, uniqueTaxpayerReferenceRoute)
+      val request = FakeRequest(GET, corporationTaxUTRRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -105,7 +106,7 @@ class UniqueTaxpayerReferenceControllerSpec extends SpecBase with MockitoSugar w
 
       val filledForm = form.bind(
         Map(
-          "uniqueTaxPayerReference" -> utr
+          "corporationTaxUTR" -> utr
         )
       )
 
@@ -114,7 +115,7 @@ class UniqueTaxpayerReferenceControllerSpec extends SpecBase with MockitoSugar w
         "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "uniqueTaxpayerReference.njk"
+      templateCaptor.getValue mustEqual "corporationTaxUTR.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
       application.stop()
@@ -136,8 +137,8 @@ class UniqueTaxpayerReferenceControllerSpec extends SpecBase with MockitoSugar w
 
 
       val request =
-        FakeRequest(POST, uniqueTaxpayerReferenceRoute)
-          .withFormUrlEncodedBody(("uniqueTaxPayerReference", utr))
+        FakeRequest(POST, corporationTaxUTRRoute)
+          .withFormUrlEncodedBody(("corporationTaxUTR", utr))
 
       val result = route(application, request).value
 
@@ -154,8 +155,8 @@ class UniqueTaxpayerReferenceControllerSpec extends SpecBase with MockitoSugar w
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, uniqueTaxpayerReferenceRoute).withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
+      val request = FakeRequest(POST, corporationTaxUTRRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -166,25 +167,26 @@ class UniqueTaxpayerReferenceControllerSpec extends SpecBase with MockitoSugar w
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"   -> boundForm,
-        "mode"   -> NormalMode
+        "form" -> boundForm,
+        "mode" -> NormalMode
       )
 
-      templateCaptor.getValue mustEqual "uniqueTaxpayerReference.njk"
+      templateCaptor.getValue mustEqual "corporationTaxUTR.njk"
       jsonCaptor.getValue must containJson(expectedJson)
 
-       application.stop()
+      application.stop()
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {
 
       val application = applicationBuilder(userAnswers = None).build()
 
-      val request = FakeRequest(GET, uniqueTaxpayerReferenceRoute)
+      val request = FakeRequest(GET, corporationTaxUTRRoute)
 
       val result = route(application, request).value
 
       status(result) mustEqual SEE_OTHER
+
       redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
 
       application.stop()
@@ -195,8 +197,8 @@ class UniqueTaxpayerReferenceControllerSpec extends SpecBase with MockitoSugar w
       val application = applicationBuilder(userAnswers = None).build()
 
       val request =
-        FakeRequest(POST, uniqueTaxpayerReferenceRoute)
-          .withFormUrlEncodedBody(("uniqueTaxPayerReference", "value 1"))
+        FakeRequest(POST, corporationTaxUTRRoute)
+          .withFormUrlEncodedBody(("value", "answer"))
 
       val result = route(application, request).value
 

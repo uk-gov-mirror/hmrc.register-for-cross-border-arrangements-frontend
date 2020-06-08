@@ -63,7 +63,7 @@ class BusinessMatchingController @Inject()(
       /*Note: Needs business type, name and utr to business match
       * Checking UTR page only because /registered-business-name uses the business type before calling this method
       */
-      request.userAnswers.get(UniqueTaxpayerReferencePage) match {
+      request.userAnswers.get(SelfAssessmentUTRPage) match {
         case Some(_) =>
           businessMatchingService.sendBusinessMatchingInformation(request.userAnswers) flatMap {
             case Some(details) =>
@@ -78,7 +78,7 @@ class BusinessMatchingController @Inject()(
           } recover {
             case _ => Redirect(routes.BusinessNotConfirmedController.onPageLoad()) //TODO Redirect to error page when it's ready
           }
-        case _ => Future.successful(Redirect(routes.UniqueTaxpayerReferenceController.onPageLoad(NormalMode)))
+        case _ => Future.successful(Redirect(routes.DoYouHaveUTRController.onPageLoad(NormalMode)))
       }
   }
 }

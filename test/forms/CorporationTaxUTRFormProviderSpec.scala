@@ -19,16 +19,16 @@ package forms
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
 
-class UniqueTaxpayerReferenceFormProviderSpec extends StringFieldBehaviours {
+class CorporationTaxUTRFormProviderSpec extends StringFieldBehaviours {
 
-  val form = new UniqueTaxpayerReferenceFormProvider()()
+  val form = new CorporationTaxUTRFormProvider()()
 
-  ".uniqueTaxPayerReference" - {
+  ".corporationTaxUTRReference" - {
 
-    val fieldName = "uniqueTaxPayerReference"
-    val requiredKey = "uniqueTaxpayerReference.error.uniqueTaxPayerReference.required"
-    val lengthKey = "uniqueTaxpayerReference.error.uniqueTaxPayerReference.length"
-    val invalidKey = "uniqueTaxpayerReference.error.uniqueTaxPayerReference.invalid"
+    val fieldName = "corporationTaxUTR"
+    val requiredKey = "corporationTaxUTR.error.corporationTaxUTR.required"
+    val lengthKey = "corporationTaxUTR.error.corporationTaxUTR.length"
+    val invalidKey = "corporationTaxUTR.error.corporationTaxUTR.invalid"
     val utrRegex = "^((\\s*[A-Za-z0-9]\\s*){10})|((\\s*[A-Za-z0-9]\\s*){13})$"
     val maxLength = 13
 

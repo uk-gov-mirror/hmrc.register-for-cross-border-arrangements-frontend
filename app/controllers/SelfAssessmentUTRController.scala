@@ -16,12 +16,13 @@
 
 package controllers
 
+import config.FrontendAppConfig
 import controllers.actions._
-import forms.UniqueTaxpayerReferenceFormProvider
+import forms.SelfAssessmentUTRFormProvider
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
-import pages.{BusinessTypePage, UniqueTaxpayerReferencePage}
+import pages.{BusinessTypePage, SelfAssessmentUTRPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -32,16 +33,17 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class UniqueTaxpayerReferenceController @Inject()(
-    override val messagesApi: MessagesApi,
-    sessionRepository: SessionRepository,
-    navigator: Navigator,
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    formProvider: UniqueTaxpayerReferenceFormProvider,
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
+class SelfAssessmentUTRController @Inject()(
+                                                   override val messagesApi: MessagesApi,
+                                                   appConfig: FrontendAppConfig,
+                                                   sessionRepository: SessionRepository,
+                                                   navigator: Navigator,
+                                                   identify: IdentifierAction,
+                                                   getData: DataRetrievalAction,
+                                                   requireData: DataRequiredAction,
+                                                   formProvider: SelfAssessmentUTRFormProvider,
+                                                   val controllerComponents: MessagesControllerComponents,
+                                                   renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
   private val form = formProvider()
@@ -49,20 +51,18 @@ class UniqueTaxpayerReferenceController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(UniqueTaxpayerReferencePage) match {
+      val preparedForm = request.userAnswers.get(SelfAssessmentUTRPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
-      val businessType = request.userAnswers.get(BusinessTypePage)
-
       val json = Json.obj(
-        "form"   -> preparedForm,
-        "mode"   -> mode,
-        "businessType"-> businessType
+        "form" -> preparedForm,
+        "mode" -> mode,
+        "lostUTRUrl" -> appConfig.lostUTRUrl
       )
 
-      renderer.render("uniqueTaxpayerReference.njk", json).map(Ok(_))
+      renderer.render("selfAssessmentUTR.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -71,21 +71,18 @@ class UniqueTaxpayerReferenceController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors => {
 
-          val businessType = request.userAnswers.get(BusinessTypePage)
-
           val json = Json.obj(
             "form"   -> formWithErrors,
-            "mode"   -> mode,
-            "businessType"-> businessType
+            "mode"   -> mode
           )
 
-          renderer.render("uniqueTaxpayerReference.njk", json).map(BadRequest(_))
+          renderer.render("selfAssessmentUTR.njk", json).map(BadRequest(_))
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(UniqueTaxpayerReferencePage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(SelfAssessmentUTRPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(UniqueTaxpayerReferencePage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(SelfAssessmentUTRPage, mode, updatedAnswers))
       )
   }
 }

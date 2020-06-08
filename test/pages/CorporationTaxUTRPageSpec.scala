@@ -17,11 +17,17 @@
 package pages
 
 import models.UniqueTaxpayerReference
-import play.api.libs.json.JsPath
+import pages.behaviours.PageBehaviours
 
-case object UniqueTaxpayerReferencePage extends QuestionPage[UniqueTaxpayerReference] {
 
-  override def path: JsPath = JsPath \ toString
+class CorporationTaxUTRPageSpec extends PageBehaviours {
 
-  override def toString: String = "uniqueTaxpayerReference"
+  "CorporationTaxUTRPage" - {
+
+    beRetrievable[UniqueTaxpayerReference](CorporationTaxUTRPage)
+
+    beSettable[UniqueTaxpayerReference](CorporationTaxUTRPage)
+
+    beRemovable[UniqueTaxpayerReference](CorporationTaxUTRPage)
+  }
 }

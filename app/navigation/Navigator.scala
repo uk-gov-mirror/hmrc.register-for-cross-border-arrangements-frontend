@@ -31,8 +31,11 @@ class Navigator @Inject()() {
 
   private val normalRoutes: PartialFunction[Page, UserAnswers => Option[Call]] = {
     case RegistrationTypePage => registrationTypeRoutes
-    case DoYouHaveUTRPage => doYouHaveUTRPage
-    case DoYouHaveANationalInsuranceNumberPage =>   doYouHaveANationalInsuranceNumberRoutes
+    case DoYouHaveUTRPage => doYouHaveUTRRoutes
+    case BusinessTypePage => businessTypeRoutes
+    case CorporationTaxUTRPage => businessNameRoutes
+    case SelfAssessmentUTRPage => businessNameRoutes
+    case DoYouHaveANationalInsuranceNumberPage => doYouHaveANationalInsuranceNumberRoutes
     case NinoPage => _ => Some(routes.NameController.onPageLoad(NormalMode))
     case NamePage => _ => Some(routes.DateOfBirthController.onPageLoad(NormalMode))
     case BusinessNamePage => _ => Some(routes.BusinessMatchingController.matchBusiness())
@@ -40,8 +43,6 @@ class Navigator @Inject()() {
     case ConfirmBusinessPage => confirmBusinessRoutes
     case DateOfBirthPage => dateOfBirthRoutes
     case DoYouLiveInTheUKPage => doYouLiveInTheUKRoutes
-    case BusinessTypePage => _ => Some(routes.UniqueTaxpayerReferenceController.onPageLoad(NormalMode))
-    case UniqueTaxpayerReferencePage => businessNameRoutes
     case NonUkNamePage => _ => Some(routes.DateOfBirthController.onPageLoad(NormalMode))
     case BusinessAddressPage => _ =>   Some(routes.ContactNameController.onPageLoad(NormalMode))
     case BusinessWithoutIDNamePage => _ => Some(routes.BusinessAddressController.onPageLoad(NormalMode))
@@ -62,6 +63,19 @@ class Navigator @Inject()() {
     case _ => _ => routes.CheckYourAnswersController.onPageLoad()
   }
 
+  private def businessTypeRoutes(ua: UserAnswers): Option[Call] = {
+    ua.get(BusinessTypePage) map {
+      case BusinessType.CorporateBody | BusinessType.UnIncorporatedBody => routes.CorporationTaxUTRController.onPageLoad(NormalMode)
+      case _ => routes.SelfAssessmentUTRController.onPageLoad(NormalMode)
+    }
+  }
+
+  private def doYouHaveUTRRoutes(ua: UserAnswers): Option[Call] =
+    ua.get(DoYouHaveUTRPage) map {
+      case true  => routes.BusinessTypeController.onPageLoad(NormalMode)
+      case false => routes.RegistrationTypeController.onPageLoad(NormalMode)
+    }
+
   private def businessNameRoutes(ua: UserAnswers): Option[Call] = {
     ua.get(BusinessTypePage) map {
       case BusinessType.NotSpecified => routes.SoleTraderNameController.onPageLoad(NormalMode)
@@ -75,12 +89,6 @@ class Navigator @Inject()() {
     ua.get(ConfirmBusinessPage) map {
       case true  => routes.IdentityConfirmedController.onPageLoad()
       case false  => routes.BusinessNotConfirmedController.onPageLoad()
-    }
-
-  private def doYouHaveUTRPage(ua: UserAnswers): Option[Call] =
-    ua.get(DoYouHaveUTRPage) map {
-      case true  => routes.BusinessTypeController.onPageLoad(NormalMode)
-      case false => routes.RegistrationTypeController.onPageLoad(NormalMode)
     }
 
   private def doYouHaveANationalInsuranceNumberRoutes(ua: UserAnswers): Option[Call] =
