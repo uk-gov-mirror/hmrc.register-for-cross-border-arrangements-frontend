@@ -28,7 +28,7 @@ class SecondaryContactEmailAddressFormProvider @Inject() extends Mappings {
 
   def apply(): Form[String] =
     Form(
-      "email" -> text("secondaryContactEmailAddress.error.required")
+      "email" -> textNonWhitespaceOnly("secondaryContactEmailAddress.error.required")
       .verifying(regexp(emailRegex, "secondaryContactEmailAddress.error.email.invalid"))
       .verifying(maxLength(254, "secondaryContactEmailAddress.error.length"))
     )
