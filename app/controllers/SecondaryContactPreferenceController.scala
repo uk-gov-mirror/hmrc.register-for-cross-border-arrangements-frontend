@@ -75,7 +75,7 @@ class SecondaryContactPreferenceController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors => {
 
-          val secondaryContactName: String = request.userAnswers.get(SecondaryContactNamePage).getOrElse("them")
+          val secondaryContactName: String = request.userAnswers.get(SecondaryContactNamePage).get
 
           val json = Json.obj(
             "form"       -> formWithErrors,
