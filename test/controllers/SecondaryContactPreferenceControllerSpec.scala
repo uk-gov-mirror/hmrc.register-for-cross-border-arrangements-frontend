@@ -150,7 +150,12 @@ class SecondaryContactPreferenceControllerSpec extends SpecBase with MockitoSuga
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(SecondaryContactNamePage, "SecondContactName")
+        .success
+        .value
+      
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request =  FakeRequest(POST, secondaryContactPreferenceRoute).withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

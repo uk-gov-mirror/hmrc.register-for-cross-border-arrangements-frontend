@@ -17,7 +17,6 @@
 package models
 
 import play.api.data.Form
-import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels._
 
 sealed trait SecondaryContactPreference
@@ -32,7 +31,7 @@ object SecondaryContactPreference extends Enumerable.Implicits {
     Telephone
   )
 
-  def checkboxes(form: Form[_])(implicit messages: Messages): Seq[Checkboxes.Item] = {
+  def checkboxes(form: Form[_]): Seq[Checkboxes.Item] = {
 
     val field = form("value")
     val items = Seq(
