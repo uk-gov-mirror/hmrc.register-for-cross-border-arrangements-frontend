@@ -435,3 +435,11 @@ secondaryContactPreference.telephone = Telephone
 secondaryContactPreference.checkYourAnswersLabel = How can we contact them?
 secondaryContactPreference.checkYourAnswersLabel = How can we contact them?
 secondaryContactPreference.error.required = Select how we can contact them
+
+secondaryContactEmailAddress.title = What is the email address for your second contact?
+secondaryContactEmailAddress.heading = What is the email address for {0}?
+secondaryContactEmailAddress.hint = We will use this email address to send confirmation of your disclosures.
+secondaryContactEmailAddress.checkYourAnswersLabel = What is the email address for {0}?
+secondaryContactEmailAddress.error.required = Enter an email address
+secondaryContactEmailAddress.error.length = Email addressLine3 must be 254 characters or less
+secondaryContactEmailAddress.error.email.invalid = Enter an email address in the correct format, like name@example.com
