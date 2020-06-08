@@ -46,7 +46,7 @@ class IndividualNotConfirmedControllerSpec extends SpecBase with MockitoSugar wi
       val result = route(application, request).value
 
       val expectedJson = Json.obj(
-        "tryAgainLink" -> "/register-for-cross-border-arrangements-frontend/register/do-you-have-a-utr"
+        "tryAgainLink" -> "/register-for-cross-border-arrangements/register/do-you-have-a-utr"
       )
 
       status(result) mustEqual OK
