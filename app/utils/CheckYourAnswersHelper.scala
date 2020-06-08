@@ -28,6 +28,21 @@ import utils.CheckYourAnswersHelper._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
+  def secondaryContactPreference: Option[Row] = userAnswers.get(SecondaryContactPreferencePage) map {
+    answer =>
+      Row(
+        key     = Key(msg"secondaryContactPreference.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(Html(answer.map(a => msg"secondaryContactPreference.$a").mkString(",<br>"))),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.SecondaryContactPreferenceController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"secondaryContactPreference.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
   def secondaryContactName: Option[Row] = userAnswers.get(SecondaryContactNamePage) map {
     answer =>
       Row(

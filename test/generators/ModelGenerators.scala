@@ -24,6 +24,7 @@ import org.scalacheck.{Arbitrary, Gen}
 import uk.gov.hmrc.domain.Nino
 
 trait ModelGenerators {
+
   self: Generators =>
 
   val regime = "DACSIX"
@@ -100,6 +101,11 @@ trait ModelGenerators {
   implicit lazy val arbitraryBusinessType: Arbitrary[BusinessType] =
     Arbitrary {
       Gen.oneOf(BusinessType.values.toSeq)
+    }
+
+  implicit lazy val arbitrarySecondaryContactPreference: Arbitrary[SecondaryContactPreference] =
+    Arbitrary {
+      Gen.oneOf(SecondaryContactPreference.values.toSeq)
     }
 
 }

@@ -172,3 +172,8 @@ GET        /register/second-contact-name                         controllers.Sec
 POST       /register/second-contact-name                         controllers.SecondaryContactNameController.onSubmit(mode: Mode = NormalMode)
 GET        /register/change-second-contact-name                  controllers.SecondaryContactNameController.onPageLoad(mode: Mode = CheckMode)
 POST       /register/change-second-contact-name                  controllers.SecondaryContactNameController.onSubmit(mode: Mode = CheckMode)
+
+GET        /register/second-contact-preference                        controllers.SecondaryContactPreferenceController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/second-contact-preference                        controllers.SecondaryContactPreferenceController.onSubmit(mode: Mode = NormalMode)
+GET        /register/change-second-contact-preference                 controllers.SecondaryContactPreferenceController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/change-second-contact-preference                 controllers.SecondaryContactPreferenceController.onSubmit(mode: Mode = CheckMode)
