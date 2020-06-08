@@ -520,7 +520,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(SecondaryContactPreferencePage, NormalMode, updatedAnswers)
-              .mustBe(routes.ContactEmailAddressController.onPageLoad(NormalMode)) //TODO change to Second Contact Email page when built
+              .mustBe(routes.SecondaryContactEmailAddressController.onPageLoad(NormalMode))
         }
       }
 
@@ -559,7 +559,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
     }
-    }
+
 
     "in Check mode" - {
 

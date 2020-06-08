@@ -126,7 +126,7 @@ class Navigator @Inject()() {
       case set: Set[SecondaryContactPreference] if set.head == Telephone =>
         routes.ContactTelephoneNumberController.onPageLoad(NormalMode) //TODO change to SecondaryContactTelephone
       case set: Set[SecondaryContactPreference] if set.head == Email =>
-        routes.ContactEmailAddressController.onPageLoad(NormalMode) //TODO change to SecondaryContactEmail
+        routes.SecondaryContactEmailAddressController.onPageLoad(NormalMode)
     }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
