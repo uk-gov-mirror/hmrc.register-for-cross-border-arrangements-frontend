@@ -56,7 +56,7 @@ class SecondaryContactEmailAddressController @Inject()(
 
       val contactName = request.userAnswers.get(SecondaryContactNamePage) match {
         case None => "your second contact" 
-        case Some(contactName) => s"${contactName}’s"
+        case Some(contactName) => s"${contactName}"
       }
 
       val json = Json.obj(
@@ -73,7 +73,7 @@ class SecondaryContactEmailAddressController @Inject()(
 
     val contactName = request.userAnswers.get(SecondaryContactNamePage) match {
         case None => "your second contact"
-        case Some(contactName) => s"${contactName}’s"
+        case Some(contactName) => s"${contactName}"
       }
 
       form.bindFromRequest().fold(
