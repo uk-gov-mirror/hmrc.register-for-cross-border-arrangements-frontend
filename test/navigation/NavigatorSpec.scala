@@ -17,14 +17,14 @@
 package navigation
 
 import base.SpecBase
-import controllers.routes
 import generators.Generators
-import models.BusinessType._
 import models.RegistrationType.Individual
 import models._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
+import controllers.routes
+import models.BusinessType._
 
 class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
@@ -520,7 +520,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(SecondaryContactPreferencePage, NormalMode, updatedAnswers)
-              .mustBe(routes.ContactEmailAddressController.onPageLoad(NormalMode)) //TODO change to Second Contact Email page when built
+              .mustBe(routes.SecondaryContactEmailAddressController.onPageLoad(NormalMode))
         }
       }
 
@@ -541,7 +541,25 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
               .mustBe(routes.ContactTelephoneNumberController.onPageLoad(NormalMode)) //TODO change to Second Contact Telephone page when built
         }
       }
+
+      "must go from the What is the email address of your second contact page " +
+        "to Check your answers page" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers
+                .set(SecondaryContactEmailAddressPage, "test@test.com")
+                .success
+                .value
+
+            navigator
+              .nextPage(SecondaryContactEmailAddressPage, NormalMode, updatedAnswers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+        }
+      }
     }
+
 
     "in Check mode" - {
 
