@@ -54,6 +54,7 @@ class Navigator @Inject()() {
     case HaveSecondContactPage => haveSecondContactRoutes
     case SecondaryContactNamePage => _ => Some(routes.SecondaryContactPreferenceController.onPageLoad(NormalMode))
     case SecondaryContactPreferencePage => secondaryContactPreferenceRoutes
+    case SecondaryContactEmailAddressPage => _ => Some(routes.CheckYourAnswersController.onPageLoad())
     case _ => _ => Some(routes.IndexController.onPageLoad())
   }
 
