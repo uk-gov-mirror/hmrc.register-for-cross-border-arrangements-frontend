@@ -25,7 +25,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.SecondaryContactPreferencePage
+import pages.{SecondaryContactNamePage, SecondaryContactPreferencePage}
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -53,7 +53,12 @@ class SecondaryContactPreferenceControllerSpec extends SpecBase with MockitoSuga
 
       when(mockRenderer.render(any(), any())(any())) thenReturn Future.successful(Html(""))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(SecondaryContactNamePage, "SecondContactName")
+        .success
+        .value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, secondaryContactPreferenceRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
@@ -80,7 +85,14 @@ class SecondaryContactPreferenceControllerSpec extends SpecBase with MockitoSuga
 
       when(mockRenderer.render(any(), any())(any())) thenReturn Future.successful(Html(""))
 
-      val userAnswers = UserAnswers(userAnswersId).set(SecondaryContactPreferencePage, SecondaryContactPreference.values.toSet).success.value
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(SecondaryContactNamePage, "SecondContactName")
+        .success
+        .value
+        .set(SecondaryContactPreferencePage, SecondaryContactPreference.values.toSet)
+        .success
+        .value
+
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, secondaryContactPreferenceRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
