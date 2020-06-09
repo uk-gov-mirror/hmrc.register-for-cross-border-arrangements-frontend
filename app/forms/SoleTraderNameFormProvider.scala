@@ -23,8 +23,8 @@ import play.api.data.Form
 import play.api.data.Forms._
 
 class SoleTraderNameFormProvider @Inject() extends Mappings {
-    val firstNameRegex = "^[a-zA-Z &`\\-\\'^]{1,35}$"
-    val lastNameRegex =  "^[a-zA-Z &`\\-\\'^]{1,35}$"
+    val firstNameRegex = "^[a-zA-Z0-9 '&\\/]{1,35}$"
+    val lastNameRegex =  "^[a-zA-Z0-9 '&\\/]{1,35}$"
 
 
   def apply(): Form[Name] =
