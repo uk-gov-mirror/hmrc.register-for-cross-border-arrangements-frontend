@@ -45,6 +45,7 @@ class BusinessMatchingServiceSpec extends SpecBase
   with Generators
   with ScalaCheckPropertyChecks {
 
+
   val mockBusinessMatchingConnector: BusinessMatchingConnector = mock[BusinessMatchingConnector]
 
   override lazy val app: Application = new GuiceApplicationBuilder()
@@ -59,6 +60,8 @@ class BusinessMatchingServiceSpec extends SpecBase
     reset(
       mockBusinessMatchingConnector
     )
+
+
 
   "Business Matching Service" - {
     "when able to construct an individual matching submission" - {
@@ -111,12 +114,17 @@ class BusinessMatchingServiceSpec extends SpecBase
 
     "when able to construct a business/organisation matching submission" - {
       "must return the validated business name" in {
+
+
         forAll(
           arbitrary[UserAnswers],
           arbitrary[BusinessType],
           arbitrary[UniqueTaxpayerReference],
           RegexpGen.from("^[a-zA-Z0-9 '&\\/]{1,105}$"),
-          arbitrary[Name]
+          for {
+            firstName <- RegexpGen.from("^[a-zA-Z0-9 '&\\/]{1,35}$")
+            secondName <- RegexpGen.from("^[a-zA-Z0-9 '&\\/]{1,35}$")
+          } yield Name(firstName, secondName)
         ){
           (userAnswers, businessType, utr, businessName, soleTraderName) =>
             val answers = userAnswers
