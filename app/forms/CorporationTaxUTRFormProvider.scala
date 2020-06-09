@@ -24,13 +24,14 @@ import play.api.data.Forms._
 
 class CorporationTaxUTRFormProvider @Inject() extends Mappings {
 
-  private val utrRegex = "^((\\s*[A-Za-z0-9]\\s*){10})|((\\s*[A-Za-z0-9]\\s*){13})$"
+  private val utrRegex = "^[0-9]{10}$"
 
   def apply(): Form[UniqueTaxpayerReference] = Form(
     mapping(
       "corporationTaxUTR" -> text("corporationTaxUTR.error.corporationTaxUTR.required")
         .verifying(regexp(utrRegex, "corporationTaxUTR.error.corporationTaxUTR.invalid"))
-        .verifying(maxLength(13, "corporationTaxUTR.error.corporationTaxUTR.length"))
+        .verifying(maxLength(10, "corporationTaxUTR.error.corporationTaxUTR.length"))
+        .verifying(minLength(10, "corporationTaxUTR.error.corporationTaxUTR.length"))
     )(UniqueTaxpayerReference.apply)(UniqueTaxpayerReference.unapply)
   )
 }

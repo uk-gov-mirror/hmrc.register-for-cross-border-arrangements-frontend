@@ -73,7 +73,8 @@ class CorporationTaxUTRController @Inject()(
 
           val json = Json.obj(
             "form" -> formWithErrors,
-            "mode" -> mode
+            "mode" -> mode,
+            "lostUTRUrl" -> appConfig.lostUTRUrl
           )
 
           renderer.render("corporationTaxUTR.njk", json).map(BadRequest(_))

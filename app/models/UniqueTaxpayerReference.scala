@@ -22,4 +22,5 @@ case class UniqueTaxpayerReference(uniqueTaxPayerReference: String)
 
 object UniqueTaxpayerReference {
   implicit val format = Json.format[UniqueTaxpayerReference]
+
 }

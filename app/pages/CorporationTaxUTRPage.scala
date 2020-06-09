@@ -17,14 +17,11 @@
 package pages
 
 import models.UniqueTaxpayerReference
-import play.api.libs.json.{JsPath, Json, Writes}
+import play.api.libs.json.JsPath
 
 case object CorporationTaxUTRPage extends QuestionPage[UniqueTaxpayerReference] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "corporationTaxUTR"
-
-  implicit lazy val writes: Writes[UniqueTaxpayerReference] = Json.writes[UniqueTaxpayerReference]
-
 }

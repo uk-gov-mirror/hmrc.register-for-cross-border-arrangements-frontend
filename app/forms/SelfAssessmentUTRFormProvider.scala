@@ -24,13 +24,14 @@ import play.api.data.Forms._
 
 class SelfAssessmentUTRFormProvider @Inject() extends Mappings {
 
-  private val utrRegex = "^((\\s*[A-Za-z0-9]\\s*){10})|((\\s*[A-Za-z0-9]\\s*){13})$"
+  private val utrRegex = "^[0-9]{10}$"
 
    def apply(): Form[UniqueTaxpayerReference] = Form(
      mapping(
       "selfAssessmentUTR" -> text("selfAssessmentUTR.error.required")
           .verifying(regexp(utrRegex, "selfAssessmentUTR.error.invalid"))
-        .verifying(maxLength(13, "selfAssessmentUTR.error.length"))
+        .verifying(maxLength(10, "selfAssessmentUTR.error.length"))
+        .verifying(minLength(10, "selfAssessmentUTR.error.length"))
     )(UniqueTaxpayerReference.apply)(UniqueTaxpayerReference.unapply)
    )
  }

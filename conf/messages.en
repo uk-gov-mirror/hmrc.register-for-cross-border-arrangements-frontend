@@ -195,7 +195,7 @@ selfAssessmentUTR.hint = This is 10 numbers, for example 1234567890. It will be 
 selfAssessmentUTR.link = find a lost UTR number.
 selfAssessmentUTR.error.required = Enter your Self Assessment Unique Taxpayer Reference
 selfAssessmentUTR.error.length =  Self Assessment Unique Taxpayer Reference must be 10 numbers
-selfAssessmentUTR.error.invalid = Enter a real Self Assessment Unique Taxpayer Reference
+selfAssessmentUTR.error.invalid = Self Assessment Unique Taxpayer Reference must only include numbers 0 to 9
 
 corporationTaxUTR.title.corporation = What is your Corporation Tax Unique TaxPayer Reference?
 corporationTaxUTR.heading.corporation = What is your Corporation Tax Unique TaxPayer Reference?
@@ -204,7 +204,7 @@ corporationTaxUTR.link = find a lost UTR number.
 corporationTaxUTR.checkYourAnswersLabel = What is your Corporation Tax Unique TaxPayer Reference?
 corporationTaxUTR.error.corporationTaxUTR.required = Enter your Corporation Tax Unique Taxpayer Reference
 corporationTaxUTR.error.corporationTaxUTR.length = Corporation Tax Unique Taxpayer Reference must be 10 numbers
-corporationTaxUTR.error.corporationTaxUTR.invalid = Enter a real Corporation Tax Unique Taxpayer Reference
+corporationTaxUTR.error.corporationTaxUTR.invalid = Corporation Tax Unique Taxpayer Reference must only include numbers 0 to 9
 
 postCode.title = What is the postcode of your registered address?
 postCode.heading = What is the postcode of your registered address?

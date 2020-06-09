@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import forms.SelfAssessmentUTRFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, UniqueTaxpayerReference, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -49,14 +49,8 @@ class SelfAssessmentUTRControllerSpec extends SpecBase with MockitoSugar with Nu
 
   lazy val uniqueTaxpayerReferenceRoute = routes.SelfAssessmentUTRController.onPageLoad(NormalMode).url
 
-  val userAnswers = UserAnswers(
-    userAnswersId,
-    Json.obj(
-      SelfAssessmentUTRPage.toString -> Json.obj(
-        "uniqueTaxPayerReference" -> utr
-      )
-    )
-  )
+  val userAnswers = UserAnswers(userAnswersId).set(SelfAssessmentUTRPage,UniqueTaxpayerReference(utr)).success.value
+
 
   "SelfAssessmentUTR Controller" - {
 

@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import forms.CorporationTaxUTRFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, UniqueTaxpayerReference, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -50,14 +50,8 @@ class CorporationTaxUTRControllerSpec extends SpecBase with MockitoSugar with Nu
 
   lazy val corporationTaxUTRRoute = routes.CorporationTaxUTRController.onPageLoad(NormalMode).url
 
-  val userAnswers = UserAnswers(
-    userAnswersId,
-    Json.obj(
-      CorporationTaxUTRPage.toString -> Json.obj(
-        "uniqueTaxPayerReference" -> utr
-      )
-    )
-  )
+ val userAnswers = UserAnswers(userAnswersId).set(CorporationTaxUTRPage,UniqueTaxpayerReference(utr)).success.value
+
 
   "CorporationTaxUTR Controller" - {
 
