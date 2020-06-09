@@ -64,7 +64,6 @@ class BusinessMatchingController @Inject()(
       /*Note: Needs business type, name and utr to business match
       * Checking UTR page only because /registered-business-name uses the business type before calling this method
       */
-      Logger.debug(s"\n\nThe utr is ${request.userAnswers.get(UniqueTaxpayerReferencePage)}")
       request.userAnswers.get(UniqueTaxpayerReferencePage) match {
         case Some(_) =>
           businessMatchingService.sendBusinessMatchingInformation(request.userAnswers) flatMap {
