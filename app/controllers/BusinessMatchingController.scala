@@ -21,6 +21,7 @@ import javax.inject.Inject
 import models.{Mode, NormalMode}
 import navigation.Navigator
 import pages._
+import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
@@ -63,6 +64,7 @@ class BusinessMatchingController @Inject()(
       /*Note: Needs business type, name and utr to business match
       * Checking UTR page only because /registered-business-name uses the business type before calling this method
       */
+      Logger.debug(s"\n\nThe utr is ${request.userAnswers.get(UniqueTaxpayerReferencePage)}")
       request.userAnswers.get(UniqueTaxpayerReferencePage) match {
         case Some(_) =>
           businessMatchingService.sendBusinessMatchingInformation(request.userAnswers) flatMap {

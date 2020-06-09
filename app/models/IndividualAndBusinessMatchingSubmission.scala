@@ -18,7 +18,7 @@ package models
 
 import java.time.LocalDate
 
-import pages.{BusinessNamePage, BusinessTypePage, DateOfBirthPage, NamePage}
+import pages.{BusinessNamePage, BusinessTypePage, DateOfBirthPage, NamePage, SoleTraderNamePage}
 import play.api.libs.json.{Json, OWrites, Reads, _}
 
 trait IndividualAndBusinessMatchingSubmission
@@ -93,13 +93,22 @@ case class BusinessMatchingSubmission(regime: String,
 object BusinessMatchingSubmission {
   def apply(userAnswers: UserAnswers): Option[BusinessMatchingSubmission] =
     for {
-      businessName <- userAnswers.get(BusinessNamePage)
+      businessName <- getBusinessName(userAnswers)
       businessType <- userAnswers.get(BusinessTypePage)
     } yield BusinessMatchingSubmission(
       regime = "DAC",
       requiresNameMatch = true,
       isAnAgent = false,
       Organisation(businessName, businessType))
+
+  private def getBusinessName(userAnswers: UserAnswers): Option[String] = {
+    userAnswers.get(BusinessTypePage) match {
+      case Some(BusinessType.NotSpecified) => {
+        userAnswers.get(SoleTraderNamePage).map { name => s"${name.firstName} ${name.secondName}"}
+      }
+      case _ =>  userAnswers.get(BusinessNamePage)
+    }
+  }
 
   implicit val format: OFormat[BusinessMatchingSubmission] = Json.format[BusinessMatchingSubmission]
 

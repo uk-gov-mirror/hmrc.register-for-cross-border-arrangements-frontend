@@ -20,6 +20,7 @@ import connectors.BusinessMatchingConnector
 import javax.inject.Inject
 import models.{BusinessAddress, BusinessDetails, BusinessMatchingSubmission, IndividualMatchingSubmission, UserAnswers}
 import pages.{NinoPage, UniqueTaxpayerReferencePage}
+import play.api.Logger
 import play.api.http.Status._
 import play.api.libs.json.JsResult.Exception
 import play.api.libs.json.{JsError, JsSuccess, JsValue}
@@ -56,6 +57,7 @@ class BusinessMatchingService @Inject()(businessMatchingConnector: BusinessMatch
   }
 
   private def validateJsonForBusiness(value: JsValue): Option[BusinessDetails] = {
+    Logger.debug(s"\n\nValidating return ${value.toString}\n\n")
       value.validate[BusinessDetails] match {
         case JsSuccess(details, _) => Some(details)
         case JsError(_) => throw Exception(JsError(s"Error encountered retrieving business matching record."))

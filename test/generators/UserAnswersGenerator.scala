@@ -52,6 +52,7 @@ trait UserAnswersGenerator extends TryValues {
     arbitrary[(PostCodePage.type, JsValue)] ::
     arbitrary[(UniqueTaxpayerReferencePage.type, JsValue)] ::
     arbitrary[(BusinessTypePage.type, JsValue)] ::
+    arbitrary[(SoleTraderNamePage.type, JsValue)] ::
     Nil
 
   implicit lazy val arbitraryUserData: Arbitrary[UserAnswers] = {
