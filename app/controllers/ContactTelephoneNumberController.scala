@@ -81,18 +81,17 @@ class ContactTelephoneNumberController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
+      val (pageTitle, heading) = request.userAnswers.get(ContactNamePage) match {
+        case Some(name) =>
+          (Messages("contactTelephoneNumber.business.title"),
+            Messages("contactTelephoneNumber.business.heading", s"${name.firstName} ${name.secondName}"))
+        case None =>
+          (Messages("contactTelephoneNumber.individual.title"),
+            Messages("contactTelephoneNumber.individual.heading"))
+      }
+
       form.bindFromRequest().fold(
         formWithErrors => {
-
-          val (pageTitle, heading) = request.userAnswers.get(ContactNamePage) match {
-            case Some(name) =>
-              (Messages("contactTelephoneNumber.business.title"),
-                Messages("contactTelephoneNumber.business.heading", s"${name.firstName} ${name.secondName}"))
-            case None =>
-              (Messages("contactTelephoneNumber.title"),
-                Messages("contactTelephoneNumber.heading"))
-          }
-
           val json = Json.obj(
             "form" -> formWithErrors,
             "mode" -> mode,

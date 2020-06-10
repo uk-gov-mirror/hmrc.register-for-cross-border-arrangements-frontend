@@ -20,7 +20,7 @@ import controllers.routes
 import helpers.JourneyHelpers._
 import javax.inject.{Inject, Singleton}
 import models.BusinessType._
-import models.RegistrationType.{Business, Individual}
+import models.RegistrationType.{Individual, enumerable => _, reads => _, _}
 import models.SecondaryContactPreference._
 import models._
 import pages._
@@ -50,7 +50,7 @@ class Navigator @Inject()() {
     case ContactNamePage => _ => Some(routes.ContactEmailAddressController.onPageLoad(NormalMode))
     case TelephoneNumberQuestionPage => telephoneNumberQuestionRoutes
     case ContactEmailAddressPage => _ => Some(routes.TelephoneNumberQuestionController.onPageLoad(NormalMode))
-    case ContactTelephoneNumberPage => _ => Some(routes.HaveSecondContactController.onPageLoad(NormalMode))
+    case ContactTelephoneNumberPage => contactTelephoneNumberRoutes
     case HaveSecondContactPage => haveSecondContactRoutes
     case SecondaryContactNamePage => _ => Some(routes.SecondaryContactPreferenceController.onPageLoad(NormalMode))
     case SecondaryContactPreferencePage => secondaryContactPreferenceRoutes
@@ -128,6 +128,13 @@ class Navigator @Inject()() {
       case set: Set[SecondaryContactPreference] if set.head == Email =>
         routes.SecondaryContactEmailAddressController.onPageLoad(NormalMode)
     }
+
+  private def contactTelephoneNumberRoutes(ua: UserAnswers): Option[Call] = {
+    (ua.get(RegistrationTypePage), ua.get(BusinessTypePage)) match {
+      case (Some(Individual),_) => Some(routes.CheckYourAnswersController.onPageLoad())
+      case (_,_) => Some(routes.HaveSecondContactController.onPageLoad(NormalMode))
+    }
+  }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
     case NormalMode =>

@@ -381,6 +381,9 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             val updatedAnswers =
               answers
+                .set(RegistrationTypePage, RegistrationType.Business)
+                .success
+                .value
                 .set(ContactTelephoneNumberPage, "07540000000")
                 .success
                 .value
@@ -388,6 +391,25 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
             navigator
               .nextPage(ContactTelephoneNumberPage, NormalMode, updatedAnswers)
               .mustBe(routes.HaveSecondContactController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from the What is your telephone number page? to Check Your Answers page" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers
+                .set(RegistrationTypePage, RegistrationType.Individual)
+                .success
+                .value
+                .set(ContactTelephoneNumberPage, "07540000000")
+                .success
+                .value
+
+            navigator
+              .nextPage(ContactTelephoneNumberPage, NormalMode, updatedAnswers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
         }
       }
 
