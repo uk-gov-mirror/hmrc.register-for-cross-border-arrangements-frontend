@@ -55,7 +55,8 @@ class Navigator @Inject()() {
     case HaveSecondContactPage => haveSecondContactRoutes
     case SecondaryContactNamePage => _ => Some(routes.SecondaryContactPreferenceController.onPageLoad(NormalMode))
     case SecondaryContactPreferencePage => secondaryContactPreferenceRoutes
-    case SecondaryContactEmailAddressPage => _ => Some(routes.CheckYourAnswersController.onPageLoad())
+    case SecondaryContactEmailAddressPage => secondaryContactEmailRoutes
+    case SecondaryContactTelephoneNumberPage => _ => Some(routes.CheckYourAnswersController.onPageLoad())
     case _ => _ => Some(routes.IndexController.onPageLoad())
   }
 
@@ -89,6 +90,12 @@ class Navigator @Inject()() {
     ua.get(ConfirmBusinessPage) map {
       case true  => routes.IdentityConfirmedController.onPageLoad()
       case false  => routes.BusinessNotConfirmedController.onPageLoad()
+    }
+
+  private def doYouHaveUTRPage(ua: UserAnswers): Option[Call] =
+    ua.get(DoYouHaveUTRPage) map {
+      case true  => routes.BusinessTypeController.onPageLoad(NormalMode)
+      case false => routes.RegistrationTypeController.onPageLoad(NormalMode)
     }
 
   private def doYouHaveANationalInsuranceNumberRoutes(ua: UserAnswers): Option[Call] =
@@ -132,7 +139,7 @@ class Navigator @Inject()() {
   private def secondaryContactPreferenceRoutes(ua: UserAnswers): Option[Call] =
     ua.get(SecondaryContactPreferencePage) map {
       case set: Set[SecondaryContactPreference] if set.head == Telephone =>
-        routes.ContactTelephoneNumberController.onPageLoad(NormalMode) //TODO change to SecondaryContactTelephone
+        routes.SecondaryContactTelephoneNumberController.onPageLoad(NormalMode)
       case set: Set[SecondaryContactPreference] if set.head == Email =>
         routes.SecondaryContactEmailAddressController.onPageLoad(NormalMode)
     }
@@ -143,6 +150,13 @@ class Navigator @Inject()() {
       case (_,_) => Some(routes.HaveSecondContactController.onPageLoad(NormalMode))
     }
   }
+
+  private def secondaryContactEmailRoutes(ua: UserAnswers): Option[Call] =
+    ua.get(SecondaryContactPreferencePage) map {
+      case set: Set[SecondaryContactPreference] if set.contains(Telephone) =>
+        routes.SecondaryContactTelephoneNumberController.onPageLoad(NormalMode)
+      case _ => routes.CheckYourAnswersController.onPageLoad()
+    }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
     case NormalMode =>

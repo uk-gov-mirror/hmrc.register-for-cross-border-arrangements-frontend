@@ -178,7 +178,12 @@ POST       /register/second-contact-preference                        controller
 GET        /register/change-second-contact-preference                 controllers.SecondaryContactPreferenceController.onPageLoad(mode: Mode = CheckMode)
 POST       /register/change-second-contact-preference                 controllers.SecondaryContactPreferenceController.onSubmit(mode: Mode = CheckMode)
 
-GET        /register/second-contact-email                        controllers.SecondaryContactEmailAddressController.onPageLoad(mode: Mode = NormalMode)
-POST       /register/second-contact-email                       controllers.SecondaryContactEmailAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /register/second-contact-email                         controllers.SecondaryContactEmailAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/second-contact-email                         controllers.SecondaryContactEmailAddressController.onSubmit(mode: Mode = NormalMode)
 GET        /register/change-second-contact-email                  controllers.SecondaryContactEmailAddressController.onPageLoad(mode: Mode = CheckMode)
 POST       /register/change-second-contact-email                  controllers.SecondaryContactEmailAddressController.onSubmit(mode: Mode = CheckMode)
+
+GET        /register/second-contact-telephone                      controllers.SecondaryContactTelephoneNumberController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/second-contact-telephone                      controllers.SecondaryContactTelephoneNumberController.onSubmit(mode: Mode = NormalMode)
+GET        /register/change-second-contact-telephone               controllers.SecondaryContactTelephoneNumberController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/change-second-contact-telephone               controllers.SecondaryContactTelephoneNumberController.onSubmit(mode: Mode = CheckMode)
