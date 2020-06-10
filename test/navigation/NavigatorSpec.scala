@@ -125,14 +125,80 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
-//      "must go from business type page to tax reference page when ..." in {
-//        forAll(arbitrary[UserAnswers]) {
-//          answers =>
-//            navigator
-//              .nextPage(BusinessTypePage, NormalMode, answers)
-//              .mustBe(routes.UniqueTaxpayerReferenceController.onPageLoad(NormalMode))
-//        }
-//      }
+      "must go from Business Type Page to Corporation Tax UTR when I selected CorporateBody" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(BusinessTypePage, BusinessType.CorporateBody)
+                .success
+                .value
+
+            navigator
+              .nextPage(BusinessTypePage, NormalMode, updatedAnswers)
+              .mustBe(routes.CorporationTaxUTRController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from Business Type Page to Corporation Tax UTR when I selected UnIncorporatedBody" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(BusinessTypePage, BusinessType.UnIncorporatedBody)
+                .success
+                .value
+
+            navigator
+              .nextPage(BusinessTypePage, NormalMode, updatedAnswers)
+              .mustBe(routes.CorporationTaxUTRController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from Business Type Page to Self Assessment when I selected Partnership" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(BusinessTypePage, BusinessType.Partnership)
+                .success
+                .value
+
+            navigator
+              .nextPage(BusinessTypePage, NormalMode, updatedAnswers)
+              .mustBe(routes.SelfAssessmentUTRController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from Business Type Page to Self Assessment when I selected NotSpecified" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(BusinessTypePage, BusinessType.NotSpecified)
+                .success
+                .value
+
+            navigator
+              .nextPage(BusinessTypePage, NormalMode, updatedAnswers)
+              .mustBe(routes.SelfAssessmentUTRController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from Business Type Page to Self Assessment when I selected LimitedLiability" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(BusinessTypePage, BusinessType.LimitedLiability)
+                .success
+                .value
+
+            navigator
+              .nextPage(BusinessTypePage, NormalMode, updatedAnswers)
+              .mustBe(routes.SelfAssessmentUTRController.onPageLoad(NormalMode))
+        }
+      }
 
       "must go from businessAddress page to Check your answers page" in {
         forAll(arbitrary[UserAnswers]) {

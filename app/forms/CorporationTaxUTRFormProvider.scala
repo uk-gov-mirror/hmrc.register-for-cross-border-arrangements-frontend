@@ -28,10 +28,10 @@ class CorporationTaxUTRFormProvider @Inject() extends Mappings {
 
   def apply(): Form[UniqueTaxpayerReference] = Form(
     mapping(
-      "corporationTaxUTR" -> text("corporationTaxUTR.error.corporationTaxUTR.required")
-        .verifying(regexp(utrRegex, "corporationTaxUTR.error.corporationTaxUTR.invalid"))
-        .verifying(maxLength(10, "corporationTaxUTR.error.corporationTaxUTR.length"))
-        .verifying(minLength(10, "corporationTaxUTR.error.corporationTaxUTR.length"))
+      "corporationTaxUTR" -> text("corporationTaxUTR.error.required")
+        .verifying(regexp(utrRegex, "corporationTaxUTR.error.invalid"))
+        .verifying(maxLength(10, "corporationTaxUTR.error.length"))
+        .verifying(minLength(10, "corporationTaxUTR.error.length"))
     )(UniqueTaxpayerReference.apply)(UniqueTaxpayerReference.unapply)
   )
 }

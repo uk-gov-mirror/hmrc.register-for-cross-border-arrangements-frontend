@@ -73,7 +73,8 @@ class SelfAssessmentUTRController @Inject()(
 
           val json = Json.obj(
             "form"   -> formWithErrors,
-            "mode"   -> mode
+            "mode"   -> mode,
+            "lostUTRUrl" -> appConfig.lostUTRUrl
           )
 
           renderer.render("selfAssessmentUTR.njk", json).map(BadRequest(_))
