@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package models
+package pages
 
-import play.api.libs.json._
+import models.UniqueTaxpayerReference
+import play.api.libs.json.JsPath
 
-case class UniqueTaxpayerReference(uniqueTaxPayerReference: String)
+case object CorporationTaxUTRPage extends QuestionPage[UniqueTaxpayerReference] {
 
-object UniqueTaxpayerReference {
-  implicit val format = Json.format[UniqueTaxpayerReference]
+  override def path: JsPath = JsPath \ toString
 
+  override def toString: String = "corporationTaxUTR"
 }

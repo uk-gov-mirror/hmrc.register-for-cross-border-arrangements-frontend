@@ -55,7 +55,7 @@ class BusinessMatchingControllerSpec extends SpecBase
     .set(BusinessTypePage, BusinessType.CorporateBody)
     .success
     .value
-    .set(UniqueTaxpayerReferencePage, UniqueTaxpayerReference("0123456789"))
+    .set(SelfAssessmentUTRPage, UniqueTaxpayerReference("0123456789"))
     .success
     .value
     .set(BusinessNamePage, "Business Name")
@@ -210,7 +210,7 @@ class BusinessMatchingControllerSpec extends SpecBase
         val result = route(application, getRequest(businessMatchingRoute)).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/business/with-id/utr")
+        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/do-you-have-a-utr")
       }
     }
   }

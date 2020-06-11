@@ -44,11 +44,6 @@ POST       /register/business/with-id/type              controllers.BusinessType
 GET        /register/business/with-id/change-type       controllers.BusinessTypeController.onPageLoad(mode: Mode = CheckMode)
 POST       /register/business/with-id/change-type       controllers.BusinessTypeController.onSubmit(mode: Mode = CheckMode)
 
-GET        /register/business/with-id/utr               controllers.UniqueTaxpayerReferenceController.onPageLoad(mode: Mode = NormalMode)
-POST       /register/business/with-id/utr               controllers.UniqueTaxpayerReferenceController.onSubmit(mode: Mode = NormalMode)
-GET        /register/business/with-id/change-utr        controllers.UniqueTaxpayerReferenceController.onPageLoad(mode: Mode = CheckMode)
-POST       /register/business/with-id/change-utr        controllers.UniqueTaxpayerReferenceController.onSubmit(mode: Mode = CheckMode)
-
 GET        /register/business/with-id/postCode          controllers.PostCodeController.onPageLoad(mode: Mode = NormalMode)
 POST       /register/business/with-id/postCode          controllers.PostCodeController.onSubmit(mode: Mode = NormalMode)
 GET        /register/business/with-id/change-postcode   controllers.PostCodeController.onPageLoad(mode: Mode = CheckMode)
@@ -67,10 +62,15 @@ POST       /register/business-type                        controllers.BusinessTy
 GET        /register/change-business-type                 controllers.BusinessTypeController.onPageLoad(mode: Mode = CheckMode)
 POST       /register/change-business-type                 controllers.BusinessTypeController.onSubmit(mode: Mode = CheckMode)
 
-GET        /register/utr                                  controllers.UniqueTaxpayerReferenceController.onPageLoad(mode: Mode = NormalMode)
-POST       /register/utr                                  controllers.UniqueTaxpayerReferenceController.onSubmit(mode: Mode = NormalMode)
-GET        /register/changeUniqueTaxpayerReference        controllers.UniqueTaxpayerReferenceController.onPageLoad(mode: Mode = CheckMode)
-POST       /register/changeUniqueTaxpayerReference        controllers.UniqueTaxpayerReferenceController.onSubmit(mode: Mode = CheckMode)
+GET        /register/self-assessment-utr                  controllers.SelfAssessmentUTRController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/self-assessment-utr                  controllers.SelfAssessmentUTRController.onSubmit(mode: Mode = NormalMode)
+GET        /register/change-self-assessment-utr           controllers.SelfAssessmentUTRController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/change-self-assessment-utr           controllers.SelfAssessmentUTRController.onSubmit(mode: Mode = CheckMode)
+
+GET        /register/corporation-tax-utr                  controllers.CorporationTaxUTRController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/corporation-tax-utr                  controllers.CorporationTaxUTRController.onSubmit(mode: Mode = NormalMode)
+GET        /register/change-corporation-tax-utr           controllers.CorporationTaxUTRController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/change-corporation-tax-utr           controllers.CorporationTaxUTRController.onSubmit(mode: Mode = CheckMode)
 
 GET        /postCode                        controllers.PostCodeController.onPageLoad(mode: Mode = NormalMode)
 POST       /postCode                        controllers.PostCodeController.onSubmit(mode: Mode = NormalMode)

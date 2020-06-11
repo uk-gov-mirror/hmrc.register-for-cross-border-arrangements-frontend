@@ -22,15 +22,16 @@ import models.UniqueTaxpayerReference
 import play.api.data.Form
 import play.api.data.Forms._
 
-class UniqueTaxpayerReferenceFormProvider @Inject() extends Mappings {
+class SelfAssessmentUTRFormProvider @Inject() extends Mappings {
 
-  private val utrRegex = "^((\\s*[A-Za-z0-9]\\s*){10})|((\\s*[A-Za-z0-9]\\s*){13})$"
+  private val utrRegex = "^[0-9]{10}$"
 
    def apply(): Form[UniqueTaxpayerReference] = Form(
      mapping(
-      "uniqueTaxPayerReference" -> text("uniqueTaxpayerReference.error.uniqueTaxPayerReference.required")
-          .verifying(regexp(utrRegex, "uniqueTaxpayerReference.error.uniqueTaxPayerReference.invalid"))
-        .verifying(maxLength(13, "uniqueTaxpayerReference.error.uniqueTaxPayerReference.length"))
+      "selfAssessmentUTR" -> text("selfAssessmentUTR.error.required")
+          .verifying(regexp(utrRegex, "selfAssessmentUTR.error.invalid"))
+        .verifying(maxLength(10, "selfAssessmentUTR.error.length"))
+        .verifying(minLength(10, "selfAssessmentUTR.error.length"))
     )(UniqueTaxpayerReference.apply)(UniqueTaxpayerReference.unapply)
    )
  }

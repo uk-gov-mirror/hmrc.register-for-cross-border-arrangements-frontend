@@ -125,12 +125,78 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
-      "must go from business type page to tax reference page" in {
+      "must go from Business Type Page to Corporation Tax UTR when I selected CorporateBody" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
+            val updatedAnswers =
+              answers
+                .set(BusinessTypePage, BusinessType.CorporateBody)
+                .success
+                .value
+
             navigator
-              .nextPage(BusinessTypePage, NormalMode, answers)
-              .mustBe(routes.UniqueTaxpayerReferenceController.onPageLoad(NormalMode))
+              .nextPage(BusinessTypePage, NormalMode, updatedAnswers)
+              .mustBe(routes.CorporationTaxUTRController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from Business Type Page to Corporation Tax UTR when I selected UnIncorporatedBody" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(BusinessTypePage, BusinessType.UnIncorporatedBody)
+                .success
+                .value
+
+            navigator
+              .nextPage(BusinessTypePage, NormalMode, updatedAnswers)
+              .mustBe(routes.CorporationTaxUTRController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from Business Type Page to Self Assessment when I selected Partnership" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(BusinessTypePage, BusinessType.Partnership)
+                .success
+                .value
+
+            navigator
+              .nextPage(BusinessTypePage, NormalMode, updatedAnswers)
+              .mustBe(routes.SelfAssessmentUTRController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from Business Type Page to Self Assessment when I selected NotSpecified" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(BusinessTypePage, BusinessType.NotSpecified)
+                .success
+                .value
+
+            navigator
+              .nextPage(BusinessTypePage, NormalMode, updatedAnswers)
+              .mustBe(routes.SelfAssessmentUTRController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from Business Type Page to Self Assessment when I selected LimitedLiability" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(BusinessTypePage, BusinessType.LimitedLiability)
+                .success
+                .value
+
+            navigator
+              .nextPage(BusinessTypePage, NormalMode, updatedAnswers)
+              .mustBe(routes.SelfAssessmentUTRController.onPageLoad(NormalMode))
         }
       }
 
@@ -183,7 +249,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                 .value
 
             navigator
-              .nextPage(UniqueTaxpayerReferencePage, NormalMode, updatedAnswers)
+              .nextPage(SelfAssessmentUTRPage, NormalMode, updatedAnswers)
               .mustBe(routes.SoleTraderNameController.onPageLoad(NormalMode))
         }
       }
@@ -198,7 +264,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                 .value
 
             navigator
-              .nextPage(UniqueTaxpayerReferencePage, NormalMode, updatedAnswers)
+              .nextPage(SelfAssessmentUTRPage, NormalMode, updatedAnswers)
               .mustBe(routes.BusinessNameOrganisationController.onPageLoad(NormalMode))
         }
       }
@@ -213,7 +279,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                 .value
 
             navigator
-              .nextPage(UniqueTaxpayerReferencePage, NormalMode, updatedAnswers)
+              .nextPage(SelfAssessmentUTRPage, NormalMode, updatedAnswers)
               .mustBe(routes.BusinessNameRegisteredBusinessController.onPageLoad(NormalMode))
         }
       }
@@ -228,7 +294,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                 .value
 
             navigator
-              .nextPage(UniqueTaxpayerReferencePage, NormalMode, updatedAnswers)
+              .nextPage(SelfAssessmentUTRPage, NormalMode, updatedAnswers)
               .mustBe(routes.BusinessNameRegisteredBusinessController.onPageLoad(NormalMode))
         }
       }
@@ -243,7 +309,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
                 .value
 
             navigator
-              .nextPage(UniqueTaxpayerReferencePage, NormalMode, updatedAnswers)
+              .nextPage(SelfAssessmentUTRPage, NormalMode, updatedAnswers)
               .mustBe(routes.BusinessNamePartnershipController.onPageLoad(NormalMode))
         }
       }
