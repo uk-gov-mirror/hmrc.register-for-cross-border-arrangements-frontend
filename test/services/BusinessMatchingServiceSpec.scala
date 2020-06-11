@@ -45,6 +45,7 @@ class BusinessMatchingServiceSpec extends SpecBase
   with Generators
   with ScalaCheckPropertyChecks {
 
+
   val mockBusinessMatchingConnector: BusinessMatchingConnector = mock[BusinessMatchingConnector]
 
   override lazy val app: Application = new GuiceApplicationBuilder()
@@ -59,6 +60,8 @@ class BusinessMatchingServiceSpec extends SpecBase
     reset(
       mockBusinessMatchingConnector
     )
+
+
 
   "Business Matching Service" - {
     "when able to construct an individual matching submission" - {
@@ -111,12 +114,19 @@ class BusinessMatchingServiceSpec extends SpecBase
 
     "when able to construct a business/organisation matching submission" - {
       "must return the validated business name" in {
+
+
         forAll(
           arbitrary[UserAnswers],
           arbitrary[BusinessType],
           arbitrary[UniqueTaxpayerReference],
-          RegexpGen.from("^[a-zA-Z0-9 '&\\/]{1,105}$")){
-          (userAnswers, businessType, utr, businessName) =>
+          RegexpGen.from("^[a-zA-Z0-9 '&\\/]{1,105}$"),
+          for {
+            firstName <- RegexpGen.from("^[a-zA-Z0-9 '&\\/]{1,35}$")
+            secondName <- RegexpGen.from("^[a-zA-Z0-9 '&\\/]{1,35}$")
+          } yield Name(firstName, secondName)
+        ){
+          (userAnswers, businessType, utr, businessName, soleTraderName) =>
             val answers = userAnswers
               .set(BusinessTypePage, businessType)
               .success
@@ -125,6 +135,9 @@ class BusinessMatchingServiceSpec extends SpecBase
               .success
               .value
               .set(BusinessNamePage, businessName)
+              .success
+              .value
+              .set(SoleTraderNamePage, soleTraderName)
               .success
               .value
 
@@ -161,8 +174,8 @@ class BusinessMatchingServiceSpec extends SpecBase
       }
 
       "must throw an error if Json validation fails" in {
-        forAll(arbitrary[UserAnswers], arbitrary[BusinessType], arbitrary[UniqueTaxpayerReference], arbitrary[String]){
-          (userAnswers, businessType, utr, businessName) =>
+        forAll(arbitrary[UserAnswers], arbitrary[BusinessType], arbitrary[UniqueTaxpayerReference], arbitrary[String], arbitrary[Name]){
+          (userAnswers, businessType, utr, businessName, soleTraderName) =>
             val answers = userAnswers
               .set(BusinessTypePage, businessType)
               .success
@@ -171,6 +184,9 @@ class BusinessMatchingServiceSpec extends SpecBase
               .success
               .value
               .set(BusinessNamePage, businessName)
+              .success
+              .value
+              .set(SoleTraderNamePage, soleTraderName)
               .success
               .value
 
@@ -195,8 +211,8 @@ class BusinessMatchingServiceSpec extends SpecBase
       }
 
       "should return a future None if business can't be found" in {
-        forAll(arbitrary[UserAnswers], arbitrary[BusinessType], arbitrary[UniqueTaxpayerReference], arbitrary[String]){
-          (userAnswers, businessType, utr, businessName) =>
+        forAll(arbitrary[UserAnswers], arbitrary[BusinessType], arbitrary[UniqueTaxpayerReference], arbitrary[String], arbitrary[Name]){
+          (userAnswers, businessType, utr, businessName, soleTraderName) =>
             val answers = userAnswers
               .set(BusinessTypePage, businessType)
               .success
@@ -207,6 +223,10 @@ class BusinessMatchingServiceSpec extends SpecBase
               .set(BusinessNamePage, businessName)
               .success
               .value
+              .set(SoleTraderNamePage, soleTraderName)
+              .success
+              .value
+
 
             when(mockBusinessMatchingConnector.sendBusinessMatchingInformation(any(), any())(any(), any()))
               .thenReturn(Future.successful(HttpResponse(NOT_FOUND, None)))

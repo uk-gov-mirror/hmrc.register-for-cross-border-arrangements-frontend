@@ -31,8 +31,8 @@ class SoleTraderNameFormProviderSpec extends StringFieldBehaviours {
 
   val form = new SoleTraderNameFormProvider()()
 
-  val firstNameRegex = "^[a-zA-Z &`\\-\\'^]{1,35}$"
-  val secondNameRegex = "^[a-zA-Z &`\\-\\'^]{1,35}$"
+  val firstNameRegex = "^[a-zA-Z0-9 '&\\/]{1,35}$"
+  val secondNameRegex = "^[a-zA-Z0-9 '&\\/]{1,35}$"
   val firstNameMaxLength = 35
   val secondNameMaxLength = 35
 

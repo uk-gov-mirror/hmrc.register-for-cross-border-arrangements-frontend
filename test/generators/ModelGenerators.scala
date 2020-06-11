@@ -94,7 +94,6 @@ trait ModelGenerators {
     Arbitrary {
       for {
         uniqueTaxPayerReference <- arbitrary[String]
-        field2 <- arbitrary[String]
       } yield UniqueTaxpayerReference(uniqueTaxPayerReference)
     }
 
