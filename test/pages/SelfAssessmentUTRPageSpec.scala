@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-package models
+package pages
 
-import play.api.libs.json._
+import models.UniqueTaxpayerReference
+import pages.behaviours.PageBehaviours
 
-case class UniqueTaxpayerReference(uniqueTaxPayerReference: String)
+class SelfAssessmentUTRPageSpec extends PageBehaviours {
 
-object UniqueTaxpayerReference {
-  implicit val format = Json.format[UniqueTaxpayerReference]
+  "SelfAssessmentUTR Page" - {
 
+    beRetrievable[UniqueTaxpayerReference](SelfAssessmentUTRPage)
+
+    beSettable[UniqueTaxpayerReference](SelfAssessmentUTRPage)
+
+    beRemovable[UniqueTaxpayerReference](SelfAssessmentUTRPage)
+  }
 }

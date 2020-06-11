@@ -19,18 +19,20 @@ package forms
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
 
-class UniqueTaxpayerReferenceFormProviderSpec extends StringFieldBehaviours {
+class SelfAssessmentUTRFormProviderSpec extends StringFieldBehaviours {
 
-  val form = new UniqueTaxpayerReferenceFormProvider()()
+  val form = new SelfAssessmentUTRFormProvider()()
 
-  ".uniqueTaxPayerReference" - {
+  ".selfAssessmentUTR" - {
 
-    val fieldName = "uniqueTaxPayerReference"
-    val requiredKey = "uniqueTaxpayerReference.error.uniqueTaxPayerReference.required"
-    val lengthKey = "uniqueTaxpayerReference.error.uniqueTaxPayerReference.length"
-    val invalidKey = "uniqueTaxpayerReference.error.uniqueTaxPayerReference.invalid"
-    val utrRegex = "^((\\s*[A-Za-z0-9]\\s*){10})|((\\s*[A-Za-z0-9]\\s*){13})$"
-    val maxLength = 13
+    val fieldName = "selfAssessmentUTR"
+    val requiredKey = "selfAssessmentUTR.error.required"
+    val lengthKey = "selfAssessmentUTR.error.length"
+    val invalidKey = "selfAssessmentUTR.error.invalid"
+    val utrRegex =  "^[0-9]{10}$"
+
+    val maxLength = 10
+    val minLength = 10
 
     behave like fieldThatBindsValidData(
       form,
@@ -44,6 +46,14 @@ class UniqueTaxpayerReferenceFormProviderSpec extends StringFieldBehaviours {
       maxLength = maxLength,
       invalidError = FormError(fieldName, invalidKey, Seq(utrRegex)),
       lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+    )
+
+    behave like fieldWithMinLengthAndInvalid(
+      form,
+      fieldName,
+      invalidError = FormError(fieldName, invalidKey, Seq(utrRegex)),
+      minLength = minLength,
+      lengthError = FormError(fieldName, lengthKey, Seq(minLength))
     )
 
     behave like mandatoryField(

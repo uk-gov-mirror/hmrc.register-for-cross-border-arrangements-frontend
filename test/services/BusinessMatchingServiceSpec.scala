@@ -131,7 +131,7 @@ class BusinessMatchingServiceSpec extends SpecBase
               .set(BusinessTypePage, businessType)
               .success
               .value
-              .set(UniqueTaxpayerReferencePage, utr)
+              .set(SelfAssessmentUTRPage, utr)
               .success
               .value
               .set(BusinessNamePage, businessName)
@@ -180,7 +180,7 @@ class BusinessMatchingServiceSpec extends SpecBase
               .set(BusinessTypePage, businessType)
               .success
               .value
-              .set(UniqueTaxpayerReferencePage, utr)
+              .set(SelfAssessmentUTRPage, utr)
               .success
               .value
               .set(BusinessNamePage, businessName)
@@ -217,7 +217,7 @@ class BusinessMatchingServiceSpec extends SpecBase
               .set(BusinessTypePage, businessType)
               .success
               .value
-              .set(UniqueTaxpayerReferencePage, utr)
+              .set(SelfAssessmentUTRPage, utr)
               .success
               .value
               .set(BusinessNamePage, businessName)

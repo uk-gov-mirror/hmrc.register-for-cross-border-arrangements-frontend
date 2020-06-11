@@ -18,8 +18,8 @@ package services
 
 import connectors.BusinessMatchingConnector
 import javax.inject.Inject
-import models.{BusinessDetails, BusinessMatchingSubmission, IndividualMatchingSubmission, UserAnswers}
-import pages.{NinoPage, UniqueTaxpayerReferencePage}
+import models.{BusinessAddress, BusinessDetails, BusinessMatchingSubmission, IndividualMatchingSubmission, UserAnswers}
+import pages.{NinoPage, SelfAssessmentUTRPage}
 import play.api.http.Status._
 import play.api.libs.json.JsResult.Exception
 import play.api.libs.json.{JsError, JsSuccess, JsValue}
@@ -43,7 +43,7 @@ class BusinessMatchingService @Inject()(businessMatchingConnector: BusinessMatch
                                      (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[BusinessDetails]] = {
 
       businessMatchingConnector.sendBusinessMatchingInformation(
-        userAnswers.get(UniqueTaxpayerReferencePage).get,
+        userAnswers.get(SelfAssessmentUTRPage).get,
         BusinessMatchingSubmission(userAnswers).get
       ).map {
         response =>

@@ -20,7 +20,7 @@ import controllers.routes
 import helpers.JourneyHelpers._
 import javax.inject.{Inject, Singleton}
 import models.BusinessType._
-import models.RegistrationType.{Business, Individual}
+import models.RegistrationType.{Individual, enumerable => _, reads => _, _}
 import models.SecondaryContactPreference._
 import models._
 import pages._
@@ -31,8 +31,11 @@ class Navigator @Inject()() {
 
   private val normalRoutes: PartialFunction[Page, UserAnswers => Option[Call]] = {
     case RegistrationTypePage => registrationTypeRoutes
-    case DoYouHaveUTRPage => doYouHaveUTRPage
-    case DoYouHaveANationalInsuranceNumberPage =>   doYouHaveANationalInsuranceNumberRoutes
+    case DoYouHaveUTRPage => doYouHaveUTRRoutes
+    case BusinessTypePage => businessTypeRoutes
+    case CorporationTaxUTRPage => businessNameRoutes
+    case SelfAssessmentUTRPage => businessNameRoutes
+    case DoYouHaveANationalInsuranceNumberPage => doYouHaveANationalInsuranceNumberRoutes
     case NinoPage => _ => Some(routes.NameController.onPageLoad(NormalMode))
     case NamePage => _ => Some(routes.DateOfBirthController.onPageLoad(NormalMode))
     case BusinessNamePage => _ => Some(routes.BusinessMatchingController.matchBusiness())
@@ -40,8 +43,6 @@ class Navigator @Inject()() {
     case ConfirmBusinessPage => confirmBusinessRoutes
     case DateOfBirthPage => dateOfBirthRoutes
     case DoYouLiveInTheUKPage => doYouLiveInTheUKRoutes
-    case BusinessTypePage => _ => Some(routes.UniqueTaxpayerReferenceController.onPageLoad(NormalMode))
-    case UniqueTaxpayerReferencePage => businessNameRoutes
     case NonUkNamePage => _ => Some(routes.DateOfBirthController.onPageLoad(NormalMode))
     case BusinessAddressPage => _ =>   Some(routes.ContactNameController.onPageLoad(NormalMode))
     case BusinessWithoutIDNamePage => _ => Some(routes.BusinessAddressController.onPageLoad(NormalMode))
@@ -50,7 +51,7 @@ class Navigator @Inject()() {
     case ContactNamePage => _ => Some(routes.ContactEmailAddressController.onPageLoad(NormalMode))
     case TelephoneNumberQuestionPage => telephoneNumberQuestionRoutes
     case ContactEmailAddressPage => _ => Some(routes.TelephoneNumberQuestionController.onPageLoad(NormalMode))
-    case ContactTelephoneNumberPage => _ => Some(routes.HaveSecondContactController.onPageLoad(NormalMode))
+    case ContactTelephoneNumberPage => contactTelephoneNumberRoutes
     case HaveSecondContactPage => haveSecondContactRoutes
     case SecondaryContactNamePage => _ => Some(routes.SecondaryContactPreferenceController.onPageLoad(NormalMode))
     case SecondaryContactPreferencePage => secondaryContactPreferenceRoutes
@@ -61,6 +62,19 @@ class Navigator @Inject()() {
   private val checkRouteMap: Page => UserAnswers => Call = {
     case _ => _ => routes.CheckYourAnswersController.onPageLoad()
   }
+
+  private def businessTypeRoutes(ua: UserAnswers): Option[Call] = {
+    ua.get(BusinessTypePage) map {
+      case BusinessType.CorporateBody | BusinessType.UnIncorporatedBody => routes.CorporationTaxUTRController.onPageLoad(NormalMode)
+      case _ => routes.SelfAssessmentUTRController.onPageLoad(NormalMode)
+    }
+  }
+
+  private def doYouHaveUTRRoutes(ua: UserAnswers): Option[Call] =
+    ua.get(DoYouHaveUTRPage) map {
+      case true  => routes.BusinessTypeController.onPageLoad(NormalMode)
+      case false => routes.RegistrationTypeController.onPageLoad(NormalMode)
+    }
 
   private def businessNameRoutes(ua: UserAnswers): Option[Call] = {
     ua.get(BusinessTypePage) map {
@@ -75,12 +89,6 @@ class Navigator @Inject()() {
     ua.get(ConfirmBusinessPage) map {
       case true  => routes.IdentityConfirmedController.onPageLoad()
       case false  => routes.BusinessNotConfirmedController.onPageLoad()
-    }
-
-  private def doYouHaveUTRPage(ua: UserAnswers): Option[Call] =
-    ua.get(DoYouHaveUTRPage) map {
-      case true  => routes.BusinessTypeController.onPageLoad(NormalMode)
-      case false => routes.RegistrationTypeController.onPageLoad(NormalMode)
     }
 
   private def doYouHaveANationalInsuranceNumberRoutes(ua: UserAnswers): Option[Call] =
@@ -128,6 +136,13 @@ class Navigator @Inject()() {
       case set: Set[SecondaryContactPreference] if set.head == Email =>
         routes.SecondaryContactEmailAddressController.onPageLoad(NormalMode)
     }
+
+  private def contactTelephoneNumberRoutes(ua: UserAnswers): Option[Call] = {
+    (ua.get(RegistrationTypePage), ua.get(BusinessTypePage)) match {
+      case (Some(Individual),_) => Some(routes.CheckYourAnswersController.onPageLoad())
+      case (_,_) => Some(routes.HaveSecondContactController.onPageLoad(NormalMode))
+    }
+  }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
     case NormalMode =>

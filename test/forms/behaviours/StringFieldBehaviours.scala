@@ -51,6 +51,22 @@ trait StringFieldBehaviours extends FieldBehaviours {
     }
   }
 
+  def fieldWithMinLengthAndInvalid(form: Form[_],
+                         fieldName: String,
+                         minLength: Int,
+                         invalidError: FormError,
+                         lengthError: FormError): Unit = {
+
+    s"must not bind strings shorter than $minLength characters" in {
+
+      forAll(stringsShorterThan(minLength) -> "longString") {
+        string =>
+          val result = form.bind(Map(fieldName -> string)).apply(fieldName)
+          result.errors shouldEqual Seq(invalidError,lengthError)
+      }
+    }
+  }
+
   def fieldWithNonEmptyWhitespace(form: Form[_],
                                    fieldName: String,
                                    requiredError: FormError): Unit = {

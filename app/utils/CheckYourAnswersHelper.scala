@@ -396,16 +396,31 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
       )
   }
 
-  def uniqueTaxpayerReference: Option[Row] = userAnswers.get(UniqueTaxpayerReferencePage) map {
+  def selfAssessmentUTR: Option[Row] = userAnswers.get(SelfAssessmentUTRPage) map {
     answer =>
       Row(
-        key     = Key(msg"uniqueTaxpayerReference.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        key     = Key(msg"selfAssessmentUTR.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
         value   = Value(lit"${answer.uniqueTaxPayerReference}"),
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.UniqueTaxpayerReferenceController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"uniqueTaxpayerReference.checkYourAnswersLabel"))
+            href               = routes.SelfAssessmentUTRController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"selfAssessmentUTR.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
+  def corporationTaxUTR: Option[Row] = userAnswers.get(CorporationTaxUTRPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"corporationTaxUTR.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(lit"${answer.uniqueTaxPayerReference}"),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.CorporationTaxUTRController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"corporationTaxUTR.checkYourAnswersLabel"))
           )
         )
       )

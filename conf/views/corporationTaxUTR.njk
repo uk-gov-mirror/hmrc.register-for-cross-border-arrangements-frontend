@@ -7,11 +7,7 @@
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-   {% if businessType == "other" %}
-        {{ title(messages("uniqueTaxpayerReference.title.selfAssessment"), form.errors) }}
-   {% else %}
-        {{ title(messages("uniqueTaxpayerReference.title.corporation"), form.errors) }}
-   {% endif %}
+        {{ title(messages("corporationTaxUTR.title.corporation"), form.errors) }}
 {% endblock %}
 
 {% block mainContent %}
@@ -31,30 +27,29 @@
           }) }}
         {% endif %}
 
-        <form action="{{ routes.controllers.UniqueTaxpayerReferenceController.onSubmit(mode).url }}" method="post">
+        <form action="{{ routes.controllers.CorporationTaxUTRController.onSubmit(mode).url }}" method="post">
 
           {{ csrf() | safe }}
 
         <h1 class="govuk-heading-xl">
-           {% if businessType == "other" %}
-                {{ messages("uniqueTaxpayerReference.heading.selfAssessment") }}
-           {% else %}
-                {{ messages("uniqueTaxpayerReference.heading.corporation") }}
-           {% endif %}
+            {{ messages("corporationTaxUTR.heading.corporation") }}
         </h1>
 
+        <div>
+              <p class="govuk-hint">{{ messages("corporationTaxUTR.hint") }}
+              <a href="{{lostUTRUrl}}" class="govuk-link" rel="noreferrer noopener" target="_blank">{{messages("corporationTaxUTR.link")}}</a></p>
+        </div>
+
           {{ govukInput({
-            label: {
-              text: ""
-            },
-            id: "uniqueTaxPayerReference",
-            name: "uniqueTaxPayerReference",
-            value: form.uniqueTaxPayerReference.value,
-            errorMessage: form.uniqueTaxPayerReference.error
+            id: "corporationTaxUTR",
+            name: "corporationTaxUTR",
+            value: form.corporationTaxUTR.value,
+            errorMessage: form.corporationTaxUTR.error
           }) }}
 
           {{ govukButton({
-            text: messages("site.continue")
+            text: messages("site.continue"),
+            attributes:{"id": "submit"}
           }) }}
 
         </form>

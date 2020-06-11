@@ -185,10 +185,18 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryUniqueTaxpayerReferenceUserAnswersEntry: Arbitrary[(UniqueTaxpayerReferencePage.type, JsValue)] =
+  implicit lazy val arbitrarySelfAssessmentUTRPageUserAnswersEntry: Arbitrary[(SelfAssessmentUTRPage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[UniqueTaxpayerReferencePage.type]
+        page  <- arbitrary[SelfAssessmentUTRPage.type]
+        value <- arbitrary[UniqueTaxpayerReference].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryCorporationTaxUTRUserAnswersEntry: Arbitrary[(CorporationTaxUTRPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[CorporationTaxUTRPage.type]
         value <- arbitrary[UniqueTaxpayerReference].map(Json.toJson(_))
       } yield (page, value)
     }
