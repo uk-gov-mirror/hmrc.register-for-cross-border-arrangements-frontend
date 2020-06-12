@@ -127,11 +127,17 @@ class BusinessMatchingServiceSpec extends SpecBase
           } yield Name(firstName, secondName)
         ){
           (userAnswers, businessType, utr, businessName, soleTraderName) =>
+            val utrPage = if (businessType == BusinessType.UnIncorporatedBody | businessType == BusinessType.LimitedLiability) {
+              CorporationTaxUTRPage
+            } else {
+              SelfAssessmentUTRPage
+            }
+
             val answers = userAnswers
               .set(BusinessTypePage, businessType)
               .success
               .value
-              .set(SelfAssessmentUTRPage, utr)
+              .set(utrPage, utr)
               .success
               .value
               .set(BusinessNamePage, businessName)
@@ -174,10 +180,10 @@ class BusinessMatchingServiceSpec extends SpecBase
       }
 
       "must throw an error if Json validation fails" in {
-        forAll(arbitrary[UserAnswers], arbitrary[BusinessType], arbitrary[UniqueTaxpayerReference], arbitrary[String], arbitrary[Name]){
-          (userAnswers, businessType, utr, businessName, soleTraderName) =>
+        forAll(arbitrary[UserAnswers], arbitrary[UniqueTaxpayerReference], arbitrary[String], arbitrary[Name]){
+          (userAnswers, utr, businessName, soleTraderName) =>
             val answers = userAnswers
-              .set(BusinessTypePage, businessType)
+              .set(BusinessTypePage, BusinessType.NotSpecified)
               .success
               .value
               .set(SelfAssessmentUTRPage, utr)
@@ -211,13 +217,13 @@ class BusinessMatchingServiceSpec extends SpecBase
       }
 
       "should return a future None if business can't be found" in {
-        forAll(arbitrary[UserAnswers], arbitrary[BusinessType], arbitrary[UniqueTaxpayerReference], arbitrary[String], arbitrary[Name]){
-          (userAnswers, businessType, utr, businessName, soleTraderName) =>
+        forAll(arbitrary[UserAnswers], arbitrary[UniqueTaxpayerReference], arbitrary[String], arbitrary[Name]){
+          (userAnswers, utr, businessName, soleTraderName) =>
             val answers = userAnswers
-              .set(BusinessTypePage, businessType)
+              .set(BusinessTypePage, BusinessType.LimitedLiability)
               .success
               .value
-              .set(SelfAssessmentUTRPage, utr)
+              .set(CorporationTaxUTRPage, utr)
               .success
               .value
               .set(BusinessNamePage, businessName)

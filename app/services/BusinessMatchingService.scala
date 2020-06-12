@@ -19,7 +19,7 @@ package services
 import connectors.BusinessMatchingConnector
 import javax.inject.Inject
 import models.{BusinessDetails, BusinessMatchingSubmission, IndividualMatchingSubmission, UserAnswers}
-import pages.{NinoPage, SelfAssessmentUTRPage}
+import pages.{CorporationTaxUTRPage, NinoPage, SelfAssessmentUTRPage}
 import play.api.http.Status._
 import play.api.libs.json.JsResult.Exception
 import play.api.libs.json.{JsError, JsSuccess, JsValue}
@@ -42,8 +42,13 @@ class BusinessMatchingService @Inject()(businessMatchingConnector: BusinessMatch
   def sendBusinessMatchingInformation(userAnswers: UserAnswers)
                                      (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[BusinessDetails]] = {
 
+    val utrExist = (userAnswers.get(SelfAssessmentUTRPage), userAnswers.get(CorporationTaxUTRPage)) match {
+      case (Some(utr), _) => utr
+      case (_, Some(utr)) => utr
+    }
+
       businessMatchingConnector.sendBusinessMatchingInformation(
-        userAnswers.get(SelfAssessmentUTRPage).get,
+        utrExist,
         BusinessMatchingSubmission(userAnswers).get
       ).map {
         response =>

@@ -63,22 +63,28 @@ class BusinessMatchingController @Inject()(
       /*Note: Needs business type, name and utr to business match
       * Checking UTR page only because /registered-business-name uses the business type before calling this method
       */
-      request.userAnswers.get(SelfAssessmentUTRPage) match {
-        case Some(_) =>
-          businessMatchingService.sendBusinessMatchingInformation(request.userAnswers) flatMap {
-            case Some(details) =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(BusinessAddressPage, details.address.toAddress))
-                updatedNameAnswers <- Future.fromTry(updatedAnswers.set(RetrievedNamePage, details.name))
-                _              <- sessionRepository.set(updatedNameAnswers)
-              } yield {
-                Redirect(routes.ConfirmBusinessController.onPageLoad(NormalMode))
-              }
-            case None => Future.successful(Redirect(routes.BusinessNotConfirmedController.onPageLoad()))
-          } recover {
-            case _ => Redirect(routes.BusinessNotConfirmedController.onPageLoad()) //TODO Redirect to error page when it's ready
-          }
-        case _ => Future.successful(Redirect(routes.DoYouHaveUTRController.onPageLoad(NormalMode)))
+      val utrExist = (request.userAnswers.get(SelfAssessmentUTRPage), request.userAnswers.get(CorporationTaxUTRPage)) match {
+        case (Some(_), _) => true
+        case (_, Some(_)) => true
+        case _ => false
+      }
+
+      if (utrExist) {
+        businessMatchingService.sendBusinessMatchingInformation(request.userAnswers) flatMap {
+          case Some(details) =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(BusinessAddressPage, details.address.toAddress))
+              updatedNameAnswers <- Future.fromTry(updatedAnswers.set(RetrievedNamePage, details.name))
+              _ <- sessionRepository.set(updatedNameAnswers)
+            } yield {
+              Redirect(routes.ConfirmBusinessController.onPageLoad(NormalMode))
+            }
+          case None => Future.successful(Redirect(routes.BusinessNotConfirmedController.onPageLoad()))
+        } recover {
+          case _ => Redirect(routes.BusinessNotConfirmedController.onPageLoad()) //TODO Redirect to error page when it's ready
+        }
+      } else {
+        Future.successful(Redirect(routes.DoYouHaveUTRController.onPageLoad(NormalMode)))
       }
   }
 }
