@@ -71,12 +71,6 @@ class Navigator @Inject()() {
     }
   }
 
-  private def doYouHaveUTRRoutes(ua: UserAnswers): Option[Call] =
-    ua.get(DoYouHaveUTRPage) map {
-      case true  => routes.BusinessTypeController.onPageLoad(NormalMode)
-      case false => routes.RegistrationTypeController.onPageLoad(NormalMode)
-    }
-
   private def businessNameRoutes(ua: UserAnswers): Option[Call] = {
     ua.get(BusinessTypePage) map {
       case BusinessType.NotSpecified => routes.SoleTraderNameController.onPageLoad(NormalMode)
@@ -92,7 +86,7 @@ class Navigator @Inject()() {
       case false  => routes.BusinessNotConfirmedController.onPageLoad()
     }
 
-  private def doYouHaveUTRPage(ua: UserAnswers): Option[Call] =
+  private def doYouHaveUTRRoutes(ua: UserAnswers): Option[Call] =
     ua.get(DoYouHaveUTRPage) map {
       case true  => routes.BusinessTypeController.onPageLoad(NormalMode)
       case false => routes.RegistrationTypeController.onPageLoad(NormalMode)

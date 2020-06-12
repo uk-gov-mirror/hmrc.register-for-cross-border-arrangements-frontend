@@ -71,14 +71,13 @@ class SecondaryContactTelephoneNumberController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
+      val contactName = request.userAnswers.get(SecondaryContactNamePage) match {
+        case None => "your second contact"
+        case Some(contactName) => s"${contactName}"
+      }
+
       form.bindFromRequest().fold(
         formWithErrors => {
-
-          val contactName = request.userAnswers.get(SecondaryContactNamePage) match {
-            case None => "your second contact"
-            case Some(contactName) => s"${contactName}"
-          }
-
           val json = Json.obj(
             "form" -> formWithErrors,
             "mode" -> mode,
