@@ -37,7 +37,7 @@ phaseBanner.3 = will help us to improve it.
 
 checkYourAnswers.title = Check your answers before you register
 checkYourAnswers.heading = Check your answers before you register
-checkYourAnswers.individual.h2 = Your details
+checkYourAnswers.individualDetails.h2 = Your details
 checkYourAnswers.businessDetails.h2 = Business details
 checkYourAnswers.contactDetails.h2 = Contact details
 checkYourAnswers.information.h2 = Now send your registration

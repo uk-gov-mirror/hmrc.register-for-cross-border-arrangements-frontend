@@ -42,13 +42,13 @@ class CheckYourAnswersControllerSpec extends SpecBase {
 
   "Check Your Answers Controller" - {
 
-    "must return OK and the correct view for a GET - Business with ID" in {
+    "must return OK and the correct view for a GET - Business with ID (inc. Sole proprietor)" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(BusinessTypePage, BusinessType.Partnership)
+        .set(BusinessTypePage, BusinessType.UnIncorporatedBody)
         .success.value
         .set(BusinessAddressPage, address)
         .success.value
@@ -87,10 +87,12 @@ class CheckYourAnswersControllerSpec extends SpecBase {
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val json = jsonCaptor.getValue
+      val header = (json \ "header").toString
       val businessDetails = (json \ "businessDetailsList").toString
       val contactDetails = (json \ "contactDetailsList").toString
 
       templateCaptor.getValue mustEqual "check-your-answers.njk"
+      header.contains("checkYourAnswers.businessDetails.h2") mustBe true
       businessDetails.contains("Your business") mustBe true
       contactDetails.contains("Contact name") mustBe true
       contactDetails.contains("Email address") mustBe true
@@ -139,10 +141,12 @@ class CheckYourAnswersControllerSpec extends SpecBase {
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val json = jsonCaptor.getValue
+      val header = (json \ "header").toString
       val businessDetails = (json \ "businessDetailsList").toString
       val contactDetails = (json \ "contactDetailsList").toString
 
       templateCaptor.getValue mustEqual "check-your-answers.njk"
+      header.contains("checkYourAnswers.individualDetails.h2") mustBe true
       businessDetails.contains("Do you have UK Unique Taxpayer Reference?") mustBe true
       businessDetails.contains("Do you have a National Insurance number?") mustBe true
       businessDetails.contains("Your National Insurance number") mustBe true
@@ -193,10 +197,12 @@ class CheckYourAnswersControllerSpec extends SpecBase {
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val json = jsonCaptor.getValue
+      val header = (json \ "header").toString
       val businessDetails = (json \ "businessDetailsList").toString
       val contactDetails = (json \ "contactDetailsList").toString
 
       templateCaptor.getValue mustEqual "check-your-answers.njk"
+      header.contains("checkYourAnswers.businessDetails.h2") mustBe true
       businessDetails.contains("Do you have UK Unique Taxpayer Reference?") mustBe true
       businessDetails.contains("Registering as") mustBe true
       businessDetails.contains("Legal name of business") mustBe true
@@ -247,10 +253,12 @@ class CheckYourAnswersControllerSpec extends SpecBase {
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val json = jsonCaptor.getValue
+      val header = (json \ "header").toString
       val businessDetails = (json \ "businessDetailsList").toString
       val contactDetails = (json \ "contactDetailsList").toString
 
       templateCaptor.getValue mustEqual "check-your-answers.njk"
+      header.contains("checkYourAnswers.individualDetails.h2") mustBe true
       businessDetails.contains("Do you have UK Unique Taxpayer Reference?") mustBe true
       businessDetails.contains("Do you have a National Insurance number?") mustBe true
       businessDetails.contains("Your name") mustBe true

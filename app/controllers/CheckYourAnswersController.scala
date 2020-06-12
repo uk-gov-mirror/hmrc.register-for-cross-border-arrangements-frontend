@@ -18,7 +18,8 @@ package controllers
 
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import pages.BusinessTypePage
+import models.RegistrationType
+import pages.{BusinessTypePage, RegistrationTypePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -45,9 +46,11 @@ class CheckYourAnswersController @Inject()(
       val businessDetails: Seq[SummaryList.Row] = buildDetails(helper)
       val contactDetails: Seq[SummaryList.Row] = buildContactDetails(helper)
 
-      val header: String = request.userAnswers.get(BusinessTypePage) match {
-        case Some(_) => "checkYourAnswers.businessDetails.h2"
-        case None => "checkYourAnswers.individual.h2"
+      val header: String =
+        (request.userAnswers.get(BusinessTypePage), request.userAnswers.get(RegistrationTypePage)) match {
+          case (Some(_), _) => "checkYourAnswers.businessDetails.h2"
+          case (_, Some(RegistrationType.Business)) => "checkYourAnswers.businessDetails.h2"
+          case _ => "checkYourAnswers.individualDetails.h2"
       }
 
       renderer.render(
@@ -71,7 +74,7 @@ class CheckYourAnswersController @Inject()(
 
     pagesToCheck match {
       case (Some(_), None, None, None) =>
-        //Business with ID (inc. Sole trader)
+        //Business with ID (inc. Sole proprietor)
         Seq(
           helper.confirmBusiness
         ).flatten
