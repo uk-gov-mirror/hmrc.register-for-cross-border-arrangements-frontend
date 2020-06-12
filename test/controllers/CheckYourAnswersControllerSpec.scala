@@ -70,6 +70,8 @@ class CheckYourAnswersControllerSpec extends SpecBase {
         .success.value
         .set(SecondaryContactEmailAddressPage, email)
         .success.value
+        .set(SecondaryContactTelephoneNumberPage, "07888888888")
+        .success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -97,6 +99,7 @@ class CheckYourAnswersControllerSpec extends SpecBase {
       contactDetails.contains("Additional contact name") mustBe true
       contactDetails.contains("Contact preferences") mustBe true
       contactDetails.contains("Additional contact email address") mustBe true
+      contactDetails.contains("Additional contact telephone number") mustBe true
 
       application.stop()
     }

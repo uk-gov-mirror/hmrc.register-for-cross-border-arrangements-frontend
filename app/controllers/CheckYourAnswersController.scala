@@ -18,7 +18,7 @@ package controllers
 
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import helpers.JourneyHelpers._
+import pages.BusinessTypePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -42,14 +42,12 @@ class CheckYourAnswersController @Inject()(
     implicit request =>
 
       val helper = new CheckYourAnswersHelper(request.userAnswers)
-      val isOrganisation: Boolean = isOrganisationJourney(request.userAnswers)
-      val businessDetails: Seq[SummaryList.Row] = buildDetails(helper, isOrganisation)
+      val businessDetails: Seq[SummaryList.Row] = buildDetails(helper)
       val contactDetails: Seq[SummaryList.Row] = buildContactDetails(helper)
 
-      val header: String = if (isOrganisation) {
-        "checkYourAnswers.businessDetails.h2"
-      } else {
-        "checkYourAnswers.individual.h2"
+      val header: String = request.userAnswers.get(BusinessTypePage) match {
+        case Some(_) => "checkYourAnswers.businessDetails.h2"
+        case None => "checkYourAnswers.individual.h2"
       }
 
       renderer.render(
@@ -62,7 +60,7 @@ class CheckYourAnswersController @Inject()(
       ).map(Ok(_))
   }
 
-  private def buildDetails(helper: CheckYourAnswersHelper, isOrganisation: Boolean): Seq[SummaryList.Row] = {
+  private def buildDetails(helper: CheckYourAnswersHelper): Seq[SummaryList.Row] = {
 
     val pagesToCheck = Tuple4(
       helper.businessType,
@@ -72,18 +70,11 @@ class CheckYourAnswersController @Inject()(
     )
 
     pagesToCheck match {
-      case (Some(_), None, None, None) if isOrganisation =>
-        //Business with ID
+      case (Some(_), None, None, None) =>
+        //Business with ID (inc. Sole trader)
         Seq(
           helper.confirmBusiness
         ).flatten
-
-        //TODO Fix once Sole trader journey is working
-//      case (Some(_), None, None, None) =>
-//        //Sole trader
-//        Seq(
-//          ???
-//        ).flatten
 
       case (None, Some(_), None, None) =>
         //Individual with ID
@@ -116,7 +107,6 @@ class CheckYourAnswersController @Inject()(
       case _ =>
         //All pages
         Seq(
-          helper.businessType,
           helper.doYouHaveUTR,
           helper.confirmBusiness,
           helper.nino,
@@ -146,7 +136,8 @@ class CheckYourAnswersController @Inject()(
       helper.haveSecondContact,
       helper.secondaryContactName,
       helper.secondaryContactPreference,
-      helper.secondaryContactEmailAddress
+      helper.secondaryContactEmailAddress,
+      helper.secondaryContactTelephoneNumber
     ).flatten
   }
 }

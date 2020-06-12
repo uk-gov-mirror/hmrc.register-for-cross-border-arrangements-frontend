@@ -459,6 +459,6 @@ secondaryContactEmailAddress.error.email.invalid = Enter an email address in the
 secondaryContactTelephoneNumber.title = What is the telephone number for your second contact?
 secondaryContactTelephoneNumber.heading = What is the telephone number for {0}?
 secondaryContactTelephoneNumber.hint = For international numbers include the country code.
-secondaryContactTelephoneNumber.checkYourAnswersLabel = What is the telephone number for {0}?
+secondaryContactTelephoneNumber.checkYourAnswersLabel = Additional contact telephone number
 secondaryContactTelephoneNumber.error.required = Enter a telephone number
 secondaryContactTelephoneNumber.error.invalid = Enter a telephone number, like 01632 960 001, 07700 900 982 or +44 0808 157 0192

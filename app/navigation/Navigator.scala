@@ -142,6 +142,7 @@ class Navigator @Inject()() {
   private def contactTelephoneNumberRoutes(ua: UserAnswers): Option[Call] = {
     (ua.get(RegistrationTypePage), ua.get(BusinessTypePage)) match {
       case (Some(Individual),_) => Some(routes.CheckYourAnswersController.onPageLoad())
+      case (_, Some(BusinessType.NotSpecified)) => Some(routes.CheckYourAnswersController.onPageLoad())
       case (_,_) => Some(routes.HaveSecondContactController.onPageLoad(NormalMode))
     }
   }

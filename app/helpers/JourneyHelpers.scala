@@ -29,7 +29,7 @@ object JourneyHelpers {
     }
 
     (ua.get(BusinessTypePage), isRegisteringAsBusiness) match {
-      case (Some(businessType), _) if businessType.equals(BusinessType.NotSpecified) => false
+      case (Some(BusinessType.NotSpecified), _) => false
       case (Some(_), _) => true
       case (None, true) => true
       case _ => false
