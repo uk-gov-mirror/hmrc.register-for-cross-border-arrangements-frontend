@@ -626,23 +626,23 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(SecondaryContactPreferencePage, NormalMode, updatedAnswers)
-              .mustBe(routes.ContactTelephoneNumberController.onPageLoad(NormalMode)) //TODO change to Second Contact Telephone page when built
+              .mustBe(routes.SecondaryContactTelephoneNumberController.onPageLoad(NormalMode))
         }
       }
 
-      "must go from the What is the email address of your second contact page " +
+      "must go from the What is the telephone number for *name* contact page " +
         "to Check your answers page" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
 
             val updatedAnswers =
               answers
-                .set(SecondaryContactEmailAddressPage, "test@test.com")
+                .set(SecondaryContactTelephoneNumberPage, "07000000000")
                 .success
                 .value
 
             navigator
-              .nextPage(SecondaryContactEmailAddressPage, NormalMode, updatedAnswers)
+              .nextPage(SecondaryContactTelephoneNumberPage, NormalMode, updatedAnswers)
               .mustBe(routes.CheckYourAnswersController.onPageLoad())
         }
       }

@@ -191,7 +191,7 @@ businessType.error.required = Select businessType
 
 selfAssessmentUTR.title = What is your Self Assessment Unique Taxpayer Reference?
 selfAssessmentUTR.heading = What is your Self Assessment Unique Taxpayer Reference?
-selfAssessmentUTR.hint = This is 10 numbers, for example 1234567890. It will be on tax returns and other letters about Corporation Tax. It may be called ‘reference’, ‘UTR’ or ‘official use’. You can
+selfAssessmentUTR.hint = This is 10 numbers, for example 1234567890. It will be on tax returns and other letters about Self Assessment. It may be called ‘reference’, ‘UTR’ or ‘official use’. You can
 selfAssessmentUTR.link = find a lost UTR number (opens in new window or tab).
 selfAssessmentUTR.error.required = Enter your Self Assessment Unique Taxpayer Reference
 selfAssessmentUTR.error.length =  Self Assessment Unique Taxpayer Reference must be 10 numbers
@@ -223,7 +223,6 @@ nino.heading = What is your National Insurance number?
 nino.checkYourAnswersLabel = What is your National Insurance number?
 nino.error.required = Enter National Insurance number
 nino.error.length = Nino must be 9 characters or less
-
 
 name.title = What is your name?
 name.heading = What is your name?
@@ -450,3 +449,10 @@ secondaryContactEmailAddress.checkYourAnswersLabel = What is the email address f
 secondaryContactEmailAddress.error.required = Enter an email address
 secondaryContactEmailAddress.error.length = Email address must be 254 characters or less
 secondaryContactEmailAddress.error.email.invalid = Enter an email address in the correct format, like name@example.com
+
+secondaryContactTelephoneNumber.title = What is the telephone number for your second contact?
+secondaryContactTelephoneNumber.heading = What is the telephone number for {0}?
+secondaryContactTelephoneNumber.hint = For international numbers include the country code.
+secondaryContactTelephoneNumber.checkYourAnswersLabel = What is the telephone number for {0}?
+secondaryContactTelephoneNumber.error.required = Enter a telephone number
+secondaryContactTelephoneNumber.error.invalid = Enter a telephone number, like 01632 960 001, 07700 900 982 or +44 0808 157 0192
