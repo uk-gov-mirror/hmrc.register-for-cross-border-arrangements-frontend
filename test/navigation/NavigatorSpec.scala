@@ -460,28 +460,24 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           .success
           .value
 
-          navigator
-            .nextPage(ContactTelephoneNumberPage, NormalMode, userAnswers)
-            .mustBe(routes.HaveSecondContactController.onPageLoad(NormalMode))
+        navigator
+          .nextPage(ContactTelephoneNumberPage, NormalMode, userAnswers)
+          .mustBe(routes.HaveSecondContactController.onPageLoad(NormalMode))
       }
 
-      "must go from the What is your telephone number page? to Check Your Answers page" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
+      "must go from the What is your telephone number page? to Check Your Answers page is registration type is Individual" in {
 
-            val updatedAnswers =
-              answers
-                .set(RegistrationTypePage, RegistrationType.Individual)
-                .success
-                .value
-                .set(ContactTelephoneNumberPage, "07540000000")
-                .success
-                .value
+        val userAnswers = UserAnswers(userAnswersId)
+          .set(RegistrationTypePage, RegistrationType.Individual)
+          .success
+          .value
+          .set(ContactTelephoneNumberPage, "07540000000")
+          .success
+          .value
 
-            navigator
-              .nextPage(ContactTelephoneNumberPage, NormalMode, updatedAnswers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad())
-        }
+        navigator
+          .nextPage(ContactTelephoneNumberPage, NormalMode, userAnswers)
+          .mustBe(routes.CheckYourAnswersController.onPageLoad())
       }
 
       "must go from the What is your telephone number page? to Check Your Answers page if business type is Sole trader" in {
@@ -493,9 +489,9 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           .success
           .value
 
-          navigator
-            .nextPage(ContactTelephoneNumberPage, NormalMode, userAnswers)
-            .mustBe(routes.CheckYourAnswersController.onPageLoad())
+        navigator
+          .nextPage(ContactTelephoneNumberPage, NormalMode, userAnswers)
+          .mustBe(routes.CheckYourAnswersController.onPageLoad())
       }
 
       "must go from the Do you have telephone page to the What is the telephone number page when the answer is 'Yes'" in {

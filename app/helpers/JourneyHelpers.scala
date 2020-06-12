@@ -23,15 +23,10 @@ object JourneyHelpers {
 
   def isOrganisationJourney(ua: UserAnswers): Boolean = {
 
-    val isRegisteringAsBusiness = ua.get(RegistrationTypePage) match {
-      case Some(RegistrationType.Business) => true
-      case _ => false
-    }
-
-    (ua.get(BusinessTypePage), isRegisteringAsBusiness) match {
+    (ua.get(BusinessTypePage), ua.get(RegistrationTypePage)) match {
       case (Some(BusinessType.NotSpecified), _) => false
+      case (_, Some(RegistrationType.Business)) => true
       case (Some(_), _) => true
-      case (None, true) => true
       case _ => false
     }
   }
