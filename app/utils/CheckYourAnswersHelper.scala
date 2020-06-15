@@ -19,7 +19,7 @@ package utils
 import java.time.format.DateTimeFormatter
 
 import controllers.routes
-import models.{BusinessType, CheckMode, UserAnswers}
+import models.{Address, BusinessType, CheckMode, UserAnswers}
 import pages._
 import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels.Text.Literal
@@ -37,7 +37,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = routes.SecondaryContactTelephoneNumberController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"secondaryContactTelephoneNumber.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"secondaryContactTelephoneNumber.checkYourAnswersLabel")),
+            attributes         = Map("id" -> "change-additional-contact-telephone-number")
           )
         )
       )
@@ -52,7 +53,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = routes.SecondaryContactEmailAddressController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"secondaryContactEmailAddress.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"secondaryContactEmailAddress.checkYourAnswersLabel")),
+            attributes         = Map("id" -> "change-additional-contact-email-address")
           )
         )
       )
@@ -60,14 +62,17 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
   def secondaryContactPreference: Option[Row] = userAnswers.get(SecondaryContactPreferencePage) map {
     answer =>
+      val formattedAnswer = answer.map(_.toString).mkString(" and ").capitalize
+
       Row(
         key     = Key(msg"secondaryContactPreference.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(Html(answer.map(a => msg"secondaryContactPreference.$a").mkString(",<br>"))),
+        value   = Value(lit"$formattedAnswer"),
         actions = List(
           Action(
             content            = msg"site.edit",
             href               = routes.SecondaryContactPreferenceController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"secondaryContactPreference.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"secondaryContactPreference.checkYourAnswersLabel")),
+            attributes         = Map("id" -> "change-contact-preferences")
           )
         )
       )
@@ -82,7 +87,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = routes.SecondaryContactNameController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"secondaryContactName.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"secondaryContactName.checkYourAnswersLabel")),
+            attributes         = Map("id" -> "change-additional-contact-name")
           )
         )
       )
@@ -97,7 +103,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = routes.HaveSecondContactController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"haveSecondContact.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"haveSecondContact.checkYourAnswersLabel")),
+            attributes         = Map("id" -> "change-do-you-have-additional-contact")
           )
         )
       )
@@ -107,14 +114,15 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
   def whatIsYourAddressUk: Option[Row] = userAnswers.get(WhatIsYourAddressUkPage) map {
     answer =>
       Row(
-        key     = Key(msg"whatIsYourAddressUk.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(lit"$answer.lines"),
+        key     = Key(msg"whatIsYourUkAddress.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(formatAddress(answer)),
         actions = List(
           Action(
             content            = msg"site.edit",
             href               = routes.WhatIsYourAddressUkController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whatIsYourAddressUk.checkYourAnswersLabel"))
-                      )
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whatIsYourAddressUk.checkYourAnswersLabel")),
+            attributes         = Map("id" -> "change-uk-address")
+          )
         )
       )
   }
@@ -128,7 +136,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = routes.TelephoneNumberQuestionController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"telephoneNumberQuestion.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"telephoneNumberQuestion.checkYourAnswersLabel")),
+            attributes         = Map("id" -> "change-do-you-have-a-telephone")
 
           )
         )
@@ -144,7 +153,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = routes.ContactTelephoneNumberController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"contactTelephoneNumber.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"contactTelephoneNumber.checkYourAnswersLabel")),
+            attributes         = Map("id" -> "change-telephone-number")
           )
         )
       )
@@ -152,14 +162,28 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
   def confirmBusiness: Option[Row] = userAnswers.get(ConfirmBusinessPage) map {
     answer =>
+      val businessName = userAnswers.get(RetrievedNamePage).get
+      val address = userAnswers.get(BusinessAddressPage).get
+
       Row(
         key     = Key(msg"confirmBusiness.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(yesOrNo(answer)),
+        value   = Value(
+          Html(s"""
+              $businessName<br><br>
+              ${address.addressLine1}<br>
+              ${address.addressLine2}<br>
+              ${address.addressLine3.fold("")(address => s"$address<br>")}
+              ${address.addressLine4.fold("")(address => s"$address<br>")}
+              ${address.postCode.fold("")(postcode => s"$postcode<br>")}
+              ${address.country.description}
+              """)
+        ),
         actions = List(
           Action(
             content            = msg"site.edit",
             href               = routes.ConfirmBusinessController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"confirmBusiness.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"confirmBusiness.checkYourAnswersLabel")),
+            attributes         = Map("id" -> "change-your-business")
           )
         )
       )
@@ -169,12 +193,13 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
     answer =>
       Row(
         key     = Key(msg"contactName.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(lit"$answer"),
+        value   = Value(lit"${answer.firstName} ${answer.secondName}"),
         actions = List(
           Action(
             content            = msg"site.edit",
             href               = routes.ContactNameController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"contactName.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"contactName.checkYourAnswersLabel")),
+            attributes         = Map("id" -> "change-contact-name")
           )
         )
       )
@@ -189,7 +214,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = routes.ContactEmailAddressController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"contactEmailAddress.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"contactEmailAddress.checkYourAnswersLabel")),
+            attributes         = Map("id" -> "change-email-address")
           )
         )
       )
@@ -199,12 +225,13 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
     answer =>
       Row(
         key     = Key(msg"businessAddress.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(lit"$answer"),
+        value   = Value(formatAddress(answer)),
         actions = List(
           Action(
             content            = msg"site.edit",
             href               = routes.BusinessAddressController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"businessAddress.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"businessAddress.checkYourAnswersLabel")),
+            attributes         = Map("id" -> "change-business-address")
           )
         )
       )
@@ -219,7 +246,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = routes.BusinessWithoutIDNameController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"businessWithoutIDName.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"businessWithoutIDName.checkYourAnswersLabel")),
+            attributes         = Map("id" -> "change-business-name")
           )
         )
       )
@@ -268,12 +296,13 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
     answer =>
       Row(
         key     = Key(msg"whatIsYourAddress.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(lit"${answer.lines}"),
+        value   = Value(formatAddress(answer)),
         actions = List(
           Action(
             content            = msg"site.edit",
             href               = routes.WhatIsYourAddressController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whatIsYourAddress.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"whatIsYourAddress.checkYourAnswersLabel")),
+            attributes         = Map("id" -> "change-address")
           )
         )
       )
@@ -288,7 +317,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = routes.DoYouLiveInTheUKController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"doYouLiveInTheUK.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"doYouLiveInTheUK.checkYourAnswersLabel")),
+            attributes         = Map("id" -> "change-do-you-live-in-the-uk")
           )
         )
       )
@@ -303,7 +333,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = routes.NonUkNameController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"nonUkName.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"nonUkName.checkYourAnswersLabel")),
+            attributes         = Map("id" -> "change-name")
           )
         )
       )
@@ -318,7 +349,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = routes.DateOfBirthController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"dateOfBirth.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"dateOfBirth.checkYourAnswersLabel")),
+            attributes         = Map("id" -> "change-dob")
           )
         )
       )
@@ -333,7 +365,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = routes.DoYouHaveUTRController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"doYouHaveUTR.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"doYouHaveUTR.checkYourAnswersLabel")),
+            attributes         = Map("id" -> "change-do-you-have-a-utr")
           )
         )
       )
@@ -348,19 +381,24 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = routes.RegistrationTypeController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"registrationType.checkYourAnswersLabel")))))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"registrationType.checkYourAnswersLabel")),
+            attributes         = Map("id" -> "change-registration-type")
+          )
+        )
+      )
   }
 
   def namePage: Option[Row] = userAnswers.get(NamePage) map {
     answer =>
       Row(
         key = Key(msg"name.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value = Value(lit"$answer"),
+        value = Value(lit"${answer.firstName} ${answer.secondName}"),
         actions = List(
           Action(
-            content = msg"site.edit",
-            href = routes.NameController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"namePage.checkYourAnswersLabel"))
+            content             = msg"site.edit",
+            href                = routes.NameController.onPageLoad(CheckMode).url,
+            visuallyHiddenText  = Some(msg"site.edit.hidden".withArgs(msg"namePage.checkYourAnswersLabel")),
+            attributes          = Map("id" -> "change-name")
           )
         )
       )
@@ -390,7 +428,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content            = msg"site.edit",
             href               = routes.NinoController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"nino.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"nino.checkYourAnswersLabel")),
+            attributes         = Map("id" -> "change-nino")
           )
         )
       )
@@ -405,7 +444,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
           Action(
             content = msg"site.edit",
             href = routes.DoYouHaveANationalInsuranceNumberController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"doYouHaveANationalInsuranceNumber.checkYourAnswersLabel"))
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"doYouHaveANationalInsuranceNumber.checkYourAnswersLabel")),
+            attributes = Map("id" -> "change-do-you-have-national-insurance-number")
           )
         )
       )
@@ -462,6 +502,17 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
     } else {
       msg"site.no"
     }
+
+  private def formatAddress(answer: Address): Html = {
+    Html(s"""
+        ${answer.addressLine1}<br>
+        ${answer.addressLine2}<br>
+        ${answer.addressLine3.fold("")(address => s"$address<br>")}
+        ${answer.addressLine4.fold("")(address => s"$address<br>")}
+        ${answer.postCode.fold("")(postcode => s"$postcode<br>")}
+        ${answer.country.description}
+     """)
+  }
 }
 
 object CheckYourAnswersHelper {

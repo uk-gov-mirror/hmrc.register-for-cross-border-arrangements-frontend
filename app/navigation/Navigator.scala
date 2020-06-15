@@ -47,6 +47,7 @@ class Navigator @Inject()() {
     case BusinessAddressPage => _ =>   Some(routes.ContactNameController.onPageLoad(NormalMode))
     case BusinessWithoutIDNamePage => _ => Some(routes.BusinessAddressController.onPageLoad(NormalMode))
     case WhatIsYourAddressUkPage => _ => Some(routes.ContactEmailAddressController.onPageLoad(NormalMode))
+    case WhatIsYourAddressPage => _ => Some(routes.ContactNameController.onPageLoad(NormalMode))
     case IsThisYourBusinessPage => _ => Some(routes.IdentityConfirmedController.onPageLoad())
     case ContactNamePage => _ => Some(routes.ContactEmailAddressController.onPageLoad(NormalMode))
     case TelephoneNumberQuestionPage => telephoneNumberQuestionRoutes
@@ -139,9 +140,10 @@ class Navigator @Inject()() {
     }
 
   private def contactTelephoneNumberRoutes(ua: UserAnswers): Option[Call] = {
-    (ua.get(RegistrationTypePage), ua.get(BusinessTypePage)) match {
-      case (Some(Individual),_) => Some(routes.CheckYourAnswersController.onPageLoad())
-      case (_,_) => Some(routes.HaveSecondContactController.onPageLoad(NormalMode))
+    if (isOrganisationJourney(ua)) {
+      Some(routes.HaveSecondContactController.onPageLoad(NormalMode))
+    } else {
+      Some(routes.CheckYourAnswersController.onPageLoad())
     }
   }
 

@@ -16,15 +16,19 @@
 
 package helpers
 
-import models.{BusinessType, UserAnswers}
-import pages.BusinessTypePage
+import models.{BusinessType, RegistrationType, UserAnswers}
+import pages.{BusinessTypePage, RegistrationTypePage}
 
 object JourneyHelpers {
 
-  def isOrganisationJourney(ua: UserAnswers): Boolean = ua.get(BusinessTypePage) match {
-    case Some(businessType) if businessType.equals(BusinessType.NotSpecified) => false
-    case Some(_) => true
-    case None => false
+  def isOrganisationJourney(ua: UserAnswers): Boolean = {
+
+    (ua.get(BusinessTypePage), ua.get(RegistrationTypePage)) match {
+      case (Some(BusinessType.NotSpecified), _) => false
+      case (_, Some(RegistrationType.Business)) => true
+      case (Some(_), _) => true
+      case _ => false
+    }
   }
 
 }
