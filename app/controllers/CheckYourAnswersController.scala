@@ -120,9 +120,7 @@ class CheckYourAnswersController @Inject()(
           helper.businessAddress,
           helper.doYouHaveANationalInsuranceNumber,
           helper.nonUkName,
-          helper.dateOfBirth,
           helper.doYouLiveInTheUK,
-          helper.individualUKPostcode,
           helper.whatIsYourAddress,
           helper.whatIsYourAddressUk
         ).flatten
