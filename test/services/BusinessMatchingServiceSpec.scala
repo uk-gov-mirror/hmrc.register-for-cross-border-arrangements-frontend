@@ -45,7 +45,6 @@ class BusinessMatchingServiceSpec extends SpecBase
   with Generators
   with ScalaCheckPropertyChecks {
 
-
   val mockBusinessMatchingConnector: BusinessMatchingConnector = mock[BusinessMatchingConnector]
 
   override lazy val app: Application = new GuiceApplicationBuilder()
@@ -56,12 +55,18 @@ class BusinessMatchingServiceSpec extends SpecBase
 
   val businessMatchingService: BusinessMatchingService = app.injector.instanceOf[BusinessMatchingService]
 
+  def utrPage(businessType: BusinessType): QuestionPage[UniqueTaxpayerReference] = {
+    if (businessType == BusinessType.UnIncorporatedBody | businessType == BusinessType.LimitedLiability) {
+      CorporationTaxUTRPage
+    } else {
+      SelfAssessmentUTRPage
+    }
+  }
+
   override def beforeEach: Unit =
     reset(
       mockBusinessMatchingConnector
     )
-
-
 
   "Business Matching Service" - {
     "when able to construct an individual matching submission" - {
@@ -127,17 +132,12 @@ class BusinessMatchingServiceSpec extends SpecBase
           } yield Name(firstName, secondName)
         ){
           (userAnswers, businessType, utr, businessName, soleTraderName) =>
-            val utrPage = if (businessType == BusinessType.UnIncorporatedBody | businessType == BusinessType.LimitedLiability) {
-              CorporationTaxUTRPage
-            } else {
-              SelfAssessmentUTRPage
-            }
 
             val answers = userAnswers
               .set(BusinessTypePage, businessType)
               .success
               .value
-              .set(utrPage, utr)
+              .set(utrPage(businessType), utr)
               .success
               .value
               .set(BusinessNamePage, businessName)
@@ -180,13 +180,13 @@ class BusinessMatchingServiceSpec extends SpecBase
       }
 
       "must throw an error if Json validation fails" in {
-        forAll(arbitrary[UserAnswers], arbitrary[UniqueTaxpayerReference], arbitrary[String], arbitrary[Name]){
-          (userAnswers, utr, businessName, soleTraderName) =>
+        forAll(arbitrary[UserAnswers], arbitrary[BusinessType], arbitrary[UniqueTaxpayerReference], arbitrary[String], arbitrary[Name]){
+          (userAnswers, businessType, utr, businessName, soleTraderName) =>
             val answers = userAnswers
-              .set(BusinessTypePage, BusinessType.NotSpecified)
+              .set(BusinessTypePage, businessType)
               .success
               .value
-              .set(SelfAssessmentUTRPage, utr)
+              .set(utrPage(businessType), utr)
               .success
               .value
               .set(BusinessNamePage, businessName)
@@ -217,13 +217,13 @@ class BusinessMatchingServiceSpec extends SpecBase
       }
 
       "should return a future None if business can't be found" in {
-        forAll(arbitrary[UserAnswers], arbitrary[UniqueTaxpayerReference], arbitrary[String], arbitrary[Name]){
-          (userAnswers, utr, businessName, soleTraderName) =>
+        forAll(arbitrary[UserAnswers], arbitrary[BusinessType], arbitrary[UniqueTaxpayerReference], arbitrary[String], arbitrary[Name]){
+          (userAnswers, businessType, utr, businessName, soleTraderName) =>
             val answers = userAnswers
-              .set(BusinessTypePage, BusinessType.LimitedLiability)
+              .set(BusinessTypePage, businessType)
               .success
               .value
-              .set(CorporationTaxUTRPage, utr)
+              .set(utrPage(businessType), utr)
               .success
               .value
               .set(BusinessNamePage, businessName)
