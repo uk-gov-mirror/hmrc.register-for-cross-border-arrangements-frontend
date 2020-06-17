@@ -22,7 +22,7 @@ import base.SpecBase
 import controllers.routes
 import generators.Generators
 import models.RegistrationType.{Business, Individual}
-import models.{BusinessType, CheckMode, Name, RegistrationType, SecondaryContactPreference, UserAnswers}
+import models.{Address, BusinessType, CheckMode, Country, Name, RegistrationType, SecondaryContactPreference, UniqueTaxpayerReference, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
@@ -33,6 +33,8 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
   val navigator = new Navigator
 
   val name: Name = Name("FirstName", "LastName")
+  val address: Address = Address("", "", None, None, None, Country("", "", ""))
+  val utr: UniqueTaxpayerReference = UniqueTaxpayerReference("0123456789")
 
   "Navigator in Check mode" - {
 
@@ -64,6 +66,177 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
             navigator
               .nextPage(DoYouHaveUTRPage, CheckMode, updatedAnswers)
               .mustBe(routes.RegistrationTypeController.onPageLoad(CheckMode))
+        }
+      }
+    }
+
+    "must go from What type of business do you have? page to" - {
+      "What is your Corporation Tax Unique Taxpayer Reference? when answer is 'UnIncorporatedBody'" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(BusinessTypePage, BusinessType.UnIncorporatedBody)
+                .success
+                .value
+
+            navigator
+              .nextPage(BusinessTypePage, CheckMode, updatedAnswers)
+              .mustBe(routes.CorporationTaxUTRController.onPageLoad(CheckMode))
+        }
+      }
+
+      "What is your Corporation Tax Unique Taxpayer Reference? when answer is 'CorporateBody'" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(BusinessTypePage, BusinessType.CorporateBody)
+                .success
+                .value
+
+            navigator
+              .nextPage(BusinessTypePage, CheckMode, updatedAnswers)
+              .mustBe(routes.CorporationTaxUTRController.onPageLoad(CheckMode))
+        }
+      }
+
+      "What is your Self Assessment Unique Taxpayer Reference? when answer is 'Sole proprietor'" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(BusinessTypePage, BusinessType.NotSpecified)
+                .success
+                .value
+
+            navigator
+              .nextPage(BusinessTypePage, CheckMode, updatedAnswers)
+              .mustBe(routes.SelfAssessmentUTRController.onPageLoad(CheckMode))
+        }
+      }
+
+      "What is your Self Assessment Unique Taxpayer Reference? when answer is 'Partnership'" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(BusinessTypePage, BusinessType.Partnership)
+                .success
+                .value
+
+            navigator
+              .nextPage(BusinessTypePage, CheckMode, updatedAnswers)
+              .mustBe(routes.SelfAssessmentUTRController.onPageLoad(CheckMode))
+        }
+      }
+
+      "What is your Self Assessment Unique Taxpayer Reference? when answer is 'LimitedLiability'" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(BusinessTypePage, BusinessType.LimitedLiability)
+                .success
+                .value
+
+            navigator
+              .nextPage(BusinessTypePage, CheckMode, updatedAnswers)
+              .mustBe(routes.SelfAssessmentUTRController.onPageLoad(CheckMode))
+        }
+      }
+    }
+
+    "must go from What is your Corporation Tax Unique Taxpayer Reference? page to" - {
+      "Check your answers page when answer is a UTR and business type is 'CorporateBody'" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(BusinessTypePage, BusinessType.CorporateBody)
+                .success
+                .value
+                .set(CorporationTaxUTRPage, utr)
+                .success
+                .value
+
+            navigator
+              .nextPage(CorporationTaxUTRPage, CheckMode, updatedAnswers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+        }
+      }
+
+      "Check your answers page when answer is a UTR and business type is 'UnIncorporatedBody'" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(BusinessTypePage, BusinessType.UnIncorporatedBody)
+                .success
+                .value
+                .set(SelfAssessmentUTRPage, utr)
+                .success
+                .value
+
+            navigator
+              .nextPage(CorporationTaxUTRPage, CheckMode, updatedAnswers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+        }
+      }
+    }
+
+    "must go from What is your Self Assessment Unique Taxpayer Reference? page to" - {
+      "Check your answers page when answer is a UTR and business type is 'Sole proprietor'" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(BusinessTypePage, BusinessType.NotSpecified)
+                .success
+                .value
+                .set(SelfAssessmentUTRPage, utr)
+                .success
+                .value
+
+            navigator
+              .nextPage(SelfAssessmentUTRPage, CheckMode, updatedAnswers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+        }
+      }
+
+      "Check your answers page when answer is a UTR and business type is 'Partnership'" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(BusinessTypePage, BusinessType.Partnership)
+                .success
+                .value
+                .set(SelfAssessmentUTRPage, utr)
+                .success
+                .value
+
+            navigator
+              .nextPage(SelfAssessmentUTRPage, CheckMode, updatedAnswers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+        }
+      }
+
+      "Check your answers page when answer is a UTR and business type is 'LimitedLiability'" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(BusinessTypePage, BusinessType.LimitedLiability)
+                .success
+                .value
+                .set(SelfAssessmentUTRPage, utr)
+                .success
+                .value
+
+            navigator
+              .nextPage(SelfAssessmentUTRPage, CheckMode, updatedAnswers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
         }
       }
     }
@@ -267,6 +440,40 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
             navigator
               .nextPage(DoYouLiveInTheUKPage, CheckMode, updatedAnswers)
               .mustBe(routes.WhatIsYourAddressController.onPageLoad(CheckMode))
+        }
+      }
+    }
+
+    "must go from What is your home address? page to" - {
+      "Check your answers page when answer is a home address (non-UK)" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(WhatIsYourAddressPage, address)
+                .success
+                .value
+
+            navigator
+              .nextPage(WhatIsYourAddressPage, CheckMode, updatedAnswers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+        }
+      }
+    }
+
+    "must go from What is your home address? (non-UK) page to" - {
+      "Check your answers page when answer is a home address" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(WhatIsYourAddressUkPage, address)
+                .success
+                .value
+
+            navigator
+              .nextPage(WhatIsYourAddressUkPage, CheckMode, updatedAnswers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
         }
       }
     }
@@ -502,6 +709,23 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
                 .success
                 .value
                 .set(SecondaryContactTelephoneNumberPage, "email@email.com")
+                .success
+                .value
+
+            navigator
+              .nextPage(SecondaryContactTelephoneNumberPage, CheckMode, updatedAnswers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+        }
+      }
+    }
+
+    "must go from What is the email address for *name*? page to" - {
+      "Check your answers page when answer is a telephone number" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(SecondaryContactTelephoneNumberPage, "07888888888")
                 .success
                 .value
 

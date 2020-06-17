@@ -32,9 +32,9 @@ class Navigator @Inject()() {
   private val normalRoutes: PartialFunction[Page, UserAnswers => Option[Call]] = {
     case RegistrationTypePage => registrationTypeRoutes(NormalMode)
     case DoYouHaveUTRPage => doYouHaveUTRRoutes(NormalMode)
-    case BusinessTypePage => businessTypeRoutes
-    case CorporationTaxUTRPage => businessNameRoutes
-    case SelfAssessmentUTRPage => businessNameRoutes
+    case BusinessTypePage => businessTypeRoutes(NormalMode)
+    case CorporationTaxUTRPage => businessNameRoutes(NormalMode)
+    case SelfAssessmentUTRPage => businessNameRoutes(NormalMode)
     case DoYouHaveANationalInsuranceNumberPage => doYouHaveANationalInsuranceNumberRoutes(NormalMode)
     case NinoPage => _ => Some(routes.NameController.onPageLoad(NormalMode))
     case NamePage => _ => Some(routes.DateOfBirthController.onPageLoad(NormalMode))
@@ -71,6 +71,11 @@ class Navigator @Inject()() {
     case NamePage => _ => Some(routes.CheckYourAnswersController.onPageLoad()) //Done
     case DateOfBirthPage => dateOfBirthRoutes(CheckMode) //Done
     case DoYouLiveInTheUKPage => doYouLiveInTheUKRoutes(CheckMode) //Done
+    case WhatIsYourAddressPage => _ => Some(routes.CheckYourAnswersController.onPageLoad())//Done
+    case WhatIsYourAddressUkPage => _ => Some(routes.CheckYourAnswersController.onPageLoad())//Done
+    case BusinessTypePage => businessTypeRoutes(CheckMode) //Done
+    case CorporationTaxUTRPage => _ => Some(routes.CheckYourAnswersController.onPageLoad())//Done
+    case SelfAssessmentUTRPage => _ => Some(routes.CheckYourAnswersController.onPageLoad())//Done
     case ContactNamePage => _ => Some(routes.CheckYourAnswersController.onPageLoad()) //Done
     case ContactEmailAddressPage => _ => Some(routes.CheckYourAnswersController.onPageLoad()) //Done
     case TelephoneNumberQuestionPage => telephoneNumberQuestionRoutes(CheckMode) //Done
@@ -79,33 +84,28 @@ class Navigator @Inject()() {
     case SecondaryContactNamePage => _ => Some(routes.CheckYourAnswersController.onPageLoad()) //Done
     case SecondaryContactPreferencePage => secondaryContactPreferenceRoutes(CheckMode) //Done
     case SecondaryContactEmailAddressPage => secondaryContactEmailRoutes(CheckMode) //Done
-    case SecondaryContactTelephoneNumberPage => _ => Some(routes.CheckYourAnswersController.onPageLoad())//TODO
-    case BusinessTypePage => businessTypeRoutes
-    case CorporationTaxUTRPage => businessNameRoutes
-    case SelfAssessmentUTRPage => businessNameRoutes
+    case SecondaryContactTelephoneNumberPage => _ => Some(routes.CheckYourAnswersController.onPageLoad())//Done
     case BusinessNamePage => _ => Some(routes.BusinessMatchingController.matchBusiness())
     case SoleTraderNamePage => _ => Some(routes.BusinessMatchingController.matchBusiness())
     case ConfirmBusinessPage => confirmBusinessRoutes
     case BusinessAddressPage => _ =>   Some(routes.ContactNameController.onPageLoad(NormalMode))
-    case WhatIsYourAddressUkPage => _ => Some(routes.ContactEmailAddressController.onPageLoad(NormalMode))
-    case WhatIsYourAddressPage => _ => Some(routes.ContactNameController.onPageLoad(NormalMode))
     case IsThisYourBusinessPage => _ => Some(routes.IdentityConfirmedController.onPageLoad())
     case _ => _ => Some(routes.CheckYourAnswersController.onPageLoad())
   }
 
-  private def businessTypeRoutes(ua: UserAnswers): Option[Call] = {
+  private def businessTypeRoutes(mode: Mode)(ua: UserAnswers): Option[Call] = {
     ua.get(BusinessTypePage) map {
-      case BusinessType.CorporateBody | BusinessType.UnIncorporatedBody => routes.CorporationTaxUTRController.onPageLoad(NormalMode)
-      case _ => routes.SelfAssessmentUTRController.onPageLoad(NormalMode)
+      case BusinessType.CorporateBody | BusinessType.UnIncorporatedBody => routes.CorporationTaxUTRController.onPageLoad(mode)
+      case _ => routes.SelfAssessmentUTRController.onPageLoad(mode)
     }
   }
 
-  private def businessNameRoutes(ua: UserAnswers): Option[Call] = {
+  private def businessNameRoutes(mode: Mode)(ua: UserAnswers): Option[Call] = {
     ua.get(BusinessTypePage) map {
-      case BusinessType.NotSpecified => routes.SoleTraderNameController.onPageLoad(NormalMode)
-      case BusinessType.Partnership => routes.BusinessNamePartnershipController.onPageLoad(NormalMode)
-      case BusinessType.LimitedLiability | BusinessType.CorporateBody => routes.BusinessNameRegisteredBusinessController.onPageLoad(NormalMode)
-      case BusinessType.UnIncorporatedBody => routes.BusinessNameOrganisationController.onPageLoad(NormalMode)
+      case BusinessType.NotSpecified => routes.SoleTraderNameController.onPageLoad(mode)
+      case BusinessType.Partnership => routes.BusinessNamePartnershipController.onPageLoad(mode)
+      case BusinessType.LimitedLiability | BusinessType.CorporateBody => routes.BusinessNameRegisteredBusinessController.onPageLoad(mode)
+      case BusinessType.UnIncorporatedBody => routes.BusinessNameOrganisationController.onPageLoad(mode)
     }
   }
 
