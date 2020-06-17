@@ -166,16 +166,6 @@ nino.checkYourAnswersLabel = What is your National Insurance number?
 nino.error.required = Enter National Insurance number
 nino.error.length = Nino must be 9 characters or less
 
-name.title = What is your name?
-name.heading = What is your name?
-name.checkYourAnswersLabel = What is your name?
-name.firstName = First name
-name.secondName = Second name
-name.error.firstName.required = Enter your first name
-name.error.firstName.length = First name must be 50 characters or less
-name.error.secondName.required = Enter your second name
-name.error.secondName.length = Second name must be 50 characters or less
-
 dateOfBirth.title = What is your date of birth?
 dateOfBirth.heading = What is your date of birth?
 dateOfBirth.hint = For example, 12 11 2007
@@ -234,11 +224,11 @@ name.title = What is your name?
 name.heading = What is your name?
 name.checkYourAnswersLabel = Your name
 name.firstName = First name
-name.secondName = Second name
+name.secondName = Last name
 name.error.firstName.required = Enter your first name
 name.error.firstName.length = First name must be 50 characters or less
-name.error.secondName.required = Enter your second name
-name.error.secondName.length = Second name must be 50 characters or less
+name.error.secondName.required = Enter your last name
+name.error.secondName.length = Last name must be 50 characters or less
 
 cantConfirmIdentity.title = We could not confirm your identity
 cantConfirmIdentity.heading = We could not confirm your identity
