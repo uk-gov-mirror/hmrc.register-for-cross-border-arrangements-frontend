@@ -26,9 +26,9 @@ class DoYouLiveInTheUKFormProviderSpec extends BooleanFieldBehaviours {
 
   val form = new DoYouLiveInTheUKFormProvider()()
 
-  ".value" - {
+  ".confirm" - {
 
-    val fieldName = "value"
+    val fieldName = "confirm"
 
     behave like booleanField(
       form,

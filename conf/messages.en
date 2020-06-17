@@ -244,10 +244,10 @@ nonUkName.error.secondName.required = Enter Family name
 nonUkName.error.firstName.length = Given name must be 50 characters or less
 nonUkName.error.secondName.length = Family name must be 50 characters or less
 
-doYouLiveInTheUK.title = Do you live in the UK?
-doYouLiveInTheUK.heading = Do you live in the UK?
-doYouLiveInTheUK.checkYourAnswersLabel = Do you live in the UK?
-doYouLiveInTheUK.error.required = Select yes if live in the UK
+doYouLiveInTheUK.title = Do you live in the United Kingdom?
+doYouLiveInTheUK.heading = Do you live in the United Kingdom?
+doYouLiveInTheUK.checkYourAnswersLabel = Do you live in the United Kingdom?
+doYouLiveInTheUK.error.required = Select yes if you live in the United Kingdom
 
 individualUKPostcode.title = What is your postcode?
 individualUKPostcode.heading = What is your postcode?

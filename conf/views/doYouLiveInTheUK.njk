@@ -33,7 +33,7 @@
 
           {{ govukRadios({
             classes: "govuk-radios--inline",
-            name: 'value',
+            name: 'confirm',
             fieldset: {
               legend: {
                 text: messages('doYouLiveInTheUK.title'),
@@ -42,7 +42,7 @@
               }
             },
             items: radios,
-            errorMessage: form.value.error
+            errorMessage: form.confirm.error
           }) }}
 
           {{ govukButton({
