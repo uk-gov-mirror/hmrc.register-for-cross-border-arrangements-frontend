@@ -64,8 +64,7 @@ class BusinessMatchingController @Inject()(
       * Checking UTR page only because /registered-business-name uses the business type before calling this method
       */
       val utrExist = (request.userAnswers.get(SelfAssessmentUTRPage), request.userAnswers.get(CorporationTaxUTRPage)) match {
-        case (Some(_), _) => true
-        case (_, Some(_)) => true
+        case (Some(_), _) | (_, Some(_)) => true
         case _ => false
       }
 

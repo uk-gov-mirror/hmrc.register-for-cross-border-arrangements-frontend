@@ -42,13 +42,13 @@ class BusinessMatchingService @Inject()(businessMatchingConnector: BusinessMatch
   def sendBusinessMatchingInformation(userAnswers: UserAnswers)
                                      (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[BusinessDetails]] = {
 
-    val utrExist = (userAnswers.get(SelfAssessmentUTRPage), userAnswers.get(CorporationTaxUTRPage)) match {
+    val utr = (userAnswers.get(SelfAssessmentUTRPage), userAnswers.get(CorporationTaxUTRPage)) match {
       case (Some(utr), _) => utr
       case (_, Some(utr)) => utr
     }
 
       businessMatchingConnector.sendBusinessMatchingInformation(
-        utrExist,
+        utr,
         BusinessMatchingSubmission(userAnswers).get
       ).map {
         response =>
