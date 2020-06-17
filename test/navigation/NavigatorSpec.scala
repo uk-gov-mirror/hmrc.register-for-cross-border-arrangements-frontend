@@ -408,13 +408,13 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
-      "must go from What is your home address page to Contact name page" in {
+      "must go from What is your home address (non-UK) page to What is your email address page" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
 
             navigator
               .nextPage(WhatIsYourAddressPage, NormalMode, answers)
-              .mustBe(routes.ContactNameController.onPageLoad(NormalMode))
+              .mustBe(routes.ContactEmailAddressController.onPageLoad(NormalMode))
         }
       }
 

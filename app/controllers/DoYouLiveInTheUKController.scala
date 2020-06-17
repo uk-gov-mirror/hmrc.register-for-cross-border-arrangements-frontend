@@ -57,7 +57,7 @@ class DoYouLiveInTheUKController @Inject()(
       val json = Json.obj(
         "form"   -> preparedForm,
         "mode"   -> mode,
-        "radios" -> Radios.yesNo(preparedForm("value"))
+        "radios" -> Radios.yesNo(preparedForm("confirm"))
       )
 
       renderer.render("doYouLiveInTheUK.njk", json).map(Ok(_))
@@ -72,7 +72,7 @@ class DoYouLiveInTheUKController @Inject()(
           val json = Json.obj(
             "form"   -> formWithErrors,
             "mode"   -> mode,
-            "radios" -> Radios.yesNo(formWithErrors("value"))
+            "radios" -> Radios.yesNo(formWithErrors("confirm"))
           )
 
           renderer.render("doYouLiveInTheUK.njk", json).map(BadRequest(_))

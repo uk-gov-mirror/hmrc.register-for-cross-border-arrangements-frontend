@@ -263,7 +263,7 @@ class CheckYourAnswersControllerSpec extends SpecBase {
       businessDetails.contains("Do you have a National Insurance number?") mustBe true
       businessDetails.contains("Your name") mustBe true
       businessDetails.contains("Your date of birth") mustBe true
-      businessDetails.contains("Do you live in the UK?") mustBe true
+      businessDetails.contains("Do you live in the United Kingdom?") mustBe true
       businessDetails.contains("Your home address") mustBe true
       contactDetails.contains("Email address") mustBe true
       contactDetails.contains("Do they have a telephone number?") mustBe true

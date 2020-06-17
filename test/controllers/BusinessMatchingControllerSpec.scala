@@ -52,10 +52,10 @@ class BusinessMatchingControllerSpec extends SpecBase
   val mockBusinessMatchingService: BusinessMatchingService = mock[BusinessMatchingService]
 
   val businessUserAnswers: UserAnswers = UserAnswers(userAnswersId)
-    .set(BusinessTypePage, BusinessType.CorporateBody)
+    .set(BusinessTypePage, BusinessType.UnIncorporatedBody)
     .success
     .value
-    .set(SelfAssessmentUTRPage, UniqueTaxpayerReference("0123456789"))
+    .set(CorporationTaxUTRPage, UniqueTaxpayerReference("0123456789"))
     .success
     .value
     .set(BusinessNamePage, "Business Name")
@@ -126,7 +126,7 @@ class BusinessMatchingControllerSpec extends SpecBase
 
     "when a correct submission can be created and returns a business match" - {
 
-      "must redirect the user to /is-this-your-business page" in {
+      "must redirect the user to /confirm-business page if business is unincorporated or limited company" in {
 
         val application = applicationBuilder(userAnswers = Some(businessUserAnswers))
           .overrides(
@@ -143,8 +143,38 @@ class BusinessMatchingControllerSpec extends SpecBase
         val result = route(application, getRequest(businessMatchingRoute)).value
 
         status(result) mustEqual SEE_OTHER
-        //TODO Uncomment below once /is-this-your-business is ready
-//        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements-frontend/is-this-your-business")
+        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/confirm-business")
+      }
+
+      "must redirect the user to /confirm-business page if business is not unincorporated or limited company" in {
+
+        val businessUserAnswers: UserAnswers = UserAnswers(userAnswersId)
+          .set(BusinessTypePage, BusinessType.Partnership)
+          .success
+          .value
+          .set(SelfAssessmentUTRPage, UniqueTaxpayerReference("0123456789"))
+          .success
+          .value
+          .set(BusinessNamePage, "Business Name")
+          .success
+          .value
+
+        val application = applicationBuilder(userAnswers = Some(businessUserAnswers))
+          .overrides(
+            bind[BusinessMatchingService].toInstance(mockBusinessMatchingService)
+          ).build()
+
+        val businessDetails = BusinessDetails(
+          name = "My Company",
+          address = BusinessAddress("1 Address Street", None, None, None, "NE11 1BB", "GB"))
+
+        when(mockBusinessMatchingService.sendBusinessMatchingInformation(any())(any(), any()))
+          .thenReturn(Future.successful(Some(businessDetails)))
+
+        val result = route(application, getRequest(businessMatchingRoute)).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/confirm-business")
       }
     }
 

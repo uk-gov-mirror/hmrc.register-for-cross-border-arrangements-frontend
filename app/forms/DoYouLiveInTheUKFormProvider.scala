@@ -24,6 +24,6 @@ class DoYouLiveInTheUKFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Boolean] =
     Form(
-      "value" -> boolean("doYouLiveInTheUK.error.required")
+      "confirm" -> boolean("doYouLiveInTheUK.error.required")
     )
 }
