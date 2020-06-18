@@ -126,7 +126,7 @@ class BusinessMatchingControllerSpec extends SpecBase
 
     "when a correct submission can be created and returns a business match" - {
 
-      "must redirect the user to /confirm-business page if business is unincorporated or limited company" in {
+      "must redirect the user to /confirm-business page if business is unincorporated or corporate" in {
 
         val application = applicationBuilder(userAnswers = Some(businessUserAnswers))
           .overrides(
@@ -146,7 +146,7 @@ class BusinessMatchingControllerSpec extends SpecBase
         redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/confirm-business")
       }
 
-      "must redirect the user to /confirm-business page if business is not unincorporated or limited company" in {
+      "must redirect the user to /confirm-business page if business is not unincorporated or corporate" in {
 
         val businessUserAnswers: UserAnswers = UserAnswers(userAnswersId)
           .set(BusinessTypePage, BusinessType.Partnership)

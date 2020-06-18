@@ -76,6 +76,11 @@ class Navigator @Inject()() {
     case BusinessTypePage => businessTypeRoutes(CheckMode) //Done
     case CorporationTaxUTRPage => _ => Some(routes.CheckYourAnswersController.onPageLoad())//Done
     case SelfAssessmentUTRPage => _ => Some(routes.CheckYourAnswersController.onPageLoad())//Done
+    case BusinessNamePage => _ => Some(routes.BusinessMatchingController.matchBusiness())//Done
+    case SoleTraderNamePage => _ => Some(routes.BusinessMatchingController.matchBusiness())//Done
+    case ConfirmBusinessPage => confirmBusinessRoutes//Done
+    case BusinessAddressPage => _ =>   Some(routes.CheckYourAnswersController.onPageLoad())//Done
+    case IsThisYourBusinessPage => _ => Some(routes.IdentityConfirmedController.onPageLoad())//TODO Delete this page. It's not being used
     case ContactNamePage => _ => Some(routes.CheckYourAnswersController.onPageLoad()) //Done
     case ContactEmailAddressPage => _ => Some(routes.CheckYourAnswersController.onPageLoad()) //Done
     case TelephoneNumberQuestionPage => telephoneNumberQuestionRoutes(CheckMode) //Done
@@ -85,11 +90,6 @@ class Navigator @Inject()() {
     case SecondaryContactPreferencePage => secondaryContactPreferenceRoutes(CheckMode) //Done
     case SecondaryContactEmailAddressPage => secondaryContactEmailRoutes(CheckMode) //Done
     case SecondaryContactTelephoneNumberPage => _ => Some(routes.CheckYourAnswersController.onPageLoad())//Done
-    case BusinessNamePage => _ => Some(routes.BusinessMatchingController.matchBusiness())
-    case SoleTraderNamePage => _ => Some(routes.BusinessMatchingController.matchBusiness())
-    case ConfirmBusinessPage => confirmBusinessRoutes
-    case BusinessAddressPage => _ =>   Some(routes.ContactNameController.onPageLoad(NormalMode))
-    case IsThisYourBusinessPage => _ => Some(routes.IdentityConfirmedController.onPageLoad())
     case _ => _ => Some(routes.CheckYourAnswersController.onPageLoad())
   }
 

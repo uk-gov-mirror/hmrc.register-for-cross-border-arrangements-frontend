@@ -241,6 +241,75 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
       }
     }
 
+    "must got from What is the registered name of your business?, " +
+      "What is the partnership name?, " +
+      "What is the registered name of your business? and " +
+      "What is the name of your organisation? pages to" - {
+      "Business matching when answer is a name" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(BusinessNamePage, "Business name")
+                .success
+                .value
+
+            navigator
+              .nextPage(BusinessNamePage, CheckMode, updatedAnswers)
+              .mustBe(routes.BusinessMatchingController.matchBusiness())
+        }
+      }
+    }
+
+    "must got from What is your name? page to" - {
+      "Business matching when answer is a Sole proprietor name" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(SoleTraderNamePage, name)
+                .success
+                .value
+
+            navigator
+              .nextPage(SoleTraderNamePage, CheckMode, updatedAnswers)
+              .mustBe(routes.BusinessMatchingController.matchBusiness())
+        }
+      }
+    }
+
+    "must got from Is this your business? page to" - {
+      "We have confirmed your identity page when answer is 'Yes'" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(ConfirmBusinessPage, true)
+                .success
+                .value
+
+            navigator
+              .nextPage(ConfirmBusinessPage, CheckMode, updatedAnswers)
+              .mustBe(routes.IdentityConfirmedController.onPageLoad())
+        }
+      }
+
+      "We could not find your business page when answer is 'No'" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(ConfirmBusinessPage, false)
+                .success
+                .value
+
+            navigator
+              .nextPage(ConfirmBusinessPage, CheckMode, updatedAnswers)
+              .mustBe(routes.BusinessNotConfirmedController.onPageLoad())
+        }
+      }
+    }
+
     "must got from What are you registering as? page to" - {
       "What is the name of your business? when answer is 'A business'" in {
         forAll(arbitrary[UserAnswers]) {
@@ -285,6 +354,23 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
             navigator
               .nextPage(BusinessWithoutIDNamePage, CheckMode, updatedAnswers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+        }
+      }
+    }
+
+    "must got from What is the main address of your business? page to" - {
+      "Check you answers page when answer is an address" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(BusinessAddressPage, address)
+                .success
+                .value
+
+            navigator
+              .nextPage(BusinessAddressPage, CheckMode, updatedAnswers)
               .mustBe(routes.CheckYourAnswersController.onPageLoad())
         }
       }
