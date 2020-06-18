@@ -354,7 +354,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
             navigator
               .nextPage(BusinessWithoutIDNamePage, CheckMode, updatedAnswers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+              .mustBe(routes.BusinessAddressController.onPageLoad(CheckMode))
         }
       }
     }
@@ -421,7 +421,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
             navigator
               .nextPage(NinoPage, CheckMode, updatedAnswers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+              .mustBe(routes.NameController.onPageLoad(CheckMode))
         }
       }
     }
@@ -438,7 +438,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
             navigator
               .nextPage(NonUkNamePage, CheckMode, updatedAnswers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+              .mustBe(routes.DateOfBirthController.onPageLoad(CheckMode))
         }
       }
     }
@@ -455,7 +455,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
             navigator
               .nextPage(NamePage, CheckMode, updatedAnswers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+              .mustBe(routes.DateOfBirthController.onPageLoad(CheckMode))
         }
       }
     }
@@ -728,7 +728,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
             navigator
               .nextPage(SecondaryContactNamePage, CheckMode, updatedAnswers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+              .mustBe(routes.SecondaryContactPreferenceController.onPageLoad(CheckMode))
         }
       }
     }

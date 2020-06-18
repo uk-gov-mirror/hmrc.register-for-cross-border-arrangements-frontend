@@ -63,11 +63,11 @@ class Navigator @Inject()() {
   private val checkRouteMap: Page => UserAnswers => Option[Call] = {
     case DoYouHaveUTRPage => doYouHaveUTRRoutes(CheckMode) //Done
     case RegistrationTypePage => registrationTypeRoutes(CheckMode) //Done
-    case BusinessWithoutIDNamePage => _ => Some(routes.CheckYourAnswersController.onPageLoad()) //Done
+    case BusinessWithoutIDNamePage => _ => Some(routes.BusinessAddressController.onPageLoad(CheckMode)) //Done
     case DoYouHaveANationalInsuranceNumberPage => doYouHaveANationalInsuranceNumberRoutes(CheckMode) //Done
-    case NinoPage => _ => Some(routes.CheckYourAnswersController.onPageLoad()) //Done
-    case NonUkNamePage => _ => Some(routes.CheckYourAnswersController.onPageLoad()) //Done
-    case NamePage => _ => Some(routes.CheckYourAnswersController.onPageLoad()) //Done
+    case NinoPage => _ => Some(routes.NameController.onPageLoad(CheckMode)) //Done
+    case NonUkNamePage => _ => Some(routes.DateOfBirthController.onPageLoad(CheckMode)) //Done
+    case NamePage => _ => Some(routes.DateOfBirthController.onPageLoad(CheckMode)) //Done
     case DateOfBirthPage => dateOfBirthRoutes(CheckMode) //Done
     case DoYouLiveInTheUKPage => doYouLiveInTheUKRoutes(CheckMode) //Done
     case WhatIsYourAddressPage => _ => Some(routes.CheckYourAnswersController.onPageLoad())//Done
@@ -84,7 +84,7 @@ class Navigator @Inject()() {
     case TelephoneNumberQuestionPage => telephoneNumberQuestionRoutes(CheckMode) //Done
     case ContactTelephoneNumberPage => contactTelephoneNumberRoutes(CheckMode) //Done
     case HaveSecondContactPage => haveSecondContactRoutes(CheckMode) //Done
-    case SecondaryContactNamePage => _ => Some(routes.CheckYourAnswersController.onPageLoad()) //Done
+    case SecondaryContactNamePage => _ => Some(routes.SecondaryContactPreferenceController.onPageLoad(CheckMode)) //Done
     case SecondaryContactPreferencePage => secondaryContactPreferenceRoutes(CheckMode) //Done
     case SecondaryContactEmailAddressPage => secondaryContactEmailRoutes(CheckMode) //Done
     case SecondaryContactTelephoneNumberPage => _ => Some(routes.CheckYourAnswersController.onPageLoad())//Done

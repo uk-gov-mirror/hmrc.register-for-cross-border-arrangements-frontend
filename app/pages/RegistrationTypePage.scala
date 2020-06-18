@@ -16,12 +16,32 @@
 
 package pages
 
-import models.RegistrationType
+import models.RegistrationType.{Business, Individual}
+import models.{RegistrationType, UserAnswers}
 import play.api.libs.json.JsPath
+
+import scala.util.Try
 
 case object RegistrationTypePage extends QuestionPage[RegistrationType] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "registrationType"
+
+  override def cleanup(value: Option[RegistrationType], userAnswers: UserAnswers): Try[UserAnswers] =
+    value match {
+      case Some(Business) =>
+        userAnswers.remove(DoYouHaveANationalInsuranceNumberPage)
+          .flatMap(_.remove(NinoPage))
+          .flatMap(_.remove(NamePage))
+          .flatMap(_.remove(DateOfBirthPage))
+          .flatMap(_.remove(NonUkNamePage))
+          .flatMap(_.remove(DoYouLiveInTheUKPage))
+          .flatMap(_.remove(WhatIsYourAddressUkPage))
+          .flatMap(_.remove(WhatIsYourAddressPage))
+      case Some(Individual) =>
+        userAnswers.remove(BusinessWithoutIDNamePage)
+          .flatMap(_.remove(BusinessAddressPage))
+      case _ => super.cleanup(value, userAnswers)
+    }
 }
