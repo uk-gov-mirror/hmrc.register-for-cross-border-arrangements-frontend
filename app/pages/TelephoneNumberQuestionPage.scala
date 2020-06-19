@@ -28,8 +28,8 @@ case object TelephoneNumberQuestionPage extends QuestionPage[Boolean] {
   override def toString: String = "telephoneNumberQuestion"
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
-    (value, userAnswers.get(ContactTelephoneNumberPage)) match {
-      case (Some(false), Some(_)) => userAnswers.remove(ContactTelephoneNumberPage)
+    value match {
+      case Some(false) => userAnswers.remove(ContactTelephoneNumberPage)
       case _ => super.cleanup(value, userAnswers)
     }
 }

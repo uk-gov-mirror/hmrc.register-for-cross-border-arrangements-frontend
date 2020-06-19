@@ -42,6 +42,6 @@ case object RegistrationTypePage extends QuestionPage[RegistrationType] {
       case Some(Individual) =>
         userAnswers.remove(BusinessWithoutIDNamePage)
           .flatMap(_.remove(BusinessAddressPage))
-      case _ => super.cleanup(value, userAnswers)
+      case None => super.cleanup(value, userAnswers)//TODO Check later
     }
 }

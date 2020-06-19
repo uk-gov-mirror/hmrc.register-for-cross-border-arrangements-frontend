@@ -16,9 +16,14 @@
 
 package pages
 
+import models.{Address, Country, UserAnswers}
 import pages.behaviours.PageBehaviours
+import org.scalacheck.Arbitrary.arbitrary
+
 
 class DoYouLiveInTheUKPageSpec extends PageBehaviours {
+
+  val address: Address = Address("", "", None, None, None, Country("", "", ""))
 
   "DoYouLiveInTheUKPage" - {
 
@@ -27,5 +32,35 @@ class DoYouLiveInTheUKPageSpec extends PageBehaviours {
     beSettable[Boolean](DoYouLiveInTheUKPage)
 
     beRemovable[Boolean](DoYouLiveInTheUKPage)
+
+    "must remove UK address when user changes answer to 'Yes'" in {
+      forAll(arbitrary[UserAnswers]) {
+        answers =>
+          val result = answers
+            .set(WhatIsYourAddressPage, address)
+            .success
+            .value
+            .set(DoYouLiveInTheUKPage, true)
+            .success
+            .value
+
+          result.get(WhatIsYourAddressPage) must not be defined
+      }
+    }
+
+    "must remove non-UK address when user changes answer to 'No'" in {
+      forAll(arbitrary[UserAnswers]) {
+        answers =>
+          val result = answers
+            .set(WhatIsYourAddressUkPage, address)
+            .success
+            .value
+            .set(DoYouLiveInTheUKPage, false)
+            .success
+            .value
+
+          result.get(WhatIsYourAddressUkPage) must not be defined
+      }
+    }
   }
 }

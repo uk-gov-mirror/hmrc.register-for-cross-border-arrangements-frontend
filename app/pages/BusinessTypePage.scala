@@ -31,6 +31,6 @@ case object BusinessTypePage extends QuestionPage[BusinessType] {
     value match {
       case Some(BusinessType.NotSpecified) => userAnswers.remove(BusinessNamePage)
       case Some(_) => userAnswers.remove(SoleTraderNamePage)
-      case _ => super.cleanup(value, userAnswers)
+      case None => super.cleanup(value, userAnswers)//TODO Check the None works by running the tests
     }
 }
