@@ -61,33 +61,33 @@ class Navigator @Inject()() {
   }
 
   private val checkRouteMap: Page => UserAnswers => Option[Call] = {
-    case DoYouHaveUTRPage => doYouHaveUTRRoutes(CheckMode) //Done
-    case RegistrationTypePage => registrationTypeRoutes(CheckMode) //Done
-    case BusinessWithoutIDNamePage => _ => Some(routes.BusinessAddressController.onPageLoad(CheckMode)) //Done
-    case DoYouHaveANationalInsuranceNumberPage => doYouHaveANationalInsuranceNumberRoutes(CheckMode) //Done
-    case NinoPage => _ => Some(routes.NameController.onPageLoad(CheckMode)) //Done
-    case NonUkNamePage => _ => Some(routes.DateOfBirthController.onPageLoad(CheckMode)) //Done
-    case NamePage => _ => Some(routes.DateOfBirthController.onPageLoad(CheckMode)) //Done
-    case DateOfBirthPage => dateOfBirthRoutes(CheckMode) //Done
-    case DoYouLiveInTheUKPage => doYouLiveInTheUKRoutes(CheckMode) //Done
-    case WhatIsYourAddressPage => _ => Some(routes.CheckYourAnswersController.onPageLoad())//Done
-    case WhatIsYourAddressUkPage => _ => Some(routes.CheckYourAnswersController.onPageLoad())//Done
-    case BusinessTypePage => businessTypeRoutes(CheckMode) //Done
-    case CorporationTaxUTRPage => _ => Some(routes.CheckYourAnswersController.onPageLoad())//Done
-    case SelfAssessmentUTRPage => _ => Some(routes.CheckYourAnswersController.onPageLoad())//Done
-    case BusinessNamePage => _ => Some(routes.BusinessMatchingController.matchBusiness())//Done
-    case SoleTraderNamePage => _ => Some(routes.BusinessMatchingController.matchBusiness())//Done
-    case ConfirmBusinessPage => confirmBusinessRoutes//Done
-    case BusinessAddressPage => _ =>   Some(routes.CheckYourAnswersController.onPageLoad())//Done
-    case ContactNamePage => _ => Some(routes.CheckYourAnswersController.onPageLoad()) //Done
-    case ContactEmailAddressPage => _ => Some(routes.CheckYourAnswersController.onPageLoad()) //Done
-    case TelephoneNumberQuestionPage => telephoneNumberQuestionRoutes(CheckMode) //Done
-    case ContactTelephoneNumberPage => contactTelephoneNumberRoutes(CheckMode) //Done
-    case HaveSecondContactPage => haveSecondContactRoutes(CheckMode) //Done
-    case SecondaryContactNamePage => _ => Some(routes.SecondaryContactPreferenceController.onPageLoad(CheckMode)) //Done
-    case SecondaryContactPreferencePage => secondaryContactPreferenceRoutes(CheckMode) //Done
-    case SecondaryContactEmailAddressPage => secondaryContactEmailRoutes(CheckMode) //Done
-    case SecondaryContactTelephoneNumberPage => _ => Some(routes.CheckYourAnswersController.onPageLoad())//Done
+    case DoYouHaveUTRPage => doYouHaveUTRRoutes(CheckMode)
+    case RegistrationTypePage => registrationTypeRoutes(CheckMode)
+    case BusinessWithoutIDNamePage => _ => Some(routes.BusinessAddressController.onPageLoad(CheckMode))
+    case DoYouHaveANationalInsuranceNumberPage => doYouHaveANationalInsuranceNumberRoutes(CheckMode)
+    case NinoPage => _ => Some(routes.NameController.onPageLoad(CheckMode))
+    case NonUkNamePage => _ => Some(routes.DateOfBirthController.onPageLoad(CheckMode))
+    case NamePage => _ => Some(routes.DateOfBirthController.onPageLoad(CheckMode))
+    case DateOfBirthPage => dateOfBirthRoutes(CheckMode)
+    case DoYouLiveInTheUKPage => doYouLiveInTheUKRoutes(CheckMode)
+    case WhatIsYourAddressPage => _ => Some(routes.ContactEmailAddressController.onPageLoad(CheckMode))
+    case WhatIsYourAddressUkPage => _ => Some(routes.ContactEmailAddressController.onPageLoad(CheckMode))
+    case BusinessTypePage => businessTypeRoutes(CheckMode)
+    case CorporationTaxUTRPage => businessNameRoutes(CheckMode)
+    case SelfAssessmentUTRPage => businessNameRoutes(CheckMode)
+    case BusinessNamePage => _ => Some(routes.BusinessMatchingController.matchBusiness())
+    case SoleTraderNamePage => _ => Some(routes.BusinessMatchingController.matchBusiness())
+    case ConfirmBusinessPage => confirmBusinessRoutes
+    case BusinessAddressPage => _ => Some(routes.ContactNameController.onPageLoad(CheckMode))
+    case ContactNamePage => _ => Some(routes.ContactEmailAddressController.onPageLoad(CheckMode))
+    case ContactEmailAddressPage => _ => Some(routes.TelephoneNumberQuestionController.onPageLoad(CheckMode))
+    case TelephoneNumberQuestionPage => telephoneNumberQuestionRoutes(CheckMode)
+    case ContactTelephoneNumberPage => contactTelephoneNumberRoutes(CheckMode)
+    case HaveSecondContactPage => haveSecondContactRoutes(CheckMode)
+    case SecondaryContactNamePage => _ => Some(routes.SecondaryContactPreferenceController.onPageLoad(CheckMode))
+    case SecondaryContactPreferencePage => secondaryContactPreferenceRoutes(CheckMode)
+    case SecondaryContactEmailAddressPage => secondaryContactEmailRoutes(CheckMode)
+    case SecondaryContactTelephoneNumberPage => _ => Some(routes.CheckYourAnswersController.onPageLoad())
     case _ => _ => Some(routes.CheckYourAnswersController.onPageLoad())
   }
 

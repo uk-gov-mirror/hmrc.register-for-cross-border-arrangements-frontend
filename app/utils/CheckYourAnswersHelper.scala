@@ -181,7 +181,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
         actions = List(
           Action(
             content            = msg"site.edit",
-            href               = routes.ConfirmBusinessController.onPageLoad(CheckMode).url,
+            href               = routes.DoYouHaveUTRController.onPageLoad(CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"confirmBusiness.checkYourAnswersLabel")),
             attributes         = Map("id" -> "change-your-business")
           )
