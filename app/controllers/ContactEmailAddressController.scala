@@ -105,7 +105,7 @@ class ContactEmailAddressController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactEmailAddressPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(ContactEmailAddressPage, mode, updatedAnswers)) //TODO to be changed once telephone page is created
+          } yield Redirect(navigator.nextPage(ContactEmailAddressPage, mode, updatedAnswers))
       )
   }
 }

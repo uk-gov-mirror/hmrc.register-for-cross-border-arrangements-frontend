@@ -105,7 +105,7 @@ class ContactTelephoneNumberController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactTelephoneNumberPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(ContactTelephoneNumberPage, mode, updatedAnswers))//TODO change to second contact page once built
+          } yield Redirect(navigator.nextPage(ContactTelephoneNumberPage, mode, updatedAnswers))
       )
   }
 }

@@ -148,7 +148,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
     }
 
     "must go from What is your Corporation Tax Unique Taxpayer Reference? page to" - {
-      "Check your answers page when answer is a UTR and business type is 'CorporateBody'" in {
+      "What is the registered name of your business? page when answer is a UTR and business type is 'CorporateBody'" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
@@ -166,7 +166,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         }
       }
 
-      "Check your answers page when answer is a UTR and business type is 'UnIncorporatedBody'" in {
+      "What is the name of your organisation? page when answer is a UTR and business type is 'UnIncorporatedBody'" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
@@ -186,7 +186,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
     }
 
     "must go from What is your Self Assessment Unique Taxpayer Reference? page to" - {
-      "Check your answers page when answer is a UTR and business type is 'Sole proprietor'" in {
+      "What is your name? page when answer is a UTR and business type is 'Sole proprietor'" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
@@ -204,7 +204,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         }
       }
 
-      "Check your answers page when answer is a UTR and business type is 'Partnership'" in {
+      "What is the partnership name? page when answer is a UTR and business type is 'Partnership'" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
@@ -222,7 +222,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         }
       }
 
-      "Check your answers page when answer is a UTR and business type is 'LimitedLiability'" in {
+      "What is the registered name of your business? page when answer is a UTR and business type is 'LimitedLiability'" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
@@ -343,7 +343,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
     }
 
     "must go from What is the name of your business? page to" - {
-      "Check your answers page when answer is a new business name" in {
+      "What is the main address of your business? page when answer is a new business name" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
@@ -409,7 +409,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
     }
 
     "must go from What is your National Insurance number? page to" - {
-      "Check your answers page when answer is a nino" in {
+      "What is your name? page when answer is a nino" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val nino = new Generator().nextNino
@@ -427,7 +427,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
     }
 
     "must go from What is your name? page (non-UK) to" - {
-      "Check your answers page when answer is a name" in {
+      "What is your date of birth? page when answer is a name" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
@@ -444,7 +444,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
     }
 
     "must go from What is your name? page to" - {
-      "Check your answers page when answer is a name" in {
+      "What is your date of birth? page when answer is a name" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
@@ -531,7 +531,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
     }
 
     "must go from What is your home address? page to" - {
-      "Check your answers page when answer is a home address (non-UK)" in {
+      "What is your email address? page when answer is a home address (non-UK)" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
@@ -548,7 +548,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
     }
 
     "must go from What is your home address? (non-UK) page to" - {
-      "Check your answers page when answer is a home address" in {
+      "What is your email address? page when answer is a home address" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
@@ -568,7 +568,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
 
     "must go from Who should we contact...? page to" - {
-      "Check your answers page when answer is a contact name" in {
+      "What is your email address? page when answer is a contact name" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
@@ -585,7 +585,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
     }
 
     "must go from What is *name*'s email address? page to" - {
-      "Check your answers page when answer is an email" in {
+      "Do they have a telephone number? page when answer is an email" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
@@ -717,7 +717,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
     }
 
     "must go from What is the name of the individual or team we should contact? page to" - {
-      "Check your answers page when answer is a name" in {
+      "How can we contact *name*? page when answer is a name" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
@@ -794,18 +794,18 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
                 .set(SecondaryContactPreferencePage, preferences)
                 .success
                 .value
-                .set(SecondaryContactTelephoneNumberPage, "email@email.com")
+                .set(SecondaryContactEmailAddressPage, "email@email.com")
                 .success
                 .value
 
             navigator
-              .nextPage(SecondaryContactTelephoneNumberPage, CheckMode, updatedAnswers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+              .nextPage(SecondaryContactEmailAddressPage, CheckMode, updatedAnswers)
+              .mustBe(routes.SecondaryContactTelephoneNumberController.onPageLoad(CheckMode))
         }
       }
     }
 
-    "must go from What is the email address for *name*? page to" - {
+    "must go from What is the telephone number for *name*? page to" - {
       "Check your answers page when answer is a telephone number" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
@@ -822,17 +822,17 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
       }
     }
 
-//    "must go from a page that doesn't exist in the edit route map  to Check Your Answers" in {
-//
-//      case object UnknownPage extends Page
-//
-//      forAll(arbitrary[UserAnswers]) {
-//        answers =>
-//
-//          navigator.nextPage(UnknownPage, CheckMode, answers)
-//            .mustBe(routes.CheckYourAnswersController.onPageLoad())
-//      }
-//    }
+    "must go from a page that doesn't exist in the edit route map  to Check Your Answers" in {
+
+      case object UnknownPage extends Page
+
+      forAll(arbitrary[UserAnswers]) {
+        answers =>
+
+          navigator.nextPage(UnknownPage, CheckMode, answers)
+            .mustBe(routes.CheckYourAnswersController.onPageLoad())
+      }
+    }
   }
 
 }
