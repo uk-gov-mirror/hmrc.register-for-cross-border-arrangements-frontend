@@ -16,7 +16,9 @@
 
 package pages
 
+import models.{SecondaryContactPreference, UserAnswers}
 import pages.behaviours.PageBehaviours
+import org.scalacheck.Arbitrary.arbitrary
 
 class HaveSecondContactPageSpec extends PageBehaviours {
 
@@ -27,5 +29,32 @@ class HaveSecondContactPageSpec extends PageBehaviours {
     beSettable[Boolean](HaveSecondContactPage)
 
     beRemovable[Boolean](HaveSecondContactPage)
+
+    "must remove secondary contact details when user changes answer to 'No'" in {
+      forAll(arbitrary[UserAnswers]) {
+        answers =>
+          val result = answers
+            .set(SecondaryContactNamePage, "Contact name")
+            .success
+            .value
+            .set(SecondaryContactPreferencePage, SecondaryContactPreference.values.toSet)
+            .success
+            .value
+            .set(SecondaryContactEmailAddressPage, "email@email.com")
+            .success
+            .value
+            .set(SecondaryContactTelephoneNumberPage, "07888888888")
+            .success
+            .value
+            .set(HaveSecondContactPage, false)
+            .success
+            .value
+
+          result.get(SecondaryContactNamePage) must not be defined
+          result.get(SecondaryContactPreferencePage) must not be defined
+          result.get(SecondaryContactEmailAddressPage) must not be defined
+          result.get(SecondaryContactTelephoneNumberPage) must not be defined
+      }
+    }
   }
 }

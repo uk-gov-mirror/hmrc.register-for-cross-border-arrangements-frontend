@@ -56,7 +56,7 @@ class BusinessMatchingServiceSpec extends SpecBase
   val businessMatchingService: BusinessMatchingService = app.injector.instanceOf[BusinessMatchingService]
 
   def utrPage(businessType: BusinessType): QuestionPage[UniqueTaxpayerReference] = {
-    if (businessType == BusinessType.UnIncorporatedBody | businessType == BusinessType.LimitedLiability) {
+    if (businessType == BusinessType.UnIncorporatedBody | businessType == BusinessType.CorporateBody) {
       CorporationTaxUTRPage
     } else {
       SelfAssessmentUTRPage

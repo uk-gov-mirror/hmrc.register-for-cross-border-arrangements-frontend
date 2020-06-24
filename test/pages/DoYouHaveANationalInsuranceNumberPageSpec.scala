@@ -16,7 +16,13 @@
 
 package pages
 
+import java.time.LocalDate
+
+import models.{Name, UserAnswers}
 import pages.behaviours.PageBehaviours
+import org.scalacheck.Arbitrary.arbitrary
+import uk.gov.hmrc.domain.Generator
+
 
 class DoYouHaveANationalInsuranceNumberPageSpec extends PageBehaviours {
 
@@ -27,5 +33,51 @@ class DoYouHaveANationalInsuranceNumberPageSpec extends PageBehaviours {
     beSettable[Boolean](DoYouHaveANationalInsuranceNumberPage)
 
     beRemovable[Boolean](DoYouHaveANationalInsuranceNumberPage)
+
+    "must remove all answers from no-nino journey when user changes answer to 'Yes'" in {
+      forAll(arbitrary[UserAnswers]) {
+        answers =>
+          val result = answers
+            .set(NonUkNamePage, Name("FirstName", "LastName"))
+            .success
+            .value
+            .set(DoYouLiveInTheUKPage, true)
+            .success
+            .value
+            .set(DateOfBirthPage, LocalDate.now())
+            .success
+            .value
+            .set(DoYouHaveANationalInsuranceNumberPage, true)
+            .success
+            .value
+
+          result.get(NonUkNamePage) must not be defined
+          result.get(DoYouLiveInTheUKPage) must not be defined
+          result.get(DateOfBirthPage) must not be defined
+      }
+    }
+
+    "must remove all answers from nino journey when user changes answer to 'No'" in {
+      forAll(arbitrary[UserAnswers]) {
+        answers =>
+          val result = answers
+            .set(NinoPage, new Generator().nextNino)
+            .success
+            .value
+            .set(NamePage, Name("FirstName", "LastName"))
+            .success
+            .value
+            .set(DateOfBirthPage, LocalDate.now())
+            .success
+            .value
+            .set(DoYouHaveANationalInsuranceNumberPage, false)
+            .success
+            .value
+
+          result.get(NinoPage) must not be defined
+          result.get(NamePage) must not be defined
+          result.get(DateOfBirthPage) must not be defined
+      }
+    }
   }
 }

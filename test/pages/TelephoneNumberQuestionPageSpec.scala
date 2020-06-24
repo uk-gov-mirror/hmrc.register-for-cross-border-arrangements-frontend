@@ -16,7 +16,10 @@
 
 package pages
 
+import models.UserAnswers
 import pages.behaviours.PageBehaviours
+import org.scalacheck.Arbitrary.arbitrary
+
 
 class TelephoneNumberQuestionPageSpec extends PageBehaviours {
 
@@ -27,5 +30,20 @@ class TelephoneNumberQuestionPageSpec extends PageBehaviours {
     beSettable[Boolean](TelephoneNumberQuestionPage)
 
     beRemovable[Boolean](TelephoneNumberQuestionPage)
+
+    "must remove contact telephone number when user changes answer to 'No'" in {
+      forAll(arbitrary[UserAnswers]) {
+        answers =>
+          val result = answers
+            .set(ContactTelephoneNumberPage, "07888888888")
+            .success
+            .value
+            .set(TelephoneNumberQuestionPage, false)
+            .success
+            .value
+
+          result.get(ContactTelephoneNumberPage) must not be defined
+      }
+    }
   }
 }

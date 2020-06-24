@@ -16,10 +16,12 @@
 
 package pages
 
-import models.BusinessType
+import models.{BusinessType, Name, UserAnswers}
 import pages.behaviours.PageBehaviours
+import org.scalacheck.Arbitrary.arbitrary
 
-class BusinessTypeSpec extends PageBehaviours {
+
+class BusinessTypePageSpec extends PageBehaviours {
 
   "BusinessTypePage" - {
 
@@ -28,5 +30,35 @@ class BusinessTypeSpec extends PageBehaviours {
     beSettable[BusinessType](BusinessTypePage)
 
     beRemovable[BusinessType](BusinessTypePage)
+
+    "must remove business name when user changes answer to 'Sole proprietor'" in {
+      forAll(arbitrary[UserAnswers]) {
+        answers =>
+          val result = answers
+            .set(BusinessNamePage, "Business name")
+            .success
+            .value
+            .set(BusinessTypePage, BusinessType.NotSpecified)
+            .success
+            .value
+
+          result.get(BusinessNamePage) must not be defined
+      }
+    }
+
+    "must remove sole trader name when user answer is not 'Sole proprietor'" in {
+      forAll(arbitrary[UserAnswers]) {
+        answers =>
+          val result = answers
+            .set(SoleTraderNamePage, Name("FirstName", "LastName"))
+            .success
+            .value
+            .set(BusinessTypePage, BusinessType.CorporateBody)
+            .success
+            .value
+
+          result.get(SoleTraderNamePage) must not be defined
+      }
+    }
   }
 }
