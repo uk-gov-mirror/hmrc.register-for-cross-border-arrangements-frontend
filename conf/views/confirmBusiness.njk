@@ -37,13 +37,15 @@
                   </h1>
 
           <div>
-              <p>{{businessName}}</p>
-              <p>{{address.addressLine1}}</p>
-              <p>{{address.addressLine2}}</p>
-              <p>{{address.addressLine3}}</p>
-              <p>{{address.addressLine4}}</p>
-              <p>{{address.postCode}}</p>
-              <p>{{address.country.code}}</p>
+              <p  class="govuk-body">{{businessName}}</p>
+              <p class="govuk-body govuk-!-margin-bottom-0">{{address.addressLine1}}</p>
+              <p class="govuk-body govuk-!-margin-bottom-0">{{address.addressLine2}}</p>
+              <p class="govuk-body govuk-!-margin-bottom-0">{{address.addressLine3}}</p>
+              <p class="govuk-body govuk-!-margin-bottom-0">{{address.addressLine4}}</p>
+              <p class="govuk-body" >{{address.postCode}}</p>
+              {% if address.country.code != "GB" %}
+                <p class="govuk-body">{{address.country.code}}</p>
+              {% endif %}
           </div>
 
           {{ govukRadios({
@@ -53,7 +55,7 @@
             },
             items: radios,
             errorMessage: form.value.error
-          }) }},
+          }) }}
 
            {{ govukButton({
                       text: messages("site.continue"),
