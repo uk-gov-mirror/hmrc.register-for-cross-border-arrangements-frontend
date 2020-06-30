@@ -16,6 +16,7 @@ GET        /unauthorised                                  controllers.Unauthoris
 GET        /accessibility-statement                       controllers.AccessibilityController.onPageLoad
 
 GET        /register/check-answers                        controllers.CheckYourAnswersController.onPageLoad
+POST       /register/check-answers                        controllers.CheckYourAnswersController.onSubmit
 
 GET        /register/registration-type                   controllers.RegistrationTypeController.onPageLoad(mode: Mode = NormalMode)
 POST       /register/registration-type                   controllers.RegistrationTypeController.onSubmit(mode: Mode = NormalMode)

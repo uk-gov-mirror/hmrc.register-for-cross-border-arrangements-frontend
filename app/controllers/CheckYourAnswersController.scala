@@ -18,26 +18,31 @@ package controllers
 
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.RegistrationType
-import pages.{BusinessTypePage, RegistrationTypePage}
+import models.{NormalMode, RegistrationType}
+import org.slf4j.LoggerFactory
+import pages.{BusinessTypePage, RegistrationTypePage, SecondaryContactEmailAddressPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
+import services.EmailService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
 import utils.CheckYourAnswersHelper
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersController @Inject()(
     override val messagesApi: MessagesApi,
     identify: IdentifierAction,
+    emailService: EmailService,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+
+  private val logger = LoggerFactory.getLogger(getClass)
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -51,7 +56,7 @@ class CheckYourAnswersController @Inject()(
           case (Some(_), _) => "checkYourAnswers.businessDetails.h2"
           case (_, Some(RegistrationType.Business)) => "checkYourAnswers.businessDetails.h2"
           case _ => "checkYourAnswers.individualDetails.h2"
-      }
+        }
 
       renderer.render(
         "check-your-answers.njk",
@@ -142,5 +147,25 @@ class CheckYourAnswersController @Inject()(
       helper.secondaryContactEmailAddress,
       helper.secondaryContactTelephoneNumber
     ).flatten
+  }
+
+
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+    // TODO: Direct to Confirmation page (not index page) once registration created and page available
+    implicit request =>
+      emailService.sendEmail(request.userAnswers) map {
+        case Some(response) => response.status match {
+          case OK => Redirect(routes.IndexController.onPageLoad())
+          case NOT_FOUND => {
+                              logger.warn("The template cannot be found within the email service")
+                              Redirect(routes.IndexController.onPageLoad())
+                              }
+          case BAD_REQUEST =>  {
+                                logger.warn("Missing email or name parameter")
+                                Redirect(routes.IndexController.onPageLoad())
+                                }
+        }
+        case None => Redirect(routes.IndexController.onPageLoad())
+      }
   }
 }
