@@ -24,7 +24,6 @@ import org.scalacheck.{Arbitrary, Gen}
 import uk.gov.hmrc.domain.Nino
 
 trait ModelGenerators {
-
   self: Generators =>
 
   val regime = "DACSIX"

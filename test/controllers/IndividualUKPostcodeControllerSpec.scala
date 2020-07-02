@@ -17,6 +17,7 @@
 package controllers
 
 import base.SpecBase
+import config.FrontendAppConfig
 import forms.IndividualUKPostcodeFormProvider
 import matchers.JsonMatchers
 import models.{NormalMode, UserAnswers}
@@ -26,6 +27,7 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.IndividualUKPostcodePage
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -42,9 +44,9 @@ class IndividualUKPostcodeControllerSpec extends SpecBase with MockitoSugar with
   def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new IndividualUKPostcodeFormProvider()
-  val form = formProvider()
+  val form: Form[String] = formProvider()
 
-  lazy val individualUKPostcodeRoute = routes.IndividualUKPostcodeController.onPageLoad(NormalMode).url
+  lazy val individualUKPostcodeRoute: String = routes.IndividualUKPostcodeController.onPageLoad(NormalMode).url
 
   "IndividualUKPostcode Controller" - {
 
@@ -54,6 +56,7 @@ class IndividualUKPostcodeControllerSpec extends SpecBase with MockitoSugar with
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
       val request = FakeRequest(GET, individualUKPostcodeRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
@@ -80,8 +83,9 @@ class IndividualUKPostcodeControllerSpec extends SpecBase with MockitoSugar with
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(IndividualUKPostcodePage, "answer").success.value
+      val userAnswers = UserAnswers(userAnswersId).set(IndividualUKPostcodePage, "AA1 1AA").success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
       val request = FakeRequest(GET, individualUKPostcodeRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
@@ -92,7 +96,7 @@ class IndividualUKPostcodeControllerSpec extends SpecBase with MockitoSugar with
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("value" -> "answer"))
+      val filledForm = form.bind(Map("value" -> "AA1 1AA"))
 
       val expectedJson = Json.obj(
         "form" -> filledForm,
@@ -108,20 +112,21 @@ class IndividualUKPostcodeControllerSpec extends SpecBase with MockitoSugar with
     "must redirect to the next page when valid data is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
+      val mockFrontendAppConfig = mock[FrontendAppConfig]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute, appConfig = mockFrontendAppConfig)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
 
       val request =
         FakeRequest(POST, individualUKPostcodeRoute)
-          .withFormUrlEncodedBody(("value", "answer"))
+          .withFormUrlEncodedBody(("value", "AA1 1AA"))
 
       val result = route(application, request).value
 

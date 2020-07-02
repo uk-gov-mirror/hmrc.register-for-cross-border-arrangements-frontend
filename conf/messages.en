@@ -252,8 +252,10 @@ doYouLiveInTheUK.error.required = Select yes if you live in the United Kingdom
 individualUKPostcode.title = What is your postcode?
 individualUKPostcode.heading = What is your postcode?
 individualUKPostcode.checkYourAnswersLabel = What is your postcode?
+individualUKPostcode.button = Find address
 individualUKPostcode.error.required = Enter your postcode
 individualUKPostcode.error.length = Your postcode must be 8 characters or less
+individualUKPostcode.error.invalid = Enter a postcode, like AA1 1AA
 
 whatIsYourAddress.title = What is your home address?
 whatIsYourAddress.heading = What is your home address?
@@ -452,3 +454,10 @@ secondaryContactTelephoneNumber.hint = For international numbers include the cou
 secondaryContactTelephoneNumber.checkYourAnswersLabel = Additional contact telephone number
 secondaryContactTelephoneNumber.error.required = Enter a telephone number
 secondaryContactTelephoneNumber.error.invalid = Enter a telephone number, like 01632 960 001, 07700 900 982 or +44 0808 157 0192
+
+selectAddress.title = What is your address?
+selectAddress.heading = What is your address?
+selectAddress.checkYourAnswersLabel = Your home address
+selectAddress.error.required = Select your address
+selectAddress.hint.part1 = Select from the list or
+selectAddress.hint.part2 = enter your address manually

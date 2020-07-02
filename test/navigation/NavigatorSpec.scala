@@ -17,18 +17,21 @@
 package navigation
 
 import base.SpecBase
+import config.FrontendAppConfig
+import controllers.routes
 import generators.Generators
+import models.BusinessType._
 import models.RegistrationType.Individual
 import models._
+import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
-import controllers.routes
-import models.BusinessType._
 
 class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
-  val navigator = new Navigator
+  val mockFrontendConfig: FrontendAppConfig = mock[FrontendAppConfig]
+  val navigator: Navigator = new Navigator(mockFrontendConfig)
 
   "Navigator" - {
 
@@ -349,7 +352,29 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
-      "must go from the Do You Live in the UK page for people who answer yes to What is your address Uk?" in {
+      "must go from the Do You Live in the UK page for people who answer yes to What is your postcode? - address lookup toggle is true" in {
+
+        when(mockFrontendConfig.addressLookupToggle).thenReturn(true)
+
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers
+                .set(DoYouLiveInTheUKPage, true)
+                .success
+                .value
+
+            navigator
+              .nextPage(DoYouLiveInTheUKPage, NormalMode, updatedAnswers)
+              .mustBe(routes.IndividualUKPostcodeController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from the Do You Live in the UK page for people who answer yes to What is your address? - address lookup toggle is false" in {
+
+        when(mockFrontendConfig.addressLookupToggle).thenReturn(false)
+
         forAll(arbitrary[UserAnswers]) {
           answers =>
 
@@ -365,7 +390,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
-      "must go from the Do You Live in the UK page for people who do to the What is your address page" in {
+      "must go from the Do You Live in the UK page for people who do to the What is your address page (non-UK)" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
 
@@ -378,6 +403,38 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
             navigator
               .nextPage(DoYouLiveInTheUKPage, NormalMode, updatedAnswers)
               .mustBe(routes.WhatIsYourAddressController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from the What is your postcode? page to What is your address? page" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers
+                .set(IndividualUKPostcodePage, "AA1 1AA")
+                .success
+                .value
+
+            navigator
+              .nextPage(IndividualUKPostcodePage, NormalMode, updatedAnswers)
+              .mustBe(routes.SelectAddressController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from the What is your address? page to What is your email address? page" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers
+                .set(SelectAddressPage, "Some UK address")
+                .success
+                .value
+
+            navigator
+              .nextPage(SelectAddressPage, NormalMode, updatedAnswers)
+              .mustBe(routes.ContactEmailAddressController.onPageLoad(NormalMode))
         }
       }
 

@@ -14,22 +14,16 @@
  * limitations under the License.
  */
 
-package pages
+package forms
 
-import play.api.libs.json.JsPath
-import models.{Address, UserAnswers}
+import forms.mappings.Mappings
+import javax.inject.Inject
+import play.api.data.Form
 
-import scala.util.Try
+class SelectAddressFormProvider @Inject() extends Mappings {
 
-case object WhatIsYourAddressUkPage extends QuestionPage[Address] {
-
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "whatIsYourAddressUk"
-
-  override def cleanup(value: Option[Address], userAnswers: UserAnswers): Try[UserAnswers] =
-    value match {
-      case Some(_) => userAnswers.remove(SelectAddressPage)
-      case None => super.cleanup(value, userAnswers)
-    }
+  def apply(): Form[String] =
+    Form(
+      "value" -> text("selectAddress.error.required")
+    )
 }

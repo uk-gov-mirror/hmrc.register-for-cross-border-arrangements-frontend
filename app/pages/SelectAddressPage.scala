@@ -21,18 +21,15 @@ import play.api.libs.json.JsPath
 
 import scala.util.Try
 
-case object DoYouLiveInTheUKPage extends QuestionPage[Boolean] {
+case object SelectAddressPage extends QuestionPage[String] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "doYouLiveInTheUK"
+  override def toString: String = "selectAddress"
 
-  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
+  override def cleanup(value: Option[String], userAnswers: UserAnswers): Try[UserAnswers] =
     value match {
-      case Some(true) => userAnswers.remove(WhatIsYourAddressPage)
-      case Some(false) =>
-        userAnswers.remove(SelectAddressPage)
-          .flatMap(_.remove(WhatIsYourAddressUkPage))
+      case Some(_) => userAnswers.remove(WhatIsYourAddressUkPage)
       case None => super.cleanup(value, userAnswers)
     }
 }
