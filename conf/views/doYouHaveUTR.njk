@@ -31,11 +31,8 @@
 
           {{ csrf() | safe }}
 
-
-
           {{ govukRadios({
-            classes: "govuk-radios--inline",
-            name: 'value',
+            name: 'confirm',
             fieldset: {
               legend: {
                 text: messages('doYouHaveUTR.title'),
@@ -47,7 +44,7 @@
                 text: messages('doYouHaveUTR.guidance')
               },
               items: radios,
-            errorMessage: form.value.error
+            errorMessage: form.confirm.error
           }) }}
 
           {{ govukButton({

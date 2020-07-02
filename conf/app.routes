@@ -22,10 +22,10 @@ POST       /register/what-are-you-registering-as        controllers.Registration
 GET        /register/edit-what-are-you-registering-as   controllers.RegistrationTypeController.onPageLoad(mode: Mode = CheckMode)
 POST       /register/edit-what-are-you-registering-as   controllers.RegistrationTypeController.onSubmit(mode: Mode = CheckMode)
 
-GET        /register/do-you-have-a-utr                   controllers.DoYouHaveUTRController.onPageLoad(mode: Mode = NormalMode)
-POST       /register/do-you-have-a-utr                   controllers.DoYouHaveUTRController.onSubmit(mode: Mode = NormalMode)
-GET        /register/edit-do-you-have-a-utr              controllers.DoYouHaveUTRController.onPageLoad(mode: Mode = CheckMode)
-POST       /register/edit-do-you-have-a-utr              controllers.DoYouHaveUTRController.onSubmit(mode: Mode = CheckMode)
+GET        /register/have-utr                     controllers.DoYouHaveUTRController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/have-utr                     controllers.DoYouHaveUTRController.onSubmit(mode: Mode = NormalMode)
+GET        /register/change-have-utr              controllers.DoYouHaveUTRController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/change-have-utr              controllers.DoYouHaveUTRController.onSubmit(mode: Mode = CheckMode)
 
 GET        /register/individual/do-you-have-a-nino      controllers.DoYouHaveANationalInsuranceNumberController.onPageLoad(mode: Mode = NormalMode)
 POST       /register/individual/do-you-have-a-nino      controllers.DoYouHaveANationalInsuranceNumberController.onSubmit(mode: Mode = NormalMode)
