@@ -32,7 +32,7 @@
           {{ csrf() | safe }}
 
           {{ govukRadios({
-            classes: "govuk-radios--inline",
+            classes: "govuk-radios",
             name: 'confirm',
             fieldset: {
               legend: {
@@ -46,7 +46,8 @@
           }) }}
 
           {{ govukButton({
-            text: messages("site.continue")
+            text: messages("site.continue"),
+            attributes:{"id": "submit"}
           }) }}
 
         </form>
