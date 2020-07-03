@@ -51,6 +51,7 @@ class SelectAddressControllerSpec extends SpecBase
   def onwardRoute: Call = Call("GET", "/foo")
 
   lazy val selectAddressRoute: String = routes.SelectAddressController.onPageLoad(NormalMode).url
+  val manualAddressURL: String = "http://localhost/register-for-cross-border-arrangements/register/home-address-uk"
 
   val formProvider = new SelectAddressFormProvider()
   val form: Form[String] = formProvider()
@@ -72,7 +73,6 @@ class SelectAddressControllerSpec extends SpecBase
         .thenReturn(Future.successful(Html("")))
       when(mockAddressLookupConnector.addressLookupByPostcode(any())(any(), any()))
         .thenReturn(Future.successful(addresses))
-      when(mockFrontendConfig.dacFrontendUrl).thenReturn(dacFrontendUrl)
 
       val answers = UserAnswers(userAnswersId)
         .set(IndividualUKPostcodePage, "ZZ1 1ZZ")
@@ -97,6 +97,7 @@ class SelectAddressControllerSpec extends SpecBase
       val expectedJson = Json.obj(
         "form"   -> form,
         "mode"   -> NormalMode,
+        "manualAddressURL" -> manualAddressURL,
         "radios" -> Radios(field = form("value"), items = addressRadios)
       )
 
@@ -112,7 +113,6 @@ class SelectAddressControllerSpec extends SpecBase
         .thenReturn(Future.successful(Html("")))
       when(mockAddressLookupConnector.addressLookupByPostcode(any())(any(), any()))
         .thenReturn(Future.successful(addresses))
-      when(mockFrontendConfig.dacFrontendUrl).thenReturn(dacFrontendUrl)
 
       val userAnswers = UserAnswers(userAnswersId)
         .set(SelectAddressPage, "1 Address line 1, Town, ZZ1 1ZZ")
@@ -142,6 +142,7 @@ class SelectAddressControllerSpec extends SpecBase
       val expectedJson = Json.obj(
         "form"   -> filledForm,
         "mode"   -> NormalMode,
+        "manualAddressURL" -> manualAddressURL,
         "radios" -> Radios(field = filledForm("value"), items = addressRadios)
       )
 
@@ -204,7 +205,6 @@ class SelectAddressControllerSpec extends SpecBase
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
       when(mockAddressLookupConnector.addressLookupByPostcode(any())(any(), any()))
         .thenReturn(Future.successful(addresses))
-      when(mockFrontendConfig.dacFrontendUrl).thenReturn(dacFrontendUrl)
 
       val answers = UserAnswers(userAnswersId)
         .set(IndividualUKPostcodePage, "ZZ1 1ZZ")
@@ -238,7 +238,6 @@ class SelectAddressControllerSpec extends SpecBase
         .thenReturn(Future.successful(Html("")))
       when(mockAddressLookupConnector.addressLookupByPostcode(any())(any(), any()))
         .thenReturn(Future.successful(addresses))
-      when(mockFrontendConfig.dacFrontendUrl).thenReturn(dacFrontendUrl)
 
       val answers = UserAnswers(userAnswersId)
         .set(IndividualUKPostcodePage, "ZZ1 1ZZ")
@@ -264,6 +263,7 @@ class SelectAddressControllerSpec extends SpecBase
       val expectedJson = Json.obj(
         "form"   -> boundForm,
         "mode"   -> NormalMode,
+        "manualAddressURL" -> manualAddressURL,
         "radios" -> Radios(field = boundForm("value"), items = addressRadios)
       )
 
