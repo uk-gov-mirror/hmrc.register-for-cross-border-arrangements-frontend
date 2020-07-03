@@ -240,7 +240,7 @@ class BusinessMatchingControllerSpec extends SpecBase
         val result = route(application, getRequest(businessMatchingRoute)).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/do-you-have-a-utr")
+        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/have-utr")
       }
     }
   }

@@ -26,9 +26,9 @@ class DoYouHaveUTRFormProviderSpec extends BooleanFieldBehaviours {
 
   val form = new DoYouHaveUTRFormProvider()()
 
-  ".value" - {
+  ".confirm" - {
 
-    val fieldName = "value"
+    val fieldName = "confirm"
 
     behave like booleanField(
       form,

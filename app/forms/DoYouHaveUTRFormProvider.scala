@@ -24,6 +24,6 @@ class DoYouHaveUTRFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Boolean] =
     Form(
-      "value" -> boolean("doYouHaveUTR.error.required")
+      "confirm" -> boolean("doYouHaveUTR.error.required")
     )
 }
