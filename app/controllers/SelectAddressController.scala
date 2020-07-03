@@ -27,7 +27,7 @@ import pages.{IndividualUKPostcodePage, SelectAddressPage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
@@ -50,10 +50,10 @@ class SelectAddressController @Inject()(
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
   private val form = formProvider()
-  private val manualAddressURL: String = appConfig.dacFrontendUrl + routes.WhatIsYourAddressUkController.onPageLoad(NormalMode).url
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
+    val manualAddressURL: String = routes.WhatIsYourAddressUkController.onPageLoad(NormalMode).absoluteURL()
     val postCode = request.userAnswers.get(IndividualUKPostcodePage) match {
       case Some(postCode) => postCode.replaceAll(" ", "").toUpperCase
       case None => ""
@@ -85,7 +85,7 @@ class SelectAddressController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-
+      val manualAddressURL: String = routes.WhatIsYourAddressUkController.onPageLoad(NormalMode).absoluteURL()
       val postCode = request.userAnswers.get(IndividualUKPostcodePage) match {
         case Some(postCode) => postCode.replaceAll(" ", "").toUpperCase
         case None => ""
