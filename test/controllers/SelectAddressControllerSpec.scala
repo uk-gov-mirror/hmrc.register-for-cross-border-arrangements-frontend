@@ -51,7 +51,7 @@ class SelectAddressControllerSpec extends SpecBase
   def onwardRoute: Call = Call("GET", "/foo")
 
   lazy val selectAddressRoute: String = routes.SelectAddressController.onPageLoad(NormalMode).url
-  val manualAddressURL: String = "http://localhost/register-for-cross-border-arrangements/register/home-address-uk"
+  val manualAddressURL: String = "/register-for-cross-border-arrangements/register/home-address-uk"
 
   val formProvider = new SelectAddressFormProvider()
   val form: Form[String] = formProvider()

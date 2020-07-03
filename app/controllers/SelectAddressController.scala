@@ -53,7 +53,7 @@ class SelectAddressController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-    val manualAddressURL: String = routes.WhatIsYourAddressUkController.onPageLoad(NormalMode).absoluteURL()
+    val manualAddressURL: String = routes.WhatIsYourAddressUkController.onPageLoad(NormalMode).url
     val postCode = request.userAnswers.get(IndividualUKPostcodePage) match {
       case Some(postCode) => postCode.replaceAll(" ", "").toUpperCase
       case None => ""
@@ -85,7 +85,7 @@ class SelectAddressController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val manualAddressURL: String = routes.WhatIsYourAddressUkController.onPageLoad(NormalMode).absoluteURL()
+      val manualAddressURL: String = routes.WhatIsYourAddressUkController.onPageLoad(NormalMode).url
       val postCode = request.userAnswers.get(IndividualUKPostcodePage) match {
         case Some(postCode) => postCode.replaceAll(" ", "").toUpperCase
         case None => ""
