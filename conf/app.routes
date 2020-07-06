@@ -27,8 +27,8 @@ POST       /register/have-utr                     controllers.DoYouHaveUTRContro
 GET        /register/change-have-utr              controllers.DoYouHaveUTRController.onPageLoad(mode: Mode = CheckMode)
 POST       /register/change-have-utr              controllers.DoYouHaveUTRController.onSubmit(mode: Mode = CheckMode)
 
-GET        /register/individual/do-you-have-a-nino      controllers.DoYouHaveANationalInsuranceNumberController.onPageLoad(mode: Mode = NormalMode)
-POST       /register/individual/do-you-have-a-nino      controllers.DoYouHaveANationalInsuranceNumberController.onSubmit(mode: Mode = NormalMode)
+GET        /register/have-national-insurance-number     controllers.DoYouHaveANationalInsuranceNumberController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/have-national-insurance-number     controllers.DoYouHaveANationalInsuranceNumberController.onSubmit(mode: Mode = NormalMode)
 GET        /changeDoYouHaveANationalInsuranceNumber     controllers.DoYouHaveANationalInsuranceNumberController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeDoYouHaveANationalInsuranceNumber     controllers.DoYouHaveANationalInsuranceNumberController.onSubmit(mode: Mode = CheckMode)
 

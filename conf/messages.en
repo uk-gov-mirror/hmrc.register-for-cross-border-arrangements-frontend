@@ -158,7 +158,7 @@ doYouHaveUTR.error.required = Select yes if you have a UK Unique Taxpayer Refere
 doYouHaveANationalInsuranceNumber.title = Do you have a National Insurance number?
 doYouHaveANationalInsuranceNumber.heading = Do you have a National Insurance number?
 doYouHaveANationalInsuranceNumber.checkYourAnswersLabel = Do you have a National Insurance number?
-doYouHaveANationalInsuranceNumber.error.required = Select yes if have a National Insurance number
+doYouHaveANationalInsuranceNumber.error.required = Select yes if you have a National Insurance number
 
 nino.title = What is your National Insurance number?
 nino.heading = What is your National Insurance number?
@@ -212,7 +212,7 @@ postCode.error.invalid = Enter a real postal code
 doYouHaveANationalInsuranceNumber.title = Do you have a National Insurance number?
 doYouHaveANationalInsuranceNumber.heading = Do you have a National Insurance number?
 doYouHaveANationalInsuranceNumber.checkYourAnswersLabel = Do you have a National Insurance number?
-doYouHaveANationalInsuranceNumber.error.required = Select yes if have a National Insurance number
+doYouHaveANationalInsuranceNumber.error.required = Select yes if you have a National Insurance number
 
 nino.title = What is your National Insurance number?
 nino.heading = What is your National Insurance number?
