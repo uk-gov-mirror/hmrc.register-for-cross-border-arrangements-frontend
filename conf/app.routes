@@ -17,10 +17,10 @@ GET        /accessibility-statement                       controllers.Accessibil
 
 GET        /register/check-answers                        controllers.CheckYourAnswersController.onPageLoad
 
-GET        /register/what-are-you-registering-as        controllers.RegistrationTypeController.onPageLoad(mode: Mode = NormalMode)
-POST       /register/what-are-you-registering-as        controllers.RegistrationTypeController.onSubmit(mode: Mode = NormalMode)
-GET        /register/edit-what-are-you-registering-as   controllers.RegistrationTypeController.onPageLoad(mode: Mode = CheckMode)
-POST       /register/edit-what-are-you-registering-as   controllers.RegistrationTypeController.onSubmit(mode: Mode = CheckMode)
+GET        /register/registration-type                   controllers.RegistrationTypeController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/registration-type                   controllers.RegistrationTypeController.onSubmit(mode: Mode = NormalMode)
+GET        /register/change-registration-type            controllers.RegistrationTypeController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/change-registration-type            controllers.RegistrationTypeController.onSubmit(mode: Mode = CheckMode)
 
 GET        /register/have-utr                     controllers.DoYouHaveUTRController.onPageLoad(mode: Mode = NormalMode)
 POST       /register/have-utr                     controllers.DoYouHaveUTRController.onSubmit(mode: Mode = NormalMode)

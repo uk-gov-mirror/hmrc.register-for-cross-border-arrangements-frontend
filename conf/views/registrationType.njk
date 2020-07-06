@@ -32,7 +32,7 @@
           {{ csrf() | safe }}
 
           {{ govukRadios({
-            name: 'value',
+            name: 'registrationType',
             fieldset: {
               legend: {
                 text: messages('registrationType.title'),
@@ -41,11 +41,12 @@
               }
             },
             items: radios,
-            errorMessage: form.value.error
+            errorMessage: form.registrationType.error
           }) }}
 
           {{ govukButton({
-            text: messages("site.continue")
+            text: messages("site.continue"),
+            attributes:{"id": "submit"}
           }) }}
 
         </form>
