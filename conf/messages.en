@@ -163,9 +163,11 @@ doYouHaveANationalInsuranceNumber.error.required = Select yes if you have a Nati
 
 nino.title = What is your National Insurance number?
 nino.heading = What is your National Insurance number?
+nino.hintText = It’s on your National Insurance card, benefit letter, payslip or P60. For example, ‘QQ 12 34 56 C’.
 nino.checkYourAnswersLabel = What is your National Insurance number?
-nino.error.required = Enter National Insurance number
-nino.error.length = Nino must be 9 characters or less
+nino.error.required = Enter your National Insurance number
+nino.error.length = National Insurance number must be 9 characters or less
+nino.error.invalid = Enter your National Insurance number in the correct format
 
 dateOfBirth.title = What is your date of birth?
 dateOfBirth.heading = What is your date of birth?
@@ -214,12 +216,6 @@ doYouHaveANationalInsuranceNumber.title = Do you have a National Insurance numbe
 doYouHaveANationalInsuranceNumber.heading = Do you have a National Insurance number?
 doYouHaveANationalInsuranceNumber.checkYourAnswersLabel = Do you have a National Insurance number?
 doYouHaveANationalInsuranceNumber.error.required = Select yes if you have a National Insurance number
-
-nino.title = What is your National Insurance number?
-nino.heading = What is your National Insurance number?
-nino.checkYourAnswersLabel = Your National Insurance number
-nino.error.required = Enter National Insurance number
-nino.error.length = Nino must be 9 characters or less
 
 name.title = What is your name?
 name.heading = What is your name?

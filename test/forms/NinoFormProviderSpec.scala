@@ -24,6 +24,8 @@ class NinoFormProviderSpec extends StringFieldBehaviours {
   val requiredKey = "nino.error.required"
   val lengthKey = "nino.error.length"
   val maxLength = 9
+  val invalidKey = "nino.error.invalid"
+  val ninoRegex = "^([ACEHJLMOPRSWXY][A-CEGHJ-NPR-TW-Z]|B[A-CEHJ-NPR-TW-Z]|G[ACEGHJ-NPR-TW-Z]|[KT][A-CEGHJ-MPR-TW-Z]|N[A-CEGHJL-NPR-SW-Z]|Z[A-CEGHJ-NPR-TW-Y])[0-9]{6}[A-D ]$"
 
   val form = new NinoFormProvider()()
 
@@ -37,11 +39,12 @@ class NinoFormProviderSpec extends StringFieldBehaviours {
       stringsWithMaxLength(maxLength)
     )
 
-    behave like fieldWithMaxLength(
+    behave like fieldWithMaxLengthAndInvalid(
       form,
       fieldName,
       maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      invalidError = FormError(fieldName, invalidKey, Seq(ninoRegex)),
+      lengthError = FormError(fieldName, lengthKey, Seq(maxLength)),
     )
 
     behave like mandatoryField(

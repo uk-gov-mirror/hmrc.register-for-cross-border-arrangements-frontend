@@ -22,9 +22,15 @@ import play.api.data.Form
 
 class NinoFormProvider @Inject() extends Mappings {
 
+  val ninoRegex = "^([ACEHJLMOPRSWXY][A-CEGHJ-NPR-TW-Z]|B[A-CEHJ-NPR-TW-Z]|G[ACEGHJ-NPR-TW-Z]|[KT][A-CEGHJ-MPR-TW-Z]|N[A-CEGHJL-NPR-SW-Z]|Z[A-CEGHJ-NPR-TW-Y])[0-9]{6}[A-D ]$"
+
+  def removeWhitespace(string: String): String = string.split("\\s+").mkString
+
   def apply(): Form[String] =
     Form(
       "value" -> text("nino.error.required")
+        .transform[String](nino => removeWhitespace(nino.toUpperCase), nino => nino)
+        .verifying(regexp(ninoRegex, "nino.error.invalid"))
         .verifying(maxLength(9, "nino.error.length"))
     )
 }
