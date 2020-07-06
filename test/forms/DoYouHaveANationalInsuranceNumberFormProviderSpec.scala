@@ -26,9 +26,9 @@ class DoYouHaveANationalInsuranceNumberFormProviderSpec extends BooleanFieldBeha
 
   val form = new DoYouHaveANationalInsuranceNumberFormProvider()()
 
-  ".value" - {
+  ".confirm" - {
 
-    val fieldName = "value"
+    val fieldName = "confirm"
 
     behave like booleanField(
       form,

@@ -32,7 +32,7 @@
           {{ csrf() | safe }}
 
           {{ govukRadios({
-            name: 'value',
+            name: 'confirm',
             fieldset: {
               legend: {
                 text: messages('doYouHaveANationalInsuranceNumber.title'),
@@ -41,7 +41,7 @@
               }
             },
             items: radios,
-            errorMessage: form.value.error
+            errorMessage: form.confirm.error
           }) }}
 
           {{ govukButton({
