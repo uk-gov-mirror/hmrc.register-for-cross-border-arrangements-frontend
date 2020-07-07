@@ -31,6 +31,7 @@
   {% block mainContent %}
   {% endblock %}
   {{ hmrcReportTechnicalIssue({
+    id: "getHelpWithThisPage",
     link: config.reportAProblemNonJSUrl,
     messageKey: messages("site.getHelpWithThisPage")
   }) }}
