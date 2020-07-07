@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.DateOfBirthFormProvider
 import javax.inject.Inject
-import models.Mode
+import models.{CheckMode, Mode}
 import navigation.Navigator
 import pages.DateOfBirthPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -81,11 +81,24 @@ class DateOfBirthController @Inject()(
 
           renderer.render("dateOfBirth.njk", json).map(BadRequest(_))
         },
-        value =>
+        value => {
+          //TODO need to add UT
+          val redirectToSummary = request.userAnswers.get(DateOfBirthPage) match {
+            case Some(ans) if (ans == value) && (mode == CheckMode) => true
+            case _ => false
+          }
+
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(DateOfBirthPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(DateOfBirthPage, mode, updatedAnswers))
+            _ <- sessionRepository.set(updatedAnswers)
+          } yield {
+            if (redirectToSummary) {
+              Redirect(routes.CheckYourAnswersController.onPageLoad())
+            } else {
+              Redirect(navigator.nextPage(DateOfBirthPage, mode, updatedAnswers))
+            }
+          }
+        }
       )
   }
 }

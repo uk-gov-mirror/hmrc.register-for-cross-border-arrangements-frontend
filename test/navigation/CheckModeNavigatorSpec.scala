@@ -346,7 +346,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
     }
 
     "must go from What is the name of your business? page to" - {
-      "What is the main address of your business? page when answer is a new business name" in {
+      "Check your answers page when answer is a new business name" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
@@ -357,7 +357,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
             navigator
               .nextPage(BusinessWithoutIDNamePage, CheckMode, updatedAnswers)
-              .mustBe(routes.BusinessAddressController.onPageLoad(CheckMode))
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
         }
       }
     }
@@ -374,7 +374,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
             navigator
               .nextPage(BusinessAddressPage, CheckMode, updatedAnswers)
-              .mustBe(routes.ContactNameController.onPageLoad(CheckMode))
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
         }
       }
     }
@@ -430,7 +430,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
     }
 
     "must go from What is your name? page (non-UK) to" - {
-      "What is your date of birth? page when answer is a name" in {
+      "Check your answers page when answer is a name" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
@@ -441,7 +441,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
             navigator
               .nextPage(NonUkNamePage, CheckMode, updatedAnswers)
-              .mustBe(routes.DateOfBirthController.onPageLoad(CheckMode))
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
         }
       }
     }
@@ -626,7 +626,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
 
     "must go from Who should we contact...? page to" - {
-      "What is your email address? page when answer is a contact name" in {
+      "Check your answers page when answer is a contact name" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
@@ -637,13 +637,13 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
             navigator
               .nextPage(ContactNamePage, CheckMode, updatedAnswers)
-              .mustBe(routes.ContactEmailAddressController.onPageLoad(CheckMode))
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
         }
       }
     }
 
     "must go from What is *name*'s email address? page to" - {
-      "Do they have a telephone number? page when answer is an email" in {
+      "Check your answers page when answer is an email" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
@@ -654,7 +654,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
             navigator
               .nextPage(ContactEmailAddressPage, CheckMode, updatedAnswers)
-              .mustBe(routes.TelephoneNumberQuestionController.onPageLoad(CheckMode))
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
         }
       }
     }
@@ -709,7 +709,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
     }
 
     "must go from What is your telephone number? page to" - {
-      "Is there someone else we can contact...? page when answer is a telephone number and user is an organisation" in {
+      "Check your answers page when answer is a telephone number and user is an organisation" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
@@ -723,7 +723,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
             navigator
               .nextPage(ContactTelephoneNumberPage, CheckMode, updatedAnswers)
-              .mustBe(routes.HaveSecondContactController.onPageLoad(CheckMode))
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
         }
       }
 
@@ -775,7 +775,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
     }
 
     "must go from What is the name of the individual or team we should contact? page to" - {
-      "How can we contact *name*? page when answer is a name" in {
+      "Check your answers page when answer is a name" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
@@ -786,7 +786,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
             navigator
               .nextPage(SecondaryContactNamePage, CheckMode, updatedAnswers)
-              .mustBe(routes.SecondaryContactPreferenceController.onPageLoad(CheckMode))
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
         }
       }
     }
@@ -842,7 +842,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         }
       }
 
-      "What is the telephone number for *name*? page when answer is an email and " +
+      "Check your answers page when answer is an email and " +
         "user selected email and telephone as preferences" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
@@ -858,7 +858,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
             navigator
               .nextPage(SecondaryContactEmailAddressPage, CheckMode, updatedAnswers)
-              .mustBe(routes.SecondaryContactTelephoneNumberController.onPageLoad(CheckMode))
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
         }
       }
     }

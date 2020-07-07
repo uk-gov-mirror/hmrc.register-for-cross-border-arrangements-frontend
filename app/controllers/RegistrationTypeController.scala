@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.RegistrationTypeFormProvider
 import javax.inject.Inject
-import models.{Mode, RegistrationType}
+import models.{CheckMode, Mode, RegistrationType}
 import navigation.Navigator
 import pages.RegistrationTypePage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -77,11 +77,24 @@ class RegistrationTypeController @Inject()(
 
           renderer.render("registrationType.njk", json).map(BadRequest(_))
         },
-        registrationType =>
+        registrationType => {
+          //TODO need to add UT
+          val redirectToSummary = request.userAnswers.get(RegistrationTypePage) match {
+            case Some(ans) if (ans == registrationType) && (mode == CheckMode) => true
+            case _ => false
+          }
+
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(RegistrationTypePage, registrationType))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(RegistrationTypePage, mode, updatedAnswers))
+          } yield {
+            if (redirectToSummary) {
+              Redirect(routes.CheckYourAnswersController.onPageLoad())
+            } else {
+              Redirect(navigator.nextPage(RegistrationTypePage, mode, updatedAnswers))
+            }
+          }
+        }
       )
   }
 }

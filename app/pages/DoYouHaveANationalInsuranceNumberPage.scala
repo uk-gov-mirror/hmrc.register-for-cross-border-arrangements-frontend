@@ -32,6 +32,8 @@ case object DoYouHaveANationalInsuranceNumberPage extends QuestionPage[Boolean] 
       case Some(true) =>
         userAnswers.remove(NonUkNamePage)
           .flatMap(_.remove(DoYouLiveInTheUKPage))
+          .flatMap(_.remove(IndividualUKPostcodePage))
+          .flatMap(_.remove(SelectAddressPage))
           .flatMap(_.remove(DateOfBirthPage))
       case Some(false) =>
         userAnswers.remove(NinoPage)

@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.DoYouHaveANationalInsuranceNumberFormProvider
 import javax.inject.Inject
-import models.Mode
+import models.{CheckMode, Mode}
 import navigation.Navigator
 import pages.DoYouHaveANationalInsuranceNumberPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -77,11 +77,24 @@ class DoYouHaveANationalInsuranceNumberController @Inject()(
 
           renderer.render("doYouHaveANationalInsuranceNumber.njk", json).map(BadRequest(_))
         },
-        value =>
+        value => {
+          //TODO need to add UT
+          val redirectToSummary = request.userAnswers.get(DoYouHaveANationalInsuranceNumberPage) match {
+            case Some(ans) if (ans == value) && (mode == CheckMode) => true
+            case _ => false
+          }
+
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouHaveANationalInsuranceNumberPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(DoYouHaveANationalInsuranceNumberPage, mode, updatedAnswers))
+            _ <- sessionRepository.set(updatedAnswers)
+          } yield {
+            if(redirectToSummary) {
+              Redirect(routes.CheckYourAnswersController.onPageLoad())
+            } else {
+              Redirect(navigator.nextPage(DoYouHaveANationalInsuranceNumberPage, mode, updatedAnswers))
+            }
+          }
+        }
       )
   }
 }
