@@ -94,7 +94,7 @@ class RegistrationTypeControllerSpec extends SpecBase with MockitoSugar with Nun
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("value" -> RegistrationType.values.head.toString))
+      val filledForm = form.bind(Map("registrationType" -> RegistrationType.values.head.toString))
 
       val expectedJson = Json.obj(
         "form"   -> filledForm,
@@ -126,7 +126,7 @@ class RegistrationTypeControllerSpec extends SpecBase with MockitoSugar with Nun
 
       val request =
         FakeRequest(POST, registrationTypeRoute)
-          .withFormUrlEncodedBody(("value", RegistrationType.values.head.toString))
+          .withFormUrlEncodedBody(("registrationType", RegistrationType.values.head.toString))
 
       val result = route(application, request).value
 

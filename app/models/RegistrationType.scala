@@ -33,14 +33,11 @@ object RegistrationType extends Enumerable.Implicits {
   )
 
   def radios(form: Form[_])(implicit messages: Messages): Seq[Radios.Item] = {
-
-    val field = form("value")
-    val items = Seq(
-      Radios.Radio(msg"registrationType.business", Business.toString),
-      Radios.Radio(msg"registrationType.individual", Individual.toString)
+    val field = form("registrationType")
+    Seq(
+      Radios.Item("business",msg"registrationType.business", Business.toString, field.values.contains(Business.toString)),
+      Radios.Item("individual",msg"registrationType.individual", Individual.toString, field.values.contains(Individual.toString))
     )
-
-    Radios(field, items)
   }
 
   implicit val enumerable: Enumerable[RegistrationType] =

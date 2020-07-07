@@ -100,6 +100,7 @@ class CheckYourAnswersController @Inject()(
         //Individual without ID
         Seq(
           helper.doYouHaveUTR,
+          helper.registrationType,
           helper.doYouHaveANationalInsuranceNumber,
           helper.nonUkName,
           helper.dateOfBirth,

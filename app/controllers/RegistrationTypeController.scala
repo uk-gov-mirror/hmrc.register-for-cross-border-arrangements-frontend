@@ -77,9 +77,9 @@ class RegistrationTypeController @Inject()(
 
           renderer.render("registrationType.njk", json).map(BadRequest(_))
         },
-        value =>
+        registrationType =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(RegistrationTypePage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(RegistrationTypePage, registrationType))
             _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(RegistrationTypePage, mode, updatedAnswers))
       )
