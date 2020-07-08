@@ -41,7 +41,7 @@ class Navigator @Inject()(appConfig: FrontendAppConfig) {
     case NamePage => _ => Some(routes.DateOfBirthController.onPageLoad(NormalMode))
     case BusinessNamePage => _ => Some(routes.BusinessMatchingController.matchBusiness())
     case SoleTraderNamePage => _ => Some(routes.BusinessMatchingController.matchBusiness())
-    case ConfirmBusinessPage => confirmBusinessRoutes
+    case ConfirmBusinessPage => confirmBusinessRoutes(NormalMode)
     case DateOfBirthPage => dateOfBirthRoutes(NormalMode)
     case DoYouLiveInTheUKPage => doYouLiveInTheUKRoutes(NormalMode)
     case IndividualUKPostcodePage => _ => Some(routes.SelectAddressController.onPageLoad(NormalMode))
@@ -69,20 +69,20 @@ class Navigator @Inject()(appConfig: FrontendAppConfig) {
     case BusinessWithoutIDNamePage => _ => Some(routes.CheckYourAnswersController.onPageLoad())
     case DoYouHaveANationalInsuranceNumberPage => doYouHaveANationalInsuranceNumberRoutes(CheckMode)
     case NinoPage => _ => Some(routes.NameController.onPageLoad(CheckMode))
-    case NonUkNamePage => _ => Some(routes.CheckYourAnswersController.onPageLoad())
+    case NonUkNamePage => _ => Some(routes.DateOfBirthController.onPageLoad(CheckMode))
     case NamePage => _ => Some(routes.DateOfBirthController.onPageLoad(CheckMode))
     case DateOfBirthPage => dateOfBirthRoutes(CheckMode)
     case DoYouLiveInTheUKPage => doYouLiveInTheUKRoutes(CheckMode)
-    case WhatIsYourAddressPage => _ => Some(routes.ContactEmailAddressController.onPageLoad(CheckMode))
+    case WhatIsYourAddressPage => _ => Some(routes.CheckYourAnswersController.onPageLoad())
     case IndividualUKPostcodePage => _ => Some(routes.SelectAddressController.onPageLoad(CheckMode))
-    case WhatIsYourAddressUkPage => _ => Some(routes.ContactEmailAddressController.onPageLoad(CheckMode))
-    case SelectAddressPage => _ => Some(routes.ContactEmailAddressController.onPageLoad(CheckMode))
+    case WhatIsYourAddressUkPage => _ => Some(routes.CheckYourAnswersController.onPageLoad())
+    case SelectAddressPage => _ => Some(routes.CheckYourAnswersController.onPageLoad())
     case BusinessTypePage => businessTypeRoutes(CheckMode)
     case CorporationTaxUTRPage => businessNameRoutes(CheckMode)
     case SelfAssessmentUTRPage => businessNameRoutes(CheckMode)
     case BusinessNamePage => _ => Some(routes.BusinessMatchingController.matchBusiness())
     case SoleTraderNamePage => _ => Some(routes.BusinessMatchingController.matchBusiness())
-    case ConfirmBusinessPage => confirmBusinessRoutes
+    case ConfirmBusinessPage => confirmBusinessRoutes(CheckMode)
     case BusinessAddressPage => _ => Some(routes.CheckYourAnswersController.onPageLoad())
     case ContactNamePage => _ => Some(routes.CheckYourAnswersController.onPageLoad())
     case ContactEmailAddressPage => _ => Some(routes.CheckYourAnswersController.onPageLoad())
@@ -112,9 +112,9 @@ class Navigator @Inject()(appConfig: FrontendAppConfig) {
     }
   }
 
-  private def confirmBusinessRoutes(ua: UserAnswers): Option[Call] =
+  private def confirmBusinessRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(ConfirmBusinessPage) map {
-      case true  => routes.IdentityConfirmedController.onPageLoad()
+      case true  => routes.IdentityConfirmedController.onPageLoad(mode)
       case false  => routes.BusinessNotConfirmedController.onPageLoad()
     }
 
@@ -132,7 +132,7 @@ class Navigator @Inject()(appConfig: FrontendAppConfig) {
 
   private def dateOfBirthRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(DoYouHaveANationalInsuranceNumberPage) map {
-      case true  => routes.BusinessMatchingController.matchIndividual()
+      case true  => routes.BusinessMatchingController.matchIndividual(mode)
       case false => routes.DoYouLiveInTheUKController.onPageLoad(mode)
     }
 

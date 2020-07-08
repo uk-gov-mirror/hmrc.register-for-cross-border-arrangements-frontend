@@ -27,10 +27,10 @@ POST       /register/have-utr                     controllers.DoYouHaveUTRContro
 GET        /register/change-have-utr              controllers.DoYouHaveUTRController.onPageLoad(mode: Mode = CheckMode)
 POST       /register/change-have-utr              controllers.DoYouHaveUTRController.onSubmit(mode: Mode = CheckMode)
 
-GET        /register/have-national-insurance-number     controllers.DoYouHaveANationalInsuranceNumberController.onPageLoad(mode: Mode = NormalMode)
-POST       /register/have-national-insurance-number     controllers.DoYouHaveANationalInsuranceNumberController.onSubmit(mode: Mode = NormalMode)
-GET        /changeDoYouHaveANationalInsuranceNumber     controllers.DoYouHaveANationalInsuranceNumberController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeDoYouHaveANationalInsuranceNumber     controllers.DoYouHaveANationalInsuranceNumberController.onSubmit(mode: Mode = CheckMode)
+GET        /register/have-national-insurance-number            controllers.DoYouHaveANationalInsuranceNumberController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/have-national-insurance-number            controllers.DoYouHaveANationalInsuranceNumberController.onSubmit(mode: Mode = NormalMode)
+GET        /register/change-have-national-insurance-number     controllers.DoYouHaveANationalInsuranceNumberController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/change-have-national-insurance-number     controllers.DoYouHaveANationalInsuranceNumberController.onSubmit(mode: Mode = CheckMode)
 
 GET        /register/national-insurance                 controllers.NinoController.onPageLoad(mode: Mode = NormalMode)
 POST       /register/national-insurance                 controllers.NinoController.onSubmit(mode: Mode = NormalMode)
@@ -58,6 +58,7 @@ GET        /register/change-date-of-birth               controllers.DateOfBirthC
 POST       /register/change-date-of-birth               controllers.DateOfBirthController.onSubmit(mode: Mode = CheckMode)
 
 GET        /match-individual                            controllers.BusinessMatchingController.matchIndividual(mode: Mode = NormalMode)
+GET        /check-match-individual                      controllers.BusinessMatchingController.matchIndividual(mode: Mode = CheckMode)
 GET        /match-business                              controllers.BusinessMatchingController.matchBusiness(mode: Mode = NormalMode)
 
 GET        /register/business-type                        controllers.BusinessTypeController.onPageLoad(mode: Mode = NormalMode)
@@ -82,7 +83,8 @@ POST       /changePostCode                  controllers.PostCodeController.onSub
 
 GET        /register/business-identity-not-confirmed      controllers.BusinessNotConfirmedController.onPageLoad()
 GET        /register/individual-identity-not-confirmed    controllers.IndividualNotConfirmedController.onPageLoad()
-GET        /register/identity-confirmed                   controllers.IdentityConfirmedController.onPageLoad()
+GET        /register/identity-confirmed                   controllers.IdentityConfirmedController.onPageLoad(mode: Mode = NormalMode)
+GET        /register/check-identity-confirmed             controllers.IdentityConfirmedController.onPageLoad(mode: Mode = CheckMode)
 
 GET        /register/without-id/your-name           controllers.NonUkNameController.onPageLoad(mode: Mode = NormalMode)
 POST       /register/without-id/your-name           controllers.NonUkNameController.onSubmit(mode: Mode = NormalMode)

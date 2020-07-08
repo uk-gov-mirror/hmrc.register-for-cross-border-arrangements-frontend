@@ -21,7 +21,7 @@ import java.time.LocalDate
 import base.SpecBase
 import generators.Generators
 import matchers.JsonMatchers
-import models.{BusinessAddress, BusinessDetails, BusinessType, Name, UniqueTaxpayerReference, UserAnswers}
+import models.{BusinessAddress, BusinessDetails, BusinessType, Name, NormalMode, UniqueTaxpayerReference, UserAnswers}
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
@@ -43,7 +43,7 @@ class BusinessMatchingControllerSpec extends SpecBase
   with JsonMatchers
   with Generators {
 
-  lazy val individualMatchingRoute: String = routes.BusinessMatchingController.matchIndividual().url
+  lazy val individualMatchingRoute: String = routes.BusinessMatchingController.matchIndividual(NormalMode).url
   lazy val businessMatchingRoute: String = routes.BusinessMatchingController.matchBusiness().url
 
   def getRequest(route: String): FakeRequest[AnyContentAsEmpty.type] =

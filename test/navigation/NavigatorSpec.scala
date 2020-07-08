@@ -223,7 +223,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(DateOfBirthPage, NormalMode, updatedAnswers)
-              .mustBe(routes.BusinessMatchingController.matchIndividual())
+              .mustBe(routes.BusinessMatchingController.matchIndividual(NormalMode))
         }
       }
 

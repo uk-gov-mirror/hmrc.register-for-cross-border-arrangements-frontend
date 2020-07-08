@@ -18,7 +18,7 @@ package controllers
 
 import base.SpecBase
 import matchers.JsonMatchers
-import models.{BusinessType, UserAnswers}
+import models.{BusinessType, CheckMode, NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -34,7 +34,7 @@ import scala.concurrent.Future
 
 class IdentityConfirmedControllerSpec extends SpecBase with MockitoSugar with JsonMatchers {
 
-  lazy val identityConfirmedRoute: String = routes.IdentityConfirmedController.onPageLoad().url
+  lazy val identityConfirmedRoute: String = routes.IdentityConfirmedController.onPageLoad(NormalMode).url
 
   "IdentityConfirmed Controller" - {
 
@@ -118,6 +118,34 @@ class IdentityConfirmedControllerSpec extends SpecBase with MockitoSugar with Js
 
       val expectedJson = Json.obj(
         "nextPage" -> "/register-for-cross-border-arrangements/register/contact-name"
+      )
+
+      templateCaptor.getValue mustEqual "identityConfirmed.njk"
+      jsonCaptor.getValue must containJson(expectedJson)
+
+      application.stop()
+    }
+
+    "return OK and the correct view for a GET when mode is CheckMode - Individual with ID journey" in {
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      val checkModeRoute: String = routes.IdentityConfirmedController.onPageLoad(CheckMode).url
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val request = FakeRequest(GET, checkModeRoute)
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+
+      val result = route(application, request).value
+
+      status(result) mustEqual OK
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      val expectedJson = Json.obj(
+        "nextPage" -> "/register-for-cross-border-arrangements/register/check-answers"
       )
 
       templateCaptor.getValue mustEqual "identityConfirmed.njk"

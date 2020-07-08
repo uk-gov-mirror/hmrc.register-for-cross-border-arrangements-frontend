@@ -21,7 +21,7 @@ import forms.DateOfBirthFormProvider
 import javax.inject.Inject
 import models.{CheckMode, Mode}
 import navigation.Navigator
-import pages.DateOfBirthPage
+import pages.{DateOfBirthPage, DoYouHaveANationalInsuranceNumberPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -83,8 +83,9 @@ class DateOfBirthController @Inject()(
         },
         value => {
           //TODO need to add UT
-          val redirectToSummary = request.userAnswers.get(DateOfBirthPage) match {
-            case Some(ans) if (ans == value) && (mode == CheckMode) => true
+          val redirectToSummary = (request.userAnswers.get(DoYouHaveANationalInsuranceNumberPage), request.userAnswers.get(DateOfBirthPage)) match {
+            case (Some(false), Some(_)) if mode == CheckMode => true
+            case (_, Some(ans)) if (ans == value) && (mode == CheckMode) => true
             case _ => false
           }
 

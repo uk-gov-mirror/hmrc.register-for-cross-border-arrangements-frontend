@@ -293,7 +293,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
             navigator
               .nextPage(ConfirmBusinessPage, CheckMode, updatedAnswers)
-              .mustBe(routes.IdentityConfirmedController.onPageLoad())
+              .mustBe(routes.IdentityConfirmedController.onPageLoad(CheckMode))
         }
       }
 
@@ -430,7 +430,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
     }
 
     "must go from What is your name? page (non-UK) to" - {
-      "Check your answers page when answer is a name" in {
+      "What is your date of birth? page when answer is a name" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
@@ -441,7 +441,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
             navigator
               .nextPage(NonUkNamePage, CheckMode, updatedAnswers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+              .mustBe(routes.DateOfBirthController.onPageLoad(CheckMode))
         }
       }
     }
@@ -478,7 +478,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
             navigator
               .nextPage(DateOfBirthPage, CheckMode, updatedAnswers)
-              .mustBe(routes.BusinessMatchingController.matchIndividual())
+              .mustBe(routes.BusinessMatchingController.matchIndividual(CheckMode))
         }
       }
 
@@ -555,7 +555,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
     }
 
     "must go from What is your home address? page to" - {
-      "What is your email address? page when answer is a home address (non-UK)" in {
+      "Check your answers page when answer is a home address (non-UK)" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
@@ -566,7 +566,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
             navigator
               .nextPage(WhatIsYourAddressPage, CheckMode, updatedAnswers)
-              .mustBe(routes.ContactEmailAddressController.onPageLoad(CheckMode))
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
         }
       }
     }
@@ -589,7 +589,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
     }
 
     "must go from What is your home address? page to" - {
-      "What is your email address? page when answer is a home address" in {
+      "Check your answers page when answer is a home address" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
@@ -600,13 +600,13 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
             navigator
               .nextPage(WhatIsYourAddressUkPage, CheckMode, updatedAnswers)
-              .mustBe(routes.ContactEmailAddressController.onPageLoad(CheckMode))
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
         }
       }
     }
 
     "must go from What is your address? page to" - {
-      "What is your email address? page when user selects an address from the list" in {
+      "Check your answers page when user selects an address from the list" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
@@ -617,7 +617,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
             navigator
               .nextPage(SelectAddressPage, CheckMode, updatedAnswers)
-              .mustBe(routes.ContactEmailAddressController.onPageLoad(CheckMode))
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
         }
       }
     }
