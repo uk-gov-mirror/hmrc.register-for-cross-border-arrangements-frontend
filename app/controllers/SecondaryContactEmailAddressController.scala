@@ -19,9 +19,10 @@ package controllers
 import controllers.actions._
 import forms.SecondaryContactEmailAddressFormProvider
 import javax.inject.Inject
-import models.Mode
+import models.SecondaryContactPreference.Telephone
+import models.{CheckMode, Mode}
 import navigation.Navigator
-import pages.{SecondaryContactEmailAddressPage, SecondaryContactNamePage}
+import pages.{SecondaryContactEmailAddressPage, SecondaryContactNamePage, SecondaryContactPreferencePage, SecondaryContactTelephoneNumberPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -87,11 +88,28 @@ class SecondaryContactEmailAddressController @Inject()(
 
           renderer.render("secondaryContactEmailAddress.njk", json).map(BadRequest(_))
         },
-        value =>
+        value => {
+          //TODO need to add UT
+          val redirectToSummary =
+            (request.userAnswers.get(SecondaryContactPreferencePage),
+              request.userAnswers.get(SecondaryContactEmailAddressPage),
+              request.userAnswers.get(SecondaryContactTelephoneNumberPage)) match {
+              case (Some(prefs), Some(ans), _) if (ans == value) && (!prefs.contains(Telephone)) && (mode == CheckMode) => true
+              case (_, Some(ans), Some(_)) if (ans == value) && (mode == CheckMode) => true
+              case _ => false
+            }
+
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(SecondaryContactEmailAddressPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(SecondaryContactEmailAddressPage, mode, updatedAnswers))
+            _ <- sessionRepository.set(updatedAnswers)
+          } yield {
+            if (redirectToSummary) {
+              Redirect(routes.CheckYourAnswersController.onPageLoad())
+            } else {
+              Redirect(navigator.nextPage(SecondaryContactEmailAddressPage, mode, updatedAnswers))
+            }
+          }
+        }
       )
   }
 }

@@ -58,7 +58,7 @@ class Navigator @Inject()(appConfig: FrontendAppConfig) {
     case HaveSecondContactPage => haveSecondContactRoutes(NormalMode)
     case SecondaryContactNamePage => _ => Some(routes.SecondaryContactPreferenceController.onPageLoad(NormalMode))
     case SecondaryContactPreferencePage => secondaryContactPreferenceRoutes(NormalMode)
-    case SecondaryContactEmailAddressPage => secondaryContactEmailRoutes
+    case SecondaryContactEmailAddressPage => secondaryContactEmailRoutes(NormalMode)
     case SecondaryContactTelephoneNumberPage => _ => Some(routes.CheckYourAnswersController.onPageLoad())
     case _ => _ => Some(routes.IndexController.onPageLoad())
   }
@@ -91,7 +91,7 @@ class Navigator @Inject()(appConfig: FrontendAppConfig) {
     case HaveSecondContactPage => haveSecondContactRoutes(CheckMode)
     case SecondaryContactNamePage => _ => Some(routes.CheckYourAnswersController.onPageLoad())
     case SecondaryContactPreferencePage => secondaryContactPreferenceRoutes(CheckMode)
-    case SecondaryContactEmailAddressPage => _ => Some(routes.CheckYourAnswersController.onPageLoad())
+    case SecondaryContactEmailAddressPage => secondaryContactEmailRoutes(CheckMode)
     case SecondaryContactTelephoneNumberPage => _ => Some(routes.CheckYourAnswersController.onPageLoad())
     case _ => _ => Some(routes.CheckYourAnswersController.onPageLoad())
   }
@@ -179,10 +179,10 @@ class Navigator @Inject()(appConfig: FrontendAppConfig) {
     }
   }
 
-  private def secondaryContactEmailRoutes(ua: UserAnswers): Option[Call] =
+  private def secondaryContactEmailRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(SecondaryContactPreferencePage) map {
       case set: Set[SecondaryContactPreference] if set.contains(Telephone) =>
-        routes.SecondaryContactTelephoneNumberController.onPageLoad(NormalMode)
+        routes.SecondaryContactTelephoneNumberController.onPageLoad(mode)
       case _ => routes.CheckYourAnswersController.onPageLoad()
     }
 

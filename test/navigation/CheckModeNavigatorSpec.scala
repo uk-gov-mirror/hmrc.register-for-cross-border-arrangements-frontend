@@ -842,7 +842,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
         }
       }
 
-      "Check your answers page when answer is an email and " +
+      "What is the telephone number for *name*? page when answer is an email and " +
         "user selected email and telephone as preferences" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
@@ -858,7 +858,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
             navigator
               .nextPage(SecondaryContactEmailAddressPage, CheckMode, updatedAnswers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+              .mustBe(routes.SecondaryContactTelephoneNumberController.onPageLoad(CheckMode))
         }
       }
     }
