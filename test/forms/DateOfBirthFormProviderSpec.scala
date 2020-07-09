@@ -19,12 +19,11 @@ package forms
 import java.time.{LocalDate, ZoneOffset}
 
 import forms.behaviours.DateBehaviours
-import play.api.data.FormError
 import helpers.DateHelper
+import play.api.data.FormError
+import helpers.DateHelper._
 
 class DateOfBirthFormProviderSpec extends DateBehaviours {
-
-  val today = LocalDate.now(ZoneOffset.UTC)
 
   val form = new DateOfBirthFormProvider()()
 
@@ -44,7 +43,7 @@ class DateOfBirthFormProviderSpec extends DateBehaviours {
       key = fieldName,
       max = today,
       formError = FormError(
-        fieldName, "dateOfBirth.error.futureDate",Seq(DateHelper.formatDateToString(today))
+        fieldName, "dateOfBirth.error.futureDate", Seq(DateHelper.formatDateToString(today))
       )
     )
 
