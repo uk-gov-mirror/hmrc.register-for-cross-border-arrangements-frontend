@@ -19,6 +19,7 @@ package forms
 import java.time.LocalDate
 
 import forms.mappings.Mappings
+import helpers.DateHelper._
 import javax.inject.Inject
 import play.api.data.Form
 
@@ -31,6 +32,8 @@ class DateOfBirthFormProvider @Inject() extends Mappings {
         allRequiredKey = "dateOfBirth.error.required.all",
         twoRequiredKey = "dateOfBirth.error.required.two",
         requiredKey    = "dateOfBirth.error.required"
-      )
+      ).verifying(maxDate(today, "dateOfBirth.error.futureDate", formatDateToString(today)))
+       .verifying(minDate(LocalDate.of(1900,1,1),"dateOfBirth.error.pastDate"))
     )
+
 }
