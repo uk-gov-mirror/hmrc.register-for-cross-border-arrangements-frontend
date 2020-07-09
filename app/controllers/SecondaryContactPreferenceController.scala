@@ -18,8 +18,9 @@ package controllers
 
 import controllers.actions._
 import forms.SecondaryContactPreferenceFormProvider
+import helpers.JourneyHelpers.redirectToSummary
 import javax.inject.Inject
-import models.{CheckMode, Mode, NormalMode, SecondaryContactPreference}
+import models.{Mode, NormalMode, SecondaryContactPreference}
 import navigation.Navigator
 import pages.{SecondaryContactNamePage, SecondaryContactPreferencePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -88,16 +89,13 @@ class SecondaryContactPreferenceController @Inject()(
         },
         value => {
           //TODO need to add UT
-          val redirectToSummary = request.userAnswers.get(SecondaryContactPreferencePage) match {
-            case Some(ans) if (ans == value) && (mode == CheckMode) => true
-            case _ => false
-          }
+          val redirectUsers = redirectToSummary(value, SecondaryContactPreferencePage, mode, request.userAnswers)
 
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(SecondaryContactPreferencePage, value))
             _ <- sessionRepository.set(updatedAnswers)
           } yield {
-            if (redirectToSummary) {
+            if (redirectUsers) {
               Redirect(routes.CheckYourAnswersController.onPageLoad())
             } else {
               Redirect(navigator.nextPage(SecondaryContactPreferencePage, mode, updatedAnswers))

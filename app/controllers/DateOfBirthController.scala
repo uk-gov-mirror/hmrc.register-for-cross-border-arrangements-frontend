@@ -83,11 +83,13 @@ class DateOfBirthController @Inject()(
         },
         value => {
           //TODO need to add UT
-          val redirectToSummary = (request.userAnswers.get(DoYouHaveANationalInsuranceNumberPage), request.userAnswers.get(DateOfBirthPage)) match {
-            case (Some(false), Some(_)) if mode == CheckMode => true
-            case (_, Some(ans)) if (ans == value) && (mode == CheckMode) => true
-            case _ => false
-          }
+          val redirectToSummary =
+            (request.userAnswers.get(DoYouHaveANationalInsuranceNumberPage),
+              request.userAnswers.get(DateOfBirthPage)) match {
+              case (Some(false), Some(_)) if mode == CheckMode => true //Individual without ID
+              case (_, Some(ans)) if (ans == value) && (mode == CheckMode) => false //Individual with ID
+              case _ => false //Normal mode journey
+            }
 
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(DateOfBirthPage, value))

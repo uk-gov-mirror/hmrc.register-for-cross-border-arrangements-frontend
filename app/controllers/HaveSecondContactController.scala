@@ -18,8 +18,9 @@ package controllers
 
 import controllers.actions._
 import forms.HaveSecondContactFormProvider
+import helpers.JourneyHelpers.redirectToSummary
 import javax.inject.Inject
-import models.{CheckMode, Mode, NormalMode}
+import models.{Mode, NormalMode}
 import navigation.Navigator
 import pages.{ContactNamePage, HaveSecondContactPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -96,16 +97,13 @@ class HaveSecondContactController @Inject()(
         },
         value => {
           //TODO need to add UT
-          val redirectToSummary = request.userAnswers.get(HaveSecondContactPage) match {
-            case Some(ans) if (ans == value) && (mode == CheckMode) => true
-            case _ => false
-          }
+          val redirectUsers = redirectToSummary(value, HaveSecondContactPage, mode, request.userAnswers)
 
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(HaveSecondContactPage, value))
             _ <- sessionRepository.set(updatedAnswers)
           } yield {
-            if (redirectToSummary) {
+            if (redirectUsers) {
               Redirect(routes.CheckYourAnswersController.onPageLoad())
             } else {
               Redirect(navigator.nextPage(HaveSecondContactPage, mode, updatedAnswers))

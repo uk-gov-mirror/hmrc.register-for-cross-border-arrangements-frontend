@@ -16,8 +16,9 @@
 
 package helpers
 
-import models.{BusinessType, RegistrationType, UserAnswers}
-import pages.{BusinessTypePage, RegistrationTypePage}
+import models.{BusinessType, CheckMode, Mode, RegistrationType, UserAnswers}
+import pages.{BusinessTypePage, QuestionPage, RegistrationTypePage}
+import play.api.libs.json.Reads
 
 object JourneyHelpers {
 
@@ -29,6 +30,13 @@ object JourneyHelpers {
       case (Some(_), _) => true
       case _ => false
     }
+  }
+
+//TODO Add unit test
+  def redirectToSummary[T](value: T, page: QuestionPage[T], mode: Mode, ua: UserAnswers)
+                          (implicit rds: Reads[T]): Boolean = ua.get(page) match {
+    case Some(ans) if (ans == value) && (mode == CheckMode) => true
+    case _ => false
   }
 
 }

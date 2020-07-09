@@ -89,7 +89,7 @@ class Navigator @Inject()(appConfig: FrontendAppConfig) {
     case TelephoneNumberQuestionPage => telephoneNumberQuestionRoutes(CheckMode)
     case ContactTelephoneNumberPage => _ => Some(routes.CheckYourAnswersController.onPageLoad())
     case HaveSecondContactPage => haveSecondContactRoutes(CheckMode)
-    case SecondaryContactNamePage => _ => Some(routes.CheckYourAnswersController.onPageLoad())
+    case SecondaryContactNamePage => _ => Some(routes.SecondaryContactPreferenceController.onPageLoad(CheckMode))
     case SecondaryContactPreferencePage => secondaryContactPreferenceRoutes(CheckMode)
     case SecondaryContactEmailAddressPage => secondaryContactEmailRoutes(CheckMode)
     case SecondaryContactTelephoneNumberPage => _ => Some(routes.CheckYourAnswersController.onPageLoad())

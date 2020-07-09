@@ -775,7 +775,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
     }
 
     "must go from What is the name of the individual or team we should contact? page to" - {
-      "Check your answers page when answer is a name" in {
+      "How can we contact *name*? page when answer is a name" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
@@ -786,7 +786,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
             navigator
               .nextPage(SecondaryContactNamePage, CheckMode, updatedAnswers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+              .mustBe(routes.SecondaryContactPreferenceController.onPageLoad(CheckMode))
         }
       }
     }

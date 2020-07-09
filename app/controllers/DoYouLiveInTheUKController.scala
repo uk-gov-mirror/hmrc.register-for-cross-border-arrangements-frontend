@@ -18,8 +18,9 @@ package controllers
 
 import controllers.actions._
 import forms.DoYouLiveInTheUKFormProvider
+import helpers.JourneyHelpers.redirectToSummary
 import javax.inject.Inject
-import models.{CheckMode, Mode}
+import models.Mode
 import navigation.Navigator
 import pages.DoYouLiveInTheUKPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -79,16 +80,13 @@ class DoYouLiveInTheUKController @Inject()(
         },
         value => {
           //TODO need to add UT
-          val redirectToSummary = request.userAnswers.get(DoYouLiveInTheUKPage) match {
-            case Some(ans) if (ans == value) && (mode == CheckMode) => true
-            case _ => false
-          }
+          val redirectUsers = redirectToSummary(value, DoYouLiveInTheUKPage, mode, request.userAnswers)
 
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouLiveInTheUKPage, value))
             _ <- sessionRepository.set(updatedAnswers)
           } yield {
-            if (redirectToSummary) {
+            if (redirectUsers) {
               Redirect(routes.CheckYourAnswersController.onPageLoad())
             } else {
               Redirect(navigator.nextPage(DoYouLiveInTheUKPage, mode, updatedAnswers))
