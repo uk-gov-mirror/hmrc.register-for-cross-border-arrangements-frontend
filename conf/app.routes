@@ -32,8 +32,8 @@ POST       /register/have-national-insurance-number     controllers.DoYouHaveANa
 GET        /changeDoYouHaveANationalInsuranceNumber     controllers.DoYouHaveANationalInsuranceNumberController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeDoYouHaveANationalInsuranceNumber     controllers.DoYouHaveANationalInsuranceNumberController.onSubmit(mode: Mode = CheckMode)
 
-GET        /register/individual/with-id/nino            controllers.NinoController.onPageLoad(mode: Mode = NormalMode)
-POST       /register/individual/with-id/nino            controllers.NinoController.onSubmit(mode: Mode = NormalMode)
+GET        /register/national-insurance                 controllers.NinoController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/national-insurance                 controllers.NinoController.onSubmit(mode: Mode = NormalMode)
 GET        /changeNino                                  controllers.NinoController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeNino                                  controllers.NinoController.onSubmit(mode: Mode = CheckMode)
 

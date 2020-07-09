@@ -37,10 +37,17 @@
               isPageHeading: true,
               classes: "govuk-label--xl"
             },
+            hint: {
+              text: messages('nino.hintText')
+            },
             id: "nationalInsuranceNumber",
+            classes: "govuk-input--width-10",
             name: "value",
             value: form.value.value,
-            errorMessage: form.value.error
+            errorMessage: form.value.error,
+            attributes: {
+              spellcheck: "false"
+            }
           }) }}
 
           {{ govukButton({
