@@ -11,6 +11,7 @@ site.no = No
 site.yes = Yes
 site.continue = Continue
 site.saveAndContinue = Save and continue
+site.getHelpWithThisPage = Get help with this page (opens in a new tab)
 site.service_name = register-for-cross-border-arrangements-frontend
 site.textarea.char_limit = (Limit is {0} characters)
 site.title.suffix = - register-for-cross-border-arrangements-frontend - GOV.UK
