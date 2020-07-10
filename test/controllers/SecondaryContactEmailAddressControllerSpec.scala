@@ -20,15 +20,16 @@ import base.SpecBase
 import config.FrontendAppConfig
 import forms.SecondaryContactEmailAddressFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{CheckMode, NormalMode, SecondaryContactPreference, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.SecondaryContactEmailAddressPage
+import pages.{SecondaryContactEmailAddressPage, SecondaryContactPreferencePage, SecondaryContactTelephoneNumberPage}
+import play.api.data.Form
 import play.api.inject.bind
-import play.api.libs.json.{JsObject, JsString, Json}
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -40,12 +41,14 @@ import scala.concurrent.Future
 
 class SecondaryContactEmailAddressControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
+  val mockSessionRepository: SessionRepository = mock[SessionRepository]
+  val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
   val formProvider = new SecondaryContactEmailAddressFormProvider()
-  val form = formProvider()
+  val form: Form[String] = formProvider()
 
-  lazy val secondaryContactEmailAddressRoute = routes.SecondaryContactEmailAddressController.onPageLoad(NormalMode).url
+  lazy val secondaryContactEmailAddressRoute: String = routes.SecondaryContactEmailAddressController.onPageLoad(NormalMode).url
 
   "SecondaryContactEmailAddress Controller" - {
 
@@ -108,9 +111,6 @@ class SecondaryContactEmailAddressControllerSpec extends SpecBase with MockitoSu
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val mockSessionRepository = mock[SessionRepository]
-      val mockFrontendAppConfig = mock[FrontendAppConfig]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
@@ -157,6 +157,72 @@ class SecondaryContactEmailAddressControllerSpec extends SpecBase with MockitoSu
 
       templateCaptor.getValue mustEqual "secondaryContactEmailAddress.njk"
       jsonCaptor.getValue must containJson(expectedJson)
+
+      application.stop()
+    }
+
+    "must redirect to the Check your answers page when user don't change their email and email is their only preference" in {
+
+      val secondaryContactEmailAddressRoute: String = routes.SecondaryContactEmailAddressController.onPageLoad(CheckMode).url
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(SecondaryContactPreferencePage, SecondaryContactPreference.enumerable.withName("email").toSet)
+        .success
+        .value
+        .set(SecondaryContactEmailAddressPage, "test@email.com")
+        .success
+        .value
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute, appConfig = mockFrontendAppConfig)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      val request =
+        FakeRequest(POST, secondaryContactEmailAddressRoute)
+          .withFormUrlEncodedBody(("email", "test@email.com"))
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual routes.CheckYourAnswersController.onPageLoad().url
+
+      application.stop()
+    }
+
+    "must redirect to the Check your answers page when user don't change their email and there's a telephone number saved" in {
+
+      val secondaryContactEmailAddressRoute: String = routes.SecondaryContactEmailAddressController.onPageLoad(CheckMode).url
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(SecondaryContactEmailAddressPage, "test@email.com")
+        .success
+        .value
+        .set(SecondaryContactTelephoneNumberPage, "07888888888")
+        .success
+        .value
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute, appConfig = mockFrontendAppConfig)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      val request =
+        FakeRequest(POST, secondaryContactEmailAddressRoute)
+          .withFormUrlEncodedBody(("email", "test@email.com"))
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual routes.CheckYourAnswersController.onPageLoad().url
 
       application.stop()
     }

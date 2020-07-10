@@ -77,7 +77,6 @@ class NinoController @Inject()(
           renderer.render("nino.njk", json).map(BadRequest(_))
         },
         value => {
-          //TODO need to add UT
           val redirectToSummary = request.userAnswers.get(NinoPage) match {
             case Some(ans) if (ans == Nino(value)) && (mode == CheckMode) => true
             case _ => false

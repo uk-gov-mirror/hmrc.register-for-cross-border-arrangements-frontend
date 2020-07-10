@@ -20,13 +20,14 @@ import base.SpecBase
 import config.FrontendAppConfig
 import forms.NonUkNameFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{CheckMode, Name, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.NonUkNamePage
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -40,14 +41,16 @@ import scala.concurrent.Future
 
 class NonUkNameControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider = new NonUkNameFormProvider()
-  val form = formProvider()
+  val form: Form[Name] = formProvider()
+  val mockSessionRepository: SessionRepository = mock[SessionRepository]
+  val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
-  lazy val nonUkNameRoute = routes.NonUkNameController.onPageLoad(NormalMode).url
+  lazy val nonUkNameRoute: String = routes.NonUkNameController.onPageLoad(NormalMode).url
 
-  val userAnswers = UserAnswers(
+  val userAnswers: UserAnswers = UserAnswers(
     userAnswersId,
     Json.obj(
       NonUkNamePage.toString -> Json.obj(
@@ -122,9 +125,6 @@ class NonUkNameControllerSpec extends SpecBase with MockitoSugar with NunjucksSu
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val mockSessionRepository = mock[SessionRepository]
-      val mockFrontendAppConfig = mock[FrontendAppConfig]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
@@ -175,6 +175,34 @@ class NonUkNameControllerSpec extends SpecBase with MockitoSugar with NunjucksSu
       jsonCaptor.getValue must containJson(expectedJson)
 
        application.stop()
+    }
+
+    "must redirect to the Check your answers page when mode is CheckMode" in {
+
+      val nonUkNameRoute = routes.NonUkNameController.onPageLoad(CheckMode).url
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute, appConfig = mockFrontendAppConfig)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+
+      val request =
+        FakeRequest(POST, nonUkNameRoute)
+          .withFormUrlEncodedBody(("firstName", "value 1"), ("secondName", "value 2"))
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual routes.CheckYourAnswersController.onPageLoad().url
+
+      application.stop()
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {

@@ -79,7 +79,6 @@ class DoYouLiveInTheUKController @Inject()(
           renderer.render("doYouLiveInTheUK.njk", json).map(BadRequest(_))
         },
         value => {
-          //TODO need to add UT
           val redirectUsers = redirectToSummary(value, DoYouLiveInTheUKPage, mode, request.userAnswers)
 
           for {

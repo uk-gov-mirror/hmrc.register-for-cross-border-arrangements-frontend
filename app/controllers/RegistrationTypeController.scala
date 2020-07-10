@@ -79,7 +79,6 @@ class RegistrationTypeController @Inject()(
           renderer.render("registrationType.njk", json).map(BadRequest(_))
         },
         registrationType => {
-          //TODO need to add UT
           val redirectUsers = redirectToSummary(registrationType, RegistrationTypePage, mode, request.userAnswers)
 
           for {

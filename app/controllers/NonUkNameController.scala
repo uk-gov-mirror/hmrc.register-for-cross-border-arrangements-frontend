@@ -76,7 +76,6 @@ class NonUkNameController @Inject()(
           renderer.render("nonUkName.njk", json).map(BadRequest(_))
         },
         value => {
-          //TODO need to add UT
           val redirectToSummary = request.userAnswers.get(NonUkNamePage) match {
             case Some(_) if mode == CheckMode => true
             case _ => false

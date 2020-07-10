@@ -79,7 +79,6 @@ class DoYouHaveANationalInsuranceNumberController @Inject()(
           renderer.render("doYouHaveANationalInsuranceNumber.njk", json).map(BadRequest(_))
         },
         value => {
-          //TODO need to add UT
           val redirectUsers = redirectToSummary(value, DoYouHaveANationalInsuranceNumberPage, mode, request.userAnswers)
 
           for {

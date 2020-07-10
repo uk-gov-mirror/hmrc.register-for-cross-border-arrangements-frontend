@@ -105,7 +105,6 @@ class TelephoneNumberQuestionController @Inject()(
           renderer.render("telephoneNumberQuestion.njk", json).map(BadRequest(_))
         },
         value => {
-          //TODO need to add UT
           val redirectToSummary = request.userAnswers.get(TelephoneNumberQuestionPage) match {
             case Some(ans) if (ans == value) && (mode == CheckMode) => true
             case Some(_) if !value && (mode == CheckMode) => true

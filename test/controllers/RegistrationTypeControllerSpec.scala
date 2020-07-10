@@ -20,13 +20,14 @@ import base.SpecBase
 import config.FrontendAppConfig
 import forms.RegistrationTypeFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, RegistrationType, UserAnswers}
+import models.{CheckMode, NormalMode, RegistrationType, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.RegistrationTypePage
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -40,12 +41,14 @@ import scala.concurrent.Future
 
 class RegistrationTypeControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
+  val mockSessionRepository: SessionRepository = mock[SessionRepository]
+  val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
-  lazy val registrationTypeRoute = routes.RegistrationTypeController.onPageLoad(NormalMode).url
+  lazy val registrationTypeRoute: String = routes.RegistrationTypeController.onPageLoad(NormalMode).url
 
   val formProvider = new RegistrationTypeFormProvider()
-  val form = formProvider()
+  val form: Form[RegistrationType] = formProvider()
 
   "RegistrationType Controller" - {
 
@@ -111,9 +114,6 @@ class RegistrationTypeControllerSpec extends SpecBase with MockitoSugar with Nun
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val mockSessionRepository = mock[SessionRepository]
-      val mockFrontendAppConfig = mock[FrontendAppConfig]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
@@ -162,6 +162,37 @@ class RegistrationTypeControllerSpec extends SpecBase with MockitoSugar with Nun
 
       templateCaptor.getValue mustEqual "registrationType.njk"
       jsonCaptor.getValue must containJson(expectedJson)
+
+      application.stop()
+    }
+
+    "must redirect to the Check your answers page when user don't change answer" in {
+
+      val registrationTypeRoute: String = routes.RegistrationTypeController.onPageLoad(CheckMode).url
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(RegistrationTypePage, RegistrationType.values.head)
+        .success
+        .value
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute, appConfig = mockFrontendAppConfig)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      val request =
+        FakeRequest(POST, registrationTypeRoute)
+          .withFormUrlEncodedBody(("registrationType", RegistrationType.values.head.toString))
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual routes.CheckYourAnswersController.onPageLoad().url
 
       application.stop()
     }

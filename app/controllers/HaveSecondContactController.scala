@@ -96,7 +96,6 @@ class HaveSecondContactController @Inject()(
           renderer.render("haveSecondContact.njk", json).map(BadRequest(_))
         },
         value => {
-          //TODO need to add UT
           val redirectUsers = redirectToSummary(value, HaveSecondContactPage, mode, request.userAnswers)
 
           for {

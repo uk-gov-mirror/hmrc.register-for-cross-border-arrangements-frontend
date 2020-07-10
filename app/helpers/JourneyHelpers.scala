@@ -32,7 +32,6 @@ object JourneyHelpers {
     }
   }
 
-//TODO Add unit test
   def redirectToSummary[T](value: T, page: QuestionPage[T], mode: Mode, ua: UserAnswers)
                           (implicit rds: Reads[T]): Boolean = ua.get(page) match {
     case Some(ans) if (ans == value) && (mode == CheckMode) => true

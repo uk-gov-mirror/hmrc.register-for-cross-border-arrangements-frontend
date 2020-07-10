@@ -89,7 +89,6 @@ class SecondaryContactEmailAddressController @Inject()(
           renderer.render("secondaryContactEmailAddress.njk", json).map(BadRequest(_))
         },
         value => {
-          //TODO need to add UT
           val redirectToSummary =
             (request.userAnswers.get(SecondaryContactPreferencePage),
               request.userAnswers.get(SecondaryContactEmailAddressPage),

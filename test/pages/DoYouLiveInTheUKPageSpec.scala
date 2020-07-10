@@ -48,10 +48,13 @@ class DoYouLiveInTheUKPageSpec extends PageBehaviours {
       }
     }
 
-    "must remove non-UK address when user changes answer to 'No'" in {
+    "must remove non-UK address answers when user changes answer to 'No'" in {
       forAll(arbitrary[UserAnswers]) {
         answers =>
           val result = answers
+            .set(IndividualUKPostcodePage, "AA1 1AA")
+            .success
+            .value
             .set(SelectAddressPage, "Some UK address")
             .success
             .value
@@ -62,6 +65,7 @@ class DoYouLiveInTheUKPageSpec extends PageBehaviours {
             .success
             .value
 
+          result.get(IndividualUKPostcodePage) must not be defined
           result.get(SelectAddressPage) must not be defined
           result.get(WhatIsYourAddressUkPage) must not be defined
       }

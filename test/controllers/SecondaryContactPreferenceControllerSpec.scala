@@ -20,13 +20,14 @@ import base.SpecBase
 import config.FrontendAppConfig
 import forms.SecondaryContactPreferenceFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, SecondaryContactPreference, UserAnswers}
+import models.{CheckMode, NormalMode, SecondaryContactPreference, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.{SecondaryContactNamePage, SecondaryContactPreferencePage}
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -40,12 +41,14 @@ import scala.concurrent.Future
 
 class SecondaryContactPreferenceControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
+  val mockSessionRepository: SessionRepository = mock[SessionRepository]
+  val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
-  lazy val secondaryContactPreferenceRoute = routes.SecondaryContactPreferenceController.onPageLoad(NormalMode).url
+  lazy val secondaryContactPreferenceRoute: String = routes.SecondaryContactPreferenceController.onPageLoad(NormalMode).url
 
   val formProvider = new SecondaryContactPreferenceFormProvider()
-  val form = formProvider()
+  val form: Form[Set[SecondaryContactPreference]] = formProvider()
   val secondaryContactName = "Rose"
 
   "SecondaryContactPreference Controller" - {
@@ -121,9 +124,6 @@ class SecondaryContactPreferenceControllerSpec extends SpecBase with MockitoSuga
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val mockSessionRepository = mock[SessionRepository]
-      val mockFrontendAppConfig = mock[FrontendAppConfig]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
@@ -177,6 +177,37 @@ class SecondaryContactPreferenceControllerSpec extends SpecBase with MockitoSuga
 
       templateCaptor.getValue mustEqual "secondaryContactPreference.njk"
       jsonCaptor.getValue must containJson(expectedJson)
+
+      application.stop()
+    }
+
+    "must redirect to the Check your answers page when user doesn't change their answer" in {
+
+      val secondaryContactPreferenceRoute = routes.SecondaryContactPreferenceController.onPageLoad(CheckMode).url
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(SecondaryContactPreferencePage, SecondaryContactPreference.enumerable.withName("email").toSet)
+        .success
+        .value
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute, appConfig = mockFrontendAppConfig)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      val request =
+        FakeRequest(POST, secondaryContactPreferenceRoute)
+          .withFormUrlEncodedBody(("value[0]", SecondaryContactPreference.values.head.toString))
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual routes.CheckYourAnswersController.onPageLoad().url
 
       application.stop()
     }

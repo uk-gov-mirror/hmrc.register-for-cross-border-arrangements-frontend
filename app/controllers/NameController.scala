@@ -18,6 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.NamePageFormProvider
+import helpers.JourneyHelpers.redirectToSummary
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
@@ -75,11 +76,20 @@ class NameController @Inject()(
 
           renderer.render("name.njk", json).map(BadRequest(_))
         },
-        value =>
+        value => {
+          val redirectUsers = redirectToSummary(value, NamePage, mode, request.userAnswers)
+
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(NamePage, value))
             _ <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(NamePage, mode, updatedAnswers))
+          } yield {
+            if (redirectUsers) {
+              Redirect(routes.CheckYourAnswersController.onPageLoad())
+            } else {
+              Redirect(navigator.nextPage(NamePage, mode, updatedAnswers))
+            }
+          }
+        }
       )
   }
 }
