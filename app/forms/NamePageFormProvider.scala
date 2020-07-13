@@ -21,16 +21,17 @@ import javax.inject.Inject
 import models.Name
 import play.api.data.Form
 import play.api.data.Forms._
+import utils.RegexConstants
 
-class NamePageFormProvider @Inject() extends Mappings {
+class NamePageFormProvider @Inject() extends Mappings with RegexConstants {
+
+  private val maxLength = 35
 
   def apply(): Form[Name] =
     Form(
       mapping(
-      "firstName" -> text("name.error.firstName.required")
-        .verifying(maxLength(50, "name.error.firstName.length")),
-      "secondName" -> text("name.error.secondName.required")
-        .verifying(maxLength(50, "name.error.secondName.length"))
+      "firstName" -> validatedText("name.error.firstName.required", "name.error.firstName.invalid", "name.error.firstName.length", apiNameRegex, maxLength),
+      "secondName" -> validatedText("name.error.secondName.required", "name.error.secondName.invalid", "name.error.secondName.length", apiNameRegex, maxLength)
       )(Name.apply)(Name.unapply)
     )
 }

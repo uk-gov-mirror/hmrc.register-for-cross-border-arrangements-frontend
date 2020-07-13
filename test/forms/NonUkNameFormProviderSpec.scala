@@ -18,17 +18,20 @@ package forms
 
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
+import utils.RegexConstants
 
 class NonUkNameFormProviderSpec extends StringFieldBehaviours {
 
   val form = new NonUkNameFormProvider()()
+  val maxLength = 35
 
   ".firstName" - {
 
     val fieldName = "firstName"
     val requiredKey = "nonUkName.error.firstName.required"
+    val invalidKey = "nonUkName.error.firstName.invalid"
     val lengthKey = "nonUkName.error.firstName.length"
-    val maxLength = 50
+
 
     behave like fieldThatBindsValidData(
       form,
@@ -40,13 +43,20 @@ class NonUkNameFormProviderSpec extends StringFieldBehaviours {
       form,
       fieldName,
       maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      lengthError = FormError(fieldName, lengthKey)
     )
 
     behave like mandatoryField(
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
+    )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      "jfhf-\\^' `&%",
+      FormError(fieldName, invalidKey)
     )
   }
 
@@ -54,8 +64,8 @@ class NonUkNameFormProviderSpec extends StringFieldBehaviours {
 
     val fieldName = "secondName"
     val requiredKey = "nonUkName.error.secondName.required"
+    val invalidKey = "nonUkName.error.secondName.invalid"
     val lengthKey = "nonUkName.error.secondName.length"
-    val maxLength = 50
 
     behave like fieldThatBindsValidData(
       form,
@@ -67,13 +77,20 @@ class NonUkNameFormProviderSpec extends StringFieldBehaviours {
       form,
       fieldName,
       maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      lengthError = FormError(fieldName, lengthKey)
     )
 
     behave like mandatoryField(
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
+    )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      "jjdjdj£%^&kfkf",
+      FormError(fieldName, invalidKey)
     )
   }
 }
