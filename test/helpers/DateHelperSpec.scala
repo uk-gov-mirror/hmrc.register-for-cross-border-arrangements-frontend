@@ -34,7 +34,7 @@ class DateHelperSpec extends SpecBase {
 
       }
 
-      "must return '5 Jun 1977' if given past date 1977-6-5" in {
+      "must return '5 June 1977' if given past date 1977-6-5" in {
 
         val pastDate = LocalDate.of(1977,6,5)
         DateHelper.formatDateToString(pastDate) mustBe "5 June 1977"
