@@ -225,10 +225,10 @@ name.checkYourAnswersLabel = Your name
 name.firstName = First name
 name.secondName = Last name
 name.error.firstName.required = Enter your first name
-name.error.firstName.invalid = First name must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, slashes, carets and spaces
+name.error.firstName.invalid = First name must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
 name.error.firstName.length = First name must be 35 characters or less
 name.error.secondName.required = Enter your last name
-name.error.secondName.invalid = Last name must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, slashes, carets and spaces
+name.error.secondName.invalid = Last name must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
 name.error.secondName.length = Last name must be 35 characters or less
 
 cantConfirmIdentity.title = We could not confirm your identity
@@ -244,8 +244,8 @@ nonUkName.error.firstName.required = Enter Given name
 nonUkName.error.secondName.required = Enter Family name
 nonUkName.error.firstName.length = Given name must be 35 characters or less
 nonUkName.error.secondName.length = Family name must be 35 characters or less
-nonUkName.error.firstName.invalid = Given name must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, slashes, carets and spaces
-nonUkName.error.secondName.invalid = Family name must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, slashes, carets and spaces
+nonUkName.error.firstName.invalid = Given name must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
+nonUkName.error.secondName.invalid = Family name must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
 
 doYouLiveInTheUK.title = Do you live in the United Kingdom?
 doYouLiveInTheUK.heading = Do you live in the United Kingdom?
