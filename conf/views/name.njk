@@ -49,14 +49,15 @@
               label: {
                 text: messages('name.secondName')
               },
-              id: "lastName",
+              id: "secondName",
               name: "secondName",
               value: form.secondName.value,
               errorMessage: form.secondName.error
             }) }}
 
           {{ govukButton({
-            text: messages("site.continue")
+            text: messages("site.continue"),
+            attributes:{"id": "submit"}
           }) }}
 
         </form>

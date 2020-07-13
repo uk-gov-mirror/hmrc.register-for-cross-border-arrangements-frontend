@@ -21,12 +21,13 @@ import play.api.data.FormError
 
 class NamePageFormProviderSpec extends StringFieldBehaviours {
 
+  val maxLength = 35
   val form = new NamePageFormProvider()()
 
   ".firstName" - {
     val requiredKey = "name.error.firstName.required"
+    val invalidKey = "name.error.firstName.invalid"
     val lengthKey = "name.error.firstName.length"
-    val maxLength = 50
 
     val fieldName = "firstName"
 
@@ -40,7 +41,7 @@ class NamePageFormProviderSpec extends StringFieldBehaviours {
       form,
       fieldName,
       maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      lengthError = FormError(fieldName, lengthKey)
     )
 
     behave like mandatoryField(
@@ -48,12 +49,19 @@ class NamePageFormProviderSpec extends StringFieldBehaviours {
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
     )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      "jjdjdj£%^&kfkf",
+      FormError(fieldName, invalidKey)
+    )
   }
 
   ".secondName" - {
     val requiredKey = "name.error.secondName.required"
+    val invalidKey = "name.error.secondName.invalid"
     val lengthKey = "name.error.secondName.length"
-    val maxLength = 50
 
     val fieldName = "secondName"
 
@@ -67,13 +75,20 @@ class NamePageFormProviderSpec extends StringFieldBehaviours {
       form,
       fieldName,
       maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      lengthError = FormError(fieldName, lengthKey)
     )
 
     behave like mandatoryField(
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
+    )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      "jjdjdj£%^&kfkf",
+      FormError(fieldName, invalidKey)
     )
   }
 }

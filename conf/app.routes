@@ -37,10 +37,10 @@ POST       /register/national-insurance                 controllers.NinoControll
 GET        /changeNino                                  controllers.NinoController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeNino                                  controllers.NinoController.onSubmit(mode: Mode = CheckMode)
 
-GET        /register/individual/with-id/name            controllers.NameController.onPageLoad(mode: Mode = NormalMode)
-POST       /register/individual/with-id/name            controllers.NameController.onSubmit(mode: Mode = NormalMode)
-GET        /changeName                                  controllers.NameController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeName                                  controllers.NameController.onSubmit(mode: Mode = CheckMode)
+GET        /register/name            controllers.NameController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/name            controllers.NameController.onSubmit(mode: Mode = NormalMode)
+GET        /register/change-name                                  controllers.NameController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/change-name                                  controllers.NameController.onSubmit(mode: Mode = CheckMode)
 
 GET        /register/business/with-id/type              controllers.BusinessTypeController.onPageLoad(mode: Mode = NormalMode)
 POST       /register/business/with-id/type              controllers.BusinessTypeController.onSubmit(mode: Mode = NormalMode)
@@ -84,10 +84,10 @@ GET        /register/business-identity-not-confirmed      controllers.BusinessNo
 GET        /register/individual-identity-not-confirmed    controllers.IndividualNotConfirmedController.onPageLoad()
 GET        /register/identity-confirmed                   controllers.IdentityConfirmedController.onPageLoad()
 
-GET        /register/individual/without-id/name           controllers.NonUkNameController.onPageLoad(mode: Mode = NormalMode)
-POST       /register/individual/without-id/name           controllers.NonUkNameController.onSubmit(mode: Mode = NormalMode)
-GET        /register/individual/without-id/change-name    controllers.NonUkNameController.onPageLoad(mode: Mode = CheckMode)
-POST       /register/individual/without-id/change-name    controllers.NonUkNameController.onSubmit(mode: Mode = CheckMode)
+GET        /register/without-id/your-name           controllers.NonUkNameController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/without-id/your-name           controllers.NonUkNameController.onSubmit(mode: Mode = NormalMode)
+GET        /register/without-id/change-your-name    controllers.NonUkNameController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/without-id/change-your-name    controllers.NonUkNameController.onSubmit(mode: Mode = CheckMode)
 
 GET        /register/live-in-uk           controllers.DoYouLiveInTheUKController.onPageLoad(mode: Mode = NormalMode)
 POST       /register/live-in-uk           controllers.DoYouLiveInTheUKController.onSubmit(mode: Mode = NormalMode)

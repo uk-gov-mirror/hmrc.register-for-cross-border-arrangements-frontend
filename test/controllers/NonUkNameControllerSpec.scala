@@ -51,8 +51,8 @@ class NonUkNameControllerSpec extends SpecBase with MockitoSugar with NunjucksSu
     userAnswersId,
     Json.obj(
       NonUkNamePage.toString -> Json.obj(
-        "firstName" -> "value 1",
-        "secondName" -> "value 2"
+        "firstName" -> "value one",
+        "secondName" -> "value two"
       )
     )
   )
@@ -104,8 +104,8 @@ class NonUkNameControllerSpec extends SpecBase with MockitoSugar with NunjucksSu
 
       val filledForm = form.bind(
         Map(
-          "firstName" -> "value 1",
-          "secondName" -> "value 2"
+          "firstName" -> "value one",
+          "secondName" -> "value two"
         )
       )
 
@@ -138,7 +138,7 @@ class NonUkNameControllerSpec extends SpecBase with MockitoSugar with NunjucksSu
 
       val request =
         FakeRequest(POST, nonUkNameRoute)
-          .withFormUrlEncodedBody(("firstName", "value 1"), ("secondName", "value 2"))
+          .withFormUrlEncodedBody(("firstName", "value one"), ("secondName", "value two"))
 
       val result = route(application, request).value
 
@@ -197,7 +197,7 @@ class NonUkNameControllerSpec extends SpecBase with MockitoSugar with NunjucksSu
 
       val request =
         FakeRequest(POST, nonUkNameRoute)
-          .withFormUrlEncodedBody(("firstName", "value 1"), ("secondName", "value 2"))
+          .withFormUrlEncodedBody(("firstName", "value one"), ("secondName", "value two"))
 
       val result = route(application, request).value
 
