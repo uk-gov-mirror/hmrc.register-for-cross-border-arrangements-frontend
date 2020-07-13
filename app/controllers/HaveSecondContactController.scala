@@ -100,7 +100,7 @@ class HaveSecondContactController @Inject()(
 
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(HaveSecondContactPage, value))
-            _ <- sessionRepository.set(updatedAnswers)
+            _              <- sessionRepository.set(updatedAnswers)
           } yield {
             if (redirectUsers) {
               Redirect(routes.CheckYourAnswersController.onPageLoad())

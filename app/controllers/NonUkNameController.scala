@@ -83,7 +83,7 @@ class NonUkNameController @Inject()(
 
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(NonUkNamePage, value))
-            _ <- sessionRepository.set(updatedAnswers)
+            _              <- sessionRepository.set(updatedAnswers)
           } yield {
             if (redirectToSummary) {
               Redirect(routes.CheckYourAnswersController.onPageLoad())

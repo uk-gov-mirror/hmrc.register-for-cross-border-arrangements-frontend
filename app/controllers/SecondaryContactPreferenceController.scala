@@ -92,7 +92,7 @@ class SecondaryContactPreferenceController @Inject()(
 
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(SecondaryContactPreferencePage, value))
-            _ <- sessionRepository.set(updatedAnswers)
+            _              <- sessionRepository.set(updatedAnswers)
           } yield {
             if (redirectUsers) {
               Redirect(routes.CheckYourAnswersController.onPageLoad())

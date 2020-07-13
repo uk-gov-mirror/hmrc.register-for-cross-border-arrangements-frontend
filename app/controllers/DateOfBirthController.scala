@@ -92,7 +92,7 @@ class DateOfBirthController @Inject()(
 
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(DateOfBirthPage, value))
-            _ <- sessionRepository.set(updatedAnswers)
+            _              <- sessionRepository.set(updatedAnswers)
           } yield {
             if (redirectToSummary) {
               Redirect(routes.CheckYourAnswersController.onPageLoad())

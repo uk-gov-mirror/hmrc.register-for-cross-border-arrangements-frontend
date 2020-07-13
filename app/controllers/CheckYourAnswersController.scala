@@ -83,6 +83,7 @@ class CheckYourAnswersController @Inject()(
         //Individual with ID
         Seq(
           helper.doYouHaveUTR,
+          helper.registrationType,
           helper.doYouHaveANationalInsuranceNumber,
           helper.nino,
           helper.namePage,

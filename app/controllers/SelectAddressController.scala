@@ -112,7 +112,7 @@ class SelectAddressController @Inject()(
             value =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(SelectAddressPage, value))
-                _ <- sessionRepository.set(updatedAnswers)
+                _              <- sessionRepository.set(updatedAnswers)
               } yield Redirect(navigator.nextPage(SelectAddressPage, mode, updatedAnswers))
           )
       } recover {

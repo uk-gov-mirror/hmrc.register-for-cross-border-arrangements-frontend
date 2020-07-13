@@ -72,9 +72,9 @@ class BusinessMatchingController @Inject()(
         businessMatchingService.sendBusinessMatchingInformation(request.userAnswers) flatMap {
           case Some(details) =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(BusinessAddressPage, details.address.toAddress))
+              updatedAnswers     <- Future.fromTry(request.userAnswers.set(BusinessAddressPage, details.address.toAddress))
               updatedNameAnswers <- Future.fromTry(updatedAnswers.set(RetrievedNamePage, details.name))
-              _ <- sessionRepository.set(updatedNameAnswers)
+              _                  <- sessionRepository.set(updatedNameAnswers)
             } yield {
               Redirect(routes.ConfirmBusinessController.onPageLoad(NormalMode))
             }

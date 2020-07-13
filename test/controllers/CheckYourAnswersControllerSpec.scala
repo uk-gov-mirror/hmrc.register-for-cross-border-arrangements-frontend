@@ -19,6 +19,7 @@ package controllers
 import java.time.LocalDate
 
 import base.SpecBase
+import models.RegistrationType.Individual
 import models.{Address, BusinessType, Country, Name, RegistrationType, SecondaryContactPreference, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -114,6 +115,8 @@ class CheckYourAnswersControllerSpec extends SpecBase {
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
         .set(DoYouHaveUTRPage, false)
         .success.value
+        .set(RegistrationTypePage, Individual)
+        .success.value
         .set(DoYouHaveANationalInsuranceNumberPage, true)
         .success.value
         .set(NinoPage, nino)
@@ -148,6 +151,7 @@ class CheckYourAnswersControllerSpec extends SpecBase {
       templateCaptor.getValue mustEqual "check-your-answers.njk"
       header.contains("checkYourAnswers.individualDetails.h2") mustBe true
       businessDetails.contains("Do you have UK Unique Taxpayer Reference?") mustBe true
+      businessDetails.contains("Registering as") mustBe true
       businessDetails.contains("Do you have a National Insurance number?") mustBe true
       businessDetails.contains("Your National Insurance number") mustBe true
       businessDetails.contains("Your name") mustBe true

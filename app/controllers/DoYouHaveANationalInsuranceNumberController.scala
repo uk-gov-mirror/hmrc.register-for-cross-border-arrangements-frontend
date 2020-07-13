@@ -83,7 +83,7 @@ class DoYouHaveANationalInsuranceNumberController @Inject()(
 
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouHaveANationalInsuranceNumberPage, value))
-            _ <- sessionRepository.set(updatedAnswers)
+            _              <- sessionRepository.set(updatedAnswers)
           } yield {
             if(redirectUsers) {
               Redirect(routes.CheckYourAnswersController.onPageLoad())

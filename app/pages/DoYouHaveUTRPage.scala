@@ -16,11 +16,40 @@
 
 package pages
 
+import models.UserAnswers
 import play.api.libs.json.JsPath
+
+import scala.util.Try
 
 case object DoYouHaveUTRPage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "doYouHaveUTR"
+
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
+  //Not removing BusinessAddressPage as the page is used in both journeys
+    value match {
+      case Some(true) =>
+        userAnswers.remove(RegistrationTypePage)
+        .flatMap(_.remove(BusinessWithoutIDNamePage))
+        .flatMap(_.remove(DoYouHaveANationalInsuranceNumberPage))
+        .flatMap(_.remove(NinoPage))
+        .flatMap(_.remove(NamePage))
+        .flatMap(_.remove(DateOfBirthPage))
+        .flatMap(_.remove(NonUkNamePage))
+        .flatMap(_.remove(DoYouLiveInTheUKPage))
+        .flatMap(_.remove(IndividualUKPostcodePage))
+        .flatMap(_.remove(SelectAddressPage))
+        .flatMap(_.remove(WhatIsYourAddressUkPage))
+        .flatMap(_.remove(WhatIsYourAddressPage))
+      case Some(false) =>
+        userAnswers.remove(BusinessTypePage)
+          .flatMap(_.remove(CorporationTaxUTRPage))
+          .flatMap(_.remove(SelfAssessmentUTRPage))
+          .flatMap(_.remove(BusinessNamePage))
+          .flatMap(_.remove(ConfirmBusinessPage))
+      case None => super.cleanup(value, userAnswers)
+    }
+
 }

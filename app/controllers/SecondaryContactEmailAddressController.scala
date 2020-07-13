@@ -100,7 +100,7 @@ class SecondaryContactEmailAddressController @Inject()(
 
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(SecondaryContactEmailAddressPage, value))
-            _ <- sessionRepository.set(updatedAnswers)
+            _              <- sessionRepository.set(updatedAnswers)
           } yield {
             if (redirectToSummary) {
               Redirect(routes.CheckYourAnswersController.onPageLoad())
