@@ -47,7 +47,7 @@ class DateOfBirthControllerSpec extends SpecBase with MockitoSugar with Nunjucks
 
   def onwardRoute = Call("GET", "/foo")
 
-  val validAnswer = LocalDate.now(ZoneOffset.UTC)
+  val validAnswer = LocalDate.now().minusDays(1)
 
   lazy val dateOfBirthRoute = routes.DateOfBirthController.onPageLoad(NormalMode).url
 

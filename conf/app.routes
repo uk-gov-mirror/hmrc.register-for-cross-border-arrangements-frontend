@@ -52,8 +52,8 @@ POST       /register/business/with-id/postCode          controllers.PostCodeCont
 GET        /register/business/with-id/change-postcode   controllers.PostCodeController.onPageLoad(mode: Mode = CheckMode)
 POST       /register/business/with-id/change-Postcode   controllers.PostCodeController.onSubmit(mode: Mode = CheckMode)
 
-GET        /register/individual/with-id/date-of-birth   controllers.DateOfBirthController.onPageLoad(mode: Mode = NormalMode)
-POST       /register/individual/with-id/date-of-birth   controllers.DateOfBirthController.onSubmit(mode: Mode = NormalMode)
+GET        /register/date-of-birth                      controllers.DateOfBirthController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/date-of-birth                      controllers.DateOfBirthController.onSubmit(mode: Mode = NormalMode)
 GET        /changeDateOfBirth                           controllers.DateOfBirthController.onPageLoad(mode: Mode = CheckMode)
 POST       /changeDateOfBirth                           controllers.DateOfBirthController.onSubmit(mode: Mode = CheckMode)
 

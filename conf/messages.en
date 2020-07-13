@@ -173,10 +173,12 @@ dateOfBirth.title = What is your date of birth?
 dateOfBirth.heading = What is your date of birth?
 dateOfBirth.hint = For example, 12 11 2007
 dateOfBirth.checkYourAnswersLabel = Your date of birth
-dateOfBirth.error.required.all = Enter your date Of birth
+dateOfBirth.error.required.all = Enter your date of birth
 dateOfBirth.error.required.two = Date of birth must include {0} and {1}
 dateOfBirth.error.required = Date of birth must include {0}
-dateOfBirth.error.invalid = Enter a real date of birth
+dateOfBirth.error.invalid = Enter a valid date of birth
+dateOfBirth.error.futureDate = Date of birth must be before {0}
+dateOfBirth.error.pastDate = Date of birth must be after 1900
 
 businessType.title = What type of business do you have?
 businessType.heading = What type of business do you have?
