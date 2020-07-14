@@ -33,9 +33,11 @@ object JourneyHelpers {
   }
 
   def redirectToSummary[T](value: T, page: QuestionPage[T], mode: Mode, ua: UserAnswers)
-                          (implicit rds: Reads[T]): Boolean = ua.get(page) match {
-    case Some(ans) if (ans == value) && (mode == CheckMode) => true
-    case _ => false
+                          (implicit rds: Reads[T]): Boolean = {
+    ua.get(page) match {
+      case Some(ans) if (ans == value) && (mode == CheckMode) => true
+      case _ => false
+    }
   }
 
 }

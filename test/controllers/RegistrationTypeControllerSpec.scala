@@ -166,7 +166,7 @@ class RegistrationTypeControllerSpec extends SpecBase with MockitoSugar with Nun
       application.stop()
     }
 
-    "must redirect to the Check your answers page when user don't change answer" in {
+    "must redirect to the Check your answers page when user doesn't change their answer" in {
 
       val registrationTypeRoute: String = routes.RegistrationTypeController.onPageLoad(CheckMode).url
       val userAnswers = UserAnswers(userAnswersId)
