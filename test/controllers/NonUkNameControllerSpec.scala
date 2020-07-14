@@ -191,10 +191,9 @@ class NonUkNameControllerSpec extends SpecBase with MockitoSugar with NunjucksSu
           )
           .build()
 
-
       val request =
         FakeRequest(POST, nonUkNameRoute)
-          .withFormUrlEncodedBody(("firstName", "value 1"), ("secondName", "value 2"))
+          .withFormUrlEncodedBody(("firstName", "value one"), ("secondName", "value two"))
 
       val result = route(application, request).value
 
