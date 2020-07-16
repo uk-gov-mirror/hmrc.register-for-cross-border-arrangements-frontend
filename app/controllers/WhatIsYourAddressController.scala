@@ -106,7 +106,7 @@ class WhatIsYourAddressController @Inject()(
 
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsYourAddressPage, value))
-            _              <- sessionRepository.set(updatedAnswers) //TODO Fix spacing
+            _              <- sessionRepository.set(updatedAnswers)
           } yield {
             if (redirectUsers) {
               Redirect(routes.CheckYourAnswersController.onPageLoad())

@@ -43,29 +43,27 @@ class RegistrationTypePageSpec extends PageBehaviours {
         answers =>
           val result = answers
             .set(DoYouHaveANationalInsuranceNumberPage, true)
-            .success
-            .value
+            .success.value
             .set(NinoPage, new Generator().nextNino)
-            .success
-            .value
+            .success.value
             .set(NamePage, name)
-            .success
-            .value
+            .success.value
             .set(DateOfBirthPage, LocalDate.now())
-            .success
-            .value
+            .success.value
             .set(NonUkNamePage, name)
-            .success
-            .value
+            .success.value
             .set(DoYouLiveInTheUKPage, false)
-            .success
-            .value
+            .success.value
             .set(WhatIsYourAddressUkPage, address)
-            .success
-            .value
+            .success.value
             .set(WhatIsYourAddressPage, address)
-            .success
-            .value
+            .success.value
+            .set(ContactEmailAddressPage, "email@email.com")
+            .success.value
+            .set(TelephoneNumberQuestionPage, true)
+            .success.value
+            .set(ContactTelephoneNumberPage, "07888888888")
+            .success.value
             .set(RegistrationTypePage, Business)
             .success
             .value
@@ -78,6 +76,9 @@ class RegistrationTypePageSpec extends PageBehaviours {
           result.get(DoYouLiveInTheUKPage) must not be defined
           result.get(WhatIsYourAddressUkPage) must not be defined
           result.get(WhatIsYourAddressPage) must not be defined
+          result.get(ContactEmailAddressPage) must not be defined
+          result.get(TelephoneNumberQuestionPage) must not be defined
+          result.get(ContactTelephoneNumberPage) must not be defined
       }
     }
 
@@ -86,56 +87,41 @@ class RegistrationTypePageSpec extends PageBehaviours {
         answers =>
           val result = answers
             .set(BusinessWithoutIDNamePage, "Business name")
-            .success
-            .value
+            .success.value
             .set(BusinessAddressPage, address)
-            .success
-            .value
+            .success.value
+            .set(ContactNamePage, name)
+            .success.value
+            .set(ContactEmailAddressPage, "email@email.com")
+            .success.value
+            .set(TelephoneNumberQuestionPage, true)
+            .success.value
+            .set(ContactTelephoneNumberPage, "07888888888")
+            .success.value
             .set(HaveSecondContactPage, true)
-            .success
-            .value
+            .success.value
             .set(SecondaryContactNamePage, "Name")
-            .success
-            .value
+            .success.value
             .set(SecondaryContactPreferencePage, SecondaryContactPreference.values.toSet)
-            .success
-            .value
+            .success.value
             .set(SecondaryContactEmailAddressPage, "email@email.com")
-            .success
-            .value
+            .success.value
             .set(SecondaryContactTelephoneNumberPage, "07888888888")
-            .success
-            .value
+            .success.value
             .set(RegistrationTypePage, Individual)
-            .success
-            .value
+            .success.value
 
           result.get(BusinessWithoutIDNamePage) must not be defined
           result.get(BusinessAddressPage) must not be defined
+          result.get(ContactNamePage) must not be defined
+          result.get(ContactEmailAddressPage) must not be defined
+          result.get(TelephoneNumberQuestionPage) must not be defined
+          result.get(ContactTelephoneNumberPage) must not be defined
           result.get(HaveSecondContactPage) must not be defined
           result.get(SecondaryContactNamePage) must not be defined
           result.get(SecondaryContactPreferencePage) must not be defined
           result.get(SecondaryContactEmailAddressPage) must not be defined
           result.get(SecondaryContactTelephoneNumberPage) must not be defined
-      }
-    }
-
-    "must remove all possible business details when user changes answer to 'An individual'" in {
-      forAll(arbitrary[UserAnswers]) {
-        answers =>
-          val result = answers
-            .set(BusinessWithoutIDNamePage, "Business name")
-            .success
-            .value
-            .set(BusinessAddressPage, address)
-            .success
-            .value
-            .set(RegistrationTypePage, Individual)
-            .success
-            .value
-
-          result.get(BusinessWithoutIDNamePage) must not be defined
-          result.get(BusinessAddressPage) must not be defined
       }
     }
   }

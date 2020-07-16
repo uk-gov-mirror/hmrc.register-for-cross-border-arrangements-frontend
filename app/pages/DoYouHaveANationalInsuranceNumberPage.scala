@@ -28,17 +28,16 @@ case object DoYouHaveANationalInsuranceNumberPage extends QuestionPage[Boolean] 
   override def toString: String = "doYouHaveANationalInsuranceNumber"
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
+    //Not clearing DateOfBirthPage because it's used in both journeys
     value match {
       case Some(true) =>
         userAnswers.remove(NonUkNamePage)
           .flatMap(_.remove(DoYouLiveInTheUKPage))
           .flatMap(_.remove(IndividualUKPostcodePage))
           .flatMap(_.remove(SelectAddressPage))
-          .flatMap(_.remove(DateOfBirthPage))
       case Some(false) =>
         userAnswers.remove(NinoPage)
           .flatMap(_.remove(NamePage))
-          .flatMap(_.remove(DateOfBirthPage))
       case None => super.cleanup(value, userAnswers)
     }
 }

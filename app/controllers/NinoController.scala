@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.NinoFormProvider
 import javax.inject.Inject
-import models.{CheckMode, Mode}
+import models.Mode
 import navigation.Navigator
 import pages.NinoPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -76,23 +76,11 @@ class NinoController @Inject()(
 
           renderer.render("nino.njk", json).map(BadRequest(_))
         },
-        value => {
-          val redirectToSummary = request.userAnswers.get(NinoPage) match {
-            case Some(ans) if (ans == Nino(value)) && (mode == CheckMode) => true
-            case _ => false
-          }
-
+        value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(NinoPage, Nino(value)))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield {
-            if (redirectToSummary) {
-              Redirect(routes.CheckYourAnswersController.onPageLoad())
-            } else {
-              Redirect(navigator.nextPage(NinoPage, mode, updatedAnswers))
-            }
-          }
-        }
+          } yield Redirect(navigator.nextPage(NinoPage, mode, updatedAnswers))
       )
   }
 }

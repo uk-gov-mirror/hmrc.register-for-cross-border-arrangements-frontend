@@ -18,6 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.BusinessAddressFormProvider
+import helpers.JourneyHelpers.redirectToSummary
 import javax.inject.Inject
 import models.{Country, Mode}
 import navigation.Navigator
@@ -97,11 +98,20 @@ class BusinessAddressController @Inject()(override val messagesApi: MessagesApi,
 
           renderer.render("businessAddress.njk", json).map(BadRequest(_))
         },
-        value =>
+        value => {
+          val redirectUsers = redirectToSummary(value, BusinessAddressPage, mode, request.userAnswers)
+
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(BusinessAddressPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(BusinessAddressPage, mode, updatedAnswers))
+            _ <- sessionRepository.set(updatedAnswers)
+          } yield {
+            if (redirectUsers) {
+              Redirect(routes.CheckYourAnswersController.onPageLoad())
+            } else {
+              Redirect(navigator.nextPage(BusinessAddressPage, mode, updatedAnswers))
+            }
+          }
+        }
       )
   }
 }

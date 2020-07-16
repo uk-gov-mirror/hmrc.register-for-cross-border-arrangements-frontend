@@ -20,13 +20,14 @@ import base.SpecBase
 import config.FrontendAppConfig
 import forms.ContactTelephoneNumberFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{CheckMode, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.ContactTelephoneNumberPage
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -40,12 +41,14 @@ import scala.concurrent.Future
 
 class ContactTelephoneNumberControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
+  val mockSessionRepository: SessionRepository = mock[SessionRepository]
+  val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
   val formProvider = new ContactTelephoneNumberFormProvider()
-  val form = formProvider()
+  val form: Form[String] = formProvider()
 
-  lazy val contactTelephoneNumberRoute = routes.ContactTelephoneNumberController.onPageLoad(NormalMode).url
+  lazy val contactTelephoneNumberRoute: String = routes.ContactTelephoneNumberController.onPageLoad(NormalMode).url
 
   "ContactTelephoneNumber Controller" - {
 
@@ -110,9 +113,6 @@ class ContactTelephoneNumberControllerSpec extends SpecBase with MockitoSugar wi
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val mockSessionRepository = mock[SessionRepository]
-      val mockFrontendAppConfig = mock[FrontendAppConfig]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
@@ -174,6 +174,33 @@ class ContactTelephoneNumberControllerSpec extends SpecBase with MockitoSugar wi
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
+
+      application.stop()
+    }
+
+    "must redirect to the Check your answers page when user doesn't change their answer" in {
+
+      val contactTelephoneNumberRoute: String = routes.ContactTelephoneNumberController.onPageLoad(CheckMode).url
+      val userAnswers = UserAnswers(userAnswersId).set(ContactTelephoneNumberPage, "07540000000").success.value
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute, appConfig = mockFrontendAppConfig)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      val request =
+        FakeRequest(POST, contactTelephoneNumberRoute)
+          .withFormUrlEncodedBody(("telephoneNumber", "07540000000"))
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual routes.CheckYourAnswersController.onPageLoad().url
 
       application.stop()
     }

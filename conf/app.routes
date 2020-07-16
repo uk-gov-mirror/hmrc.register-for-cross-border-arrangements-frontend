@@ -37,10 +37,10 @@ POST       /register/national-insurance                 controllers.NinoControll
 GET        /register/change-national-insurance          controllers.NinoController.onPageLoad(mode: Mode = CheckMode)
 POST       /register/change-national-insurance          controllers.NinoController.onSubmit(mode: Mode = CheckMode)
 
-GET        /register/name            controllers.NameController.onPageLoad(mode: Mode = NormalMode)
-POST       /register/name            controllers.NameController.onSubmit(mode: Mode = NormalMode)
-GET        /register/change-name                                  controllers.NameController.onPageLoad(mode: Mode = CheckMode)
-POST       /register/change-name                                  controllers.NameController.onSubmit(mode: Mode = CheckMode)
+GET        /register/name                               controllers.NameController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/name                               controllers.NameController.onSubmit(mode: Mode = NormalMode)
+GET        /register/change-name                        controllers.NameController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/change-name                        controllers.NameController.onSubmit(mode: Mode = CheckMode)
 
 GET        /register/business/with-id/type              controllers.BusinessTypeController.onPageLoad(mode: Mode = NormalMode)
 POST       /register/business/with-id/type              controllers.BusinessTypeController.onSubmit(mode: Mode = NormalMode)
@@ -83,8 +83,7 @@ POST       /changePostCode                  controllers.PostCodeController.onSub
 
 GET        /register/business-identity-not-confirmed      controllers.BusinessNotConfirmedController.onPageLoad()
 GET        /register/individual-identity-not-confirmed    controllers.IndividualNotConfirmedController.onPageLoad()
-GET        /register/identity-confirmed                   controllers.IdentityConfirmedController.onPageLoad(mode: Mode = NormalMode)
-GET        /register/check-identity-confirmed             controllers.IdentityConfirmedController.onPageLoad(mode: Mode = CheckMode)
+GET        /register/identity-confirmed                   controllers.IdentityConfirmedController.onPageLoad()
 
 GET        /register/without-id/your-name           controllers.NonUkNameController.onPageLoad(mode: Mode = NormalMode)
 POST       /register/without-id/your-name           controllers.NonUkNameController.onSubmit(mode: Mode = NormalMode)

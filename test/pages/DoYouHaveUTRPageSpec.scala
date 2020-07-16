@@ -19,7 +19,7 @@ package pages
 import java.time.LocalDate
 
 import models.RegistrationType.Individual
-import models.{Address, BusinessType, Country, Name, UniqueTaxpayerReference, UserAnswers}
+import models.{Address, BusinessType, Country, Name, SecondaryContactPreference, UniqueTaxpayerReference, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 import uk.gov.hmrc.domain.Generator
@@ -62,6 +62,12 @@ class DoYouHaveUTRPageSpec extends PageBehaviours {
             .success.value
             .set(WhatIsYourAddressUkPage, address)
             .success.value
+            .set(ContactEmailAddressPage, "email@email.com")
+            .success.value
+            .set(TelephoneNumberQuestionPage, true)
+            .success.value
+            .set(ContactTelephoneNumberPage, "07888888888")
+            .success.value
             .set(DoYouHaveUTRPage, true)
             .success.value
 
@@ -76,6 +82,9 @@ class DoYouHaveUTRPageSpec extends PageBehaviours {
           result.get(SelectAddressPage) must not be defined
           result.get(WhatIsYourAddressPage) must not be defined
           result.get(WhatIsYourAddressUkPage) must not be defined
+          result.get(ContactEmailAddressPage) must not be defined
+          result.get(TelephoneNumberQuestionPage) must not be defined
+          result.get(ContactTelephoneNumberPage) must not be defined
       }
     }
 
@@ -106,6 +115,24 @@ class DoYouHaveUTRPageSpec extends PageBehaviours {
             .success.value
             .set(ConfirmBusinessPage, true)
             .success.value
+            .set(ContactNamePage, Name("First name", "Second name"))
+            .success.value
+            .set(ContactEmailAddressPage, "email@email.com")
+            .success.value
+            .set(TelephoneNumberQuestionPage, true)
+            .success.value
+            .set(ContactTelephoneNumberPage, "07888888888")
+            .success.value
+            .set(HaveSecondContactPage, true)
+            .success.value
+            .set(SecondaryContactNamePage, "Name")
+            .success.value
+            .set(SecondaryContactPreferencePage, SecondaryContactPreference.values.toSet)
+            .success.value
+            .set(SecondaryContactEmailAddressPage, "email@email.com")
+            .success.value
+            .set(SecondaryContactTelephoneNumberPage, "07888888888")
+            .success.value
             .set(DoYouHaveUTRPage, false)
             .success.value
 
@@ -114,6 +141,15 @@ class DoYouHaveUTRPageSpec extends PageBehaviours {
           result.get(SelfAssessmentUTRPage) must not be defined
           result.get(BusinessNamePage) must not be defined
           result.get(ConfirmBusinessPage) must not be defined
+          result.get(ContactNamePage) must not be defined
+          result.get(ContactEmailAddressPage) must not be defined
+          result.get(TelephoneNumberQuestionPage) must not be defined
+          result.get(ContactTelephoneNumberPage) must not be defined
+          result.get(HaveSecondContactPage) must not be defined
+          result.get(SecondaryContactNamePage) must not be defined
+          result.get(SecondaryContactPreferencePage) must not be defined
+          result.get(SecondaryContactEmailAddressPage) must not be defined
+          result.get(SecondaryContactTelephoneNumberPage) must not be defined
       }
     }
   }

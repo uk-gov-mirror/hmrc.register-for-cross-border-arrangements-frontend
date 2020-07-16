@@ -20,7 +20,7 @@ import base.SpecBase
 import config.FrontendAppConfig
 import forms.NamePageFormProvider
 import matchers.JsonMatchers
-import models.{CheckMode, Name, NormalMode, UserAnswers}
+import models.{Name, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -161,34 +161,6 @@ class NameControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport
 
       templateCaptor.getValue mustEqual "name.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
-    }
-
-    "must redirect to the Check your answers page when users doesn't change their answer" in {
-
-      val namePageRoute: String = routes.NameController.onPageLoad(CheckMode).url
-      val userAnswers = UserAnswers(userAnswersId).set(NamePage, Name("Mel", "Brooks")).success.value
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute, appConfig = mockFrontendAppConfig)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      val request =
-        FakeRequest(POST, namePageRoute)
-          .withFormUrlEncodedBody(("firstName", "Mel"),
-            ("secondName", "Brooks"))
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual routes.CheckYourAnswersController.onPageLoad().url
 
       application.stop()
     }

@@ -41,20 +41,20 @@ class Navigator @Inject()(appConfig: FrontendAppConfig) {
     case NamePage => _ => Some(routes.DateOfBirthController.onPageLoad(NormalMode))
     case BusinessNamePage => _ => Some(routes.BusinessMatchingController.matchBusiness())
     case SoleTraderNamePage => _ => Some(routes.BusinessMatchingController.matchBusiness())
-    case ConfirmBusinessPage => confirmBusinessRoutes(NormalMode)
+    case ConfirmBusinessPage => confirmBusinessRoutes
     case DateOfBirthPage => dateOfBirthRoutes(NormalMode)
     case DoYouLiveInTheUKPage => doYouLiveInTheUKRoutes(NormalMode)
     case IndividualUKPostcodePage => _ => Some(routes.SelectAddressController.onPageLoad(NormalMode))
     case SelectAddressPage => _ => Some(routes.ContactEmailAddressController.onPageLoad(NormalMode))
     case NonUkNamePage => _ => Some(routes.DateOfBirthController.onPageLoad(NormalMode))
-    case BusinessAddressPage => _ =>   Some(routes.ContactNameController.onPageLoad(NormalMode))
+    case BusinessAddressPage => _ => Some(routes.ContactNameController.onPageLoad(NormalMode))
     case BusinessWithoutIDNamePage => _ => Some(routes.BusinessAddressController.onPageLoad(NormalMode))
     case WhatIsYourAddressUkPage => _ => Some(routes.ContactEmailAddressController.onPageLoad(NormalMode))
     case WhatIsYourAddressPage => _ => Some(routes.ContactEmailAddressController.onPageLoad(NormalMode))
     case ContactNamePage => _ => Some(routes.ContactEmailAddressController.onPageLoad(NormalMode))
     case TelephoneNumberQuestionPage => telephoneNumberQuestionRoutes(NormalMode)
     case ContactEmailAddressPage => _ => Some(routes.TelephoneNumberQuestionController.onPageLoad(NormalMode))
-    case ContactTelephoneNumberPage => contactTelephoneNumberRoutes
+    case ContactTelephoneNumberPage => contactTelephoneNumberRoutes(NormalMode)
     case HaveSecondContactPage => haveSecondContactRoutes(NormalMode)
     case SecondaryContactNamePage => _ => Some(routes.SecondaryContactPreferenceController.onPageLoad(NormalMode))
     case SecondaryContactPreferencePage => secondaryContactPreferenceRoutes(NormalMode)
@@ -76,18 +76,18 @@ class Navigator @Inject()(appConfig: FrontendAppConfig) {
     case WhatIsYourAddressPage => _ => Some(routes.ContactEmailAddressController.onPageLoad(CheckMode))
     case IndividualUKPostcodePage => _ => Some(routes.SelectAddressController.onPageLoad(CheckMode))
     case WhatIsYourAddressUkPage => _ => Some(routes.ContactEmailAddressController.onPageLoad(CheckMode))
-    case SelectAddressPage => _ => Some(routes.CheckYourAnswersController.onPageLoad())
+    case SelectAddressPage => _ => Some(routes.ContactEmailAddressController.onPageLoad(CheckMode))
     case BusinessTypePage => businessTypeRoutes(CheckMode)
     case CorporationTaxUTRPage => businessNameRoutes(CheckMode)
     case SelfAssessmentUTRPage => businessNameRoutes(CheckMode)
     case BusinessNamePage => _ => Some(routes.BusinessMatchingController.matchBusiness())
     case SoleTraderNamePage => _ => Some(routes.BusinessMatchingController.matchBusiness())
-    case ConfirmBusinessPage => confirmBusinessRoutes(CheckMode)
-    case BusinessAddressPage => _ => Some(routes.CheckYourAnswersController.onPageLoad())
-    case ContactNamePage => _ => Some(routes.CheckYourAnswersController.onPageLoad())
-    case ContactEmailAddressPage => _ => Some(routes.CheckYourAnswersController.onPageLoad())
+    case ConfirmBusinessPage => confirmBusinessRoutes
+    case BusinessAddressPage => _ => Some(routes.ContactNameController.onPageLoad(CheckMode))
+    case ContactNamePage => _ => Some(routes.ContactEmailAddressController.onPageLoad(CheckMode))
+    case ContactEmailAddressPage => _ => Some(routes.TelephoneNumberQuestionController.onPageLoad(CheckMode))
     case TelephoneNumberQuestionPage => telephoneNumberQuestionRoutes(CheckMode)
-    case ContactTelephoneNumberPage => _ => Some(routes.CheckYourAnswersController.onPageLoad())
+    case ContactTelephoneNumberPage => contactTelephoneNumberRoutes(CheckMode)
     case HaveSecondContactPage => haveSecondContactRoutes(CheckMode)
     case SecondaryContactNamePage => _ => Some(routes.SecondaryContactPreferenceController.onPageLoad(CheckMode))
     case SecondaryContactPreferencePage => secondaryContactPreferenceRoutes(CheckMode)
@@ -112,9 +112,9 @@ class Navigator @Inject()(appConfig: FrontendAppConfig) {
     }
   }
 
-  private def confirmBusinessRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
+  private def confirmBusinessRoutes(ua: UserAnswers): Option[Call] =
     ua.get(ConfirmBusinessPage) map {
-      case true  => routes.IdentityConfirmedController.onPageLoad(mode)
+      case true  => routes.IdentityConfirmedController.onPageLoad()
       case false  => routes.BusinessNotConfirmedController.onPageLoad()
     }
 
@@ -171,9 +171,9 @@ class Navigator @Inject()(appConfig: FrontendAppConfig) {
         routes.SecondaryContactEmailAddressController.onPageLoad(mode)
     }
 
-  private def contactTelephoneNumberRoutes(ua: UserAnswers): Option[Call] = {
+  private def contactTelephoneNumberRoutes(mode: Mode)(ua: UserAnswers): Option[Call] = {
     if (isOrganisationJourney(ua)) {
-      Some(routes.HaveSecondContactController.onPageLoad(NormalMode))
+      Some(routes.HaveSecondContactController.onPageLoad(mode))
     } else {
       Some(routes.CheckYourAnswersController.onPageLoad())
     }

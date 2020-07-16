@@ -18,7 +18,7 @@ package controllers
 
 import controllers.actions._
 import javax.inject.Inject
-import models.{BusinessType, CheckMode, Mode, NormalMode}
+import models.{BusinessType, NormalMode}
 import pages.BusinessTypePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -37,13 +37,12 @@ class IdentityConfirmedController @Inject()(
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       val nextPage: String = request.userAnswers.get(BusinessTypePage) match {
         case Some(BusinessType.NotSpecified) => routes.ContactEmailAddressController.onPageLoad(NormalMode).url
         case Some(_) => routes.ContactNameController.onPageLoad(NormalMode).url
-        case None if mode == CheckMode => routes.CheckYourAnswersController.onPageLoad().url
         case None => routes.ContactEmailAddressController.onPageLoad(NormalMode).url
       }
 

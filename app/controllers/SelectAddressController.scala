@@ -19,6 +19,7 @@ package controllers
 import connectors.AddressLookupConnector
 import controllers.actions._
 import forms.SelectAddressFormProvider
+import helpers.JourneyHelpers.redirectToSummary
 import javax.inject.Inject
 import models.{AddressLookup, Mode}
 import navigation.Navigator
@@ -109,11 +110,20 @@ class SelectAddressController @Inject()(
 
               renderer.render("selectAddress.njk", json).map(BadRequest(_))
             },
-            value =>
+            value => {
+              val redirectUsers = redirectToSummary(value, SelectAddressPage, mode, request.userAnswers)
+
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(SelectAddressPage, value))
-                _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(SelectAddressPage, mode, updatedAnswers))
+                _ <- sessionRepository.set(updatedAnswers)
+              } yield {
+                if (redirectUsers) {
+                  Redirect(routes.CheckYourAnswersController.onPageLoad())
+                } else {
+                  Redirect(navigator.nextPage(SelectAddressPage, mode, updatedAnswers))
+                }
+              }
+            }
           )
       } recover {
         case _: Exception => Redirect(routes.WhatIsYourAddressUkController.onPageLoad(mode))

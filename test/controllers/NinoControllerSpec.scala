@@ -20,7 +20,7 @@ import base.SpecBase
 import config.FrontendAppConfig
 import forms.NinoFormProvider
 import matchers.JsonMatchers
-import models.{CheckMode, NormalMode, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -161,34 +161,6 @@ class NinoControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport
 
       templateCaptor.getValue mustEqual "nino.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
-    }
-
-    "must redirect to the Check your answers page when user doesn't change their answer" in {
-
-      val nino = (new Generator()).nextNino
-      val ninoRoute = routes.NinoController.onPageLoad(CheckMode).url
-      val userAnswers = UserAnswers(userAnswersId).set(NinoPage, nino).success.value
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute, appConfig = mockFrontendAppConfig)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      val request =
-        FakeRequest(POST, ninoRoute)
-          .withFormUrlEncodedBody(("value", nino.nino))
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual routes.CheckYourAnswersController.onPageLoad().url
 
       application.stop()
     }
