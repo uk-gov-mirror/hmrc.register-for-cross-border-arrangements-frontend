@@ -24,24 +24,26 @@ class BusinessAddressFormProviderSpec extends StringFieldBehaviours {
   val countries = Seq(Country("valid", "AD", "Andorra"))
   val form = new BusinessAddressFormProvider()(countries)
 
+  val addressLineMaxLength = 35
+
   ".addressLine1" - {
 
     val fieldName = "addressLine1"
     val requiredKey = "businessAddress.error.addressLine1.required"
+    val invalidKey = "businessAddress.error.addressLine1.invalid"
     val lengthKey = "businessAddress.error.addressLine1.length"
-    val maxLength = 35
 
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      validAddressLine
     )
 
     behave like fieldWithMaxLength(
       form,
       fieldName,
-      maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      maxLength = addressLineMaxLength,
+      lengthError = FormError(fieldName, lengthKey)
     )
 
     behave like fieldWithNonEmptyWhitespace(
@@ -54,6 +56,13 @@ class BusinessAddressFormProviderSpec extends StringFieldBehaviours {
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
+    )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      "jjdjdj£%^&kfkf",
+      FormError(fieldName, invalidKey)
     )
   }
 
@@ -61,20 +70,20 @@ class BusinessAddressFormProviderSpec extends StringFieldBehaviours {
 
     val fieldName = "addressLine2"
     val requiredKey = "businessAddress.error.addressLine2.required"
+    val invalidKey = "businessAddress.error.addressLine2.invalid"
     val lengthKey = "businessAddress.error.addressLine2.length"
-    val maxLength = 35
 
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      validAddressLine
     )
 
     behave like fieldWithMaxLength(
       form,
       fieldName,
-      maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      maxLength = addressLineMaxLength,
+      lengthError = FormError(fieldName, lengthKey)
     )
 
     behave like fieldWithNonEmptyWhitespace(
@@ -87,6 +96,67 @@ class BusinessAddressFormProviderSpec extends StringFieldBehaviours {
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
+    )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      "jjdjdj£%^&kfkf",
+      FormError(fieldName, invalidKey)
+    )
+  }
+
+  ".addressLine3" - {
+
+    val fieldName = "addressLine3"
+    val invalidKey = "businessAddress.error.addressLine3.invalid"
+    val lengthKey = "businessAddress.error.addressLine3.length"
+
+    behave like fieldThatBindsValidData(
+      form,
+      fieldName,
+      validAddressLine
+    )
+
+    behave like fieldWithMaxLength(
+      form,
+      fieldName,
+      maxLength = addressLineMaxLength,
+      lengthError = FormError(fieldName, lengthKey)
+    )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      "jjdjdj£%^&kfkf",
+      FormError(fieldName, invalidKey)
+    )
+  }
+
+  ".addressLine4" - {
+
+    val fieldName = "addressLine4"
+    val invalidKey = "businessAddress.error.addressLine4.invalid"
+    val lengthKey = "businessAddress.error.addressLine4.length"
+
+    behave like fieldThatBindsValidData(
+      form,
+      fieldName,
+      validAddressLine
+    )
+
+    behave like fieldWithMaxLength(
+      form,
+      fieldName,
+      maxLength = addressLineMaxLength,
+      lengthError = FormError(fieldName, lengthKey)
+    )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      "jjdjdj£%^&kfkf",
+      FormError(fieldName, invalidKey)
     )
   }
 }

@@ -25,7 +25,6 @@ class NinoFormProviderSpec extends StringFieldBehaviours {
   val lengthKey = "nino.error.length"
   val maxLength = 9
   val invalidKey = "nino.error.invalid"
-  val ninoRegex = "^([ACEHJLMOPRSWXY][A-CEGHJ-NPR-TW-Z]|B[A-CEHJ-NPR-TW-Z]|G[ACEGHJ-NPR-TW-Z]|[KT][A-CEGHJ-MPR-TW-Z]|N[A-CEGHJL-NPR-SW-Z]|Z[A-CEGHJ-NPR-TW-Y])[0-9]{6}[A-D ]$"
 
   val form = new NinoFormProvider()()
 

@@ -21,21 +21,19 @@ import javax.inject.Inject
 import models.Name
 import play.api.data.Form
 import play.api.data.Forms._
+import utils.RegexConstants
 
-class SoleTraderNameFormProvider @Inject() extends Mappings {
-    val firstNameRegex = "^[a-zA-Z0-9 '&\\/]{1,35}$"
-    val lastNameRegex =  "^[a-zA-Z0-9 '&\\/]{1,35}$"
+class SoleTraderNameFormProvider @Inject() extends Mappings with RegexConstants {
 
+  private val maxLength = 35
 
   def apply(): Form[Name] =
     Form(
       mapping(
-      "firstName" -> textNonWhitespaceOnly("soleTraderName.error.firstName.required")
-        .verifying(regexp(firstNameRegex,"soleTraderName.error.firstName.invalid"))
-        .verifying(maxLength(35, "soleTraderName.error.firstName.length")),
-      "secondName" -> textNonWhitespaceOnly("soleTraderName.error.secondName.required")
-        .verifying(regexp(lastNameRegex,"soleTraderName.error.secondName.invalid"))
-        .verifying(maxLength(35, "soleTraderName.error.secondName.length"))
+      "firstName" -> validatedText("soleTraderName.error.firstName.required",
+            "soleTraderName.error.firstName.invalid", "soleTraderName.error.firstName.length", soleTraderNameRegex, maxLength),
+      "secondName" -> validatedText("soleTraderName.error.secondName.required",
+        "soleTraderName.error.secondName.invalid","soleTraderName.error.secondName.length", soleTraderNameRegex, maxLength)
       )(Name.apply)(Name.unapply)
     )
 }

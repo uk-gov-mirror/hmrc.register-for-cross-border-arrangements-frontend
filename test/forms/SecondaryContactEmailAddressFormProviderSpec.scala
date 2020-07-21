@@ -26,8 +26,6 @@ class SecondaryContactEmailAddressFormProviderSpec extends StringFieldBehaviours
   val requiredKey = "secondaryContactEmailAddress.error.required"
   val lengthKey = "secondaryContactEmailAddress.error.length"
   val invalidKey = "secondaryContactEmailAddress.error.email.invalid"
-  val emailRegex = "^(?:[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+)*)" +
-      "@(?:[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+)*)$"
   val maxLength = 254
 
   ".email" - {
@@ -37,21 +35,27 @@ class SecondaryContactEmailAddressFormProviderSpec extends StringFieldBehaviours
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      validEmailAddress
     )
 
-    behave like fieldWithMaxLengthAndInvalid(
+    behave like fieldWithMaxLength(
       form,
       fieldName,
       maxLength = maxLength,
-      invalidError = FormError(fieldName, invalidKey, Seq(emailRegex)),
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      FormError(fieldName, lengthKey)
     )
 
     behave like mandatoryField(
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
+    )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      "jjdjdj£%^&kfkf",
+      FormError(fieldName, invalidKey)
     )
   }
 }

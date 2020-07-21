@@ -21,20 +21,26 @@ import javax.inject.Inject
 import models.{Address, Country}
 import play.api.data.Form
 import play.api.data.Forms._
+import utils.RegexConstants
 
-class WhatIsYourAddressFormProvider @Inject() extends Mappings {
+class WhatIsYourAddressFormProvider @Inject() extends Mappings with RegexConstants {
 
-  val addressLineLength = 50
+  val addressLineLength = 35
+  val postCodeMaxLength = 10
 
    def apply(countryList: Seq[Country]): Form[Address] = Form(
      mapping(
-      "addressLine1" -> textNonWhitespaceOnly("whatIsYourAddress.error.addressLine1.required")
-        .verifying(maxLength(addressLineLength, "whatIsYourAddress.error.addressLine1.length")),
-      "addressLine2" -> textNonWhitespaceOnly("whatIsYourAddress.error.addressLine2.required")
-        .verifying(maxLength(addressLineLength, "whatIsYourAddress.error.addressLine2.length")),
-       "addressLine3" -> optionalText().verifying(maxLength(addressLineLength, "whatIsYourAddress.error.addressLine3.length")),
-       "addressLine4" -> optionalText().verifying(maxLength(addressLineLength, "whatIsYourAddress.error.addressLine4.length")),
-       "postCode" -> optionalText().verifying(maxLength(10,"whatIsYourAddress.error.postcode.length")),
+      "addressLine1" -> validatedText("whatIsYourAddress.error.addressLine1.required",
+        "whatIsYourAddress.error.addressLine1.invalid",
+       "whatIsYourAddress.error.addressLine1.length", apiAddressRegex, addressLineLength ),
+      "addressLine2" -> validatedText("whatIsYourAddress.error.addressLine2.required",
+       "whatIsYourAddress.error.addressLine2.invalid",
+       "whatIsYourAddress.error.addressLine2.length", apiAddressRegex, addressLineLength),
+       "addressLine3" -> validatedOptionalText("whatIsYourAddress.error.addressLine3.invalid",
+        "whatIsYourAddress.error.addressLine3.length",apiAddressRegex,addressLineLength),
+       "addressLine4" -> validatedOptionalText("whatIsYourAddress.error.addressLine4.invalid",
+        "whatIsYourAddress.error.addressLine4.length",apiAddressRegex,addressLineLength),
+       "postCode" -> optionalText().verifying(maxLength(postCodeMaxLength,"whatIsYourAddress.error.postcode.length")),
     "country" ->  text("whatIsYourAddress.error.country.required")
     .verifying("whatIsYourAddress.error.country.required", value => countryList.exists(_.code == value))
     .transform[Country](value => countryList.find(_.code == value).get, _.code)

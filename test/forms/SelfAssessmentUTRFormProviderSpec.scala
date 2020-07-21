@@ -29,31 +29,20 @@ class SelfAssessmentUTRFormProviderSpec extends StringFieldBehaviours {
     val requiredKey = "selfAssessmentUTR.error.required"
     val lengthKey = "selfAssessmentUTR.error.length"
     val invalidKey = "selfAssessmentUTR.error.invalid"
-    val utrRegex =  "^[0-9]{10}$"
 
-    val maxLength = 10
-    val minLength = 10
+    val length = 10
 
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      validUtr
     )
 
-    behave like fieldWithMaxLengthAndInvalid(
+    behave like fieldWithFixedLength(
       form,
       fieldName,
-      maxLength = maxLength,
-      invalidError = FormError(fieldName, invalidKey, Seq(utrRegex)),
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
-    )
-
-    behave like fieldWithMinLengthAndInvalid(
-      form,
-      fieldName,
-      invalidError = FormError(fieldName, invalidKey, Seq(utrRegex)),
-      minLength = minLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(minLength))
+      length,
+      lengthError = FormError(fieldName, lengthKey)
     )
 
     behave like mandatoryField(
@@ -61,5 +50,13 @@ class SelfAssessmentUTRFormProviderSpec extends StringFieldBehaviours {
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
     )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      "0123D56789",
+      FormError(fieldName, invalidKey)
+    )
+
   }
 }

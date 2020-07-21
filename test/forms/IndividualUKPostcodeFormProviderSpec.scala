@@ -24,7 +24,7 @@ class IndividualUKPostcodeFormProviderSpec extends StringFieldBehaviours {
   val requiredKey = "individualUKPostcode.error.required"
   val lengthKey = "individualUKPostcode.error.length"
   val invalidKey = "individualUKPostcode.error.invalid"
-  val regexPostCode = """^[A-Za-z]{1,2}[0-9Rr][0-9A-Za-z]?\s?[0-9][ABD-HJLNP-UW-Zabd-hjlnp-uw-z]{2}$"""
+
   val maxLength = 8
 
   val form = new IndividualUKPostcodeFormProvider()()
@@ -36,21 +36,27 @@ class IndividualUKPostcodeFormProviderSpec extends StringFieldBehaviours {
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      validPostCodes
     )
 
-    behave like fieldWithMaxLengthAndInvalid(
+    behave like fieldWithMaxLength(
       form,
       fieldName,
       maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength)),
-      invalidError = FormError(fieldName, invalidKey, Seq(regexPostCode))
+      lengthError = FormError(fieldName, lengthKey)
     )
 
     behave like mandatoryField(
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
+    )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      "456 AD4",
+      FormError(fieldName, invalidKey)
     )
   }
 }

@@ -24,8 +24,7 @@ class SecondaryContactTelephoneNumberFormProviderSpec extends StringFieldBehavio
   val requiredKey = "secondaryContactTelephoneNumber.error.required"
   val lengthKey = "secondaryContactTelephoneNumber.error.invalid"
   val invalidKey = "secondaryContactTelephoneNumber.error.invalid"
-  val maxLength = 50
-  val digitsAndWhiteSpaceOnly = """^\+?[\d\s]+$"""
+  val maxLength = 24
 
   val form = new SecondaryContactTelephoneNumberFormProvider()()
 
@@ -36,21 +35,27 @@ class SecondaryContactTelephoneNumberFormProviderSpec extends StringFieldBehavio
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      validPhoneNumber
     )
 
-    behave like fieldWithMaxLengthAndInvalid(
+    behave like fieldWithMaxLength(
       form,
       fieldName,
       maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength)),
-      invalidError = FormError(fieldName, invalidKey, Seq(digitsAndWhiteSpaceOnly))
+      lengthError = FormError(fieldName, lengthKey)
     )
 
     behave like mandatoryField(
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
+    )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      "jjdjdj£%^&kfkf",
+      FormError(fieldName, invalidKey)
     )
   }
 }

@@ -19,14 +19,15 @@ package forms
 import forms.mappings.Mappings
 import javax.inject.Inject
 import play.api.data.Form
+import utils.RegexConstants
 
-class IndividualUKPostcodeFormProvider @Inject() extends Mappings {
-  val regexPostCode = """^[A-Za-z]{1,2}[0-9Rr][0-9A-Za-z]?\s?[0-9][ABD-HJLNP-UW-Zabd-hjlnp-uw-z]{2}$"""
+class IndividualUKPostcodeFormProvider @Inject() extends Mappings with RegexConstants {
+  private val maxLength = 8
 
   def apply(): Form[String] =
     Form(
-      "value" -> text("individualUKPostcode.error.required")
-        .verifying(regexp(regexPostCode, "individualUKPostcode.error.invalid"))
-        .verifying(maxLength(8, "individualUKPostcode.error.length"))
+      "value" -> validatedText("individualUKPostcode.error.required",
+        "individualUKPostcode.error.invalid",
+        "individualUKPostcode.error.length", regexPostcode, maxLength)
     )
 }

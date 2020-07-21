@@ -24,13 +24,14 @@ class WhatIsYourAddressUkFormProviderSpec extends StringFieldBehaviours {
 
   val countries = Seq(Country("valid", "AD", "Andorra"))
   val form = new WhatIsYourAddressUkFormProvider()(countries)
+  val maxLength = 35
 
   ".addressLine1" - {
 
     val fieldName = "addressLine1"
     val requiredKey = "whatIsYourUkAddress.error.addressLine1.required"
+    val invalidKey = "whatIsYourUkAddress.error.addressLine1.invalid"
     val lengthKey = "whatIsYourUkAddress.error.addressLine1.length"
-    val maxLength = 50
 
     behave like fieldThatBindsValidData(
       form,
@@ -42,13 +43,20 @@ class WhatIsYourAddressUkFormProviderSpec extends StringFieldBehaviours {
       form,
       fieldName,
       maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      lengthError = FormError(fieldName, lengthKey)
     )
 
     behave like mandatoryField(
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
+    )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      "jjdjdj£%^&kfkf",
+      FormError(fieldName, invalidKey)
     )
   }
 
@@ -56,8 +64,8 @@ class WhatIsYourAddressUkFormProviderSpec extends StringFieldBehaviours {
 
     val fieldName = "addressLine2"
     val requiredKey = "whatIsYourUkAddress.error.addressLine2.required"
+    val invalidKey = "whatIsYourUkAddress.error.addressLine2.invalid"
     val lengthKey = "whatIsYourUkAddress.error.addressLine2.length"
-    val maxLength = 50
 
     behave like fieldThatBindsValidData(
       form,
@@ -69,13 +77,20 @@ class WhatIsYourAddressUkFormProviderSpec extends StringFieldBehaviours {
       form,
       fieldName,
       maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      lengthError = FormError(fieldName, lengthKey)
     )
 
     behave like mandatoryField(
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
+    )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      "jjdjdj£%^&kfkf",
+      FormError(fieldName, invalidKey)
     )
   }
 
@@ -84,7 +99,7 @@ class WhatIsYourAddressUkFormProviderSpec extends StringFieldBehaviours {
     val fieldName = "postCode"
     val requiredKey = "whatIsYourUkAddress.error.postcode.required"
     val invalidKey = "whatIsYourUkAddress.error.postcode.invalid"
-    val maxLength = 8
+    val postCodeMaxLength = 8
 
     behave like fieldThatBindsValidData(
       form,
@@ -95,7 +110,7 @@ class WhatIsYourAddressUkFormProviderSpec extends StringFieldBehaviours {
     behave like fieldWithValidatedRegex(
       form,
       fieldName,
-      maxLength = maxLength,
+      maxLength = postCodeMaxLength,
       invalidError = FormError(fieldName, Seq(invalidKey))
     )
 
@@ -104,5 +119,6 @@ class WhatIsYourAddressUkFormProviderSpec extends StringFieldBehaviours {
      fieldName,
      requiredError = FormError(fieldName, requiredKey)
    )
+
   }
 }

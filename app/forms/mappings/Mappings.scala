@@ -55,11 +55,20 @@ trait Mappings extends Formatters with Constraints {
                            args: Seq[String] = Seq.empty): FieldMapping[LocalDate] =
     of(new LocalDateFormatter(invalidKey, allRequiredKey, twoRequiredKey, requiredKey, args))
 
-  protected def addressPostcode(invalidKey: String = "error.invalid", requiredKey: String = "postCode.error.required"): FieldMapping[Option[String]] = {
-    of(addressPostcodeFormatter(invalidKey, requiredKey))
+  protected def addressPostcode(invalidKey: String = "error.invalid", regex: String,
+                                requiredKey: String = "postCode.error.required"): FieldMapping[Option[String]] = {
+    of(addressPostcodeFormatter(invalidKey, regex, requiredKey))
   }
 
-  protected def validatedText(requiredKey: String, invalidKey: String, lengthKey: String, regex: String, length: Int): FieldMapping[String] = {
-    of(validatedTextFormatter(requiredKey, invalidKey, lengthKey, regex, length))
+  protected def validatedText(requiredKey: String, invalidKey: String, lengthKey: String, regex: String, maxLength: Int): FieldMapping[String] = {
+    of(validatedTextFormatter(requiredKey, invalidKey, lengthKey, regex, maxLength))
+  }
+
+  protected def validatedFixedLengthText(requiredKey: String, invalidKey: String, lengthKey: String, regex: String, length: Int): FieldMapping[String] = {
+    of(validatedFixedLengthTextFormatter(requiredKey, invalidKey, lengthKey, regex, length))
+  }
+
+  protected def validatedOptionalText(invalidKey: String, lengthKey: String, regex: String, length: Int): FieldMapping[Option[String]] = {
+    of(validatedOptionalTextFormatter(invalidKey, lengthKey, regex, length))
   }
 }

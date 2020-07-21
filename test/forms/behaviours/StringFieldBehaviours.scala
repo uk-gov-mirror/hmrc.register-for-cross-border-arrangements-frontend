@@ -35,6 +35,21 @@ trait StringFieldBehaviours extends FieldBehaviours {
     }
   }
 
+  def fieldWithFixedLength(form: Form[_],
+                         fieldName: String,
+                           length: Int,
+                         lengthError: FormError): Unit = {
+
+    s"must not bind strings that are not $length characters" in {
+
+      forAll(stringsExceptSpecificLength(length) -> "longString") {
+        string =>
+          val result = form.bind(Map(fieldName -> string)).apply(fieldName)
+          result.errors shouldEqual Seq(lengthError)
+      }
+    }
+  }
+
   def fieldWithMaxLengthAndInvalid(form: Form[_],
                                    fieldName: String,
                                    maxLength: Int,

@@ -21,17 +21,18 @@ import javax.inject.Inject
 import models.UniqueTaxpayerReference
 import play.api.data.Form
 import play.api.data.Forms._
+import utils.RegexConstants
 
-class SelfAssessmentUTRFormProvider @Inject() extends Mappings {
 
-  private val utrRegex = "^[0-9]{10}$"
+class SelfAssessmentUTRFormProvider @Inject() extends Mappings with RegexConstants {
+
+  private val length = 10
 
    def apply(): Form[UniqueTaxpayerReference] = Form(
      mapping(
-      "selfAssessmentUTR" -> text("selfAssessmentUTR.error.required")
-          .verifying(regexp(utrRegex, "selfAssessmentUTR.error.invalid"))
-        .verifying(maxLength(10, "selfAssessmentUTR.error.length"))
-        .verifying(minLength(10, "selfAssessmentUTR.error.length"))
+      "selfAssessmentUTR" -> validatedFixedLengthText("selfAssessmentUTR.error.required",
+        "selfAssessmentUTR.error.invalid",
+        "selfAssessmentUTR.error.length", utrRegex, length)
     )(UniqueTaxpayerReference.apply)(UniqueTaxpayerReference.unapply)
    )
  }

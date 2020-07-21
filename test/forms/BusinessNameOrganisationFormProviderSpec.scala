@@ -24,7 +24,6 @@ class BusinessNameOrganisationFormProviderSpec extends StringFieldBehaviours {
   val requiredKey = "businessName.organisation.error.required"
   val lengthKey = "businessName.organisation.error.length"
   val invalidKey = "businessName.organisation.error.invalid"
-  val businessNameRegex = "^[a-zA-Z0-9 '&\\/]{1,105}$"
   val maxLength = 105
 
   val form = new BusinessNameOrganisationFormProvider()()
@@ -36,15 +35,14 @@ class BusinessNameOrganisationFormProviderSpec extends StringFieldBehaviours {
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      validOrganisationName
     )
 
-    behave like fieldWithMaxLengthAndInvalid(
+    behave like fieldWithMaxLength(
       form,
       fieldName,
       maxLength = maxLength,
-      invalidError = FormError(fieldName, invalidKey, Seq(businessNameRegex)),
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      lengthError = FormError(fieldName, lengthKey)
     )
 
     behave like fieldWithNonEmptyWhitespace(
@@ -57,6 +55,13 @@ class BusinessNameOrganisationFormProviderSpec extends StringFieldBehaviours {
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
+    )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      "jjdjdj£%^&kfkf",
+      FormError(fieldName, invalidKey)
     )
   }
 }

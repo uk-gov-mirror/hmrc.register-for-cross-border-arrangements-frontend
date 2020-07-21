@@ -19,14 +19,17 @@ package forms
 import forms.mappings.Mappings
 import javax.inject.Inject
 import play.api.data.Form
+import utils.RegexConstants
 
-class BusinessNamePartnershipFormProvider @Inject() extends Mappings {
-  private val nameRegex = "^[a-zA-Z0-9 '&\\/]{1,105}$"
-
+class BusinessNamePartnershipFormProvider @Inject() extends Mappings with RegexConstants {
+  private val length = 105
   def apply(): Form[String] =
     Form(
-      "value" ->  textNonWhitespaceOnly("businessName.partnership.error.required")
-        .verifying(regexp(nameRegex,"businessName.partnership.error.invalid"))
-        .verifying(maxLength(105, "businessName.partnership.error.length"))
+      "value" ->  validatedText(
+        "businessName.partnership.error.required",
+          "businessName.partnership.error.invalid",
+          "businessName.partnership.error.length",
+                    apiOrganisationNameRegex,
+                    length)
     )
 }

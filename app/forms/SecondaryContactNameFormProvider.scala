@@ -17,18 +17,18 @@
 package forms
 
 import javax.inject.Inject
-
 import forms.mappings.Mappings
 import play.api.data.Form
+import utils.RegexConstants
 
-class SecondaryContactNameFormProvider @Inject() extends Mappings {
-  private val nameRegex = """^[a-zA-Z0-9 "'&,\-\\\/]*$"""
-  private val maxLength = 50
+class SecondaryContactNameFormProvider @Inject() extends Mappings with RegexConstants {
+
+  private val maxLength = 35
 
   def apply(): Form[String] =
     Form(
-      "secondaryContactName" -> textNonWhitespaceOnly("secondaryContactName.error.required")
-        .verifying(regexp(nameRegex,"secondaryContactName.error.invalid"))
-        .verifying(maxLength(maxLength, "secondaryContactName.error.length"))
+      "secondaryContactName" -> validatedText("secondaryContactName.error.required",
+        "secondaryContactName.error.invalid",
+        "secondaryContactName.error.length", apiNameRegex, maxLength)
     )
 }

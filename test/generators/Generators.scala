@@ -21,8 +21,10 @@ import java.time.{Instant, LocalDate, ZoneOffset}
 import org.scalacheck.Arbitrary._
 import org.scalacheck.Gen._
 import org.scalacheck.{Gen, Shrink}
+import utils.RegexConstants
+import wolfendale.scalacheck.regexp.RegexpGen
 
-trait Generators extends UserAnswersGenerator with PageGenerators with ModelGenerators with UserAnswersEntryGenerators {
+trait Generators extends UserAnswersGenerator with PageGenerators with ModelGenerators with UserAnswersEntryGenerators with RegexConstants {
 
   implicit val dontShrink: Shrink[String] = Shrink.shrinkAny
 
@@ -104,6 +106,9 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
   def stringsExceptSpecificValues(excluded: Seq[String]): Gen[String] =
     nonEmptyString suchThat (!excluded.contains(_))
 
+  def stringsExceptSpecificLength(length: Int): Gen[String] =
+    nonEmptyString suchThat (_.length != length)
+
   def oneOf[T](xs: Seq[Gen[T]]): Gen[T] =
     if (xs.isEmpty) {
       throw new IllegalArgumentException("oneOf called on empty collection")
@@ -157,4 +162,17 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
       s"${word.take(length1)} $numbers $symbols"
     }
 
+  def validAddressLine: Gen[String] = RegexpGen.from(apiAddressRegex)
+
+  def validOrganisationName: Gen[String] = RegexpGen.from(apiOrganisationNameRegex)
+
+  def validPersonalName: Gen[String] = RegexpGen.from(apiNameRegex)
+
+  def validPhoneNumber: Gen[String] = RegexpGen.from(digitsAndWhiteSpaceOnly)
+
+  def validEmailAddress: Gen[String] = RegexpGen.from(emailRegex)
+
+  def validNonApiName: Gen[String] = RegexpGen.from(nonApiNameRegex)
+
+  def validUtr: Gen[String] = RegexpGen.from(utrRegex)
 }
