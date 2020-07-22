@@ -187,7 +187,7 @@ class DateOfBirthControllerSpec extends SpecBase with MockitoSugar with Nunjucks
       application.stop()
     }
 
-    "must redirect to the Check your answers page when mode is CheckMode and user is an Individual without ID" in {
+    "must redirect to the Check your answers page when user doesn't change their answer and user is an Individual without ID" in {
 
       val dateOfBirthRoute: String = routes.DateOfBirthController.onPageLoad(CheckMode).url
       val userAnswers = UserAnswers(userAnswersId)
@@ -217,7 +217,7 @@ class DateOfBirthControllerSpec extends SpecBase with MockitoSugar with Nunjucks
       application.stop()
     }
 
-    "must redirect to the next page when user doesn't change their answer and is an Individual with ID" in {
+    "must redirect to the Check your answers page when user doesn't change their answer and is an Individual with ID" in {
 
       val dateOfBirthRoute: String = routes.DateOfBirthController.onPageLoad(CheckMode).url
       val userAnswers = UserAnswers(userAnswersId)
@@ -242,7 +242,7 @@ class DateOfBirthControllerSpec extends SpecBase with MockitoSugar with Nunjucks
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual onwardRoute.url
+      redirectLocation(result).value mustEqual routes.CheckYourAnswersController.onPageLoad().url
 
       application.stop()
     }

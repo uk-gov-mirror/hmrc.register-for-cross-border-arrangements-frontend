@@ -39,21 +39,10 @@ case object RegistrationTypePage extends QuestionPage[RegistrationType] {
           .flatMap(_.remove(DoYouLiveInTheUKPage))
           .flatMap(_.remove(WhatIsYourAddressUkPage))
           .flatMap(_.remove(WhatIsYourAddressPage))
-          .flatMap(_.remove(ContactEmailAddressPage))
-          .flatMap(_.remove(TelephoneNumberQuestionPage))
-          .flatMap(_.remove(ContactTelephoneNumberPage))
       case Some(Individual) =>
         userAnswers.remove(BusinessWithoutIDNamePage)
           .flatMap(_.remove(BusinessAddressPage))
           .flatMap(_.remove(ContactNamePage))
-          .flatMap(_.remove(ContactEmailAddressPage))
-          .flatMap(_.remove(TelephoneNumberQuestionPage))
-          .flatMap(_.remove(ContactTelephoneNumberPage))
-          .flatMap(_.remove(HaveSecondContactPage))
-          .flatMap(_.remove(SecondaryContactNamePage))
-          .flatMap(_.remove(SecondaryContactPreferencePage))
-          .flatMap(_.remove(SecondaryContactEmailAddressPage))
-          .flatMap(_.remove(SecondaryContactTelephoneNumberPage))
       case _ => super.cleanup(value, userAnswers)
     }
 }

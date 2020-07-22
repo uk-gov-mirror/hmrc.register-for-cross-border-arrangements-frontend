@@ -28,7 +28,7 @@ case object DoYouHaveUTRPage extends QuestionPage[Boolean] {
   override def toString: String = "doYouHaveUTR"
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
-  //Not removing BusinessAddressPage as the page is used in both journeys
+  //Not removing contact details and BusinessAddressPage as this page is used in both journeys
     value match {
       case Some(true) =>
         userAnswers.remove(RegistrationTypePage)
@@ -43,9 +43,6 @@ case object DoYouHaveUTRPage extends QuestionPage[Boolean] {
         .flatMap(_.remove(SelectAddressPage))
         .flatMap(_.remove(WhatIsYourAddressUkPage))
         .flatMap(_.remove(WhatIsYourAddressPage))
-        .flatMap(_.remove(ContactEmailAddressPage))
-        .flatMap(_.remove(TelephoneNumberQuestionPage))
-        .flatMap(_.remove(ContactTelephoneNumberPage))
       case Some(false) =>
         userAnswers.remove(BusinessTypePage)
           .flatMap(_.remove(CorporationTaxUTRPage))
@@ -53,14 +50,6 @@ case object DoYouHaveUTRPage extends QuestionPage[Boolean] {
           .flatMap(_.remove(BusinessNamePage))
           .flatMap(_.remove(ConfirmBusinessPage))
           .flatMap(_.remove(ContactNamePage))
-          .flatMap(_.remove(ContactEmailAddressPage))
-          .flatMap(_.remove(TelephoneNumberQuestionPage))
-          .flatMap(_.remove(ContactTelephoneNumberPage))
-          .flatMap(_.remove(HaveSecondContactPage))
-          .flatMap(_.remove(SecondaryContactNamePage))
-          .flatMap(_.remove(SecondaryContactPreferencePage))
-          .flatMap(_.remove(SecondaryContactEmailAddressPage))
-          .flatMap(_.remove(SecondaryContactTelephoneNumberPage))
       case None => super.cleanup(value, userAnswers)
     }
 
