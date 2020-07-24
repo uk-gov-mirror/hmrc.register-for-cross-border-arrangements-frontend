@@ -20,9 +20,9 @@ import controllers.actions._
 import forms.DateOfBirthFormProvider
 import helpers.JourneyHelpers.redirectToSummary
 import javax.inject.Inject
-import models.Mode
+import models.{CheckMode, Mode}
 import navigation.Navigator
-import pages.DateOfBirthPage
+import pages.{DateOfBirthPage, DoYouHaveANationalInsuranceNumberPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -83,13 +83,19 @@ class DateOfBirthController @Inject()(
           renderer.render("dateOfBirth.njk", json).map(BadRequest(_))
         },
         value => {
-          val redirectUsers = redirectToSummary(value, DateOfBirthPage, mode, request.userAnswers)
+          val redirectToSummary =
+            (request.userAnswers.get(DoYouHaveANationalInsuranceNumberPage),
+              request.userAnswers.get(DateOfBirthPage)) match {
+              case (Some(false), Some(_)) if mode == CheckMode => true //Individual without ID
+              case (Some(true), Some(ans)) if (ans == value) && (mode == CheckMode) => false //Individual with ID
+              case _ => false //Normal mode journey
+            }
 
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(DateOfBirthPage, value))
             _              <- sessionRepository.set(updatedAnswers)
           } yield {
-            if (redirectUsers) {
+            if (redirectToSummary) {
               Redirect(routes.CheckYourAnswersController.onPageLoad())
             } else {
               Redirect(navigator.nextPage(DateOfBirthPage, mode, updatedAnswers))
