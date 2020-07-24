@@ -27,20 +27,20 @@ POST       /register/have-utr                     controllers.DoYouHaveUTRContro
 GET        /register/change-have-utr              controllers.DoYouHaveUTRController.onPageLoad(mode: Mode = CheckMode)
 POST       /register/change-have-utr              controllers.DoYouHaveUTRController.onSubmit(mode: Mode = CheckMode)
 
-GET        /register/have-national-insurance-number     controllers.DoYouHaveANationalInsuranceNumberController.onPageLoad(mode: Mode = NormalMode)
-POST       /register/have-national-insurance-number     controllers.DoYouHaveANationalInsuranceNumberController.onSubmit(mode: Mode = NormalMode)
-GET        /changeDoYouHaveANationalInsuranceNumber     controllers.DoYouHaveANationalInsuranceNumberController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeDoYouHaveANationalInsuranceNumber     controllers.DoYouHaveANationalInsuranceNumberController.onSubmit(mode: Mode = CheckMode)
+GET        /register/have-national-insurance-number            controllers.DoYouHaveANationalInsuranceNumberController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/have-national-insurance-number            controllers.DoYouHaveANationalInsuranceNumberController.onSubmit(mode: Mode = NormalMode)
+GET        /register/change-have-national-insurance-number     controllers.DoYouHaveANationalInsuranceNumberController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/change-have-national-insurance-number     controllers.DoYouHaveANationalInsuranceNumberController.onSubmit(mode: Mode = CheckMode)
 
 GET        /register/national-insurance                 controllers.NinoController.onPageLoad(mode: Mode = NormalMode)
 POST       /register/national-insurance                 controllers.NinoController.onSubmit(mode: Mode = NormalMode)
-GET        /changeNino                                  controllers.NinoController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeNino                                  controllers.NinoController.onSubmit(mode: Mode = CheckMode)
+GET        /register/change-national-insurance          controllers.NinoController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/change-national-insurance          controllers.NinoController.onSubmit(mode: Mode = CheckMode)
 
-GET        /register/name            controllers.NameController.onPageLoad(mode: Mode = NormalMode)
-POST       /register/name            controllers.NameController.onSubmit(mode: Mode = NormalMode)
-GET        /register/change-name                                  controllers.NameController.onPageLoad(mode: Mode = CheckMode)
-POST       /register/change-name                                  controllers.NameController.onSubmit(mode: Mode = CheckMode)
+GET        /register/name                               controllers.NameController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/name                               controllers.NameController.onSubmit(mode: Mode = NormalMode)
+GET        /register/change-name                        controllers.NameController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/change-name                        controllers.NameController.onSubmit(mode: Mode = CheckMode)
 
 GET        /register/business/with-id/type              controllers.BusinessTypeController.onPageLoad(mode: Mode = NormalMode)
 POST       /register/business/with-id/type              controllers.BusinessTypeController.onSubmit(mode: Mode = NormalMode)
@@ -54,10 +54,11 @@ POST       /register/business/with-id/change-Postcode   controllers.PostCodeCont
 
 GET        /register/date-of-birth                      controllers.DateOfBirthController.onPageLoad(mode: Mode = NormalMode)
 POST       /register/date-of-birth                      controllers.DateOfBirthController.onSubmit(mode: Mode = NormalMode)
-GET        /changeDateOfBirth                           controllers.DateOfBirthController.onPageLoad(mode: Mode = CheckMode)
-POST       /changeDateOfBirth                           controllers.DateOfBirthController.onSubmit(mode: Mode = CheckMode)
+GET        /register/change-date-of-birth               controllers.DateOfBirthController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/change-date-of-birth               controllers.DateOfBirthController.onSubmit(mode: Mode = CheckMode)
 
 GET        /match-individual                            controllers.BusinessMatchingController.matchIndividual(mode: Mode = NormalMode)
+GET        /check-match-individual                      controllers.BusinessMatchingController.matchIndividual(mode: Mode = CheckMode)
 GET        /match-business                              controllers.BusinessMatchingController.matchBusiness(mode: Mode = NormalMode)
 
 GET        /register/business-type                        controllers.BusinessTypeController.onPageLoad(mode: Mode = NormalMode)

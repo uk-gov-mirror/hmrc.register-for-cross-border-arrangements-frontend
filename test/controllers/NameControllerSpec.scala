@@ -27,6 +27,7 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.NamePage
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -40,12 +41,14 @@ import scala.concurrent.Future
 
 class NameControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
+  val mockSessionRepository: SessionRepository = mock[SessionRepository]
+  val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
   val formProvider = new NamePageFormProvider()
-  val form = formProvider()
+  val form: Form[Name] = formProvider()
 
-  lazy val namePageRoute = routes.NameController.onPageLoad(NormalMode).url
+  lazy val namePageRoute: String = routes.NameController.onPageLoad(NormalMode).url
 
   "NamePage Controller" - {
 
@@ -110,9 +113,6 @@ class NameControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport
     }
 
     "must redirect to the next page when valid data is submitted" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-      val mockFrontendAppConfig = mock[FrontendAppConfig]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 

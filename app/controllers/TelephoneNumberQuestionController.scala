@@ -20,7 +20,7 @@ import controllers.actions._
 import forms.TelephoneNumberQuestionFormProvider
 import helpers.JourneyHelpers._
 import javax.inject.Inject
-import models.{Mode, NormalMode}
+import models.{CheckMode, Mode, NormalMode}
 import navigation.Navigator
 import pages.{ContactNamePage, TelephoneNumberQuestionPage}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
@@ -104,11 +104,24 @@ class TelephoneNumberQuestionController @Inject()(
 
           renderer.render("telephoneNumberQuestion.njk", json).map(BadRequest(_))
         },
-        value =>
+        value => {
+          val redirectToSummary = request.userAnswers.get(TelephoneNumberQuestionPage) match {
+            case Some(ans) if (ans == value) && (mode == CheckMode) => true
+            case Some(_) if !value && (mode == CheckMode) => true
+            case _ => false
+          }
+
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(TelephoneNumberQuestionPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(TelephoneNumberQuestionPage, mode, updatedAnswers))
+          } yield {
+            if (redirectToSummary) {
+              Redirect(routes.CheckYourAnswersController.onPageLoad())
+            } else {
+              Redirect(navigator.nextPage(TelephoneNumberQuestionPage, mode, updatedAnswers))
+            }
+          }
+        }
       )
   }
 }

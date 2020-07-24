@@ -16,18 +16,18 @@
 
 package controllers
 
-import config.FrontendAppConfig
 import connectors.AddressLookupConnector
 import controllers.actions._
 import forms.SelectAddressFormProvider
+import helpers.JourneyHelpers.redirectToSummary
 import javax.inject.Inject
-import models.{AddressLookup, Mode, NormalMode}
+import models.{AddressLookup, Mode}
 import navigation.Navigator
 import pages.{IndividualUKPostcodePage, SelectAddressPage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.controller.FrontendBaseController
@@ -44,7 +44,6 @@ class SelectAddressController @Inject()(
     requireData: DataRequiredAction,
     formProvider: SelectAddressFormProvider,
     addressLookupConnector: AddressLookupConnector,
-    appConfig: FrontendAppConfig,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
@@ -53,14 +52,14 @@ class SelectAddressController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-    val manualAddressURL: String = routes.WhatIsYourAddressUkController.onPageLoad(NormalMode).url
+    val manualAddressURL: String = routes.WhatIsYourAddressUkController.onPageLoad(mode).url
     val postCode = request.userAnswers.get(IndividualUKPostcodePage) match {
       case Some(postCode) => postCode.replaceAll(" ", "").toUpperCase
       case None => ""
     }
 
     addressLookupConnector.addressLookupByPostcode(postCode) flatMap {
-      case Nil => Future.successful(Redirect(routes.WhatIsYourAddressUkController.onPageLoad(NormalMode)))
+      case Nil => Future.successful(Redirect(routes.WhatIsYourAddressUkController.onPageLoad(mode)))
       case addresses =>
         val preparedForm: Form[String] = request.userAnswers.get(SelectAddressPage) match {
           case None => form
@@ -79,13 +78,13 @@ class SelectAddressController @Inject()(
 
         renderer.render("selectAddress.njk", json).map(Ok(_))
     } recover {
-      case _: Exception => Redirect(routes.WhatIsYourAddressUkController.onPageLoad(NormalMode))
+      case _: Exception => Redirect(routes.WhatIsYourAddressUkController.onPageLoad(mode))
     }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val manualAddressURL: String = routes.WhatIsYourAddressUkController.onPageLoad(NormalMode).url
+      val manualAddressURL: String = routes.WhatIsYourAddressUkController.onPageLoad(mode).url
       val postCode = request.userAnswers.get(IndividualUKPostcodePage) match {
         case Some(postCode) => postCode.replaceAll(" ", "").toUpperCase
         case None => ""
@@ -111,14 +110,23 @@ class SelectAddressController @Inject()(
 
               renderer.render("selectAddress.njk", json).map(BadRequest(_))
             },
-            value =>
+            value => {
+              val redirectUsers = redirectToSummary(value, SelectAddressPage, mode, request.userAnswers)
+
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(SelectAddressPage, value))
                 _ <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(SelectAddressPage, mode, updatedAnswers))
+              } yield {
+                if (redirectUsers) {
+                  Redirect(routes.CheckYourAnswersController.onPageLoad())
+                } else {
+                  Redirect(navigator.nextPage(SelectAddressPage, mode, updatedAnswers))
+                }
+              }
+            }
           )
       } recover {
-        case _: Exception => Redirect(routes.WhatIsYourAddressUkController.onPageLoad(NormalMode))
+        case _: Exception => Redirect(routes.WhatIsYourAddressUkController.onPageLoad(mode))
       }
   }
 

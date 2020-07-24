@@ -18,6 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.RegistrationTypeFormProvider
+import helpers.JourneyHelpers.redirectToSummary
 import javax.inject.Inject
 import models.{Mode, RegistrationType}
 import navigation.Navigator
@@ -77,11 +78,20 @@ class RegistrationTypeController @Inject()(
 
           renderer.render("registrationType.njk", json).map(BadRequest(_))
         },
-        registrationType =>
+        registrationType => {
+          val redirectUsers = redirectToSummary(registrationType, RegistrationTypePage, mode, request.userAnswers)
+
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(RegistrationTypePage, registrationType))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(RegistrationTypePage, mode, updatedAnswers))
+          } yield {
+            if (redirectUsers) {
+              Redirect(routes.CheckYourAnswersController.onPageLoad())
+            } else {
+              Redirect(navigator.nextPage(RegistrationTypePage, mode, updatedAnswers))
+            }
+          }
+        }
       )
   }
 }

@@ -20,7 +20,7 @@ import base.SpecBase
 import config.FrontendAppConfig
 import forms.ContactNameFormProvider
 import matchers.JsonMatchers
-import models.{Name, NormalMode, UserAnswers}
+import models.{CheckMode, Name, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -42,6 +42,8 @@ import scala.concurrent.Future
 class ContactNameControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
   def onwardRoute: Call = Call("GET", "/foo")
+  val mockSessionRepository: SessionRepository = mock[SessionRepository]
+  val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
   val formProvider = new ContactNameFormProvider()
   val form: Form[Name] = formProvider()
@@ -116,9 +118,6 @@ class ContactNameControllerSpec extends SpecBase with MockitoSugar with Nunjucks
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val mockSessionRepository = mock[SessionRepository]
-      val mockFrontendAppConfig = mock[FrontendAppConfig]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
@@ -165,6 +164,33 @@ class ContactNameControllerSpec extends SpecBase with MockitoSugar with Nunjucks
 
       templateCaptor.getValue mustEqual "contactName.njk"
       jsonCaptor.getValue must containJson(expectedJson)
+
+      application.stop()
+    }
+
+    "must redirect to the Check your answers page when user doesn't change their answer" in {
+
+      val contactNameRoute: String = routes.ContactNameController.onPageLoad(CheckMode).url
+      val userAnswers = UserAnswers(userAnswersId).set(ContactNamePage, Name(firstName, lastName)).success.value
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute, appConfig = mockFrontendAppConfig)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      val request =
+        FakeRequest(POST, contactNameRoute)
+          .withFormUrlEncodedBody("firstName" -> firstName, "lastName" -> lastName)
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual routes.CheckYourAnswersController.onPageLoad().url
 
       application.stop()
     }

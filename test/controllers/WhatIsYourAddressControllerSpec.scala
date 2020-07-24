@@ -21,13 +21,14 @@ import config.FrontendAppConfig
 import forms.WhatIsYourAddressFormProvider
 import matchers.JsonMatchers
 import models.Address._
-import models.{Address, Country, NormalMode, UserAnswers}
+import models.{Address, CheckMode, Country, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.WhatIsYourAddressPage
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -42,14 +43,18 @@ import scala.concurrent.Future
 
 class WhatIsYourAddressControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
+  val mockSessionRepository: SessionRepository = mock[SessionRepository]
+  val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
-  val mockCountryFactory = mock[CountryListFactory]
+  val mockCountryFactory: CountryListFactory = mock[CountryListFactory]
 
   val formProvider = new WhatIsYourAddressFormProvider()
-  val form = formProvider(Seq(Country("valid","GB","United Kingdom")))
+  val form: Form[Address] = formProvider(Seq(Country("valid","GB","United Kingdom")))
 
-  lazy val whatIsYourAddressRoute = routes.WhatIsYourAddressController.onPageLoad(NormalMode).url
+  lazy val whatIsYourAddressRoute: String = routes.WhatIsYourAddressController.onPageLoad(NormalMode).url
+  val address: Address = Address("value 1", "value 2", Some("value 3"), Some("value 4"), Some("XX9 9XX"),
+    Country("valid","GB","United Kingdom"))
 
   "WhatIsYourAddress Controller" - {
 
@@ -90,8 +95,6 @@ class WhatIsYourAddressControllerSpec extends SpecBase with MockitoSugar with Nu
 
       when(mockCountryFactory.getCountyList()).thenReturn(Some(Seq(Country("valid","GB","United Kingdom"),Country("valid","ES","Spain"))))
 
-      val address = Address("value 1","value 2",Some("value 3"),Some("value 4"),Some("XX9 9XX"),
-        Country("valid","GB","United Kingdom"))
       val userAnswers = UserAnswers(userAnswersId).set(WhatIsYourAddressPage, address).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(bind[CountryListFactory].toInstance(mockCountryFactory)).build()
@@ -129,9 +132,6 @@ class WhatIsYourAddressControllerSpec extends SpecBase with MockitoSugar with Nu
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val mockSessionRepository = mock[SessionRepository]
-      val mockFrontendAppConfig = mock[FrontendAppConfig]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
@@ -146,7 +146,7 @@ class WhatIsYourAddressControllerSpec extends SpecBase with MockitoSugar with Nu
       val request =
         FakeRequest(POST, whatIsYourAddressRoute)
           .withFormUrlEncodedBody(("addressLine1", "value 1"), ("addressLine2", "value 2"),("addressLine3", "value 3"), ("addressLine4", "value 4"),
-            ("postcode", "XX9 9XX"),("country", "GB"))
+            ("postCode", "XX9 9XX"),("country", "GB"))
 
       val result = route(application, request).value
 
@@ -183,6 +183,42 @@ class WhatIsYourAddressControllerSpec extends SpecBase with MockitoSugar with Nu
       jsonCaptor.getValue must containJson(expectedJson)
 
        application.stop()
+    }
+
+    "must redirect to the Check your answers page when user doesn't change their answer" in {
+
+      val whatIsYourAddressRoute: String = routes.WhatIsYourAddressController.onPageLoad(CheckMode).url
+      val userAnswers = UserAnswers(userAnswersId).set(WhatIsYourAddressPage, address).success.value
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute, appConfig = mockFrontendAppConfig)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+
+      val request =
+        FakeRequest(POST, whatIsYourAddressRoute)
+          .withFormUrlEncodedBody(
+            ("addressLine1", "value 1"),
+            ("addressLine2", "value 2"),
+            ("addressLine3", "value 3"),
+            ("addressLine4", "value 4"),
+            ("postCode", "XX9 9XX"),
+            ("country", "GB")
+          )
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual routes.CheckYourAnswersController.onPageLoad().url
+
+      application.stop()
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {

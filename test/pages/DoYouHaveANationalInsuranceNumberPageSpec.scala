@@ -19,8 +19,8 @@ package pages
 import java.time.LocalDate
 
 import models.{Name, UserAnswers}
-import pages.behaviours.PageBehaviours
 import org.scalacheck.Arbitrary.arbitrary
+import pages.behaviours.PageBehaviours
 import uk.gov.hmrc.domain.Generator
 
 
@@ -44,6 +44,12 @@ class DoYouHaveANationalInsuranceNumberPageSpec extends PageBehaviours {
             .set(DoYouLiveInTheUKPage, true)
             .success
             .value
+            .set(IndividualUKPostcodePage, "AA1 1AA")
+            .success
+            .value
+            .set(SelectAddressPage, "Some UK address")
+            .success
+            .value
             .set(DateOfBirthPage, LocalDate.now())
             .success
             .value
@@ -53,7 +59,9 @@ class DoYouHaveANationalInsuranceNumberPageSpec extends PageBehaviours {
 
           result.get(NonUkNamePage) must not be defined
           result.get(DoYouLiveInTheUKPage) must not be defined
-          result.get(DateOfBirthPage) must not be defined
+          result.get(IndividualUKPostcodePage) must not be defined
+          result.get(SelectAddressPage) must not be defined
+          result.get(DateOfBirthPage) mustBe defined
       }
     }
 
@@ -76,7 +84,7 @@ class DoYouHaveANationalInsuranceNumberPageSpec extends PageBehaviours {
 
           result.get(NinoPage) must not be defined
           result.get(NamePage) must not be defined
-          result.get(DateOfBirthPage) must not be defined
+          result.get(DateOfBirthPage) mustBe defined
       }
     }
   }

@@ -18,6 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.DoYouHaveANationalInsuranceNumberFormProvider
+import helpers.JourneyHelpers.redirectToSummary
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
@@ -77,11 +78,20 @@ class DoYouHaveANationalInsuranceNumberController @Inject()(
 
           renderer.render("doYouHaveANationalInsuranceNumber.njk", json).map(BadRequest(_))
         },
-        value =>
+        value => {
+          val redirectUsers = redirectToSummary(value, DoYouHaveANationalInsuranceNumberPage, mode, request.userAnswers)
+
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouHaveANationalInsuranceNumberPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(DoYouHaveANationalInsuranceNumberPage, mode, updatedAnswers))
+          } yield {
+            if(redirectUsers) {
+              Redirect(routes.CheckYourAnswersController.onPageLoad())
+            } else {
+              Redirect(navigator.nextPage(DoYouHaveANationalInsuranceNumberPage, mode, updatedAnswers))
+            }
+          }
+        }
       )
   }
 }

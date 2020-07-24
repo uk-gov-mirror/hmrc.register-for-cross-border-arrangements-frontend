@@ -27,6 +27,7 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.NinoPage
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -41,12 +42,14 @@ import scala.concurrent.Future
 
 class NinoControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
+  val mockSessionRepository: SessionRepository = mock[SessionRepository]
+  val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
   val formProvider = new NinoFormProvider()
-  val form = formProvider()
+  val form: Form[String] = formProvider()
 
-  lazy val ninoRoute = routes.NinoController.onPageLoad(NormalMode).url
+  lazy val ninoRoute: String = routes.NinoController.onPageLoad(NormalMode).url
 
   "Nino Controller" - {
 
@@ -111,8 +114,6 @@ class NinoControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport
     "must redirect to the next page when valid data is submitted" in {
 
       val nino = (new Generator()).nextNino
-      val mockSessionRepository = mock[SessionRepository]
-      val mockFrontendAppConfig = mock[FrontendAppConfig]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 

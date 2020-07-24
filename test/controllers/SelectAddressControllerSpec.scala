@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import connectors.AddressLookupConnector
 import forms.SelectAddressFormProvider
 import matchers.JsonMatchers
-import models.{AddressLookup, NormalMode, UserAnswers}
+import models.{AddressLookup, CheckMode, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -47,6 +47,8 @@ class SelectAddressControllerSpec extends SpecBase
 
   val mockAddressLookupConnector: AddressLookupConnector = mock[AddressLookupConnector]
   val mockFrontendConfig: FrontendAppConfig = mock[FrontendAppConfig]
+  val mockSessionRepository: SessionRepository = mock[SessionRepository]
+  val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
   def onwardRoute: Call = Call("GET", "/foo")
 
@@ -199,9 +201,6 @@ class SelectAddressControllerSpec extends SpecBase
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val mockSessionRepository = mock[SessionRepository]
-      val mockFrontendAppConfig = mock[FrontendAppConfig]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
       when(mockAddressLookupConnector.addressLookupByPostcode(any())(any(), any()))
         .thenReturn(Future.successful(addresses))
@@ -269,6 +268,40 @@ class SelectAddressControllerSpec extends SpecBase
 
       templateCaptor.getValue mustEqual "selectAddress.njk"
       jsonCaptor.getValue must containJson(expectedJson)
+
+      application.stop()
+    }
+
+    "must redirect to the Check your answers page when user doesn't change their answer" in {
+
+      val selectAddressRoute: String = routes.SelectAddressController.onPageLoad(CheckMode).url
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockAddressLookupConnector.addressLookupByPostcode(any())(any(), any()))
+        .thenReturn(Future.successful(addresses))
+
+      val answers = UserAnswers(userAnswersId)
+        .set(SelectAddressPage, "Address")
+        .success
+        .value
+
+      val application =
+        applicationBuilder(userAnswers = Some(answers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute, appConfig = mockFrontendAppConfig)),
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[AddressLookupConnector].toInstance(mockAddressLookupConnector)
+          ).build()
+
+      val request =
+        FakeRequest(POST, selectAddressRoute)
+          .withFormUrlEncodedBody(("value", "Address"))
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual routes.CheckYourAnswersController.onPageLoad().url
 
       application.stop()
     }

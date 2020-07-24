@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.NonUkNameFormProvider
 import javax.inject.Inject
-import models.Mode
+import models.{CheckMode, Mode}
 import navigation.Navigator
 import pages.NonUkNamePage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -75,11 +75,23 @@ class NonUkNameController @Inject()(
 
           renderer.render("nonUkName.njk", json).map(BadRequest(_))
         },
-        value =>
+        value => {
+          val redirectToSummary = request.userAnswers.get(NonUkNamePage) match {
+            case Some(_) if mode == CheckMode => true
+            case _ => false
+          }
+
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(NonUkNamePage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(NonUkNamePage, mode, updatedAnswers))
+          } yield {
+            if (redirectToSummary) {
+              Redirect(routes.CheckYourAnswersController.onPageLoad())
+            } else {
+              Redirect(navigator.nextPage(NonUkNamePage, mode, updatedAnswers))
+            }
+          }
+        }
       )
   }
 }

@@ -18,6 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.WhatIsYourAddressFormProvider
+import helpers.JourneyHelpers.redirectToSummary
 import javax.inject.Inject
 import models.{Country, Mode}
 import navigation.Navigator
@@ -100,11 +101,20 @@ class WhatIsYourAddressController @Inject()(
 
           renderer.render("whatIsYourAddress.njk", json).map(BadRequest(_))
         },
-        value =>
+        value => {
+          val redirectUsers = redirectToSummary(value, WhatIsYourAddressPage, mode, request.userAnswers)
+
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsYourAddressPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(WhatIsYourAddressPage, mode, updatedAnswers))
+          } yield {
+            if (redirectUsers) {
+              Redirect(routes.CheckYourAnswersController.onPageLoad())
+            } else {
+              Redirect(navigator.nextPage(WhatIsYourAddressPage, mode, updatedAnswers))
+            }
+          }
+        }
       )
   }
 }

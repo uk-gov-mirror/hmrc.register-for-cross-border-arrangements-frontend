@@ -18,6 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.DoYouHaveUTRFormProvider
+import helpers.JourneyHelpers.redirectToSummary
 import javax.inject.Inject
 import models.{Mode, UserAnswers}
 import navigation.Navigator
@@ -77,11 +78,23 @@ class DoYouHaveUTRController @Inject()(
 
           renderer.render("doYouHaveUTR.njk", json).map(BadRequest(_))
         },
-        value =>
+        value => {
+          val initialUserAnswers = UserAnswers(request.internalId)
+          val userAnswers = request.userAnswers.fold(initialUserAnswers)(ua => ua)
+
+          val redirectUsers = redirectToSummary(value, DoYouHaveUTRPage, mode, userAnswers)
+
           for {
-            updatedAnswers <- Future.fromTry(UserAnswers(request.internalId).set(DoYouHaveUTRPage, value))
+            updatedAnswers <- Future.fromTry(userAnswers.set(DoYouHaveUTRPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(DoYouHaveUTRPage, mode, updatedAnswers))
+          } yield {
+            if (redirectUsers) {
+              Redirect(routes.CheckYourAnswersController.onPageLoad())
+            } else {
+              Redirect(navigator.nextPage(DoYouHaveUTRPage, mode, updatedAnswers))
+            }
+          }
+        }
       )
   }
 }

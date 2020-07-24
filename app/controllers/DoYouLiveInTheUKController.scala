@@ -18,6 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.DoYouLiveInTheUKFormProvider
+import helpers.JourneyHelpers.redirectToSummary
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
@@ -77,11 +78,20 @@ class DoYouLiveInTheUKController @Inject()(
 
           renderer.render("doYouLiveInTheUK.njk", json).map(BadRequest(_))
         },
-        value =>
+        value => {
+          val redirectUsers = redirectToSummary(value, DoYouLiveInTheUKPage, mode, request.userAnswers)
+
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouLiveInTheUKPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(DoYouLiveInTheUKPage, mode, updatedAnswers))
+          } yield {
+            if (redirectUsers) {
+              Redirect(routes.CheckYourAnswersController.onPageLoad())
+            } else {
+              Redirect(navigator.nextPage(DoYouLiveInTheUKPage, mode, updatedAnswers))
+            }
+          }
+        }
       )
   }
 }

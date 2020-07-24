@@ -29,8 +29,8 @@ case object RegistrationTypePage extends QuestionPage[RegistrationType] {
   override def toString: String = "registrationType"
 
   override def cleanup(value: Option[RegistrationType], userAnswers: UserAnswers): Try[UserAnswers] =
-    (value, userAnswers.get(HaveSecondContactPage)) match {
-      case (Some(Business), _) =>
+    value match {
+      case Some(Business) =>
         userAnswers.remove(DoYouHaveANationalInsuranceNumberPage)
           .flatMap(_.remove(NinoPage))
           .flatMap(_.remove(NamePage))
@@ -39,17 +39,10 @@ case object RegistrationTypePage extends QuestionPage[RegistrationType] {
           .flatMap(_.remove(DoYouLiveInTheUKPage))
           .flatMap(_.remove(WhatIsYourAddressUkPage))
           .flatMap(_.remove(WhatIsYourAddressPage))
-      case (Some(Individual), Some(_)) =>
+      case Some(Individual) =>
         userAnswers.remove(BusinessWithoutIDNamePage)
           .flatMap(_.remove(BusinessAddressPage))
-          .flatMap(_.remove(HaveSecondContactPage))
-          .flatMap(_.remove(SecondaryContactNamePage))
-          .flatMap(_.remove(SecondaryContactPreferencePage))
-          .flatMap(_.remove(SecondaryContactEmailAddressPage))
-          .flatMap(_.remove(SecondaryContactTelephoneNumberPage))
-      case (Some(Individual), None) =>
-        userAnswers.remove(BusinessWithoutIDNamePage)
-          .flatMap(_.remove(BusinessAddressPage))
+          .flatMap(_.remove(ContactNamePage))
       case _ => super.cleanup(value, userAnswers)
     }
 }

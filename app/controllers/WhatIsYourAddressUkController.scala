@@ -18,19 +18,20 @@ package controllers
 
 import controllers.actions._
 import forms.WhatIsYourAddressUkFormProvider
+import helpers.JourneyHelpers.redirectToSummary
 import javax.inject.Inject
-import models.{Mode, Country}
+import models.Mode
 import navigation.Navigator
 import pages.WhatIsYourAddressUkPage
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 import utils.CountryListFactory
-import play.api.libs.json.{JsObject, Json}
+
 import scala.concurrent.{ExecutionContext, Future}
 
 class WhatIsYourAddressUkController @Inject()(
@@ -91,11 +92,20 @@ class WhatIsYourAddressUkController @Inject()(
 
           renderer.render("whatIsYourAddressUk.njk", json).map(BadRequest(_))
         },
-        value =>
+        value => {
+          val redirectUsers = redirectToSummary(value, WhatIsYourAddressUkPage, mode, request.userAnswers)
+
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsYourAddressUkPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(WhatIsYourAddressUkPage, mode, updatedAnswers))
+          } yield {
+            if (redirectUsers) {
+              Redirect(routes.CheckYourAnswersController.onPageLoad())
+            } else {
+              Redirect(navigator.nextPage(WhatIsYourAddressUkPage, mode, updatedAnswers))
+            }
+          }
+        }
       )
   }
 }

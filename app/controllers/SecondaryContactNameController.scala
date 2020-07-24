@@ -18,6 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.SecondaryContactNameFormProvider
+import helpers.JourneyHelpers.redirectToSummary
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
@@ -75,11 +76,20 @@ class SecondaryContactNameController @Inject()(
 
           renderer.render("secondaryContactName.njk", json).map(BadRequest(_))
         },
-        value =>
+        value => {
+          val redirectUsers = redirectToSummary(value, SecondaryContactNamePage, mode, request.userAnswers)
+
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(SecondaryContactNamePage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(SecondaryContactNamePage, mode, updatedAnswers))
+          } yield {
+            if (redirectUsers) {
+              Redirect(routes.CheckYourAnswersController.onPageLoad())
+            } else {
+              Redirect(navigator.nextPage(SecondaryContactNamePage, mode, updatedAnswers))
+            }
+          }
+        }
       )
   }
 }

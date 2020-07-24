@@ -16,19 +16,19 @@
 
 package controllers
 
-import java.time.{LocalDate, ZoneOffset}
+import java.time.LocalDate
 
 import base.SpecBase
 import config.FrontendAppConfig
 import forms.DateOfBirthFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{CheckMode, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.DateOfBirthPage
+import pages.{DateOfBirthPage, DoYouHaveANationalInsuranceNumberPage}
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded, Call}
@@ -45,19 +45,21 @@ class DateOfBirthControllerSpec extends SpecBase with MockitoSugar with Nunjucks
   val formProvider = new DateOfBirthFormProvider()
   private def form = formProvider()
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
+  val mockSessionRepository: SessionRepository = mock[SessionRepository]
+  val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
-  val validAnswer = LocalDate.now().minusDays(1)
+  val validAnswer: LocalDate = LocalDate.now().minusDays(1)
 
-  lazy val dateOfBirthRoute = routes.DateOfBirthController.onPageLoad(NormalMode).url
+  lazy val dateOfBirthRoute: String = routes.DateOfBirthController.onPageLoad(NormalMode).url
 
-  override val emptyUserAnswers = UserAnswers(userAnswersId)
+  override val emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId)
 
   def getRequest(): FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest(GET, dateOfBirthRoute)
 
-  def postRequest(): FakeRequest[AnyContentAsFormUrlEncoded] =
-    FakeRequest(POST, dateOfBirthRoute)
+  def postRequest(route: String = dateOfBirthRoute): FakeRequest[AnyContentAsFormUrlEncoded] =
+    FakeRequest(POST, route)
       .withFormUrlEncodedBody(
         "value.day"   -> validAnswer.getDayOfMonth.toString,
         "value.month" -> validAnswer.getMonthValue.toString,
@@ -135,9 +137,6 @@ class DateOfBirthControllerSpec extends SpecBase with MockitoSugar with Nunjucks
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val mockSessionRepository = mock[SessionRepository]
-      val mockFrontendAppConfig = mock[FrontendAppConfig]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
@@ -148,7 +147,7 @@ class DateOfBirthControllerSpec extends SpecBase with MockitoSugar with Nunjucks
           )
           .build()
 
-      val result = route(application, postRequest).value
+      val result = route(application, postRequest()).value
 
       status(result) mustEqual SEE_OTHER
 
@@ -188,6 +187,66 @@ class DateOfBirthControllerSpec extends SpecBase with MockitoSugar with Nunjucks
       application.stop()
     }
 
+    "must redirect to the Check your answers page when mode is CheckMode and user is an Individual without ID" in {
+
+      val dateOfBirthRoute: String = routes.DateOfBirthController.onPageLoad(CheckMode).url
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(DoYouHaveANationalInsuranceNumberPage, false)
+        .success
+        .value
+        .set(DateOfBirthPage, validAnswer)
+        .success
+        .value
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute, appConfig = mockFrontendAppConfig)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      val result = route(application, postRequest(dateOfBirthRoute)).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual routes.CheckYourAnswersController.onPageLoad().url
+
+      application.stop()
+    }
+
+    "must go through business matching again when user doesn't change their answer and is an Individual with ID" in {
+
+      val dateOfBirthRoute: String = routes.DateOfBirthController.onPageLoad(CheckMode).url
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(DoYouHaveANationalInsuranceNumberPage, true)
+        .success
+        .value
+        .set(DateOfBirthPage, validAnswer)
+        .success
+        .value
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute, appConfig = mockFrontendAppConfig)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      val result = route(application, postRequest(dateOfBirthRoute)).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual onwardRoute.url
+
+      application.stop()
+    }
+
     "must redirect to Session Expired for a GET if no existing data is found" in {
 
       val application = applicationBuilder(userAnswers = None).build()
@@ -204,7 +263,7 @@ class DateOfBirthControllerSpec extends SpecBase with MockitoSugar with Nunjucks
 
       val application = applicationBuilder(userAnswers = None).build()
 
-      val result = route(application, postRequest).value
+      val result = route(application, postRequest()).value
 
       status(result) mustEqual SEE_OTHER
 

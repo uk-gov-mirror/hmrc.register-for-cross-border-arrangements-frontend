@@ -20,7 +20,7 @@ import base.SpecBase
 import config.FrontendAppConfig
 import forms.TelephoneNumberQuestionFormProvider
 import matchers.JsonMatchers
-import models.{BusinessType, NormalMode, UserAnswers}
+import models.{BusinessType, CheckMode, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -42,6 +42,8 @@ import scala.concurrent.Future
 class TelephoneNumberQuestionControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
   def onwardRoute: Call = Call("GET", "/foo")
+  val mockSessionRepository: SessionRepository = mock[SessionRepository]
+  val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
   val formProvider = new TelephoneNumberQuestionFormProvider()
   val form: Form[Boolean] = formProvider()
@@ -135,9 +137,6 @@ class TelephoneNumberQuestionControllerSpec extends SpecBase with MockitoSugar w
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val mockSessionRepository = mock[SessionRepository]
-      val mockFrontendAppConfig = mock[FrontendAppConfig]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
@@ -189,6 +188,63 @@ class TelephoneNumberQuestionControllerSpec extends SpecBase with MockitoSugar w
 
       application.stop()
     }
+
+    "must redirect to the Check your answers page when user doesn't change their answer" in {
+
+      val telephoneNumberQuestionRoute: String = routes.TelephoneNumberQuestionController.onPageLoad(CheckMode).url
+      val userAnswers = UserAnswers(userAnswersId).set(TelephoneNumberQuestionPage, true).success.value
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute, appConfig = mockFrontendAppConfig)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      val request =
+        FakeRequest(POST, telephoneNumberQuestionRoute)
+          .withFormUrlEncodedBody(("confirm", "true"))
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual routes.CheckYourAnswersController.onPageLoad().url
+
+      application.stop()
+    }
+
+    "must redirect to the Check your answers page when user changes their answer from true to false" in {
+
+      val telephoneNumberQuestionRoute: String = routes.TelephoneNumberQuestionController.onPageLoad(CheckMode).url
+      val userAnswers = UserAnswers(userAnswersId).set(TelephoneNumberQuestionPage, true).success.value
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute, appConfig = mockFrontendAppConfig)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      val request =
+        FakeRequest(POST, telephoneNumberQuestionRoute)
+          .withFormUrlEncodedBody(("confirm", "false"))
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual routes.CheckYourAnswersController.onPageLoad().url
+
+      application.stop()
+    }
+
 
     "must redirect to Session Expired for a GET if no existing data is found" in {
 

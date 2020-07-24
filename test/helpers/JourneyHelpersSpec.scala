@@ -18,8 +18,8 @@ package helpers
 
 import base.SpecBase
 import helpers.JourneyHelpers._
-import models.{BusinessType, RegistrationType, UserAnswers}
-import pages.{BusinessTypePage, RegistrationTypePage}
+import models.{BusinessType, CheckMode, NormalMode, RegistrationType, UserAnswers}
+import pages.{BusinessTypePage, RegistrationTypePage, TelephoneNumberQuestionPage}
 
 class JourneyHelpersSpec extends SpecBase {
 
@@ -76,6 +76,30 @@ class JourneyHelpersSpec extends SpecBase {
         result mustBe false
       }
 
+    }
+
+    "calling redirectToSummary" - {
+      "must return true if mode is CheckMode and user answer is the same" in {
+        val userAnswers = UserAnswers(userAnswersId)
+          .set(TelephoneNumberQuestionPage, true)
+          .success
+          .value
+
+        val result = redirectToSummary(true, TelephoneNumberQuestionPage, CheckMode, userAnswers)
+
+        result mustBe true
+      }
+
+      "must return false if user answer is changed (NormalMode or CheckMode)" in {
+        val userAnswers = UserAnswers(userAnswersId)
+          .set(TelephoneNumberQuestionPage, true)
+          .success
+          .value
+
+        val result = redirectToSummary(false, TelephoneNumberQuestionPage, NormalMode, userAnswers)
+
+        result mustBe false
+      }
     }
   }
 

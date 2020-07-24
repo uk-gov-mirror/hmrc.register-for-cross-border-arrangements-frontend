@@ -18,6 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.SecondaryContactPreferenceFormProvider
+import helpers.JourneyHelpers.redirectToSummary
 import javax.inject.Inject
 import models.{Mode, NormalMode, SecondaryContactPreference}
 import navigation.Navigator
@@ -86,12 +87,20 @@ class SecondaryContactPreferenceController @Inject()(
 
           renderer.render("secondaryContactPreference.njk", json).map(BadRequest(_))
         },
-        value =>
+        value => {
+          val redirectUsers = redirectToSummary(value, SecondaryContactPreferencePage, mode, request.userAnswers)
+
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(SecondaryContactPreferencePage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield
-            Redirect(navigator.nextPage(SecondaryContactPreferencePage, mode, updatedAnswers))
+          } yield {
+            if (redirectUsers) {
+              Redirect(routes.CheckYourAnswersController.onPageLoad())
+            } else {
+              Redirect(navigator.nextPage(SecondaryContactPreferencePage, mode, updatedAnswers))
+            }
+          }
+        }
       )
   }
 }

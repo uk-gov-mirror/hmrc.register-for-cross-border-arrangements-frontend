@@ -101,11 +101,20 @@ class ContactTelephoneNumberController @Inject()(
 
           renderer.render("contactTelephoneNumber.njk", json).map(BadRequest(_))
         },
-        value =>
+        value => {
+          val redirectUsers = redirectToSummary(value, ContactTelephoneNumberPage, mode, request.userAnswers)
+
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactTelephoneNumberPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(ContactTelephoneNumberPage, mode, updatedAnswers))
+            _ <- sessionRepository.set(updatedAnswers)
+          } yield {
+            if (redirectUsers) {
+              Redirect(routes.CheckYourAnswersController.onPageLoad())
+            } else {
+              Redirect(navigator.nextPage(ContactTelephoneNumberPage, mode, updatedAnswers))
+            }
+          }
+        }
       )
   }
 }

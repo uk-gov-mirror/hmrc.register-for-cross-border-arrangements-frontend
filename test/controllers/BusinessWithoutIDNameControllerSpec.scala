@@ -20,7 +20,7 @@ import base.SpecBase
 import config.FrontendAppConfig
 import forms.BusinessWithoutIDNameFormProvider
 import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
+import models.{CheckMode, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -42,6 +42,8 @@ import scala.concurrent.Future
 class BusinessWithoutIDNameControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
   def onwardRoute: Call = Call("GET", "/foo")
+  val mockSessionRepository: SessionRepository = mock[SessionRepository]
+  val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
   val formProvider = new BusinessWithoutIDNameFormProvider()
   val form: Form[String] = formProvider()
@@ -116,9 +118,6 @@ class BusinessWithoutIDNameControllerSpec extends SpecBase with MockitoSugar wit
     }
 
     "must redirect to the next page when valid data is submitted" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-      val mockFrontendAppConfig = mock[FrontendAppConfig]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
@@ -198,6 +197,34 @@ class BusinessWithoutIDNameControllerSpec extends SpecBase with MockitoSugar wit
       jsonCaptor.getValue must containJson(expectedJson)
 
        application.stop()
+    }
+
+    "must redirect to the Check your answers page when user doesn't change their answer" in {
+
+      val businessNameRoute: String = routes.BusinessWithoutIDNameController.onPageLoad(CheckMode).url
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute, appConfig = mockFrontendAppConfig)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+
+      val request =
+        FakeRequest(POST, businessNameRoute)
+          .withFormUrlEncodedBody(("businessWithoutIDName", validBusinessName))
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual routes.CheckYourAnswersController.onPageLoad().url
+
+      application.stop()
     }
 
     "must redirect to Session Expired for a GET if no existing data is found" in {

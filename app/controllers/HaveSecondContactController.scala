@@ -18,6 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.HaveSecondContactFormProvider
+import helpers.JourneyHelpers.redirectToSummary
 import javax.inject.Inject
 import models.{Mode, NormalMode}
 import navigation.Navigator
@@ -94,11 +95,20 @@ class HaveSecondContactController @Inject()(
 
           renderer.render("haveSecondContact.njk", json).map(BadRequest(_))
         },
-        value =>
+        value => {
+          val redirectUsers = redirectToSummary(value, HaveSecondContactPage, mode, request.userAnswers)
+
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(HaveSecondContactPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(HaveSecondContactPage, mode, updatedAnswers))
+          } yield {
+            if (redirectUsers) {
+              Redirect(routes.CheckYourAnswersController.onPageLoad())
+            } else {
+              Redirect(navigator.nextPage(HaveSecondContactPage, mode, updatedAnswers))
+            }
+          }
+        }
       )
   }
 }

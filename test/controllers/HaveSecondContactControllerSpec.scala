@@ -20,13 +20,14 @@ import base.SpecBase
 import config.FrontendAppConfig
 import forms.HaveSecondContactFormProvider
 import matchers.JsonMatchers
-import models.{Name, NormalMode, UserAnswers}
+import models.{CheckMode, Name, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.{ContactNamePage, HaveSecondContactPage}
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
@@ -40,13 +41,15 @@ import scala.concurrent.Future
 
 class HaveSecondContactControllerSpec extends SpecBase with MockitoSugar with NunjucksSupport with JsonMatchers {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
+  val mockSessionRepository: SessionRepository = mock[SessionRepository]
+  val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
   val formProvider = new HaveSecondContactFormProvider()
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
 
-  lazy val haveSecondContactRoute = routes.HaveSecondContactController.onPageLoad(NormalMode).url
+  lazy val haveSecondContactRoute: String = routes.HaveSecondContactController.onPageLoad(NormalMode).url
 
   "HaveSecondContact Controller" - {
 
@@ -144,9 +147,6 @@ class HaveSecondContactControllerSpec extends SpecBase with MockitoSugar with Nu
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val mockSessionRepository = mock[SessionRepository]
-      val mockFrontendAppConfig = mock[FrontendAppConfig]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val name = Name("test", "test")
@@ -201,6 +201,42 @@ class HaveSecondContactControllerSpec extends SpecBase with MockitoSugar with Nu
 
       templateCaptor.getValue mustEqual "haveSecondContact.njk"
       jsonCaptor.getValue must containJson(expectedJson)
+
+      application.stop()
+    }
+
+    "must redirect to the Check your answers page when users doesn't change their answer" in {
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val name = Name("test", "test")
+
+      val haveSecondContactRoute: String = routes.HaveSecondContactController.onPageLoad(CheckMode).url
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(ContactNamePage, name)
+        .success
+        .value
+        .set(HaveSecondContactPage, true)
+        .success
+        .value
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute, appConfig = mockFrontendAppConfig)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      val request =
+        FakeRequest(POST, haveSecondContactRoute)
+          .withFormUrlEncodedBody(("confirm", "true"))
+
+      val result = route(application, request).value
+
+      status(result) mustEqual SEE_OTHER
+
+      redirectLocation(result).value mustEqual routes.CheckYourAnswersController.onPageLoad().url
 
       application.stop()
     }
