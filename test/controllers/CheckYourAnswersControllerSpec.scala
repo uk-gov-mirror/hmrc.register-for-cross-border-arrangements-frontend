@@ -23,23 +23,36 @@ import models.RegistrationType.Individual
 import models.{Address, BusinessType, Country, Name, RegistrationType, SecondaryContactPreference, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
-import org.mockito.Mockito.{times, verify, when}
+import org.mockito.Mockito.{reset, times, verify, when}
+import org.scalatest.BeforeAndAfterEach
 import pages._
+import play.api.inject.bind
 import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import services.EmailService
 import uk.gov.hmrc.domain.{Generator, Nino}
+import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.Future
 
-class CheckYourAnswersControllerSpec extends SpecBase {
+class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
 
   val address: Address = Address("value 1","value 2",Some("value 3"),Some("value 4"),Some("XX9 9XX"),
     Country("valid","GB","United Kingdom"))
   val nino: Nino = new Generator().nextNino
   val name: Name = Name("FirstName", "LastName")
   val email: String = "email@email.com"
+
+  val mockEmailService: EmailService = mock[EmailService]
+
+  override def beforeEach: Unit =
+    reset(
+      mockRenderer,
+      mockEmailService
+    )
+
 
   "Check Your Answers Controller" - {
 
@@ -289,5 +302,80 @@ class CheckYourAnswersControllerSpec extends SpecBase {
 
       application.stop()
     }
+
+    //TODO: Direct to the confirmation page when bult
+    "OnSubmit" - {
+
+      "must redirect the user to the index page when OK response received" in {
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(bind[EmailService]
+            .toInstance(mockEmailService))
+          .build()
+
+        when(mockEmailService.sendEmail(any())(any()))
+          .thenReturn(Future.successful(Some(HttpResponse(OK, ""))))
+
+        val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements")
+      }
+
+
+      "must redirect the user to the index page when NOT_FOUND response received" in {
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(bind[EmailService]
+            .toInstance(mockEmailService))
+          .build()
+
+        when(mockEmailService.sendEmail(any())(any()))
+          .thenReturn(Future.successful(Some(HttpResponse(NOT_FOUND, ""))))
+
+        val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements")
+      }
+
+
+      "must redirect the user to the index page when BAD_REQUEST response received" in {
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(bind[EmailService]
+            .toInstance(mockEmailService))
+          .build()
+
+        when(mockEmailService.sendEmail(any())(any()))
+          .thenReturn(Future.successful(Some(HttpResponse(BAD_REQUEST, ""))))
+
+        val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements")
+      }
+
+      "must redirect the user to the index page when None response received" in {
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(bind[EmailService]
+            .toInstance(mockEmailService))
+          .build()
+
+        when(mockEmailService.sendEmail(any())(any()))
+          .thenReturn(Future.successful(None))
+
+        val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements")
+      }
+    }
   }
 }
+

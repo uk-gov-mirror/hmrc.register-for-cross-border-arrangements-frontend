@@ -13,6 +13,7 @@ object AppDependencies {
     "uk.gov.hmrc"       %% "play-whitelist-filter"         % "3.1.0-play-26",
     "uk.gov.hmrc"       %% "play-nunjucks"                 % "0.23.0-play-26",
     "uk.gov.hmrc"       %% "play-nunjucks-viewmodel"       % "0.9.0-play-26",
+    "uk.gov.hmrc"       %% "emailaddress"                  % "3.4.0",
     "org.webjars.npm"   %  "govuk-frontend"                % "3.3.0"
 
   )

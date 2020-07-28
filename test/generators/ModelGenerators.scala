@@ -89,6 +89,15 @@ trait ModelGenerators {
         Organisation(businessName, businessType))
   }
 
+  implicit val arbitraryEmailRequest: Arbitrary[EmailRequest] = Arbitrary {
+    for {
+      to <- arbitrary[List[String]]
+      id <- arbitrary[String]
+      contactName <- arbitrary[Map[String, String]]
+
+    } yield EmailRequest(to, id, contactName)
+  }
+
   implicit lazy val arbitraryUniqueTaxpayerReference: Arbitrary[UniqueTaxpayerReference] =
     Arbitrary {
       for {
