@@ -152,21 +152,21 @@ class CheckYourAnswersController @Inject()(
 
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
-    // TODO: Direct to Confirmation page (not index page) once registration created and page available
     implicit request =>
       emailService.sendEmail(request.userAnswers) map {
         case Some(response) => response.status match {
-          case OK => Redirect(routes.IndexController.onPageLoad())
+          case OK => Redirect(routes.RegistrationSuccessfulController.onPageLoad())
           case NOT_FOUND => {
                               logger.warn("The template cannot be found within the email service")
-                              Redirect(routes.IndexController.onPageLoad())
+                              Redirect(routes.RegistrationSuccessfulController.onPageLoad())
                               }
           case BAD_REQUEST =>  {
                                 logger.warn("Missing email or name parameter")
-                                Redirect(routes.IndexController.onPageLoad())
+                                Redirect(routes.RegistrationSuccessfulController.onPageLoad())
                                 }
+          case _ => Redirect(routes.RegistrationSuccessfulController.onPageLoad())
         }
-        case None => Redirect(routes.IndexController.onPageLoad())
+        case None => Redirect(routes.RegistrationSuccessfulController.onPageLoad())
       }
   }
 }

@@ -303,7 +303,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
       application.stop()
     }
 
-    //TODO: Direct to the confirmation page when bult
     "OnSubmit" - {
 
       "must redirect the user to the index page when OK response received" in {
@@ -320,7 +319,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements")
+        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/confirm-registration")
       }
 
 
@@ -338,7 +337,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements")
+        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/confirm-registration")
       }
 
 
@@ -356,7 +355,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements")
+        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/confirm-registration")
       }
 
       "must redirect the user to the index page when None response received" in {
@@ -373,7 +372,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements")
+        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/confirm-registration")
       }
     }
   }
