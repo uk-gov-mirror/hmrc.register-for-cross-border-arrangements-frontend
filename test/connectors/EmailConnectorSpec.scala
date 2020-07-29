@@ -37,7 +37,7 @@ class EmailConnectorSpec extends SpecBase
 
   override lazy val app: Application = new GuiceApplicationBuilder()
     .configure(
-      conf = "microservice.services.hmrc-email.port" -> server.port()
+      conf = "microservice.services.email.port" -> server.port()
     )
     .build()
 
