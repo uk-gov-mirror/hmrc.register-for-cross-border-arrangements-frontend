@@ -49,10 +49,15 @@
           </p>
         </div>
 
-        {{ govukButton({
-           text: messages("checkYourAnswers.button"),
-           attributes: {"id": "submit"}
-        }) }}
+        <form action="{{ routes.controllers.CheckYourAnswersController.onSubmit.url }}" method="post">
+            {{ csrf() | safe }}
+
+            {{ govukButton({
+              text: messages("checkYourAnswers.button"),
+              preventDoubleClick: true,
+              attributes: {id:"submit"}
+            }) }}
+        </form>
 
       </div>
     </div>
