@@ -53,9 +53,32 @@ class EmailServiceSpec extends SpecBase
     .build()
 
   "Email Service" - {
-    "must submit to the email connector when 1 set of valid details provided" in {
+    "must submit to the email connector when 1 set of business valid details provided" in {
       val userAnswers = UserAnswers(userAnswersId)
         .set(ContactNamePage, Name("", ""))
+        .success
+        .value
+        .set(ContactEmailAddressPage, "test@test.com")
+        .success
+        .value
+
+      when(mockEmailConnector.sendEmail(any())(any()))
+        .thenReturn(
+          Future.successful(HttpResponse(OK, ""))
+        )
+
+      val result = emailService.sendEmail(userAnswers)
+
+      whenReady(result) { result =>
+        result.map(_.status) mustBe Some(OK)
+
+        verify(mockEmailConnector, times(1)).sendEmail(any())(any())
+      }
+    }
+
+    "must submit to the email connector when 1 individuals set of valid details provided" in {
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(NamePage, Name("", ""))
         .success
         .value
         .set(ContactEmailAddressPage, "test@test.com")
