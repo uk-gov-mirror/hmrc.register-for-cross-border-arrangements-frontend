@@ -39,7 +39,7 @@ class BusinessNameRegisteredBusinessFormProviderSpec extends StringFieldBehaviou
       validOrganisationName
     )
 
-    behave like fieldWithMaxLength(
+    behave like fieldWithMaxLengthAlpha(
       form,
       fieldName,
       maxLength = maxLength,

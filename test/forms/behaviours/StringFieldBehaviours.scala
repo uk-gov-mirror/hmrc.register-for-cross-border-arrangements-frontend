@@ -35,6 +35,22 @@ trait StringFieldBehaviours extends FieldBehaviours {
     }
   }
 
+  def fieldWithMaxLengthAlpha(form: Form[_],
+                         fieldName: String,
+                         maxLength: Int,
+                         lengthError: FormError): Unit = {
+
+    s"must not bind strings longer than $maxLength characters" in {
+
+      forAll(stringsLongerThanAlpha(maxLength) -> "longString") {
+        string =>
+          val result = form.bind(Map(fieldName -> string)).apply(fieldName)
+          result.errors shouldEqual Seq(lengthError)
+      }
+    }
+  }
+
+
   def fieldWithFixedLength(form: Form[_],
                          fieldName: String,
                            length: Int,
@@ -43,6 +59,21 @@ trait StringFieldBehaviours extends FieldBehaviours {
     s"must not bind strings that are not $length characters" in {
 
       forAll(stringsExceptSpecificLength(length) -> "longString") {
+        string =>
+          val result = form.bind(Map(fieldName -> string)).apply(fieldName)
+          result.errors shouldEqual Seq(lengthError)
+      }
+    }
+  }
+
+  def fieldWithFixedLengthNumeric(form: Form[_],
+                         fieldName: String,
+                           length: Int,
+                         lengthError: FormError): Unit = {
+
+    s"must not bind strings that are not $length characters" in {
+
+      forAll(stringsNotOfFixedLengthNumeric(length) -> "longString") {
         string =>
           val result = form.bind(Map(fieldName -> string)).apply(fieldName)
           result.errors shouldEqual Seq(lengthError)

@@ -37,7 +37,7 @@ class BusinessWithoutIDNameFormProviderSpec extends StringFieldBehaviours {
       validBusinessName
     )
 
-    behave like fieldWithMaxLength(
+    behave like fieldWithMaxLengthAlpha(
       form,
       fieldName,
       maxLength = maxLength,

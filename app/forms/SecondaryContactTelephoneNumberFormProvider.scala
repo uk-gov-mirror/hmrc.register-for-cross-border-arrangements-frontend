@@ -29,6 +29,6 @@ class SecondaryContactTelephoneNumberFormProvider @Inject() extends Mappings wit
     Form(
       "telephoneNumber" -> validatedText("secondaryContactTelephoneNumber.error.required",
         "secondaryContactTelephoneNumber.error.invalid",
-        "secondaryContactTelephoneNumber.error.invalid", digitsAndWhiteSpaceOnly, maxLength)
+        "secondaryContactTelephoneNumber.error.length", digitsAndWhiteSpaceOnly, maxLength)
     )
 }

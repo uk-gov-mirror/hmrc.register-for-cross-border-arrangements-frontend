@@ -39,7 +39,7 @@ class IndividualUKPostcodeFormProviderSpec extends StringFieldBehaviours {
       validPostCodes
     )
 
-    behave like fieldWithMaxLength(
+    behave like fieldWithMaxLengthAlpha(
       form,
       fieldName,
       maxLength = maxLength,

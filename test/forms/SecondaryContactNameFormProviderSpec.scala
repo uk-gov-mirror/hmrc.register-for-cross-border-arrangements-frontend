@@ -38,7 +38,7 @@ class SecondaryContactNameFormProviderSpec extends StringFieldBehaviours {
       validNonApiName
     )
 
-    behave like fieldWithMaxLength(
+    behave like fieldWithMaxLengthAlpha(
       form,
       fieldName,
       maxLength = maxLength,

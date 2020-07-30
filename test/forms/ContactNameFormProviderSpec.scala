@@ -43,7 +43,7 @@ class ContactNameFormProviderSpec extends StringFieldBehaviours {
       validPersonalName
     )
 
-    behave like fieldWithMaxLength(
+    behave like fieldWithMaxLengthAlpha(
       form,
       fieldName,
       maxLength = maxLength,
@@ -74,7 +74,7 @@ class ContactNameFormProviderSpec extends StringFieldBehaviours {
       validPersonalName
     )
 
-    behave like fieldWithMaxLength(
+    behave like fieldWithMaxLengthAlpha(
       form,
       fieldName,
       maxLength = maxLength,

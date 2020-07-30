@@ -18,14 +18,14 @@ package utils
 
 trait RegexConstants {
 
-  final val apiNameRegex = """^[a-zA-Z &`\\\-\\\\'^]{1,35}$"""
-  final val apiAddressRegex = """^[A-Za-z0-9 \\\-,.&']{1,35}$"""
-  final val apiOrganisationNameRegex = """^[a-zA-Z0-9 '&\\/]{1,105}$"""
-  final val soleTraderNameRegex = """^[a-zA-Z0-9 '&\\/]{1,35}$"""
+  final val apiNameRegex = """^[a-zA-Z &`\\\-\\\\'^]*$"""
+  final val apiAddressRegex = """^[A-Za-z0-9 \\\-,.&']*$"""
+  final val apiOrganisationNameRegex = """^[a-zA-Z0-9 '&\\/]*$"""
+  final val soleTraderNameRegex = """^[a-zA-Z0-9 '&\\/]*$"""
   final val nonApiNameRegex = """^[a-zA-Z0-9 "'&,\-\\\/]*$"""
 
 
-  final val utrRegex = "^[0-9]{10}$"
+  final val utrRegex = "^[0-9]*$"
   final val emailRegex = "^(?:[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+)*)" +
     "@(?:[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+)*)$"
   final val digitsAndWhiteSpaceOnly = """^\+?[\d\s]+$"""

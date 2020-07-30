@@ -44,7 +44,7 @@ class SoleTraderNameFormProviderSpec extends StringFieldBehaviours {
       stringsWithMaxLength(firstNameMaxLength)
     )
 
-    behave like fieldWithMaxLength(
+    behave like fieldWithMaxLengthAlpha(
       form,
       fieldName,
       maxLength = firstNameMaxLength,
@@ -81,7 +81,7 @@ class SoleTraderNameFormProviderSpec extends StringFieldBehaviours {
       stringsWithMaxLength(secondNameMaxLength)
     )
 
-    behave like fieldWithMaxLength(
+    behave like fieldWithMaxLengthAlpha(
       form,
       fieldName,
       maxLength = secondNameMaxLength,

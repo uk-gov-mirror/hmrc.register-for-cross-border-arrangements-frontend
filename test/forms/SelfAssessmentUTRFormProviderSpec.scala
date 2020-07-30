@@ -38,7 +38,7 @@ class SelfAssessmentUTRFormProviderSpec extends StringFieldBehaviours {
       validUtr
     )
 
-    behave like fieldWithFixedLength(
+    behave like fieldWithFixedLengthNumeric(
       form,
       fieldName,
       length,

@@ -39,7 +39,7 @@ class BusinessAddressFormProviderSpec extends StringFieldBehaviours {
       validAddressLine
     )
 
-    behave like fieldWithMaxLength(
+    behave like fieldWithMaxLengthAlpha(
       form,
       fieldName,
       maxLength = addressLineMaxLength,
@@ -79,7 +79,7 @@ class BusinessAddressFormProviderSpec extends StringFieldBehaviours {
       validAddressLine
     )
 
-    behave like fieldWithMaxLength(
+    behave like fieldWithMaxLengthAlpha(
       form,
       fieldName,
       maxLength = addressLineMaxLength,
@@ -118,7 +118,7 @@ class BusinessAddressFormProviderSpec extends StringFieldBehaviours {
       validAddressLine
     )
 
-    behave like fieldWithMaxLength(
+    behave like fieldWithMaxLengthAlpha(
       form,
       fieldName,
       maxLength = addressLineMaxLength,
@@ -145,7 +145,7 @@ class BusinessAddressFormProviderSpec extends StringFieldBehaviours {
       validAddressLine
     )
 
-    behave like fieldWithMaxLength(
+    behave like fieldWithMaxLengthAlpha(
       form,
       fieldName,
       maxLength = addressLineMaxLength,

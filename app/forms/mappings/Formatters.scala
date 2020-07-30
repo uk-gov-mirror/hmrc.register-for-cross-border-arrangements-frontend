@@ -131,9 +131,9 @@ trait Formatters extends Transforms {
       dataFormatter
         .bind(key, data)
         .right.flatMap {
+        case str if !str.matches(regex) => Left(Seq(FormError(key, invalidKey)))
         case str if str.length > maxLength => Left(Seq(FormError(key, lengthKey)))
-        case str if str.matches(regex) => Right(str)
-        case _ => Left(Seq(FormError(key, invalidKey)))
+        case str => Right(str)
       }
     }
     override def unbind(key: String, value: String): Map[String, String] = {
@@ -151,9 +151,9 @@ trait Formatters extends Transforms {
       dataFormatter
         .bind(key, data)
         .right.flatMap {
-        case str if str.length != length => Left(Seq(FormError(key, lengthKey)))
-        case str if str.matches(regex) => Right(str)
-        case _ => Left(Seq(FormError(key, invalidKey)))
+          case str if !str.matches(regex) => Left(Seq(FormError(key, invalidKey)))
+          case str if str.length != length => Left(Seq(FormError(key, lengthKey)))
+          case str => Right(str)
       }
     }
     override def unbind(key: String, value: String): Map[String, String] = {
@@ -168,11 +168,11 @@ trait Formatters extends Transforms {
 
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[String]] = {
         data.get(key) match {
-            case Some(str) if str.length > length => Left(Seq(FormError(key, lengthKey)))
-            case Some(str) if str.trim.length == 0 => Right(None)
-            case Some(str) if !str.matches(regex) => Left(Seq(FormError(key, invalidKey)))
-            case Some(str) if str.matches(regex) =>  Right(Some(str))
-            case _ => Right(None)
+          case Some(str) if str.trim.length == 0 => Right(None)
+          case Some(str) if !str.matches(regex)  => Left(Seq(FormError(key, invalidKey)))
+          case Some(str) if str.length > length => Left(Seq(FormError(key, lengthKey)))
+          case Some(str)  =>  Right(Some(str))
+          case _ => Right(None)
           }
         }
 
