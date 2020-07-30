@@ -185,6 +185,8 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
 
   def validEmailAddress: Gen[String] = RegexpGen.from(emailRegex)
 
+  def validEmailAdressToLong(maxLength: Int): Gen[String] = validEmailAddress suchThat (_.length > maxLength)
+
   def validNonApiName: Gen[String] = RegexpGen.from(nonApiNameRegex)
 
   def validUtr: Gen[String] = RegexpGen.from(utrRegex)

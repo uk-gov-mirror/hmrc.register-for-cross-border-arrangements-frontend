@@ -38,13 +38,6 @@ class PostCodeFormProviderSpec extends StringFieldBehaviours {
       validPostCodes
     )
 
-    behave like fieldWithMaxLength(
-      form,
-      fieldName,
-      maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey)
-    )
-
     behave like mandatoryField(
       form,
       fieldName,

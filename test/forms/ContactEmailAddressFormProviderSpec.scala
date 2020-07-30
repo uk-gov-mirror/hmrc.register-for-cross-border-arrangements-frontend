@@ -37,7 +37,7 @@ class ContactEmailAddressFormProviderSpec extends StringFieldBehaviours {
       validEmailAddress
     )
 
-    behave like fieldWithMaxLengthAlpha(
+    behave like fieldWithMaxLengthEmail(
       form,
       fieldName,
       maxLength = maxLength,

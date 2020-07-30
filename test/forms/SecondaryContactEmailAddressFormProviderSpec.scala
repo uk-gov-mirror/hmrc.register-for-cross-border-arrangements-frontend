@@ -38,7 +38,7 @@ class SecondaryContactEmailAddressFormProviderSpec extends StringFieldBehaviours
       validEmailAddress
     )
 
-    behave like fieldWithMaxLength(
+    behave like fieldWithMaxLengthEmail(
       form,
       fieldName,
       maxLength = maxLength,
