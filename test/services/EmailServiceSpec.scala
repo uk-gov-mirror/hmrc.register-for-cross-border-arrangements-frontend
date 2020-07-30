@@ -24,7 +24,7 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.{ContactEmailAddressPage, ContactNamePage, NamePage, SecondaryContactEmailAddressPage, SecondaryContactNamePage}
+import pages.{ContactEmailAddressPage, ContactNamePage, NamePage, NonUkNamePage, SecondaryContactEmailAddressPage, SecondaryContactNamePage}
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -99,6 +99,29 @@ class EmailServiceSpec extends SpecBase
       }
     }
 
+    "must submit to the email connector when 1 nonUk individuals set of valid details provided" in {
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(NonUkNamePage, Name("", ""))
+        .success
+        .value
+        .set(ContactEmailAddressPage, "test@test.com")
+        .success
+        .value
+
+      when(mockEmailConnector.sendEmail(any())(any()))
+        .thenReturn(
+          Future.successful(HttpResponse(OK, ""))
+        )
+
+      val result = emailService.sendEmail(userAnswers)
+
+      whenReady(result) { result =>
+        result.map(_.status) mustBe Some(OK)
+
+        verify(mockEmailConnector, times(1)).sendEmail(any())(any())
+      }
+    }
+
     "must submit to the email connector twice when 2 sets of valid details provided" in {
       val userAnswers = UserAnswers(userAnswersId)
         .set(ContactNamePage, Name("", ""))
@@ -107,7 +130,7 @@ class EmailServiceSpec extends SpecBase
         .set(ContactEmailAddressPage, "test@test.com")
         .success
         .value
-        .set(SecondaryContactEmailAddressPage, "")
+        .set(SecondaryContactNamePage, "")
         .success
         .value
         .set(SecondaryContactEmailAddressPage, "test@test.com")

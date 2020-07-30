@@ -19,7 +19,7 @@ package services
 import connectors.EmailConnector
 import javax.inject.{Inject, Singleton}
 import models.{EmailRequest, Name, UserAnswers}
-import pages.{ContactEmailAddressPage, ContactNamePage, NamePage, SecondaryContactEmailAddressPage, SecondaryContactNamePage}
+import pages.{ContactEmailAddressPage, ContactNamePage, NamePage, NonUkNamePage, SecondaryContactEmailAddressPage, SecondaryContactNamePage}
 import uk.gov.hmrc.emailaddress.EmailAddress
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
@@ -34,8 +34,10 @@ class EmailService @Inject()(emailConnector:EmailConnector)(implicit executionCo
 
     val contactName: Option[Name] = if (userAnswers.get(ContactNamePage).isDefined) {
       userAnswers.get(ContactNamePage)
-    } else {
+    } else if (userAnswers.get(NamePage).isDefined){
       userAnswers.get(NamePage)
+    } else {
+      userAnswers.get(NonUkNamePage)
     }
 
     val fullContactName: Option[String] = contactName.map(n => n.firstName + " " + n.secondName)
