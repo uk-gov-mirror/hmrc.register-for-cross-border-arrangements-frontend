@@ -147,7 +147,7 @@ registrationType.individual = An individual
 registrationType.individual.guidance = [guidance about personal tax]
 registrationType.agent = An agent, reporting on behalf of individuals or businesses.
 registrationType.checkYourAnswersLabel = Registering as
-registrationType.error.required = Select what you are registering as?
+registrationType.error.required = Select what you are registering as
 
 ## UTR page
 doYouHaveUTR.title =  Do you have a UK Unique Taxpayer Reference (UTR)?
@@ -188,7 +188,7 @@ businessType.corporateBody = Limited company
 businessType.unIncorporatedBody = Unincorporated association or trust
 businessType.notSpecified = Sole proprietor
 businessType.checkYourAnswersLabel = What type of business do you have?
-businessType.error.required = Select businessType
+businessType.error.required = Select the type of business you have
 
 selfAssessmentUTR.title = What is your Self Assessment Unique Taxpayer Reference?
 selfAssessmentUTR.heading = What is your Self Assessment Unique Taxpayer Reference?

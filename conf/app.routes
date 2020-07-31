@@ -43,23 +43,22 @@ POST       /register/name                               controllers.NameControll
 GET        /register/change-name                        controllers.NameController.onPageLoad(mode: Mode = CheckMode)
 POST       /register/change-name                        controllers.NameController.onSubmit(mode: Mode = CheckMode)
 
-GET        /register/business/with-id/type              controllers.BusinessTypeController.onPageLoad(mode: Mode = NormalMode)
-POST       /register/business/with-id/type              controllers.BusinessTypeController.onSubmit(mode: Mode = NormalMode)
-GET        /register/business/with-id/change-type       controllers.BusinessTypeController.onPageLoad(mode: Mode = CheckMode)
-POST       /register/business/with-id/change-type       controllers.BusinessTypeController.onSubmit(mode: Mode = CheckMode)
+GET        /register/business-type              controllers.BusinessTypeController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/business-type              controllers.BusinessTypeController.onSubmit(mode: Mode = NormalMode)
+GET        /register/change-business-type       controllers.BusinessTypeController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/change-business-type       controllers.BusinessTypeController.onSubmit(mode: Mode = CheckMode)
 
 GET        /register/business/with-id/postCode          controllers.PostCodeController.onPageLoad(mode: Mode = NormalMode)
 POST       /register/business/with-id/postCode          controllers.PostCodeController.onSubmit(mode: Mode = NormalMode)
 GET        /register/business/with-id/change-postcode   controllers.PostCodeController.onPageLoad(mode: Mode = CheckMode)
 POST       /register/business/with-id/change-Postcode   controllers.PostCodeController.onSubmit(mode: Mode = CheckMode)
 
-GET        /register/date-of-birth                      controllers.DateOfBirthController.onPageLoad(mode: Mode = NormalMode)
-POST       /register/date-of-birth                      controllers.DateOfBirthController.onSubmit(mode: Mode = NormalMode)
-GET        /register/change-date-of-birth               controllers.DateOfBirthController.onPageLoad(mode: Mode = CheckMode)
-POST       /register/change-date-of-birth               controllers.DateOfBirthController.onSubmit(mode: Mode = CheckMode)
+GET        /register/without-id/date-of-birth           controllers.DateOfBirthController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/without-id/date-of-birth           controllers.DateOfBirthController.onSubmit(mode: Mode = NormalMode)
+GET        /register/without-id/change-date-of-birth    controllers.DateOfBirthController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/without-id/change-date-of-birth    controllers.DateOfBirthController.onSubmit(mode: Mode = CheckMode)
 
 GET        /match-individual                            controllers.BusinessMatchingController.matchIndividual(mode: Mode = NormalMode)
-GET        /check-match-individual                      controllers.BusinessMatchingController.matchIndividual(mode: Mode = CheckMode)
 GET        /match-business                              controllers.BusinessMatchingController.matchBusiness(mode: Mode = NormalMode)
 
 GET        /register/business-type                        controllers.BusinessTypeController.onPageLoad(mode: Mode = NormalMode)
@@ -106,10 +105,10 @@ POST       /register/individual/without-id/address              controllers.What
 GET        /register/individual/without-id/change-address       controllers.WhatIsYourAddressController.onPageLoad(mode: Mode = CheckMode)
 POST       /register/individual/without-id/change-address       controllers.WhatIsYourAddressController.onSubmit(mode: Mode = CheckMode)
 
-GET        /register/business/without-id/address                controllers.BusinessAddressController.onPageLoad(mode: Mode = NormalMode)
-POST       /register/business/without-id/address                controllers.BusinessAddressController.onSubmit(mode: Mode = NormalMode)
-GET        /register/business/without-id/change-address         controllers.BusinessAddressController.onPageLoad(mode: Mode = CheckMode)
-POST       /register/business/without-id/change-address         controllers.BusinessAddressController.onSubmit(mode: Mode = CheckMode)
+GET        /register/without-id/address                controllers.BusinessAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/without-id/address                controllers.BusinessAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /register/without-id/change-address         controllers.BusinessAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/without-id/change-address         controllers.BusinessAddressController.onSubmit(mode: Mode = CheckMode)
 
 GET        /register/without-id/business-name                   controllers.BusinessWithoutIDNameController.onPageLoad(mode: Mode = NormalMode)
 POST       /register/without-id/business-name                   controllers.BusinessWithoutIDNameController.onSubmit(mode: Mode = NormalMode)
