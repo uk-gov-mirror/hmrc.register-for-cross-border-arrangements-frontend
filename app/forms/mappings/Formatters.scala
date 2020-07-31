@@ -182,6 +182,23 @@ trait Formatters extends Transforms {
   }
 
 
+  protected def requiredRegexOnly(requiredKey: String,
+                                  invalidKey: String,
+                                  validFormatRegex: String) = new Formatter[String] {
+    private val dataFormatter: Formatter[String] = stringTrimFormatter(requiredKey)
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {
+      dataFormatter
+        .bind(key, data)
+        .right.flatMap {
+        case str if !str.matches(validFormatRegex) => Left(Seq(FormError(key, invalidKey)))
+        case str => Right(str)
+      }
+    }
+    override def unbind(key: String, value: String): Map[String, String] = {
+      Map(key -> value)
+    }
+  }
+
   protected def addressPostcodeFormatter(invalidKey: String, regex: String,
                                          emptyKey: String = "postCode.error.required"): Formatter[Option[String]] = new Formatter[Option[String]] {
 

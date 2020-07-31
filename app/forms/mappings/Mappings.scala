@@ -19,8 +19,9 @@ package forms.mappings
 import java.time.LocalDate
 
 import models.Enumerable
-import play.api.data.FieldMapping
+import play.api.data.{FieldMapping, FormError}
 import play.api.data.Forms.of
+import play.api.data.format.Formatter
 
 trait Mappings extends Formatters with Constraints {
 
@@ -70,5 +71,9 @@ trait Mappings extends Formatters with Constraints {
 
   protected def validatedOptionalText(invalidKey: String, lengthKey: String, regex: String, length: Int): FieldMapping[Option[String]] = {
     of(validatedOptionalTextFormatter(invalidKey, lengthKey, regex, length))
+  }
+
+  protected def requiredRegexOnlyText(requiredKey: String, invalidKey: String, regex: String): FieldMapping[String] = {
+    of(requiredRegexOnly(requiredKey, invalidKey, regex))
   }
 }
