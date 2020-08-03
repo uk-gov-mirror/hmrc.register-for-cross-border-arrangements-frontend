@@ -59,6 +59,7 @@ GET        /register/without-id/change-date-of-birth    controllers.DateOfBirthC
 POST       /register/without-id/change-date-of-birth    controllers.DateOfBirthController.onSubmit(mode: Mode = CheckMode)
 
 GET        /match-individual                            controllers.BusinessMatchingController.matchIndividual(mode: Mode = NormalMode)
+GET        /check-match-individual                      controllers.BusinessMatchingController.matchIndividual(mode: Mode = CheckMode)
 GET        /match-business                              controllers.BusinessMatchingController.matchBusiness(mode: Mode = NormalMode)
 
 GET        /register/business-type                        controllers.BusinessTypeController.onPageLoad(mode: Mode = NormalMode)
