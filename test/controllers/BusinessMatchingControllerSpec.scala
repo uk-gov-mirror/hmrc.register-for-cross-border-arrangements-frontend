@@ -90,7 +90,7 @@ class BusinessMatchingControllerSpec extends SpecBase
         val result = route(application, getRequest(individualMatchingRoute)).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/identity-confirmed")
+        redirectLocation(result) mustBe Some(routes.IdentityConfirmedController.onPageLoad().url)
       }
     }
 
@@ -120,7 +120,7 @@ class BusinessMatchingControllerSpec extends SpecBase
         val result = route(application, getRequest(individualMatchingRoute)).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/individual-identity-not-confirmed")
+        redirectLocation(result) mustBe Some(routes.IndividualNotConfirmedController.onPageLoad().url)
       }
     }
 

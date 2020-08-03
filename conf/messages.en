@@ -437,7 +437,7 @@ contactTelephoneNumber.error.invalid = Enter a telephone number, like 01632 960 
 haveSecondContact.title = Is there someone else we can contact if this person is not available?
 haveSecondContact.heading = Is there someone else we can contact if {0} is not available?
 haveSecondContact.checkYourAnswersLabel = Do you have an additional contact?
-haveSecondContact.error.required = Select yes if there is someone else we can contact?
+haveSecondContact.error.required = Select yes if there is someone else we can contact
 
 secondaryContactName.title = What is the name of the individual or team we should contact?
 secondaryContactName.heading = What is the name of the individual or team we should contact?
