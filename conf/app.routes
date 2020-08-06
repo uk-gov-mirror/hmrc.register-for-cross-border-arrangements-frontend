@@ -53,10 +53,10 @@ POST       /register/business/with-id/postCode          controllers.PostCodeCont
 GET        /register/business/with-id/change-postcode   controllers.PostCodeController.onPageLoad(mode: Mode = CheckMode)
 POST       /register/business/with-id/change-Postcode   controllers.PostCodeController.onSubmit(mode: Mode = CheckMode)
 
-GET        /register/date-of-birth           controllers.DateOfBirthController.onPageLoad(mode: Mode = NormalMode)
-POST       /register/date-of-birth           controllers.DateOfBirthController.onSubmit(mode: Mode = NormalMode)
-GET        /register/change-date-of-birth    controllers.DateOfBirthController.onPageLoad(mode: Mode = CheckMode)
-POST       /register/change-date-of-birth    controllers.DateOfBirthController.onSubmit(mode: Mode = CheckMode)
+GET        /register/without-id/date-of-birth           controllers.DateOfBirthController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/without-id/date-of-birth           controllers.DateOfBirthController.onSubmit(mode: Mode = NormalMode)
+GET        /register/without-id/change-date-of-birth    controllers.DateOfBirthController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/without-id/change-date-of-birth    controllers.DateOfBirthController.onSubmit(mode: Mode = CheckMode)
 
 GET        /match-individual                            controllers.BusinessMatchingController.matchIndividual(mode: Mode = NormalMode)
 GET        /check-match-individual                      controllers.BusinessMatchingController.matchIndividual(mode: Mode = CheckMode)
@@ -82,7 +82,7 @@ POST       /postCode                        controllers.PostCodeController.onSub
 GET        /changePostCode                  controllers.PostCodeController.onPageLoad(mode: Mode = CheckMode)
 POST       /changePostCode                  controllers.PostCodeController.onSubmit(mode: Mode = CheckMode)
 
-GET        /register/business-identity-not-confirmed      controllers.BusinessNotConfirmedController.onPageLoad()
+GET        /register/identity-not-confirmed      controllers.BusinessNotConfirmedController.onPageLoad()
 GET        /register/could-not-confirm-identity    controllers.IndividualNotConfirmedController.onPageLoad()
 GET        /register/identity-confirmed                   controllers.IdentityConfirmedController.onPageLoad()
 

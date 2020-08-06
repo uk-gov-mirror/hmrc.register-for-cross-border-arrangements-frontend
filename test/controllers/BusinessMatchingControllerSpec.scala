@@ -45,6 +45,7 @@ class BusinessMatchingControllerSpec extends SpecBase
 
   lazy val individualMatchingRoute: String = routes.BusinessMatchingController.matchIndividual(NormalMode).url
   lazy val businessMatchingRoute: String = routes.BusinessMatchingController.matchBusiness().url
+  lazy val businessMatchNotFoundRoute: String = routes.BusinessNotConfirmedController.onPageLoad().url
 
   def getRequest(route: String): FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest(GET, route)
@@ -193,7 +194,7 @@ class BusinessMatchingControllerSpec extends SpecBase
         val result = route(application, getRequest(businessMatchingRoute)).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/business-identity-not-confirmed")
+        redirectLocation(result) mustBe Some(businessMatchNotFoundRoute)
       }
     }
 
@@ -213,7 +214,7 @@ class BusinessMatchingControllerSpec extends SpecBase
 
         status(result) mustEqual SEE_OTHER
         //TODO Redirect to error page when it's ready
-        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/business-identity-not-confirmed")
+        redirectLocation(result) mustBe Some(businessMatchNotFoundRoute)
       }
     }
 
