@@ -31,8 +31,6 @@ class SoleTraderNameFormProviderSpec extends StringFieldBehaviours {
 
   val form = new SoleTraderNameFormProvider()()
 
-  val firstNameRegex = "^[a-zA-Z0-9 '&\\/]{1,35}$"
-  val secondNameRegex = "^[a-zA-Z0-9 '&\\/]{1,35}$"
   val firstNameMaxLength = 35
   val secondNameMaxLength = 35
 
@@ -46,12 +44,11 @@ class SoleTraderNameFormProviderSpec extends StringFieldBehaviours {
       stringsWithMaxLength(firstNameMaxLength)
     )
 
-    behave like fieldWithMaxLengthAndInvalid(
+    behave like fieldWithMaxLengthAlpha(
       form,
       fieldName,
       maxLength = firstNameMaxLength,
-      invalidError = FormError(fieldName, invalidFirstNameKey, Seq(firstNameRegex)),
-      lengthError = FormError(fieldName, lengthFirstNameKey, Seq(firstNameMaxLength))
+      lengthError = FormError(fieldName, lengthFirstNameKey)
     )
 
     behave like fieldWithNonEmptyWhitespace(
@@ -64,6 +61,13 @@ class SoleTraderNameFormProviderSpec extends StringFieldBehaviours {
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredFirstNameKey)
+    )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      "jjdjdj£%^&kfkf",
+      FormError(fieldName, invalidFirstNameKey)
     )
   }
 
@@ -77,12 +81,11 @@ class SoleTraderNameFormProviderSpec extends StringFieldBehaviours {
       stringsWithMaxLength(secondNameMaxLength)
     )
 
-    behave like fieldWithMaxLengthAndInvalid(
+    behave like fieldWithMaxLengthAlpha(
       form,
       fieldName,
       maxLength = secondNameMaxLength,
-      invalidError = FormError(fieldName, invalidSecondNameKey, Seq(secondNameRegex)),
-      lengthError = FormError(fieldName, lengthSecondNameKey, Seq(secondNameMaxLength))
+      lengthError = FormError(fieldName, lengthSecondNameKey)
     )
 
     behave like fieldWithNonEmptyWhitespace(
@@ -95,6 +98,13 @@ class SoleTraderNameFormProviderSpec extends StringFieldBehaviours {
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredSecondNameKey)
+    )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      "jjdjdj£%^&kfkf",
+      FormError(fieldName, invalidSecondNameKey)
     )
   }
 }

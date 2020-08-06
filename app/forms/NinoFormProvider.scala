@@ -19,10 +19,10 @@ package forms
 import forms.mappings.Mappings
 import javax.inject.Inject
 import play.api.data.Form
+import utils.RegexConstants
 
-class NinoFormProvider @Inject() extends Mappings {
 
-  val ninoRegex = "^([ACEHJLMOPRSWXY][A-CEGHJ-NPR-TW-Z]|B[A-CEHJ-NPR-TW-Z]|G[ACEGHJ-NPR-TW-Z]|[KT][A-CEGHJ-MPR-TW-Z]|N[A-CEGHJL-NPR-SW-Z]|Z[A-CEGHJ-NPR-TW-Y])[0-9]{6}[A-D ]$"
+class NinoFormProvider @Inject() extends Mappings with RegexConstants{
 
   def removeWhitespace(string: String): String = string.split("\\s+").mkString
 

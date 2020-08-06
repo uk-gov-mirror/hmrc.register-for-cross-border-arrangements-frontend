@@ -29,38 +29,34 @@ class CorporationTaxUTRFormProviderSpec extends StringFieldBehaviours {
     val requiredKey = "corporationTaxUTR.error.required"
     val lengthKey = "corporationTaxUTR.error.length"
     val invalidKey = "corporationTaxUTR.error.invalid"
-    val utrRegex = "^[0-9]{10}$"
 
-    val maxLength = 10
-    val minLength = 10
+    val length = 10
 
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      validUtr
     )
 
-    behave like fieldWithMaxLengthAndInvalid(
+    behave like fieldWithFixedLengthNumeric(
       form,
       fieldName,
-      maxLength = maxLength,
-      invalidError = FormError(fieldName, invalidKey, Seq(utrRegex)),
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      length,
+      lengthError = FormError(fieldName, lengthKey)
     )
-
-    behave like fieldWithMinLengthAndInvalid(
-      form,
-      fieldName,
-      invalidError = FormError(fieldName, invalidKey, Seq(utrRegex)),
-      minLength = minLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(minLength))
-    )
-
 
     behave like mandatoryField(
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
     )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      "1234A67890",
+      FormError(fieldName, invalidKey)
+    )
+
   }
 }

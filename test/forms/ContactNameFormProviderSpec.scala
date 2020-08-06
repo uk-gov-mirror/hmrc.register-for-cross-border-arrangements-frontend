@@ -29,7 +29,6 @@ class ContactNameFormProviderSpec extends StringFieldBehaviours {
   val lengthKeyLastName = "contactName.error.length.lastName"
   val invalidKeyLastName = "contactName.error.invalid.lastName"
 
-  val validRegex = """^[a-zA-Z &`\\-\\'^]*$"""
   val maxLength = 35
 
   val form = new ContactNameFormProvider()()
@@ -41,21 +40,27 @@ class ContactNameFormProviderSpec extends StringFieldBehaviours {
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      validPersonalName
     )
 
-    behave like fieldWithMaxLengthAndInvalid(
+    behave like fieldWithMaxLengthAlpha(
       form,
       fieldName,
       maxLength = maxLength,
-      invalidError = FormError(fieldName, invalidKeyFirstName, Seq(validRegex)),
-      lengthError = FormError(fieldName, lengthKeyFirstName, Seq(maxLength))
+      lengthError = FormError(fieldName, lengthKeyFirstName)
     )
 
     behave like mandatoryField(
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKeyFirstName)
+    )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      "jjdjdj£%^&kfkf",
+      FormError(fieldName, invalidKeyFirstName)
     )
   }
 
@@ -66,21 +71,27 @@ class ContactNameFormProviderSpec extends StringFieldBehaviours {
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      validPersonalName
     )
 
-    behave like fieldWithMaxLengthAndInvalid(
+    behave like fieldWithMaxLengthAlpha(
       form,
       fieldName,
       maxLength = maxLength,
-      invalidError = FormError(fieldName, invalidKeyLastName, Seq(validRegex)),
-      lengthError = FormError(fieldName, lengthKeyLastName, Seq(maxLength))
+      lengthError = FormError(fieldName, lengthKeyLastName)
     )
 
     behave like mandatoryField(
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKeyLastName)
+    )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      "jjdjdj£%^&kfkf",
+      FormError(fieldName, invalidKeyLastName)
     )
   }
 }

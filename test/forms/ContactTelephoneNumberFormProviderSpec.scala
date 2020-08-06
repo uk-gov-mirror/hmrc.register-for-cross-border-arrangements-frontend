@@ -18,14 +18,14 @@ package forms
 
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
+import utils.RegexConstants
 
-class ContactTelephoneNumberFormProviderSpec extends StringFieldBehaviours {
+class ContactTelephoneNumberFormProviderSpec extends StringFieldBehaviours with RegexConstants {
 
   val requiredKey = "contactTelephoneNumber.error.required"
   val lengthKey = "contactTelephoneNumber.error.invalid"
   val invalidKey = "contactTelephoneNumber.error.invalid"
   val maxLength = 50
-  val digitsAndWhiteSpaceOnly = """^\+?[\d\s]+$"""
 
   val form = new ContactTelephoneNumberFormProvider()()
 
@@ -39,18 +39,24 @@ class ContactTelephoneNumberFormProviderSpec extends StringFieldBehaviours {
       stringsWithMaxLength(maxLength)
     )
 
-    behave like fieldWithMaxLengthAndInvalid(
+    behave like fieldWithMaxLength(
       form,
       fieldName,
       maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength)),
-      invalidError = FormError(fieldName, invalidKey, Seq(digitsAndWhiteSpaceOnly))
+      lengthError = FormError(fieldName, lengthKey)
     )
 
     behave like mandatoryField(
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
+    )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      "jjdjdj£%^&kfkf",
+      FormError(fieldName, invalidKey)
     )
   }
 }

@@ -94,6 +94,12 @@ trait Constraints {
         Invalid(errorKey, minimum)
     }
 
+  protected def isCorrectLength(length: Int, errorKey: String): Constraint[String] =
+    Constraint{
+      case str if str.length == length => Valid
+      case _ => Invalid(errorKey, length)
+    }
+
   protected def maxDate(maximum: LocalDate, errorKey: String, args: Any*): Constraint[LocalDate] =
     Constraint {
       case date if !date.isBefore(maximum) =>

@@ -17,18 +17,18 @@
 package forms
 
 import javax.inject.Inject
-
 import forms.mappings.Mappings
 import play.api.data.Form
+import utils.RegexConstants
 
-class SecondaryContactTelephoneNumberFormProvider @Inject() extends Mappings {
+class SecondaryContactTelephoneNumberFormProvider @Inject() extends Mappings with RegexConstants {
 
-  val digitsAndWhiteSpaceOnly = """^\+?[\d\s]+$"""
+  private val maxLength = 24
 
   def apply(): Form[String] =
     Form(
-      "telephoneNumber" -> textNonWhitespaceOnly("secondaryContactTelephoneNumber.error.required")
-        .verifying(regexp(digitsAndWhiteSpaceOnly, "secondaryContactTelephoneNumber.error.invalid"))
-        .verifying(maxLength(50, "secondaryContactTelephoneNumber.error.invalid"))
+      "telephoneNumber" -> validatedText("secondaryContactTelephoneNumber.error.required",
+        "secondaryContactTelephoneNumber.error.invalid",
+        "secondaryContactTelephoneNumber.error.length", digitsAndWhiteSpaceOnly, maxLength)
     )
 }

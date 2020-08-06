@@ -21,8 +21,10 @@ import java.time.{Instant, LocalDate, ZoneOffset}
 import org.scalacheck.Arbitrary._
 import org.scalacheck.Gen._
 import org.scalacheck.{Gen, Shrink}
+import utils.RegexConstants
+import wolfendale.scalacheck.regexp.RegexpGen
 
-trait Generators extends UserAnswersGenerator with PageGenerators with ModelGenerators with UserAnswersEntryGenerators {
+trait Generators extends UserAnswersGenerator with PageGenerators with ModelGenerators with UserAnswersEntryGenerators with RegexConstants {
 
   implicit val dontShrink: Shrink[String] = Shrink.shrinkAny
 
@@ -96,13 +98,29 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
     chars     <- listOfN(length, arbitrary[Char])
   } yield chars.mkString
 
+  def stringsLongerThanAlpha(minLength: Int): Gen[String] = for {
+    maxLength <- (minLength * 2).max(100)
+    length    <- Gen.chooseNum(minLength + 1, maxLength)
+    chars     <- listOfN(length, Gen.alphaChar)
+  } yield chars.mkString
+
+  def stringsNotOfFixedLengthNumeric(givenLength: Int): Gen[String] = for {
+    maxLength <- givenLength + 50
+    length    <- Gen.chooseNum(1, maxLength).suchThat(_ != givenLength)
+    chars     <- listOfN(length, Gen.numChar)
+  } yield chars.mkString
+
   def stringsShorterThan(minLength: Int): Gen[String] = for {
     length <- Gen.chooseNum(1, minLength - 1)
     chars <- listOfN(length, arbitrary[Char])
   } yield chars.mkString
 
+
   def stringsExceptSpecificValues(excluded: Seq[String]): Gen[String] =
     nonEmptyString suchThat (!excluded.contains(_))
+
+  def stringsExceptSpecificLength(length: Int): Gen[String] =
+    nonEmptyString suchThat (_.length != length)
 
   def oneOf[T](xs: Seq[Gen[T]]): Gen[T] =
     if (xs.isEmpty) {
@@ -157,4 +175,19 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
       s"${word.take(length1)} $numbers $symbols"
     }
 
+  def validAddressLine: Gen[String] = RegexpGen.from(apiAddressRegex)
+
+  def validOrganisationName: Gen[String] = RegexpGen.from(apiOrganisationNameRegex)
+
+  def validPersonalName: Gen[String] = RegexpGen.from(apiNameRegex)
+
+  def validPhoneNumber: Gen[String] = RegexpGen.from(digitsAndWhiteSpaceOnly)
+
+  def validEmailAddress: Gen[String] = RegexpGen.from(emailRegex)
+
+  def validEmailAdressToLong(maxLength: Int): Gen[String] = validEmailAddress suchThat (_.length > maxLength)
+
+  def validNonApiName: Gen[String] = RegexpGen.from(nonApiNameRegex)
+
+  def validUtr: Gen[String] = RegexpGen.from(utrRegex)
 }

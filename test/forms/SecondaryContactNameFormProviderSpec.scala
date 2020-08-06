@@ -24,8 +24,7 @@ class SecondaryContactNameFormProviderSpec extends StringFieldBehaviours {
   val requiredKey = "secondaryContactName.error.required"
   val lengthKey = "secondaryContactName.error.length"
   val invalidKey = "secondaryContactName.error.invalid"
-  val maxLength = 50
-  val secondaryContactNameRegex = """^[a-zA-Z0-9 "'&,\-\\\/]*$"""
+  val maxLength = 35
 
   val form = new SecondaryContactNameFormProvider()()
 
@@ -36,15 +35,14 @@ class SecondaryContactNameFormProviderSpec extends StringFieldBehaviours {
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      validNonApiName
     )
 
-    behave like fieldWithMaxLengthAndInvalid(
+    behave like fieldWithMaxLengthAlpha(
       form,
       fieldName,
       maxLength = maxLength,
-      invalidError = FormError(fieldName, invalidKey, Seq(secondaryContactNameRegex)),
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      lengthError = FormError(fieldName, lengthKey)
     )
 
     behave like mandatoryField(
@@ -57,6 +55,13 @@ class SecondaryContactNameFormProviderSpec extends StringFieldBehaviours {
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
+    )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      "jjdjdj£%^&kfkf",
+      FormError(fieldName, invalidKey)
     )
   }
 }
