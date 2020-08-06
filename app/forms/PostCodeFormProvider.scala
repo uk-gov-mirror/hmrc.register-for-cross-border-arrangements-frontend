@@ -23,8 +23,6 @@ import utils.RegexConstants
 
 class PostCodeFormProvider @Inject() extends Mappings with RegexConstants {
 
-  private val maxLength = 8
-
   def apply(): Form[String] =
     Form(
       "value" -> requiredRegexOnlyText("postCode.error.required",
