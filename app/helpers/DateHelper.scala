@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicReference
 
 object DateHelper {
 
-  private val mockDate: AtomicReference[Option[LocalDate]] = new AtomicReference(None)
+  private def mockDate: AtomicReference[Option[LocalDate]] = new AtomicReference(None)
 
   def today: LocalDate = mockDate.get().getOrElse(LocalDate.now())
   def setDate(date: Option[LocalDate]): Unit = mockDate.set(date)
