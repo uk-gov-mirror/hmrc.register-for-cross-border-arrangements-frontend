@@ -26,22 +26,14 @@ class DateHelperSpec extends SpecBase {
 
     "calling formatDateToString" - {
 
-      "must return '1 January 2020' if today's date is 2020-1-1" in {
-
-        DateHelper.setDate(Some(LocalDate.of(2020,1,1)))
-
-        DateHelper.formatDateToString(DateHelper.today) mustBe "1 January 2020"
-
-      }
-
-      "must return '5 June 1977' if given past date 1977-6-5" in {
+      "must return '5 June 1977' if given date 1977-6-5" in {
 
         val pastDate = LocalDate.of(1977,6,5)
         DateHelper.formatDateToString(pastDate) mustBe "5 June 1977"
 
       }
 
-      "must return '29 September 2239' if given future date 2239-9-29" in {
+      "must return '29 September 2239' if given date 2239-9-29" in {
 
         val futureDate = LocalDate.of(2239,9,29)
         DateHelper.formatDateToString(futureDate) mustBe "29 September 2239"
