@@ -50,19 +50,19 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
       }
 
       "must go from  Do you have a UK Unique Taxpayer Reference (UTR)? to What type of business do you have? when Yes is selected" in {
-                forAll(arbitrary[UserAnswers]) {
-                  answers =>
-                    val updatedAnswers =
-                      answers
-                        .set(DoYouHaveUTRPage, true)
-                        .success
-                        .value
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(DoYouHaveUTRPage, true)
+                .success
+                .value
 
-                    navigator
-                      .nextPage(DoYouHaveUTRPage, NormalMode, updatedAnswers)
-                      .mustBe(routes.BusinessTypeController.onPageLoad(NormalMode))
-                }
-              }
+            navigator
+              .nextPage(DoYouHaveUTRPage, NormalMode, updatedAnswers)
+              .mustBe(routes.BusinessTypeController.onPageLoad(NormalMode))
+        }
+      }
 
       "must go from  Do you have a UK Unique Taxpayer Reference (UTR)? to What are you registering as? when No is selected" in {
         forAll(arbitrary[UserAnswers]) {
@@ -610,11 +610,11 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
       "must go from the Do you have telephone page to the Check answers page when the answer is 'No' and " +
         "the user is an Individual" in {
 
-          val userAnswers = UserAnswers(userAnswersId).set(TelephoneNumberQuestionPage, false).success.value
+        val userAnswers = UserAnswers(userAnswersId).set(TelephoneNumberQuestionPage, false).success.value
 
-          navigator
-            .nextPage(TelephoneNumberQuestionPage, NormalMode, userAnswers)
-            .mustBe(routes.CheckYourAnswersController.onPageLoad())
+        navigator
+          .nextPage(TelephoneNumberQuestionPage, NormalMode, userAnswers)
+          .mustBe(routes.CheckYourAnswersController.onPageLoad())
       }
 
       "must go from Is there someone else we can contact if *name* is not available??" +
@@ -686,7 +686,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
       "must go from the How can we contact *name*? page " +
         "to What is the email address for *name*? page " +
-        "when checkbox telephone is selected " in {
+          "when checkbox telephone is selected " in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
 
@@ -718,8 +718,60 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
               .mustBe(routes.CheckYourAnswersController.onPageLoad())
         }
       }
-    }
 
+      "must got from Is this your business? page to" - {
+        "Contact email address page when answer is 'Yes' is business type not specified" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers =
+                answers
+                  .set(ConfirmBusinessPage, true)
+                  .success
+                  .value
+                  .set(BusinessTypePage, BusinessType.NotSpecified)
+                  .success
+                  .value
+
+              navigator
+                .nextPage(ConfirmBusinessPage, NormalMode, updatedAnswers)
+                .mustBe(routes.ContactEmailAddressController.onPageLoad(NormalMode))
+          }
+        }
+
+        "Contact name page when answer is 'Yes' and business type is specified" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers =
+                answers
+                  .set(ConfirmBusinessPage, true)
+                  .success
+                  .value
+                  .set(BusinessTypePage, BusinessType.LimitedLiability)
+                  .success
+                  .value
+
+              navigator
+                .nextPage(ConfirmBusinessPage, NormalMode, updatedAnswers)
+                .mustBe(routes.ContactNameController.onPageLoad(NormalMode))
+          }
+        }
+
+        "Identity not confirmed when answer is 'No'" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers =
+                answers
+                  .set(ConfirmBusinessPage, false)
+                  .success
+                  .value
+
+              navigator
+                .nextPage(ConfirmBusinessPage, NormalMode, updatedAnswers)
+                .mustBe(routes.BusinessNotConfirmedController.onPageLoad())
+          }
+        }
+      }
+    }
   }
 }
 

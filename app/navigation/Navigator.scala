@@ -41,7 +41,7 @@ class Navigator @Inject()(appConfig: FrontendAppConfig) {
     case NamePage => _ => Some(routes.DateOfBirthController.onPageLoad(NormalMode))
     case BusinessNamePage => _ => Some(routes.BusinessMatchingController.matchBusiness())
     case SoleTraderNamePage => _ => Some(routes.BusinessMatchingController.matchBusiness())
-    case ConfirmBusinessPage => confirmBusinessRoutes
+    case ConfirmBusinessPage => confirmBusinessRoutes(NormalMode)
     case DateOfBirthPage => dateOfBirthRoutes(NormalMode)
     case DoYouLiveInTheUKPage => doYouLiveInTheUKRoutes(NormalMode)
     case IndividualUKPostcodePage => _ => Some(routes.SelectAddressController.onPageLoad(NormalMode))
@@ -82,7 +82,7 @@ class Navigator @Inject()(appConfig: FrontendAppConfig) {
     case SelfAssessmentUTRPage => businessNameRoutes(CheckMode)
     case BusinessNamePage => _ => Some(routes.BusinessMatchingController.matchBusiness())
     case SoleTraderNamePage => _ => Some(routes.BusinessMatchingController.matchBusiness())
-    case ConfirmBusinessPage => confirmBusinessRoutes
+    case ConfirmBusinessPage => confirmBusinessRoutes(CheckMode)
     case BusinessAddressPage => _ => Some(routes.ContactNameController.onPageLoad(CheckMode))
     case ContactNamePage => _ => Some(routes.ContactEmailAddressController.onPageLoad(CheckMode))
     case ContactEmailAddressPage => _ => Some(routes.TelephoneNumberQuestionController.onPageLoad(CheckMode))
@@ -112,9 +112,13 @@ class Navigator @Inject()(appConfig: FrontendAppConfig) {
     }
   }
 
-  private def confirmBusinessRoutes(ua: UserAnswers): Option[Call] =
+  private def confirmBusinessRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(ConfirmBusinessPage) map {
-      case true  => routes.IdentityConfirmedController.onPageLoad()
+      case true  => ua.get(BusinessTypePage) match {
+                      case Some(BusinessType.NotSpecified) => routes.ContactEmailAddressController.onPageLoad(mode)
+                      case Some(_) => routes.ContactNameController.onPageLoad(mode)
+                      case None => routes.ContactEmailAddressController.onPageLoad(mode)
+                    }
       case false  => routes.BusinessNotConfirmedController.onPageLoad()
     }
 
