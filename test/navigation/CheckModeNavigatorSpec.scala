@@ -282,7 +282,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
     }
 
     "must got from Is this your business? page to" - {
-      "We have confirmed your identity page when answer is 'Yes'" in {
+      "Contact email address page when answer is 'Yes' and business type is not specified" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
@@ -290,10 +290,31 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
                 .set(ConfirmBusinessPage, true)
                 .success
                 .value
+                .set(BusinessTypePage, BusinessType.NotSpecified)
+                .success
+                .value
 
             navigator
               .nextPage(ConfirmBusinessPage, CheckMode, updatedAnswers)
-              .mustBe(routes.IdentityConfirmedController.onPageLoad())
+              .mustBe(routes.ContactEmailAddressController.onPageLoad(CheckMode))
+        }
+      }
+
+      "Contact name page when answer is 'Yes' and business type is specified" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(ConfirmBusinessPage, true)
+                .success
+                .value
+                .set(BusinessTypePage, BusinessType.LimitedLiability)
+                .success
+                .value
+
+            navigator
+              .nextPage(ConfirmBusinessPage, CheckMode, updatedAnswers)
+              .mustBe(routes.ContactNameController.onPageLoad(CheckMode))
         }
       }
 
