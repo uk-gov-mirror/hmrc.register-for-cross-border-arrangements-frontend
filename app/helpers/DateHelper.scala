@@ -18,18 +18,12 @@ package helpers
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.concurrent.atomic.AtomicReference
 
 object DateHelper {
 
-  private def mockDate: AtomicReference[Option[LocalDate]] = new AtomicReference(None)
+  val dateFormatterDMY: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
 
-  def today: LocalDate = mockDate.get().getOrElse(LocalDate.now())
-  def setDate(date: Option[LocalDate]): Unit = mockDate.set(date)
-
-  def formatDateToString(date: LocalDate): String = {
-    val dateFormatterDMY: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
-    date.format(dateFormatterDMY)
-  }
+  def today: LocalDate = LocalDate.now()
+  def formatDateToString(date: LocalDate): String = date.format(dateFormatterDMY)
 
 }
