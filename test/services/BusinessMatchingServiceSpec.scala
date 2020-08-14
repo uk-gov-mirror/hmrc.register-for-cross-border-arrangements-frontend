@@ -70,7 +70,7 @@ class BusinessMatchingServiceSpec extends SpecBase
 
   "Business Matching Service" - {
     "when able to construct an individual matching submission" - {
-      "should send a request to the business matching connector" in {
+      "should send a request to the business matching connector for an individual" in {
         forAll(arbitrary[UserAnswers], arbitrary[Name], arbitrary[LocalDate], arbitrary[Nino]){
           (userAnswers, name, dob, nino) =>
             val answers = userAnswers
@@ -95,6 +95,32 @@ class BusinessMatchingServiceSpec extends SpecBase
             }
         }
       }
+
+      "should send a request to the business matching connector for a sole proprietor" in {
+        forAll(arbitrary[UniqueTaxpayerReference], arbitrary[Name]){
+          (utr, name) =>
+            val answers = UserAnswers(userAnswersId)
+              .set(BusinessTypePage, BusinessType.NotSpecified)
+              .success
+              .value
+              .set(SelfAssessmentUTRPage, utr)
+              .success
+              .value
+              .set(SoleTraderNamePage, name)
+              .success
+              .value
+
+            when(mockBusinessMatchingConnector.sendSoleProprietorMatchingInformation(any(), any())(any(), any()))
+              .thenReturn(
+                Future.successful(HttpResponse(OK, ""))
+              )
+            val result = businessMatchingService.sendIndividualMatchingInformation(answers)
+
+            whenReady(result){
+              _.map(_.status) mustBe Some(OK)
+            }
+        }
+      }
     }
 
     "when unable to construct an individual matching submission" - {
@@ -108,6 +134,10 @@ class BusinessMatchingServiceSpec extends SpecBase
                 .remove(DateOfBirthPage)
                 .success
                 .value
+              .remove(SelfAssessmentUTRPage)
+              .success
+              .value
+
             val result = businessMatchingService.sendIndividualMatchingInformation(answers)
 
             whenReady(result){

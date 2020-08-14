@@ -20,8 +20,7 @@ import config.FrontendAppConfig
 import javax.inject.Inject
 import models.{BusinessMatchingSubmission, IndividualMatchingSubmission, UniqueTaxpayerReference}
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.http.HttpClient
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -31,6 +30,12 @@ class BusinessMatchingConnector @Inject()(val config: FrontendAppConfig, val htt
                                        (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
       val submissionUrl = s"${config.businessMatchingUrl}/matching/individual/$nino"
       http.POST[IndividualMatchingSubmission, HttpResponse](submissionUrl, individualSubmission)
+  }
+
+  def sendSoleProprietorMatchingInformation(utr: UniqueTaxpayerReference, soleProprietorSubmission: BusinessMatchingSubmission)
+                                       (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
+    val submissionUrl = s"${config.businessMatchingUrl}/matching/individual/utr/${utr.uniqueTaxPayerReference}"
+    http.POST[BusinessMatchingSubmission, HttpResponse](submissionUrl, soleProprietorSubmission)
   }
 
   def sendBusinessMatchingInformation(utr: UniqueTaxpayerReference, businessSubmission: BusinessMatchingSubmission)

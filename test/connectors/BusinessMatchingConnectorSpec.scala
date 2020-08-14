@@ -21,9 +21,10 @@ import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, urlEqua
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import generators.Generators
 import helpers.WireMockServerHandler
-import models.{IndividualMatchingSubmission, UniqueTaxpayerReference}
+import models.{BusinessMatchingSubmission, BusinessType, IndividualMatchingSubmission, Name, UniqueTaxpayerReference, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import pages.{BusinessTypePage, SelfAssessmentUTRPage, SoleTraderNamePage}
 import play.api.Application
 import play.api.http.Status._
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -80,6 +81,63 @@ class BusinessMatchingConnectorSpec extends SpecBase
             val result = connector.sendIndividualMatchingInformation(nino, ims)
             result.futureValue.status mustBe INTERNAL_SERVER_ERROR
         }
+      }
+    }
+
+    "when calling sendSoleProprietorMatchingInformation" - {
+
+      val utr = UniqueTaxpayerReference("1234567890")
+
+      val answers = UserAnswers(userAnswersId)
+        .set(BusinessTypePage, BusinessType.NotSpecified)
+        .success
+        .value
+        .set(SelfAssessmentUTRPage, utr)
+        .success
+        .value
+        .set(SoleTraderNamePage, Name("FirstName", "LastName"))
+        .success
+        .value
+
+      val bms = BusinessMatchingSubmission(answers).get
+
+      "must return status as OK for submission of valid Sole Proprietor Matching Submission" in {
+
+        stubResponse(s"/register-for-cross-border-arrangements/matching/individual/utr/${utr.uniqueTaxPayerReference}", OK)
+
+        val result = connector.sendSoleProprietorMatchingInformation(utr, bms)
+        result.futureValue.status mustBe OK
+      }
+
+      "must return status as BAD_REQUEST for submission of invalid utr" in {
+
+        val invalidUTR = UniqueTaxpayerReference("12345678901")
+
+        val answers = UserAnswers(userAnswersId)
+          .set(BusinessTypePage, BusinessType.NotSpecified)
+          .success
+          .value
+          .set(SelfAssessmentUTRPage, invalidUTR)
+          .success
+          .value
+          .set(SoleTraderNamePage, Name("FirstName", "LastName"))
+          .success
+          .value
+
+        val bms = BusinessMatchingSubmission(answers).get
+
+        stubResponse(s"/register-for-cross-border-arrangements/matching/individual/utr/${invalidUTR.uniqueTaxPayerReference}", BAD_REQUEST)
+
+        val result = connector.sendSoleProprietorMatchingInformation(invalidUTR, bms)
+        result.futureValue.status mustBe BAD_REQUEST
+      }
+
+      "must return status as INTERNAL_SERVER_ERROR for technical error incurred" in {
+
+        stubResponse(s"/register-for-cross-border-arrangements/matching/individual/utr/${utr.uniqueTaxPayerReference}", INTERNAL_SERVER_ERROR)
+
+        val result = connector.sendSoleProprietorMatchingInformation(utr, bms)
+        result.futureValue.status mustBe INTERNAL_SERVER_ERROR
       }
     }
 

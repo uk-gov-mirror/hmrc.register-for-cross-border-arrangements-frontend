@@ -276,7 +276,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
 
             navigator
               .nextPage(SoleTraderNamePage, CheckMode, updatedAnswers)
-              .mustBe(routes.BusinessMatchingController.matchBusiness())
+              .mustBe(routes.BusinessMatchingController.matchIndividual(CheckMode))
         }
       }
     }

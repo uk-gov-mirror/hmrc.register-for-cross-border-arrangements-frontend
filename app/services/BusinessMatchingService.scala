@@ -32,9 +32,13 @@ class BusinessMatchingService @Inject()(businessMatchingConnector: BusinessMatch
   def sendIndividualMatchingInformation(userAnswers: UserAnswers)
                                        (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[HttpResponse]] = {
 
-    (IndividualMatchingSubmission(userAnswers), userAnswers.get(NinoPage)) match {
-      case (Some(individualSubmission), Some(nino)) =>
+    //Note: ETMP data suggests sole trader business partner accounts are individual records
+    (IndividualMatchingSubmission(userAnswers), BusinessMatchingSubmission(userAnswers),
+      userAnswers.get(NinoPage), userAnswers.get(SelfAssessmentUTRPage)) match {
+      case (Some(individualSubmission), _, Some(nino), _) =>
         businessMatchingConnector.sendIndividualMatchingInformation(nino, individualSubmission).map(Some(_))
+      case (_, Some(businessMatchingSubmission), _, Some(utr)) =>
+        businessMatchingConnector.sendSoleProprietorMatchingInformation(utr, businessMatchingSubmission).map(Some(_))
       case _ => Future.successful(None)
     }
   }
