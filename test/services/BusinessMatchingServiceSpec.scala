@@ -21,6 +21,7 @@ import java.time.LocalDate
 import base.SpecBase
 import connectors.BusinessMatchingConnector
 import generators.Generators
+import models.BusinessType._
 import models.{BusinessAddress, BusinessDetails, BusinessType, Name, UniqueTaxpayerReference, UserAnswers}
 import org.mockito.Matchers._
 import org.mockito.Mockito.{reset, _}
@@ -39,6 +40,7 @@ import wolfendale.scalacheck.regexp.RegexpGen
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.util.Random
 
 class BusinessMatchingServiceSpec extends SpecBase
   with MockitoSugar
@@ -54,6 +56,8 @@ class BusinessMatchingServiceSpec extends SpecBase
     .build()
 
   val businessMatchingService: BusinessMatchingService = app.injector.instanceOf[BusinessMatchingService]
+
+  val businessTypesNoSoleTrader = Seq(Partnership, LimitedLiability, CorporateBody, UnIncorporatedBody)
 
   def utrPage(businessType: BusinessType): QuestionPage[UniqueTaxpayerReference] = {
     if (businessType == BusinessType.UnIncorporatedBody | businessType == BusinessType.CorporateBody) {
@@ -95,32 +99,6 @@ class BusinessMatchingServiceSpec extends SpecBase
             }
         }
       }
-
-      "should send a request to the business matching connector for a sole proprietor" in {
-        forAll(arbitrary[UniqueTaxpayerReference], arbitrary[Name]){
-          (utr, name) =>
-            val answers = UserAnswers(userAnswersId)
-              .set(BusinessTypePage, BusinessType.NotSpecified)
-              .success
-              .value
-              .set(SelfAssessmentUTRPage, utr)
-              .success
-              .value
-              .set(SoleTraderNamePage, name)
-              .success
-              .value
-
-            when(mockBusinessMatchingConnector.sendSoleProprietorMatchingInformation(any(), any())(any(), any()))
-              .thenReturn(
-                Future.successful(HttpResponse(OK, ""))
-              )
-            val result = businessMatchingService.sendIndividualMatchingInformation(answers)
-
-            whenReady(result){
-              _.map(_.status) mustBe Some(OK)
-            }
-        }
-      }
     }
 
     "when unable to construct an individual matching submission" - {
@@ -134,10 +112,6 @@ class BusinessMatchingServiceSpec extends SpecBase
                 .remove(DateOfBirthPage)
                 .success
                 .value
-              .remove(SelfAssessmentUTRPage)
-              .success
-              .value
-
             val result = businessMatchingService.sendIndividualMatchingInformation(answers)
 
             whenReady(result){
@@ -149,11 +123,8 @@ class BusinessMatchingServiceSpec extends SpecBase
 
     "when able to construct a business/organisation matching submission" - {
       "must return the validated business name" in {
-
-
         forAll(
           arbitrary[UserAnswers],
-          arbitrary[BusinessType],
           arbitrary[UniqueTaxpayerReference],
           RegexpGen.from("^[a-zA-Z0-9 '&\\/]{1,105}$"),
           for {
@@ -161,13 +132,14 @@ class BusinessMatchingServiceSpec extends SpecBase
             secondName <- RegexpGen.from("^[a-zA-Z0-9 '&\\/]{1,35}$")
           } yield Name(firstName, secondName)
         ){
-          (userAnswers, businessType, utr, businessName, soleTraderName) =>
+          (userAnswers, utr, businessName, soleTraderName) =>
+            val getRandomBusinessTypeNoSoleTrader = Random.shuffle(businessTypesNoSoleTrader).head
 
             val answers = userAnswers
-              .set(BusinessTypePage, businessType)
+              .set(BusinessTypePage, getRandomBusinessTypeNoSoleTrader)
               .success
               .value
-              .set(utrPage(businessType), utr)
+              .set(utrPage(getRandomBusinessTypeNoSoleTrader), utr)
               .success
               .value
               .set(BusinessNamePage, businessName)
@@ -209,14 +181,62 @@ class BusinessMatchingServiceSpec extends SpecBase
         }
       }
 
-      "must throw an error if Json validation fails" in {
-        forAll(arbitrary[UserAnswers], arbitrary[BusinessType], arbitrary[UniqueTaxpayerReference], arbitrary[String], arbitrary[Name]){
-          (userAnswers, businessType, utr, businessName, soleTraderName) =>
-            val answers = userAnswers
-              .set(BusinessTypePage, businessType)
+      "should send a request to the business matching connector for a sole proprietor" in {
+        forAll(arbitrary[UniqueTaxpayerReference]){
+          utr =>
+            val answers = UserAnswers(userAnswersId)
+              .set(BusinessTypePage, NotSpecified)
               .success
               .value
-              .set(utrPage(businessType), utr)
+              .set(utrPage(NotSpecified), utr)
+              .success
+              .value
+              .set(SoleTraderNamePage, Name("Bobby", "Bob"))
+              .success
+              .value
+
+            val responseJson: JsValue = Json.parse(s"""
+              {
+                "anotherKey" : "DAC6",
+                "organisation": {
+                  "organisationName": "Bobby Bob"
+                },
+                "address" : {
+                  "addressLine1" : "1 TestStreet",
+                  "addressLine2" : "Test",
+                  "postalCode" : "AA11BB",
+                  "countryCode" : "GB"
+                }
+              }
+              """)
+
+            val businessDetails = BusinessDetails(
+              "Bobby Bob",
+              BusinessAddress("1 TestStreet", Some("Test"), None, None, "AA11BB", "GB")
+            )
+
+            when(mockBusinessMatchingConnector.sendSoleProprietorMatchingInformation(any(), any())(any(), any()))
+              .thenReturn(
+                Future.successful(HttpResponse(OK, responseJson, Map.empty[String,Seq[String]]))
+              )
+            val result = businessMatchingService.sendBusinessMatchingInformation(answers)
+
+            whenReady(result){ result =>
+              result mustBe Some(businessDetails)
+            }
+        }
+      }
+
+      "must throw an error if Json validation fails" in {
+        forAll(arbitrary[UserAnswers], arbitrary[UniqueTaxpayerReference], arbitrary[String], arbitrary[Name]){
+          (userAnswers, utr, businessName, soleTraderName) =>
+            val getRandomBusinessTypeNoSoleTrader = Random.shuffle(businessTypesNoSoleTrader).head
+
+            val answers = userAnswers
+              .set(BusinessTypePage, getRandomBusinessTypeNoSoleTrader)
+              .success
+              .value
+              .set(utrPage(getRandomBusinessTypeNoSoleTrader), utr)
               .success
               .value
               .set(BusinessNamePage, businessName)
@@ -247,13 +267,15 @@ class BusinessMatchingServiceSpec extends SpecBase
       }
 
       "should return a future None if business can't be found" in {
-        forAll(arbitrary[UserAnswers], arbitrary[BusinessType], arbitrary[UniqueTaxpayerReference], arbitrary[String], arbitrary[Name]){
-          (userAnswers, businessType, utr, businessName, soleTraderName) =>
+        forAll(arbitrary[UserAnswers], arbitrary[UniqueTaxpayerReference], arbitrary[String], arbitrary[Name]){
+          (userAnswers, utr, businessName, soleTraderName) =>
+            val getRandomBusinessTypeNoSoleTrader = Random.shuffle(businessTypesNoSoleTrader).head
+
             val answers = userAnswers
-              .set(BusinessTypePage, businessType)
+              .set(BusinessTypePage, getRandomBusinessTypeNoSoleTrader)
               .success
               .value
-              .set(utrPage(businessType), utr)
+              .set(utrPage(getRandomBusinessTypeNoSoleTrader), utr)
               .success
               .value
               .set(BusinessNamePage, businessName)

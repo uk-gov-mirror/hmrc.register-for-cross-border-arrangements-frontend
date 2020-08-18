@@ -333,7 +333,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(SoleTraderNamePage, NormalMode, answers)
-              .mustBe(routes.BusinessMatchingController.matchIndividual(NormalMode))
+              .mustBe(routes.BusinessMatchingController.matchBusiness())
         }
       }
 
