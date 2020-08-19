@@ -18,8 +18,8 @@ package services
 
 import connectors.BusinessMatchingConnector
 import javax.inject.Inject
-import models.{BusinessDetails, BusinessMatchingSubmission, IndividualMatchingSubmission, UserAnswers}
-import pages.{CorporationTaxUTRPage, NinoPage, SelfAssessmentUTRPage}
+import models.{BusinessDetails, BusinessMatchingSubmission, BusinessType, IndividualMatchingSubmission, UserAnswers}
+import pages.{BusinessTypePage, CorporationTaxUTRPage, NinoPage, SelfAssessmentUTRPage}
 import play.api.http.Status._
 import play.api.libs.json.JsResult.Exception
 import play.api.libs.json.{JsError, JsSuccess, JsValue}
@@ -47,16 +47,24 @@ class BusinessMatchingService @Inject()(businessMatchingConnector: BusinessMatch
       case (_, Some(utr)) => utr
     }
 
-      businessMatchingConnector.sendBusinessMatchingInformation(
-        utr,
-        BusinessMatchingSubmission(userAnswers).get
-      ).map {
-        response =>
-          response.status match {
-            case OK => validateJsonForBusiness(response.json)
-            case NOT_FOUND => None
-            case _ => None
-          }
+    //Note: ETMP data suggests sole trader business partner accounts are individual records
+    userAnswers.get(BusinessTypePage) match {
+      case Some(BusinessType.NotSpecified) =>
+        businessMatchingConnector.sendSoleProprietorMatchingInformation(utr, BusinessMatchingSubmission(userAnswers).get).map {
+          response =>
+            response.status match {
+              case OK => validateJsonForBusiness(response.json)
+              case _ => None
+            }
+        }
+      case _ =>
+        businessMatchingConnector.sendBusinessMatchingInformation(utr, BusinessMatchingSubmission(userAnswers).get).map {
+          response =>
+            response.status match {
+              case OK => validateJsonForBusiness(response.json)
+              case _ => None
+            }
+        }
     }
   }
 
