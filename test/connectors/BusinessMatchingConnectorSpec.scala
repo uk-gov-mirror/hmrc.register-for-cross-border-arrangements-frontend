@@ -52,7 +52,7 @@ class BusinessMatchingConnectorSpec extends SpecBase
 
         forAll(arbitrary[Nino], arbitrary[IndividualMatchingSubmission]) {
           (nino, ims) =>
-            stubResponse(s"/register-for-cross-border-arrangements/matching/individual/$nino", OK)
+            stubResponse(s"/register-for-cross-border-arrangements/matching/individual/nino/$nino", OK)
 
             val result = connector.sendIndividualMatchingInformation(nino, ims)
             result.futureValue.status mustBe OK
@@ -64,10 +64,21 @@ class BusinessMatchingConnectorSpec extends SpecBase
 
         forAll(arbitrary[Nino], arbitrary[IndividualMatchingSubmission]) {
           (nino, ims) =>
-            stubResponse(s"/register-for-cross-border-arrangements/matching/individual/$nino", BAD_REQUEST)
+            stubResponse(s"/register-for-cross-border-arrangements/matching/individual/nino/$nino", BAD_REQUEST)
 
             val result = connector.sendIndividualMatchingInformation(nino, ims)
             result.futureValue.status mustBe BAD_REQUEST
+        }
+      }
+
+      "must return status as FORBIDDEN for authorisation errors" in {
+
+        forAll(arbitrary[Nino], arbitrary[IndividualMatchingSubmission]) {
+          (nino, ims) =>
+            stubResponse(s"/register-for-cross-border-arrangements/matching/individual/nino/$nino", FORBIDDEN)
+
+            val result = connector.sendIndividualMatchingInformation(nino, ims)
+            result.futureValue.status mustBe FORBIDDEN
         }
       }
 
@@ -76,7 +87,7 @@ class BusinessMatchingConnectorSpec extends SpecBase
 
         forAll(arbitrary[Nino], arbitrary[IndividualMatchingSubmission]) {
           (nino, ims) =>
-            stubResponse(s"/register-for-cross-border-arrangements/matching/individual/$nino", INTERNAL_SERVER_ERROR)
+            stubResponse(s"/register-for-cross-border-arrangements/matching/individual/nino/$nino", INTERNAL_SERVER_ERROR)
 
             val result = connector.sendIndividualMatchingInformation(nino, ims)
             result.futureValue.status mustBe INTERNAL_SERVER_ERROR
@@ -132,6 +143,14 @@ class BusinessMatchingConnectorSpec extends SpecBase
         result.futureValue.status mustBe BAD_REQUEST
       }
 
+      "must return status as FORBIDDEN for authorisation errors" in {
+
+        stubResponse(s"/register-for-cross-border-arrangements/matching/individual/utr/${utr.uniqueTaxPayerReference}", FORBIDDEN)
+
+        val result = connector.sendSoleProprietorMatchingInformation(utr, bms)
+        result.futureValue.status mustBe FORBIDDEN
+      }
+
       "must return status as INTERNAL_SERVER_ERROR for technical error incurred" in {
 
         stubResponse(s"/register-for-cross-border-arrangements/matching/individual/utr/${utr.uniqueTaxPayerReference}", INTERNAL_SERVER_ERROR)
@@ -147,7 +166,7 @@ class BusinessMatchingConnectorSpec extends SpecBase
         forAll(arbitraryBusinessMatchingSubmission.arbitrary) {
           bms =>
             val utr = UniqueTaxpayerReference("0123456789")
-            stubResponse(s"/register-for-cross-border-arrangements/matching/organisation/${utr.uniqueTaxPayerReference}", OK)
+            stubResponse(s"/register-for-cross-border-arrangements/matching/organisation/utr/${utr.uniqueTaxPayerReference}", OK)
 
             val result = connector.sendBusinessMatchingInformation(utr, bms)
             result.futureValue.status mustBe OK
@@ -158,10 +177,21 @@ class BusinessMatchingConnectorSpec extends SpecBase
         forAll(arbitraryBusinessMatchingSubmission.arbitrary) {
           bms =>
             val invalidUTR = UniqueTaxpayerReference("01234567891")
-            stubResponse(s"/register-for-cross-border-arrangements/matching/organisation/${invalidUTR.uniqueTaxPayerReference}", BAD_REQUEST)
+            stubResponse(s"/register-for-cross-border-arrangements/matching/organisation/utr/${invalidUTR.uniqueTaxPayerReference}", BAD_REQUEST)
 
             val result = connector.sendBusinessMatchingInformation(invalidUTR, bms)
             result.futureValue.status mustBe BAD_REQUEST
+        }
+      }
+
+      "must return status as FORBIDDEN for authorisation errors" in {
+        forAll(arbitraryBusinessMatchingSubmission.arbitrary) {
+          bms =>
+            val utr = UniqueTaxpayerReference("0123456789")
+            stubResponse(s"/register-for-cross-border-arrangements/matching/organisation/utr/${utr.uniqueTaxPayerReference}", FORBIDDEN)
+
+            val result = connector.sendBusinessMatchingInformation(utr, bms)
+            result.futureValue.status mustBe FORBIDDEN
         }
       }
 
@@ -169,7 +199,7 @@ class BusinessMatchingConnectorSpec extends SpecBase
         forAll(arbitraryBusinessMatchingSubmission.arbitrary) {
           bms =>
             val utr = UniqueTaxpayerReference("0123456789")
-            stubResponse(s"/register-for-cross-border-arrangements/matching/organisation/${utr.uniqueTaxPayerReference}", INTERNAL_SERVER_ERROR)
+            stubResponse(s"/register-for-cross-border-arrangements/matching/organisation/utr/${utr.uniqueTaxPayerReference}", INTERNAL_SERVER_ERROR)
 
             val result = connector.sendBusinessMatchingInformation(utr, bms)
             result.futureValue.status mustBe INTERNAL_SERVER_ERROR
