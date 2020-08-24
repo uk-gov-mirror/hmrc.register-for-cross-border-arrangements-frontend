@@ -28,7 +28,7 @@ class BusinessMatchingConnector @Inject()(val config: FrontendAppConfig, val htt
 
   def sendIndividualMatchingInformation(nino: Nino, individualSubmission: IndividualMatchingSubmission)
                                        (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
-      val submissionUrl = s"${config.businessMatchingUrl}/matching/individual/$nino"
+      val submissionUrl = s"${config.businessMatchingUrl}/matching/individual/nino/$nino"
       http.POST[IndividualMatchingSubmission, HttpResponse](submissionUrl, individualSubmission)
   }
 
@@ -40,7 +40,7 @@ class BusinessMatchingConnector @Inject()(val config: FrontendAppConfig, val htt
 
   def sendBusinessMatchingInformation(utr: UniqueTaxpayerReference, businessSubmission: BusinessMatchingSubmission)
                                      (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
-    val submissionUrl = s"${config.businessMatchingUrl}/matching/organisation/${utr.uniqueTaxPayerReference}"
+    val submissionUrl = s"${config.businessMatchingUrl}/matching/organisation/utr/${utr.uniqueTaxPayerReference}"
     http.POST[BusinessMatchingSubmission, HttpResponse](submissionUrl, businessSubmission)
   }
 
