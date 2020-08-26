@@ -17,15 +17,17 @@
 package controllers
 
 import com.google.inject.Inject
+import connectors.TaxEnrolmentsConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.{NormalMode, RegistrationType}
+import models.RegistrationType
 import org.slf4j.LoggerFactory
-import pages.{BusinessTypePage, RegistrationTypePage, SecondaryContactEmailAddressPage}
+import pages.{BusinessTypePage, RegistrationTypePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import services.EmailService
+import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
 import utils.CheckYourAnswersHelper
@@ -33,14 +35,15 @@ import utils.CheckYourAnswersHelper
 import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersController @Inject()(
-    override val messagesApi: MessagesApi,
-    identify: IdentifierAction,
-    emailService: EmailService,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+                                            override val messagesApi: MessagesApi,
+                                            identify: IdentifierAction,
+                                            emailService: EmailService,
+                                            getData: DataRetrievalAction,
+                                            requireData: DataRequiredAction,
+                                            val controllerComponents: MessagesControllerComponents,
+                                            renderer: Renderer,
+                                            taxEnrolmentsConnector: TaxEnrolmentsConnector
+                                          )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
   private val logger = LoggerFactory.getLogger(getClass)
 
@@ -150,23 +153,32 @@ class CheckYourAnswersController @Inject()(
     ).flatten
   }
 
-
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      emailService.sendEmail(request.userAnswers) map {
-        case Some(response) => response.status match {
-          case OK => Redirect(routes.RegistrationSuccessfulController.onPageLoad())
-          case NOT_FOUND => {
-                              logger.warn("The template cannot be found within the email service")
-                              Redirect(routes.RegistrationSuccessfulController.onPageLoad())
-                              }
-          case BAD_REQUEST =>  {
-                                logger.warn("Missing email or name parameter")
-                                Redirect(routes.RegistrationSuccessfulController.onPageLoad())
-                                }
-          case _ => Redirect(routes.RegistrationSuccessfulController.onPageLoad())
-        }
-        case None => Redirect(routes.RegistrationSuccessfulController.onPageLoad())
+
+      taxEnrolmentsConnector.createEnrolment(request.userAnswers).flatMap {
+        subscriptionResponse =>
+          if (subscriptionResponse.status.equals(OK)) {
+            emailService.sendEmail(request.userAnswers).map {
+              emailResponse =>
+                logEmailResponse(emailResponse)
+                Redirect(routes.RegistrationSuccessfulController.onPageLoad())
+            }
+          } else {
+            Future(BadRequest("ERROR PAGE TO GO HERE"))
+
+          }
       }
   }
+
+
+  private def logEmailResponse(emailResponse: Option[HttpResponse]): Unit = {
+    emailResponse match {
+      case Some(HttpResponse(NOT_FOUND, _, _)) => logger.warn("The template cannot be found within the email service")
+      case Some(HttpResponse(BAD_REQUEST, _, _)) => logger.warn("Missing email or name parameter")
+      case _ => Unit
+    }
+
+  }
+
 }
