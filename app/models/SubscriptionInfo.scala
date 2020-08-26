@@ -18,16 +18,11 @@ package models
 
 import play.api.libs.json.{Json, OFormat}
 
-case class EnrolmentInfo (dac6UserID: String,
-                          businessName: Option[String],
-                          primaryContactName: String,
-                          primaryEmailAddress: String,
-                          primaryTelephoneNumber: Option[String],
-                          secondaryContactName: Option[String],
-                          secondaryEmailAddress: Option[String],
-                          secondaryTelephoneNumber: Option[String]
-                          )
-
-object EnrolmentInfo {
-  implicit val format: OFormat[EnrolmentInfo] = Json.format[EnrolmentInfo]
+case class SubscriptionInfo(safeID: String,
+                            saUtr: Option[String] = None,
+                            ctUtr: Option[String] = None,
+                            nino: Option[String] = None,
+                            nonUkPostcode: Option[String] = None)
+object SubscriptionInfo {
+  implicit val format: OFormat[SubscriptionInfo] = Json.format[SubscriptionInfo]
 }

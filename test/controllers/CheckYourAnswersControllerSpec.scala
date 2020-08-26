@@ -19,7 +19,7 @@ package controllers
 import java.time.LocalDate
 
 import base.SpecBase
-import connectors.TaxEnrolmentsConnector
+import connectors.SubscriptionConnector
 import models.RegistrationType.Individual
 import models.{Address, BusinessType, Country, Name, RegistrationType, SecondaryContactPreference, UserAnswers}
 import org.mockito.ArgumentCaptor
@@ -47,7 +47,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
   val email: String = "email@email.com"
 
   val mockEmailService: EmailService = mock[EmailService]
-  val mockRegistrationConnector: TaxEnrolmentsConnector = mock[TaxEnrolmentsConnector]
+  val mockRegistrationConnector: SubscriptionConnector = mock[SubscriptionConnector]
 
   override def beforeEach: Unit =
     reset(
@@ -313,14 +313,14 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(bind[EmailService]
             .toInstance(mockEmailService),
-            bind[TaxEnrolmentsConnector]
+            bind[SubscriptionConnector]
             .toInstance(mockRegistrationConnector))
           .build()
 
         when(mockEmailService.sendEmail(any())(any()))
           .thenReturn(Future.successful(Some(HttpResponse(OK, ""))))
 
-        when(mockRegistrationConnector.createEnrolment(any())(any(), any()))
+        when(mockRegistrationConnector.createSubscription(any())(any(), any()))
           .thenReturn(Future.successful(HttpResponse(OK, "")))
 
         val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit.url)
@@ -336,14 +336,14 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(bind[EmailService]
             .toInstance(mockEmailService),
-            bind[TaxEnrolmentsConnector]
+            bind[SubscriptionConnector]
             .toInstance(mockRegistrationConnector))
           .build()
 
         when(mockEmailService.sendEmail(any())(any()))
           .thenReturn(Future.successful(Some(HttpResponse(OK, ""))))
 
-        when(mockRegistrationConnector.createEnrolment(any())(any(), any()))
+        when(mockRegistrationConnector.createSubscription(any())(any(), any()))
           .thenReturn(Future.successful(HttpResponse(SERVICE_UNAVAILABLE, "")))
 
         val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit.url)
@@ -360,14 +360,14 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(bind[EmailService]
             .toInstance(mockEmailService),
-            bind[TaxEnrolmentsConnector]
+            bind[SubscriptionConnector]
               .toInstance(mockRegistrationConnector))
           .build()
 
         when(mockEmailService.sendEmail(any())(any()))
           .thenReturn(Future.successful(Some(HttpResponse(NOT_FOUND, ""))))
 
-        when(mockRegistrationConnector.createEnrolment(any())(any(), any()))
+        when(mockRegistrationConnector.createSubscription(any())(any(), any()))
           .thenReturn(Future.successful(HttpResponse(OK, "")))
 
         val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit.url)
@@ -383,14 +383,14 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(bind[EmailService]
             .toInstance(mockEmailService),
-            bind[TaxEnrolmentsConnector]
+            bind[SubscriptionConnector]
               .toInstance(mockRegistrationConnector))
           .build()
 
         when(mockEmailService.sendEmail(any())(any()))
           .thenReturn(Future.successful(Some(HttpResponse(BAD_REQUEST, ""))))
 
-        when(mockRegistrationConnector.createEnrolment(any())(any(), any()))
+        when(mockRegistrationConnector.createSubscription(any())(any(), any()))
           .thenReturn(Future.successful(HttpResponse(OK, "")))
 
         val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit.url)
@@ -405,14 +405,14 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(bind[EmailService]
             .toInstance(mockEmailService),
-            bind[TaxEnrolmentsConnector]
+            bind[SubscriptionConnector]
               .toInstance(mockRegistrationConnector))
           .build()
 
         when(mockEmailService.sendEmail(any())(any()))
           .thenReturn(Future.successful(None))
 
-        when(mockRegistrationConnector.createEnrolment(any())(any(), any()))
+        when(mockRegistrationConnector.createSubscription(any())(any(), any()))
           .thenReturn(Future.successful(HttpResponse(OK, "")))
 
         val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit.url)

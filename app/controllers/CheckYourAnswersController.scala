@@ -17,7 +17,7 @@
 package controllers
 
 import com.google.inject.Inject
-import connectors.TaxEnrolmentsConnector
+import connectors.SubscriptionConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.RegistrationType
 import org.slf4j.LoggerFactory
@@ -42,7 +42,7 @@ class CheckYourAnswersController @Inject()(
                                             requireData: DataRequiredAction,
                                             val controllerComponents: MessagesControllerComponents,
                                             renderer: Renderer,
-                                            taxEnrolmentsConnector: TaxEnrolmentsConnector
+                                            taxEnrolmentsConnector: SubscriptionConnector
                                           )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
   private val logger = LoggerFactory.getLogger(getClass)
@@ -156,7 +156,7 @@ class CheckYourAnswersController @Inject()(
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      taxEnrolmentsConnector.createEnrolment(request.userAnswers).flatMap {
+      taxEnrolmentsConnector.createSubscription(request.userAnswers).flatMap {
         subscriptionResponse =>
           if (subscriptionResponse.status.equals(OK)) {
             emailService.sendEmail(request.userAnswers).map {
