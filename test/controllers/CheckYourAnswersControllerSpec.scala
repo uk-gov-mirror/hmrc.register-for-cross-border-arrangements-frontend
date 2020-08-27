@@ -321,7 +321,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
           .thenReturn(Future.successful(Some(HttpResponse(OK, ""))))
 
         when(mockRegistrationConnector.createSubscription(any())(any(), any()))
-          .thenReturn(Future.successful(HttpResponse(OK, "")))
+          .thenReturn(Future.successful(HttpResponse(NO_CONTENT, "")))
 
         val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit.url)
         val result = route(application, request).value
@@ -349,7 +349,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
         val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit.url)
         val result = route(application, request).value
 
-        status(result) mustEqual BAD_REQUEST
+        status(result) mustEqual INTERNAL_SERVER_ERROR
         verify(mockEmailService, times(0)).sendEmail(any())(any())
 
       }
@@ -368,7 +368,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
           .thenReturn(Future.successful(Some(HttpResponse(NOT_FOUND, ""))))
 
         when(mockRegistrationConnector.createSubscription(any())(any(), any()))
-          .thenReturn(Future.successful(HttpResponse(OK, "")))
+          .thenReturn(Future.successful(HttpResponse(NO_CONTENT, "")))
 
         val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit.url)
         val result = route(application, request).value
@@ -391,7 +391,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
           .thenReturn(Future.successful(Some(HttpResponse(BAD_REQUEST, ""))))
 
         when(mockRegistrationConnector.createSubscription(any())(any(), any()))
-          .thenReturn(Future.successful(HttpResponse(OK, "")))
+          .thenReturn(Future.successful(HttpResponse(NO_CONTENT, "")))
 
         val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit.url)
         val result = route(application, request).value
@@ -413,7 +413,30 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
           .thenReturn(Future.successful(None))
 
         when(mockRegistrationConnector.createSubscription(any())(any(), any()))
-          .thenReturn(Future.successful(HttpResponse(OK, "")))
+          .thenReturn(Future.successful(HttpResponse(NO_CONTENT, "")))
+
+        val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/confirm-registration")
+      }
+
+
+      "must redirect the user to the index page when send email call fails" in {
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(bind[EmailService]
+            .toInstance(mockEmailService),
+            bind[SubscriptionConnector]
+              .toInstance(mockRegistrationConnector))
+          .build()
+
+        when(mockEmailService.sendEmail(any())(any()))
+          .thenReturn(Future.failed(new RuntimeException))
+
+        when(mockRegistrationConnector.createSubscription(any())(any(), any()))
+          .thenReturn(Future.successful(HttpResponse(NO_CONTENT, "")))
 
         val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit.url)
         val result = route(application, request).value

@@ -158,14 +158,16 @@ class CheckYourAnswersController @Inject()(
 
       taxEnrolmentsConnector.createSubscription(request.userAnswers).flatMap {
         subscriptionResponse =>
-          if (subscriptionResponse.status.equals(OK)) {
-            emailService.sendEmail(request.userAnswers).map {
-              emailResponse =>
-                logEmailResponse(emailResponse)
+          if (subscriptionResponse.status.equals(NO_CONTENT)) {
+           emailService.sendEmail(request.userAnswers).map {
+             emailResponse =>
+               logEmailResponse(emailResponse)
                 Redirect(routes.RegistrationSuccessfulController.onPageLoad())
-            }
+           }.recover {
+             case e: Exception => Redirect(routes.RegistrationSuccessfulController.onPageLoad())
+           }
           } else {
-            Future(BadRequest("ERROR PAGE TO GO HERE"))
+            Future(InternalServerError("ERROR PAGE TO GO HERE"))
 
           }
       }
