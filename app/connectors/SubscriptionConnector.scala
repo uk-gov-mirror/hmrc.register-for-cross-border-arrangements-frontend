@@ -32,48 +32,7 @@ class SubscriptionConnector @Inject()(val config: FrontendAppConfig, val http: H
   def createSubscription(userAnswers: UserAnswers)
                         (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
 
-    //TODO: code to go here to convert userAnswers to EnrolmentInfo
-
-    val enrolmentInfo = SubscriptionInfo(safeID = "id",
-                                         saUtr = getSaUtrIfProvided(userAnswers),
-                                         ctUtr = getCtUtrIfProvided(userAnswers),
-                                         nino = getNinoIfProvided(userAnswers),
-                                         nonUkPostcode = getNonUkPostCodeIfProvided(userAnswers))
-
     val submissionUrl = s"${config.businessMatchingUrl}/enrolment/create-enrolment"
-    http.PUT[SubscriptionInfo, HttpResponse](submissionUrl, enrolmentInfo)
+    http.PUT[SubscriptionInfo, HttpResponse](submissionUrl, SubscriptionInfo.createSubscriptionInfo(userAnswers))
   }
-
-  private def getNinoIfProvided(userAnswers: UserAnswers): Option[String] = {
-    userAnswers.get(NinoPage) match {
-
-      case Some(nino) => Some(nino.nino)
-      case _ => None
-    }
-  }
-
-  private def getSaUtrIfProvided(userAnswers: UserAnswers): Option[String] = {
-    userAnswers.get(SelfAssessmentUTRPage) match {
-
-      case Some(utr) => Some(utr.uniqueTaxPayerReference)
-      case _ => None
-    }
-  }
-
-  private def getCtUtrIfProvided(userAnswers: UserAnswers): Option[String] = {
-    userAnswers.get(CorporationTaxUTRPage) match {
-
-      case Some(utr) => Some(utr.uniqueTaxPayerReference)
-      case _ => None
-    }
-  }
-
-  private def getNonUkPostCodeIfProvided(userAnswers: UserAnswers): Option[String] = {
-    userAnswers.get(WhatIsYourAddressPage) match {
-
-      case Some(address) => address.postCode
-      case _ => None
-    }
-  }
-
 }

@@ -16,6 +16,8 @@
 
 package models
 
+import com.sun.xml.internal.bind.v2.TODO
+import pages.{CorporationTaxUTRPage, NinoPage, SelfAssessmentUTRPage, WhatIsYourAddressPage}
 import play.api.libs.json.{Json, OFormat}
 
 case class SubscriptionInfo(safeID: String,
@@ -25,4 +27,47 @@ case class SubscriptionInfo(safeID: String,
                             nonUkPostcode: Option[String] = None)
 object SubscriptionInfo {
   implicit val format: OFormat[SubscriptionInfo] = Json.format[SubscriptionInfo]
+
+  def createSubscriptionInfo(userAnswers: UserAnswers): SubscriptionInfo = {
+
+    //TODO: pass safeID from register cal lto ETMP
+
+    SubscriptionInfo(safeID = "id",
+      saUtr = getSaUtrIfProvided(userAnswers),
+      ctUtr = getCtUtrIfProvided(userAnswers),
+      nino = getNinoIfProvided(userAnswers),
+      nonUkPostcode = getNonUkPostCodeIfProvided(userAnswers))
+  }
+    private def getNinoIfProvided(userAnswers: UserAnswers): Option[String] = {
+      userAnswers.get(NinoPage) match {
+
+        case Some(nino) => Some(nino.nino)
+        case _ => None
+      }
+    }
+
+    private def getSaUtrIfProvided(userAnswers: UserAnswers): Option[String] = {
+      userAnswers.get(SelfAssessmentUTRPage) match {
+
+        case Some(utr) => Some(utr.uniqueTaxPayerReference)
+        case _ => None
+      }
+    }
+
+    private def getCtUtrIfProvided(userAnswers: UserAnswers): Option[String] = {
+      userAnswers.get(CorporationTaxUTRPage) match {
+
+        case Some(utr) => Some(utr.uniqueTaxPayerReference)
+        case _ => None
+      }
+    }
+
+    private def getNonUkPostCodeIfProvided(userAnswers: UserAnswers): Option[String] = {
+      userAnswers.get(WhatIsYourAddressPage) match {
+
+        case Some(address) => address.postCode
+        case _ => None
+      }
+    }
+
 }
