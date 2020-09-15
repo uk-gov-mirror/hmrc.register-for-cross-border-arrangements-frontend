@@ -33,7 +33,7 @@ class DateOfBirthFormProvider @Inject() extends Mappings {
         twoRequiredKey = "dateOfBirth.error.required.two",
         requiredKey    = "dateOfBirth.error.required"
       ).verifying(maxDate(today, "dateOfBirth.error.futureDate", formatDateToString(today)))
-       .verifying(minDate(LocalDate.of(1900,1,1),"dateOfBirth.error.pastDate"))
+       .verifying(minDate(LocalDate.of(1909,1,1),"dateOfBirth.error.pastDate"))
     )
 
 }
