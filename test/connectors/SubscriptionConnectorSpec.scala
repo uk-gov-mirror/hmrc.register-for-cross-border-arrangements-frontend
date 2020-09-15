@@ -30,7 +30,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import uk.gov.hmrc.domain.Nino
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class TaxEnrolmentsConnectorSpec extends SpecBase
+class SubscriptionConnectorSpec extends SpecBase
   with WireMockServerHandler
   with Generators
   with ScalaCheckPropertyChecks {
@@ -41,7 +41,7 @@ class TaxEnrolmentsConnectorSpec extends SpecBase
     )
     .build()
 
-  lazy val connector: TaxEnrolmentsConnector = app.injector.instanceOf[TaxEnrolmentsConnector]
+  lazy val connector: SubscriptionConnector = app.injector.instanceOf[SubscriptionConnector]
 
   "BusinessMatchingConnector" - {
     "must return status as OK for submission of valid enrolment request" in {
@@ -51,7 +51,7 @@ class TaxEnrolmentsConnectorSpec extends SpecBase
         (userAnswers) =>
           stubResponse(s"/register-for-cross-border-arrangements/enrolment/create-enrolment", OK)
 
-          val result = connector.createEnrolment(userAnswers)
+          val result = connector.createSubscription(userAnswers)
           result.futureValue.status mustBe OK
       }
     }
@@ -63,7 +63,7 @@ class TaxEnrolmentsConnectorSpec extends SpecBase
         (userAnswers) =>
           stubResponse(s"/register-for-cross-border-arrangements/enrolment/create-enrolment", BAD_REQUEST)
 
-          val result = connector.createEnrolment(userAnswers)
+          val result = connector.createSubscription(userAnswers)
           result.futureValue.status mustBe BAD_REQUEST
       }
     }
@@ -75,7 +75,7 @@ class TaxEnrolmentsConnectorSpec extends SpecBase
         (userAnswers) =>
           stubResponse(s"/register-for-cross-border-arrangements/enrolment/create-enrolment", INTERNAL_SERVER_ERROR)
 
-          val result = connector.createEnrolment(userAnswers)
+          val result = connector.createSubscription(userAnswers)
           result.futureValue.status mustBe INTERNAL_SERVER_ERROR
       }
     }

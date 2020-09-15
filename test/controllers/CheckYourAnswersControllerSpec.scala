@@ -19,6 +19,7 @@ package controllers
 import java.time.LocalDate
 
 import base.SpecBase
+import connectors.SubscriptionConnector
 import models.RegistrationType.Individual
 import models.{Address, BusinessType, Country, Name, RegistrationType, SecondaryContactPreference, UserAnswers}
 import org.mockito.ArgumentCaptor
@@ -46,11 +47,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
   val email: String = "email@email.com"
 
   val mockEmailService: EmailService = mock[EmailService]
+  val mockRegistrationConnector: SubscriptionConnector = mock[SubscriptionConnector]
 
   override def beforeEach: Unit =
     reset(
       mockRenderer,
-      mockEmailService
+      mockEmailService,
+      mockRegistrationConnector
     )
 
 
@@ -309,17 +312,46 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(bind[EmailService]
-            .toInstance(mockEmailService))
+            .toInstance(mockEmailService),
+            bind[SubscriptionConnector]
+            .toInstance(mockRegistrationConnector))
           .build()
 
         when(mockEmailService.sendEmail(any())(any()))
           .thenReturn(Future.successful(Some(HttpResponse(OK, ""))))
+
+        when(mockRegistrationConnector.createSubscription(any())(any(), any()))
+          .thenReturn(Future.successful(HttpResponse(NO_CONTENT, "")))
 
         val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit.url)
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/confirm-registration")
+        verify(mockEmailService, times(1)).sendEmail(any())(any())
+      }
+
+      "must redirect to the technical difficulties page and not send email when error response received from subscription connector" in {
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(bind[EmailService]
+            .toInstance(mockEmailService),
+            bind[SubscriptionConnector]
+            .toInstance(mockRegistrationConnector))
+          .build()
+
+        when(mockEmailService.sendEmail(any())(any()))
+          .thenReturn(Future.successful(Some(HttpResponse(OK, ""))))
+
+        when(mockRegistrationConnector.createSubscription(any())(any(), any()))
+          .thenReturn(Future.successful(HttpResponse(SERVICE_UNAVAILABLE, "")))
+
+        val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual INTERNAL_SERVER_ERROR
+        verify(mockEmailService, times(0)).sendEmail(any())(any())
+
       }
 
 
@@ -327,11 +359,16 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(bind[EmailService]
-            .toInstance(mockEmailService))
+            .toInstance(mockEmailService),
+            bind[SubscriptionConnector]
+              .toInstance(mockRegistrationConnector))
           .build()
 
         when(mockEmailService.sendEmail(any())(any()))
           .thenReturn(Future.successful(Some(HttpResponse(NOT_FOUND, ""))))
+
+        when(mockRegistrationConnector.createSubscription(any())(any(), any()))
+          .thenReturn(Future.successful(HttpResponse(NO_CONTENT, "")))
 
         val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit.url)
         val result = route(application, request).value
@@ -345,11 +382,16 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(bind[EmailService]
-            .toInstance(mockEmailService))
+            .toInstance(mockEmailService),
+            bind[SubscriptionConnector]
+              .toInstance(mockRegistrationConnector))
           .build()
 
         when(mockEmailService.sendEmail(any())(any()))
           .thenReturn(Future.successful(Some(HttpResponse(BAD_REQUEST, ""))))
+
+        when(mockRegistrationConnector.createSubscription(any())(any(), any()))
+          .thenReturn(Future.successful(HttpResponse(NO_CONTENT, "")))
 
         val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit.url)
         val result = route(application, request).value
@@ -362,11 +404,39 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(bind[EmailService]
-            .toInstance(mockEmailService))
+            .toInstance(mockEmailService),
+            bind[SubscriptionConnector]
+              .toInstance(mockRegistrationConnector))
           .build()
 
         when(mockEmailService.sendEmail(any())(any()))
           .thenReturn(Future.successful(None))
+
+        when(mockRegistrationConnector.createSubscription(any())(any(), any()))
+          .thenReturn(Future.successful(HttpResponse(NO_CONTENT, "")))
+
+        val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/confirm-registration")
+      }
+
+
+      "must redirect the user to the index page when send email call fails" in {
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(bind[EmailService]
+            .toInstance(mockEmailService),
+            bind[SubscriptionConnector]
+              .toInstance(mockRegistrationConnector))
+          .build()
+
+        when(mockEmailService.sendEmail(any())(any()))
+          .thenReturn(Future.failed(new RuntimeException))
+
+        when(mockRegistrationConnector.createSubscription(any())(any(), any()))
+          .thenReturn(Future.successful(HttpResponse(NO_CONTENT, "")))
 
         val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit.url)
         val result = route(application, request).value
