@@ -38,6 +38,7 @@ class DoYouHaveANationalInsuranceNumberController @Inject()(
     sessionRepository: SessionRepository,
     navigator: Navigator,
     identify: IdentifierAction,
+    notEnrolled: NotEnrolledForDAC6Action,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     formProvider: DoYouHaveANationalInsuranceNumberFormProvider,
@@ -47,7 +48,7 @@ class DoYouHaveANationalInsuranceNumberController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(DoYouHaveANationalInsuranceNumberPage) match {
@@ -64,7 +65,7 @@ class DoYouHaveANationalInsuranceNumberController @Inject()(
       renderer.render("doYouHaveANationalInsuranceNumber.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(

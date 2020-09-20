@@ -65,7 +65,6 @@ class SelectAddressControllerSpec extends SpecBase
     Radios.Radio(label = msg"1 Address line 1, Town, ZZ1 1ZZ", value = s"1 Address line 1, Town, ZZ1 1ZZ"),
     Radios.Radio(label = msg"2 Address line 1, Town, ZZ1 1ZZ", value = s"2 Address line 1, Town, ZZ1 1ZZ")
   )
-  val dacFrontendUrl = "http://localhost:9755/register-for-cross-border-arrangements/"
 
   "SelectAddress Controller" - {
 

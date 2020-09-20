@@ -38,6 +38,7 @@ class TelephoneNumberQuestionController @Inject()(
                                                    sessionRepository: SessionRepository,
                                                    navigator: Navigator,
                                                    identify: IdentifierAction,
+                                                   notEnrolled: NotEnrolledForDAC6Action,
                                                    getData: DataRetrievalAction,
                                                    requireData: DataRequiredAction,
                                                    formProvider: TelephoneNumberQuestionFormProvider,
@@ -47,7 +48,7 @@ class TelephoneNumberQuestionController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
     implicit request =>
 
       (isOrganisationJourney(request.userAnswers), request.userAnswers.get(ContactNamePage)) match {
@@ -79,7 +80,7 @@ class TelephoneNumberQuestionController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(

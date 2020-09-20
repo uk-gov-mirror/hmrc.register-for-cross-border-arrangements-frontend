@@ -38,6 +38,7 @@ class NinoController @Inject()(
     sessionRepository: SessionRepository,
     navigator: Navigator,
     identify: IdentifierAction,
+    notEnrolled: NotEnrolledForDAC6Action,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     formProvider: NinoFormProvider,
@@ -47,7 +48,7 @@ class NinoController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(NinoPage) match {
@@ -63,7 +64,7 @@ class NinoController @Inject()(
       renderer.render("nino.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(

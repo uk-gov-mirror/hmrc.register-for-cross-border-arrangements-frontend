@@ -37,6 +37,7 @@ class IndividualUKPostcodeController @Inject()(
     sessionRepository: SessionRepository,
     navigator: Navigator,
     identify: IdentifierAction,
+    notEnrolled: NotEnrolledForDAC6Action,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     formProvider: IndividualUKPostcodeFormProvider,
@@ -46,7 +47,7 @@ class IndividualUKPostcodeController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(IndividualUKPostcodePage) match {
@@ -62,7 +63,7 @@ class IndividualUKPostcodeController @Inject()(
       renderer.render("individualUKPostcode.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(

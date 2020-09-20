@@ -16,7 +16,7 @@
 
 package controllers
 
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction, NotEnrolledForDAC6Action}
 import javax.inject.Inject
 import models.{Mode, NormalMode}
 import navigation.Navigator
@@ -36,6 +36,7 @@ class BusinessMatchingController @Inject()(
                                             sessionRepository: SessionRepository,
                                             navigator: Navigator,
                                             identify: IdentifierAction,
+                                            notEnrolled: NotEnrolledForDAC6Action,
                                             getData: DataRetrievalAction,
                                             requireData: DataRequiredAction,
                                             businessMatchingService: BusinessMatchingService,
@@ -43,7 +44,7 @@ class BusinessMatchingController @Inject()(
                                             renderer: Renderer
                                           )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
-  def matchIndividual(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def matchIndividual(mode: Mode): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
     implicit request =>
       businessMatchingService.sendIndividualMatchingInformation(request.userAnswers) map {
         case Some(response) => response.status match {
@@ -56,7 +57,7 @@ class BusinessMatchingController @Inject()(
       }
   }
 
-  def matchBusiness(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def matchBusiness(mode: Mode): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
     implicit request =>
 
       /*Note: Needs business type, name and utr to business match

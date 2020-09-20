@@ -40,6 +40,7 @@ class WhatIsYourAddressUkController @Inject()(
     sessionRepository: SessionRepository,
     navigator: Navigator,
     identify: IdentifierAction,
+    notEnrolled: NotEnrolledForDAC6Action,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     formProvider: WhatIsYourAddressUkFormProvider,
@@ -47,7 +48,7 @@ class WhatIsYourAddressUkController @Inject()(
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
     implicit request =>
 
       val countries = Seq(countryListFactory.uk)
@@ -72,14 +73,10 @@ class WhatIsYourAddressUkController @Inject()(
     "value" -> countryListFactory.uk.code,
     "selected" -> true))
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
     implicit request =>
-
-
       val countries = Seq(countryListFactory.uk)
       val form = formProvider(countries)
-
-
 
       form.bindFromRequest().fold(
         formWithErrors => {

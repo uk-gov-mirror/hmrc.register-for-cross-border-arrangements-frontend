@@ -16,7 +16,7 @@
 
 package controllers
 
-import controllers.actions._
+import controllers.actions.{NotEnrolledForDAC6Action, _}
 import forms.BusinessAddressFormProvider
 import helpers.JourneyHelpers.redirectToSummary
 import javax.inject.Inject
@@ -39,6 +39,7 @@ class BusinessAddressController @Inject()(override val messagesApi: MessagesApi,
                                           sessionRepository: SessionRepository,
                                           navigator: Navigator,
                                           identify: IdentifierAction,
+                                          notEnrolled: NotEnrolledForDAC6Action,
                                           getData: DataRetrievalAction,
                                           requireData: DataRequiredAction,
                                           formProvider: BusinessAddressFormProvider,
@@ -46,7 +47,7 @@ class BusinessAddressController @Inject()(override val messagesApi: MessagesApi,
                                           renderer: Renderer
                                          )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
     implicit request =>
 
       val countries = countryListFactory.getCountyList().getOrElse(throw new Exception("Cannot retrieve country list"))
@@ -81,7 +82,7 @@ class BusinessAddressController @Inject()(override val messagesApi: MessagesApi,
     Json.obj("value" -> "", "text" -> "") +: countryJsonList
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
     implicit request =>
 
       val countries = countryListFactory.getCountyList().getOrElse(throw new Exception("Cannot retrieve country list"))

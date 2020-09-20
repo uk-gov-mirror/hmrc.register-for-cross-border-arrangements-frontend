@@ -40,6 +40,7 @@ class SelectAddressController @Inject()(
     sessionRepository: SessionRepository,
     navigator: Navigator,
     identify: IdentifierAction,
+    notEnrolled: NotEnrolledForDAC6Action,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     formProvider: SelectAddressFormProvider,
@@ -50,7 +51,7 @@ class SelectAddressController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
     implicit request =>
     val manualAddressURL: String = routes.WhatIsYourAddressUkController.onPageLoad(mode).url
     val postCode = request.userAnswers.get(IndividualUKPostcodePage) match {
@@ -82,7 +83,7 @@ class SelectAddressController @Inject()(
     }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
     implicit request =>
       val manualAddressURL: String = routes.WhatIsYourAddressUkController.onPageLoad(mode).url
       val postCode = request.userAnswers.get(IndividualUKPostcodePage) match {
@@ -130,7 +131,7 @@ class SelectAddressController @Inject()(
       }
   }
 
-  private def formatAddress(address: AddressLookup) = {
+  private def formatAddress(address: AddressLookup): String = {
     val lines = Seq(address.addressLine1, address.addressLine2, address.addressLine3, address.addressLine4).flatten.mkString(", ")
     val county = address.county.fold("")(county => s"$county, ")
 

@@ -40,6 +40,7 @@ class WhatIsYourAddressController @Inject()(
     sessionRepository: SessionRepository,
     navigator: Navigator,
     identify: IdentifierAction,
+    notEnrolled: NotEnrolledForDAC6Action,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     formProvider: WhatIsYourAddressFormProvider,
@@ -49,7 +50,7 @@ class WhatIsYourAddressController @Inject()(
 
 
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
     implicit request =>
 
       val countries = countryListFactory.getCountyList().getOrElse(throw new Exception("Cannot retrieve country list"))
@@ -84,7 +85,7 @@ class WhatIsYourAddressController @Inject()(
     Json.obj("value" -> "", "text" -> "") +: countryJsonList
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
     implicit request =>
 
       val countries = countryListFactory.getCountyList().getOrElse(throw new Exception("Cannot retrieve country list"))
