@@ -17,13 +17,9 @@
 package connectors
 
 import config.FrontendAppConfig
-import controllers.routes
 import javax.inject.Inject
-import models.{CheckMode, SubscriptionInfo, UserAnswers}
-import pages.{CorporationTaxUTRPage, NinoPage, SelfAssessmentUTRPage, WhatIsYourAddressPage}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.http.HttpClient
-import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
+import models.{SubscriptionInfo, UserAnswers}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 

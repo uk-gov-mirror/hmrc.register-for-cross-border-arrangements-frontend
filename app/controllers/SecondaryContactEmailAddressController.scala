@@ -38,6 +38,7 @@ class SecondaryContactEmailAddressController @Inject()(
     sessionRepository: SessionRepository,
     navigator: Navigator,
     identify: IdentifierAction,
+    notEnrolled: NotEnrolledForDAC6Action,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     formProvider: SecondaryContactEmailAddressFormProvider,
@@ -47,7 +48,7 @@ class SecondaryContactEmailAddressController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(SecondaryContactEmailAddressPage) match {
@@ -69,7 +70,7 @@ class SecondaryContactEmailAddressController @Inject()(
       renderer.render("secondaryContactEmailAddress.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
     implicit request =>
 
     val contactName = request.userAnswers.get(SecondaryContactNamePage) match {

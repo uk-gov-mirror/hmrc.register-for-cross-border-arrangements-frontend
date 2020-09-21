@@ -14,25 +14,24 @@
  * limitations under the License.
  */
 
-package controllers.auth
+package controllers.actions
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import models.requests.UserRequest
+import models.requests.{IdentifierRequest, UserRequest}
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Result}
-import uk.gov.hmrc.auth.core.Enrolments
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class NotEnrolledForDAC6Action @Inject()(config:FrontendAppConfig)(implicit val executionContext: ExecutionContext)
-  extends ActionRefiner[AuthenticatedRequest, UserRequest] {
+  extends ActionRefiner[UserRequest, IdentifierRequest] {
 
-  override protected def refine[A](request: AuthenticatedRequest[A]): Future[Either[Result, UserRequest[A]]] =
+  override protected def refine[A](request: UserRequest[A]): Future[Either[Result, IdentifierRequest[A]]] =
 
-    if (request.enrolments.exists(_.key == "DAC6")) {
-      Future.successful(Left(Redirect(config.dacFrontendUrl)))
+    if (request.enrolments.enrolments.exists(_.key == "HMRC-DAC6-ORG")) {
+      Future.successful(Left(Redirect(config.dacSubmissionsUrl)))
     } else {
-      Future.successful(Right(UserRequest(Enrolments(request.enrolments), request.request)))
+      Future.successful(Right(IdentifierRequest(request.request, request.identifier)))
     }
 }

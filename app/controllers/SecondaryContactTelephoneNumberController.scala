@@ -37,6 +37,7 @@ class SecondaryContactTelephoneNumberController @Inject()(
     sessionRepository: SessionRepository,
     navigator: Navigator,
     identify: IdentifierAction,
+    notEnrolled: NotEnrolledForDAC6Action,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     formProvider: SecondaryContactTelephoneNumberFormProvider,
@@ -46,7 +47,7 @@ class SecondaryContactTelephoneNumberController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(SecondaryContactTelephoneNumberPage) match {
@@ -68,7 +69,7 @@ class SecondaryContactTelephoneNumberController @Inject()(
       renderer.render("secondaryContactTelephoneNumber.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
     implicit request =>
 
       val contactName = request.userAnswers.get(SecondaryContactNamePage) match {

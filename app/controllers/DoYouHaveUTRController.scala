@@ -38,6 +38,7 @@ class DoYouHaveUTRController @Inject()(
     sessionRepository: SessionRepository,
     navigator: Navigator,
     identify: IdentifierAction,
+    notEnrolled: NotEnrolledForDAC6Action,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     formProvider: DoYouHaveUTRFormProvider,
@@ -47,7 +48,7 @@ class DoYouHaveUTRController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen notEnrolled andThen getData).async {
     implicit request =>
 
       val preparedForm = request.userAnswers.flatMap(_.get(DoYouHaveUTRPage)) match {
@@ -64,7 +65,7 @@ class DoYouHaveUTRController @Inject()(
       renderer.render("doYouHaveUTR.njk", json).map(Ok(_))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen notEnrolled andThen getData).async {
     implicit request =>
 
       form.bindFromRequest().fold(

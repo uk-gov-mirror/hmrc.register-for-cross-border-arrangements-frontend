@@ -18,7 +18,7 @@ package controllers
 
 import com.google.inject.Inject
 import connectors.SubscriptionConnector
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction, NotEnrolledForDAC6Action}
 import models.RegistrationType
 import org.slf4j.LoggerFactory
 import pages.{BusinessTypePage, RegistrationTypePage}
@@ -37,17 +37,18 @@ import scala.concurrent.{ExecutionContext, Future}
 class CheckYourAnswersController @Inject()(
                                             override val messagesApi: MessagesApi,
                                             identify: IdentifierAction,
-                                            emailService: EmailService,
+                                            notEnrolled: NotEnrolledForDAC6Action,
                                             getData: DataRetrievalAction,
                                             requireData: DataRequiredAction,
                                             val controllerComponents: MessagesControllerComponents,
-                                            renderer: Renderer,
-                                            taxEnrolmentsConnector: SubscriptionConnector
+                                            emailService: EmailService,
+                                            taxEnrolmentsConnector: SubscriptionConnector,
+                                            renderer: Renderer
                                           )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
   private val logger = LoggerFactory.getLogger(getClass)
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
     implicit request =>
 
       val helper = new CheckYourAnswersHelper(request.userAnswers)
@@ -153,7 +154,7 @@ class CheckYourAnswersController @Inject()(
     ).flatten
   }
 
-  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
     implicit request =>
 
       taxEnrolmentsConnector.createSubscription(request.userAnswers).flatMap {

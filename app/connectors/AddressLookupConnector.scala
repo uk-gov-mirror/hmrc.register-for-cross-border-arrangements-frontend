@@ -27,6 +27,7 @@ import uk.gov.hmrc.http._
 import scala.concurrent.{ExecutionContext, Future}
 
 class AddressLookupConnector @Inject()(http: HttpClient, config: FrontendAppConfig) {
+  private val logger: Logger = Logger(this.getClass)
 
   def addressLookupByPostcode(postCode: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[AddressLookup]] = {
 
@@ -50,7 +51,7 @@ class AddressLookupConnector @Inject()(http: HttpClient, config: FrontendAppConf
         Future.failed(new HttpException(message, response.status))
     } recover {
       case e: Exception =>
-        Logger.error("Exception in Address Lookup", e)
+        logger.error("Exception in Address Lookup", e)
         throw e
     }
   }

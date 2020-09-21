@@ -23,6 +23,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import config.FrontendAppConfig
+
 import scala.concurrent.ExecutionContext
 import play.api.libs.json.Json
 
@@ -30,13 +31,14 @@ class RegistrationSuccessfulController @Inject()(
     override val messagesApi: MessagesApi,
     appConfig: FrontendAppConfig,
     identify: IdentifierAction,
+    notEnrolled: NotEnrolledForDAC6Action,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData).async {
+  def onPageLoad: Action[AnyContent] = (identify andThen notEnrolled andThen getData).async {
     implicit request =>
 
       val json = Json.obj(

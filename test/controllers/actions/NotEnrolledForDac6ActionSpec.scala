@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package controllers.auth
+package controllers.actions
 
 import config.FrontendAppConfig
-import controllers.auth
-import models.requests.UserRequest
+import models.requests.{IdentifierRequest, UserRequest}
 import org.scalatest.{FreeSpec, MustMatchers}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -26,7 +25,7 @@ import play.api.mvc.Results.Ok
 import play.api.mvc.{AnyContent, MessagesControllerComponents, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.auth.core.Enrolment
+import uk.gov.hmrc.auth.core.{Enrolment, Enrolments}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -40,20 +39,21 @@ class NotEnrolledForDac6ActionSpec extends FreeSpec with MustMatchers with Mocki
   lazy val mockMcc: MessagesControllerComponents = app.injector.instanceOf[MessagesControllerComponents]
 
 
-  def harness[A]()(implicit request: AuthenticatedRequest[A]): Future[Result] = {
+  def harness[A]()(implicit request: UserRequest[A]): Future[Result] = {
 
     lazy val actionProvider = app.injector.instanceOf[NotEnrolledForDAC6Action]
 
     actionProvider.invokeBlock(
-      request, { _: UserRequest[_] =>
+      request, { _: IdentifierRequest[_] =>
         Future.successful(Ok(""))
       }
     )
   }
 
-  def createAuthenticatedRequest(dac6Enrolment: Set[Enrolment]): AuthenticatedRequest[AnyContent] =
-    auth.AuthenticatedRequest(
-      dac6Enrolment,
+  def createAuthenticatedRequest(dac6Enrolment: Set[Enrolment]): UserRequest[AnyContent] =
+    UserRequest(
+      Enrolments(dac6Enrolment),
+      "identifier",
       FakeRequest()
     )
 
@@ -63,7 +63,7 @@ class NotEnrolledForDac6ActionSpec extends FreeSpec with MustMatchers with Mocki
     "redirect to the unauthorised page when" - {
 
       "the user has a DAC6 enrolment" in {
-        implicit val request = createAuthenticatedRequest(dac6Enrolment = Set(Enrolment("DAC6")))
+        implicit val request = createAuthenticatedRequest(dac6Enrolment = Set(Enrolment("HMRC-DAC6-ORG")))
         val result = harness()(request)
         status(result) mustBe SEE_OTHER
       }

@@ -16,7 +16,6 @@
 
 package models
 
-import com.sun.xml.internal.bind.v2.TODO
 import pages.{CorporationTaxUTRPage, NinoPage, SelfAssessmentUTRPage, WhatIsYourAddressPage}
 import play.api.libs.json.{Json, OFormat}
 

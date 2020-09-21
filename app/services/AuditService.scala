@@ -18,7 +18,7 @@ package services
 
 import config.FrontendAppConfig
 import javax.inject.Inject
-import play.Logger
+import play.api.Logger
 import play.api.libs.json.JsValue
 import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
@@ -32,6 +32,7 @@ import scala.concurrent.Future
 
 class AuditService @Inject()(appConfig: FrontendAppConfig, auditConnector: AuditConnector){
   private val refererHeaderKey = "Referer"
+  private val logger: Logger = Logger(this.getClass)
 
   def sendAuditEvent(eventName: String, detail: JsValue)(implicit hc: HeaderCarrier, request: Request[_]): Future[AuditResult] = {
 
@@ -41,13 +42,20 @@ class AuditService @Inject()(appConfig: FrontendAppConfig, auditConnector: Audit
       auditSource = appConfig.appName,
       auditType = eventName,
       detail = detail,
-      tags = AuditExtensions.auditHeaderCarrier(hc).toAuditDetails() ++ AuditExtensions.auditHeaderCarrier(hc).toAuditTags(eventName, path)
+      tags = AuditExtensions.auditHeaderCarrier(hc).toAuditDetails()
+        ++ AuditExtensions.auditHeaderCarrier(hc).toAuditTags(eventName, path)
     )) map { ar: AuditResult => ar match {
-      case Failure(msg, ex) => Logger.warn(s"The attempt to issue audit event $eventName failed " +
-        s"with message : $msg", ex); ar
-      case Disabled => Logger.warn(s"The attempt to issue audit event $eventName was unsuccessful, " +
-        "as auditing is currently disabled in config"); ar
-      case _ => Logger.debug(s"Audit event $eventName issued successsfully."); ar
+      case Failure(msg, ex) =>
+        ex match {
+          case Some(throwable) =>
+            logger.warn(s"The attempt to issue audit event $eventName failed with message : $msg", throwable)
+          case None =>
+            logger.warn(s"The attempt to issue audit event $eventName failed with message : $msg")
+        }
+        ar
+      case Disabled =>
+        logger.warn(s"The attempt to issue audit event $eventName was unsuccessful, as auditing is currently disabled in config"); ar
+      case _ => logger.debug(s"Audit event $eventName issued successsfully."); ar
     }}
   }
 }

@@ -19,4 +19,4 @@ package models.requests
 import play.api.mvc.{Request, WrappedRequest}
 import uk.gov.hmrc.auth.core.Enrolments
 
-case class UserRequest[+A](enrolments: Enrolments,  request: Request[A]) extends WrappedRequest[A](request)
+case class UserRequest[+A](enrolments: Enrolments, identifier: String, request: Request[A]) extends WrappedRequest[A](request)

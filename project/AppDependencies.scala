@@ -5,15 +5,14 @@ object AppDependencies {
 
   val compile = Seq(
     play.sbt.PlayImport.ws,
-    "org.reactivemongo" %% "play2-reactivemongo"           % "0.18.6-play26",
-    "uk.gov.hmrc"       %% "domain"                        % "5.6.0-play-26",
-    "uk.gov.hmrc"       %% "play-health"                   % "3.15.0-play-26",
-    "uk.gov.hmrc"       %% "play-conditional-form-mapping" % "1.2.0-play-26",
-    "uk.gov.hmrc"       %% "bootstrap-frontend-play-27"    % "2.20.0",
-    "uk.gov.hmrc"       %% "play-whitelist-filter"         % "3.1.0-play-26",
+    "org.reactivemongo" %% "play2-reactivemongo"           % "0.18.6-play27",
+    "uk.gov.hmrc"       %% "domain"                        % "5.10.0-play-27",
+    "uk.gov.hmrc"       %% "play-conditional-form-mapping" % "1.3.0-play-26",
+    "uk.gov.hmrc"       %% "bootstrap-health-play-27"      % "2.25.0",
+    "uk.gov.hmrc"       %% "bootstrap-frontend-play-27"    % "2.25.0",
     "uk.gov.hmrc"       %% "play-nunjucks"                 % "0.23.0-play-26",
     "uk.gov.hmrc"       %% "play-nunjucks-viewmodel"       % "0.9.0-play-26",
-    "uk.gov.hmrc"       %% "emailaddress"                  % "3.4.0",
+    "uk.gov.hmrc"       %% "emailaddress"                  % "3.5.0",
     "org.webjars.npm"   %  "govuk-frontend"                % "3.3.0"
 
   )

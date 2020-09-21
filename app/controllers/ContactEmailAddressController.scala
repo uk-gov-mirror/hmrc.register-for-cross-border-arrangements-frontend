@@ -38,6 +38,7 @@ class ContactEmailAddressController @Inject()(
   sessionRepository: SessionRepository,
   navigator: Navigator,
   identify: IdentifierAction,
+  notEnrolled: NotEnrolledForDAC6Action,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   formProvider: ContactEmailAddressFormProvider,
@@ -47,7 +48,7 @@ class ContactEmailAddressController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
     implicit request =>
 
       (isOrganisationJourney(request.userAnswers), request.userAnswers.get(ContactNamePage)) match {
@@ -78,7 +79,7 @@ class ContactEmailAddressController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
     implicit request =>
 
       val (pageTitle, heading) = request.userAnswers.get(ContactNamePage) match {
