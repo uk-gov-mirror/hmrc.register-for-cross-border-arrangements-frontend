@@ -43,7 +43,7 @@ class SubscriptionConnectorSpec extends SpecBase
 
   lazy val connector: SubscriptionConnector = app.injector.instanceOf[SubscriptionConnector]
 
-  "BusinessMatchingConnector" - {
+  "SubscriptionConnector" - {
     "must return status as OK for submission of valid enrolment request" in {
 
 
