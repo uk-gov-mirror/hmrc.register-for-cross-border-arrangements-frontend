@@ -182,10 +182,9 @@ object OrgRegistration  {
       organisationName <- getBusinessName(userAnswers)
       addressBusiness <- userAnswers.get(BusinessAddressPage)
       address <- AddressNoId(addressBusiness)
-      telephone <- userAnswers.get(ContactTelephoneNumberPage)
-      email <- userAnswers.get(ContactEmailAddressPage)
     } yield {
-      RequestDetails(Some(NoIdOrganisation(organisationName)), None, address, ContactDetails(Some(telephone), None, None, Some(email)), None)
+      RequestDetails(Some(NoIdOrganisation(organisationName)), None, address,
+        ContactDetails(userAnswers.get(ContactTelephoneNumberPage), None, None, userAnswers.get(ContactEmailAddressPage)), None)
     }
 
   private def getBusinessName(userAnswers: UserAnswers): Option[String] = {
@@ -206,10 +205,9 @@ object IndRegistration  {
     dob <- userAnswers.get(DateOfBirthPage)
     addressInd <- getAddress(userAnswers)
     address <- AddressNoId(addressInd)
-    telephone <- userAnswers.get(ContactTelephoneNumberPage)
-    email <- userAnswers.get(ContactEmailAddressPage)
   } yield {
-    RequestDetails(None, Some(Individual(name, dob)), address, ContactDetails(Some(telephone), None, None, Some(email)), None)
+    RequestDetails(None, Some(Individual(name, dob)), address,
+      ContactDetails(userAnswers.get(ContactTelephoneNumberPage), None, None, userAnswers.get(ContactEmailAddressPage)), None)
   }
 
 
