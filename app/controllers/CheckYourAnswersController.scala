@@ -17,31 +17,19 @@
 package controllers
 
 import com.google.inject.Inject
-<<<<<<< HEAD
 import connectors.SubscriptionConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction, NotEnrolledForDAC6Action}
-import models.RegistrationType
-import org.slf4j.LoggerFactory
-import pages.{BusinessTypePage, RegistrationTypePage}
-=======
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import controllers.routes.{RegistrationSuccessfulController, UnsuccessfulSubscriptionController}
+import controllers.routes.UnsuccessfulSubscriptionController
 import models.RegistrationType.{Business, Individual}
 import models.{RegistrationType, UserAnswers}
 import org.slf4j.LoggerFactory
 import pages.{BusinessTypePage, DoYouHaveANationalInsuranceNumberPage, DoYouHaveUTRPage, RegistrationTypePage}
->>>>>>> DA6-243: EIS connection w/o ID
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import renderer.Renderer
-<<<<<<< HEAD
-import services.EmailService
-import uk.gov.hmrc.http.HttpResponse
-=======
 import services.{EmailService, RegistrationService}
-import uk.gov.hmrc.http.HeaderCarrier
->>>>>>> DA6-243: EIS connection w/o ID
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
 import utils.CheckYourAnswersHelper
@@ -51,24 +39,15 @@ import scala.concurrent.{ExecutionContext, Future}
 class CheckYourAnswersController @Inject()(
                                             override val messagesApi: MessagesApi,
                                             identify: IdentifierAction,
-<<<<<<< HEAD
                                             notEnrolled: NotEnrolledForDAC6Action,
                                             getData: DataRetrievalAction,
                                             requireData: DataRequiredAction,
                                             val controllerComponents: MessagesControllerComponents,
                                             emailService: EmailService,
+                                            registrationService: RegistrationService,
                                             taxEnrolmentsConnector: SubscriptionConnector,
                                             renderer: Renderer
                                           )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
-=======
-                                            emailService: EmailService,
-                                            getData: DataRetrievalAction,
-                                            requireData: DataRequiredAction,
-                                            registrationService: RegistrationService,
-                                            val controllerComponents: MessagesControllerComponents,
-                                            renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
->>>>>>> DA6-243: EIS connection w/o ID
 
   private val logger = LoggerFactory.getLogger(getClass)
 
@@ -177,75 +156,26 @@ class CheckYourAnswersController @Inject()(
     ).flatten
   }
 
-<<<<<<< HEAD
   def onSubmit(): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
-    implicit request =>
-
-      taxEnrolmentsConnector.createSubscription(request.userAnswers).flatMap {
-        subscriptionResponse =>
-          if (subscriptionResponse.status.equals(NO_CONTENT)) {
-           emailService.sendEmail(request.userAnswers).map {
-             emailResponse =>
-               logEmailResponse(emailResponse)
-                Redirect(routes.RegistrationSuccessfulController.onPageLoad())
-           }.recover {
-             case e: Exception => Redirect(routes.RegistrationSuccessfulController.onPageLoad())
-           }
-          } else {
-            Future.successful(Redirect(routes.ProblemWithServiceController.onPageLoad()))
-          }
-=======
-  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       (request.userAnswers.get(DoYouHaveUTRPage), request.userAnswers.get(RegistrationTypePage),
         request.userAnswers.get(DoYouHaveANationalInsuranceNumberPage)) match {
 
-        case (Some(true), None, None) =>  email(request.userAnswers) // TODO: EIS subscription for business with ID
-        case (Some(false), Some(Individual), Some(true)) => email(request.userAnswers) // TODO: EIS subscription for individual with ID
+        case (Some(true), None, None) => createEnrolment(request.userAnswers) // TODO: EIS subscription for business with ID
+        case (Some(false), Some(Individual), Some(true)) => createEnrolment(request.userAnswers) // TODO: EIS subscription for individual with ID
 
-        case (Some(false), Some(Individual), Some(false)) => registrationService.sendIndividualRegistration(request.userAnswers) flatMap {
+        case (Some(false), _, Some(false) | None) => registrationService.sendRegistration(request.userAnswers) flatMap {
           case Some(response) => response.status match {
-            case OK => email(request.userAnswers)
+            case OK => createEnrolment(request.userAnswers)
             case _ => Future.successful(Redirect(UnsuccessfulSubscriptionController.onPageLoad()))
           }
           case _ => Future.successful(Redirect(UnsuccessfulSubscriptionController.onPageLoad()))
         }
-
-        case (Some(false), Some(Business), None) =>
-          registrationService.sendOrganisationRegistration(request.userAnswers) flatMap {
-          case Some(response) => response.status match {
-            case OK => email(request.userAnswers)
-            case _ => Future.successful(Redirect(UnsuccessfulSubscriptionController.onPageLoad()))
-          }
-          case _ => Future.successful(Redirect(UnsuccessfulSubscriptionController.onPageLoad()))
-        }
-
         case _ => Future.successful(Redirect(UnsuccessfulSubscriptionController.onPageLoad()))
->>>>>>> DA6-243: EIS connection w/o ID
       }
 
   }
-
-  def email(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[Result] = emailService.sendEmail(userAnswers) map {
-
-    case Some(response) => response.status match {
-      case OK => Redirect(RegistrationSuccessfulController.onPageLoad())
-
-      case NOT_FOUND =>
-        logger.warn("The template cannot be found within the email service")
-        Redirect(RegistrationSuccessfulController.onPageLoad())
-
-      case BAD_REQUEST =>
-        logger.warn("Missing email or name parameter")
-        Redirect(RegistrationSuccessfulController.onPageLoad())
-
-      case _ => Redirect(RegistrationSuccessfulController.onPageLoad())
-    }
-
-    case _ => Redirect(RegistrationSuccessfulController.onPageLoad())
-  }
-
 
   private def logEmailResponse(emailResponse: Option[HttpResponse]): Unit = {
     emailResponse match {
@@ -256,5 +186,21 @@ class CheckYourAnswersController @Inject()(
 
   }
 
-}
+  def createEnrolment(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[Result] = {
+    taxEnrolmentsConnector.createSubscription(userAnswers).flatMap {
+      subscriptionResponse =>
+        if (subscriptionResponse.status.equals(NO_CONTENT)) {
+          emailService.sendEmail(userAnswers).map {
+            emailResponse =>
+              logEmailResponse(emailResponse)
+              Redirect(routes.RegistrationSuccessfulController.onPageLoad())
+          }.recover {
+            case e: Exception => Redirect(routes.RegistrationSuccessfulController.onPageLoad())
+          }
+        } else {
+          Future(InternalServerError("ERROR PAGE TO GO HERE"))
+        }
+    }
 
+  }
+}
