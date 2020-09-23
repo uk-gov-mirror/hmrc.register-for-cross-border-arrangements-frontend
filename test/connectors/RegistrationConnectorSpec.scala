@@ -44,78 +44,41 @@ class RegistrationConnectorSpec extends SpecBase
   lazy val connector: RegistrationConnector = app.injector.instanceOf[RegistrationConnector]
 
   "registrationConnector" - {
-    "for a registration submission" - {
-      "must return status as OK for submission of registration" in {
+      "must return status as OK for registration" in {
 
 
         forAll(arbitrary[Registration]) {
-          sub =>
-            stubResponse(s"/register-for-cross-border-arrangements/registration/02.00.00/individual", OK)
+          reg =>
+            stubResponse(s"/register-for-cross-border-arrangements/registration/02.00.00/noId", OK)
 
-            val result = connector.sendIndividualWithoutIDInformation(sub)
+            val result = connector.sendWithoutIDInformation(reg)
             result.futureValue.status mustBe OK
         }
       }
 
-      "must return status as BAD_REQUEST for submission of invalid registration" in {
+      "must return status as BAD_REQUEST for  registration" in {
 
 
         forAll(arbitrary[Registration]) {
-          sub =>
-            stubResponse("/register-for-cross-border-arrangements/registration/02.00.00/individual", BAD_REQUEST)
+          reg =>
+            stubResponse("/register-for-cross-border-arrangements/registration/02.00.00/noId", BAD_REQUEST)
 
-            val result = connector.sendIndividualWithoutIDInformation(sub)
+            val result = connector.sendWithoutIDInformation(reg)
             result.futureValue.status mustBe BAD_REQUEST
         }
       }
 
-      "must return status as INTERNAL_SERVER_ERROR for submission for a technical error" in {
+      "must return status as INTERNAL_SERVER_ERROR for a technical error" in {
 
 
         forAll(arbitrary[Registration]) {
-          sub =>
-            stubResponse("/register-for-cross-border-arrangements/registration/02.00.00/individual", INTERNAL_SERVER_ERROR)
+          reg =>
+            stubResponse("/register-for-cross-border-arrangements/registration/02.00.00/noId", INTERNAL_SERVER_ERROR)
 
-            val result = connector.sendIndividualWithoutIDInformation(sub)
+            val result = connector.sendWithoutIDInformation(reg)
             result.futureValue.status mustBe INTERNAL_SERVER_ERROR
         }
       }
-
-      "for an organisation registration submission" - {
-        "must return status as OK for submission of valid Organisation registration" in {
-
-          forAll(arbitrary[Registration]) {
-            sub =>
-              stubResponse("/register-for-cross-border-arrangements/registration/02.00.00/organisation", OK)
-
-              val result = connector.sendOrganisationWithoutIDInformation(sub)
-              result.futureValue.status mustBe OK
-          }
-        }
-
-        "must return status as BAD_REQUEST for submission of invalid Organisation registration" in {
-
-          forAll(arbitrary[Registration]) {
-            sub =>
-              stubResponse("/register-for-cross-border-arrangements/registration/02.00.00/organisation", BAD_REQUEST)
-
-              val result = connector.sendOrganisationWithoutIDInformation(sub)
-              result.futureValue.status mustBe BAD_REQUEST
-          }
-        }
-
-        "must return status as INTERNAL_SERVER_ERROR for submission for a technical error" in {
-
-          forAll(arbitrary[Registration]) {
-            sub =>
-              stubResponse("/register-for-cross-border-arrangements/registration/02.00.00/organisation", INTERNAL_SERVER_ERROR)
-
-              val result = connector.sendOrganisationWithoutIDInformation(sub)
-              result.futureValue.status mustBe INTERNAL_SERVER_ERROR
-          }
-        }
-      }
-    }
   }
 
     private def stubResponse(expectedUrl: String, expectedStatus: Int): StubMapping =

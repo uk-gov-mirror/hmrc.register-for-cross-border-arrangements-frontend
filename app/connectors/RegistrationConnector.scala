@@ -25,15 +25,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class RegistrationConnector @Inject()(val config: FrontendAppConfig, val http: HttpClient) {
 
-    def sendIndividualWithoutIDInformation(individualRegistration: Registration)
+    def sendWithoutIDInformation(registration: Registration)
                                           (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
-      val submissionUrl = s"${config.businessMatchingUrl}/registration/02.00.00/individual"
-      http.POST[Registration, HttpResponse](submissionUrl, individualRegistration)
-    }
-
-    def sendOrganisationWithoutIDInformation(organisationRegistration: Registration)
-                                            (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
-      val submissionUrl = s"${config.businessMatchingUrl}/registration/02.00.00/organisation"
-      http.POST[Registration, HttpResponse](submissionUrl, organisationRegistration)
+      val submissionUrl = s"${config.businessMatchingUrl}/registration/02.00.00/noId"
+      http.POST[Registration, HttpResponse](submissionUrl, registration)
     }
 }

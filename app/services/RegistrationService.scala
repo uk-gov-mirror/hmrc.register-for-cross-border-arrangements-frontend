@@ -33,13 +33,13 @@ class RegistrationService @Inject()(registrationConnector: RegistrationConnector
 
   def sendIndividualRegistration(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[HttpResponse]] = {
     IndRegistration(userAnswers) match {
-      case Some(individualRegistration) =>
+      case Some(registration) =>
 
         val subscribe = Registration(RegisterWithoutIDRequest(
           RequestCommon(dateTime, "DAC", acknRef, None),
-          individualRegistration)
+          registration)
         )
-        registrationConnector.sendIndividualWithoutIDInformation(subscribe).map(Some(_))
+        registrationConnector.sendWithoutIDInformation(subscribe).map(Some(_))
       case _ => Future.successful(None)
     }
   }
@@ -51,7 +51,7 @@ class RegistrationService @Inject()(registrationConnector: RegistrationConnector
           RequestCommon(dateTime, "DAC", acknRef, None),
           organisationRegistration))
 
-        registrationConnector.sendOrganisationWithoutIDInformation(subscribe).map(Some(_))
+        registrationConnector.sendWithoutIDInformation(subscribe).map(Some(_))
       case _ => Future.successful(None)
     }
   }

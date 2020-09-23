@@ -16,8 +16,6 @@
 
 package models
 
-import java.time.LocalDate
-
 import pages._
 import play.api.libs.json._
 
