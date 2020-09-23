@@ -168,8 +168,7 @@ class CheckYourAnswersController @Inject()(
              case e: Exception => Redirect(routes.RegistrationSuccessfulController.onPageLoad())
            }
           } else {
-            Future(InternalServerError("ERROR PAGE TO GO HERE"))
-
+            Future.successful(Redirect(routes.ProblemWithServiceController.onPageLoad()))
           }
       }
   }

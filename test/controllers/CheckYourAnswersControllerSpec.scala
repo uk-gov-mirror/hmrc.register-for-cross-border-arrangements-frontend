@@ -331,7 +331,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
         verify(mockEmailService, times(1)).sendEmail(any())(any())
       }
 
-      "must redirect to the technical difficulties page and not send email when error response received from subscription connector" in {
+      "must redirect to the problem with service and not send email when error response received from subscription connector" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(bind[EmailService]
@@ -349,7 +349,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
         val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit.url)
         val result = route(application, request).value
 
-        status(result) mustEqual INTERNAL_SERVER_ERROR
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/problem-with-service")
+
         verify(mockEmailService, times(0)).sendEmail(any())(any())
 
       }
