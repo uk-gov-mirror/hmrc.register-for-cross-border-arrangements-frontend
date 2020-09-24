@@ -47,7 +47,7 @@ class ErrorHandler @Inject()(
       case NOT_FOUND   =>
         renderer.render("notFound.njk", Json.obj()).map(NotFound(_))
       case _           =>
-        renderer.render("error.njk", Json.obj()).map {
+        renderer.render("problemWithService.njk", Json.obj()).map {
           content =>
             Results.Status(statusCode)(content)
         }
