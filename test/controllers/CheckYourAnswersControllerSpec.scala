@@ -330,7 +330,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
             .toInstance(mockSubscriptionConnector))
           .build()
 
-        when(mockRegistrationService.sendIndividualRegistration(any())(any(), any()))
+        when(mockRegistrationService.sendRegistration(any())(any(), any()))
           .thenReturn(Future.successful(Some(HttpResponse(OK, ""))))
 
         when(mockEmailService.sendEmail(any())(any()))
@@ -367,7 +367,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
         when(mockSubscriptionConnector.createSubscription(any())(any(), any()))
           .thenReturn(Future.successful(HttpResponse(SERVICE_UNAVAILABLE, "")))
 
-        val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit.url)
+        val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit().url)
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -395,7 +395,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
               .toInstance(mockSubscriptionConnector))
           .build()
 
-        when(mockRegistrationService.sendOrganisationRegistration(any())(any(), any()))
+        when(mockRegistrationService.sendRegistration(any())(any(), any()))
           .thenReturn(Future.successful(Some(HttpResponse(OK, ""))))
 
         when(mockEmailService.sendEmail(any())(any()))
@@ -419,7 +419,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
             .toInstance(mockRegistrationService))
           .build()
 
-        when(mockRegistrationService.sendOrganisationRegistration(any())(any(), any()))
+        when(mockRegistrationService.sendRegistration(any())(any(), any()))
           .thenReturn(Future.successful(Some(HttpResponse(NOT_FOUND, ""))))
 
         val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit().url)
@@ -441,7 +441,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
             .toInstance(mockRegistrationService))
           .build()
 
-        when(mockRegistrationService.sendOrganisationRegistration(any())(any(), any()))
+        when(mockRegistrationService.sendRegistration(any())(any(), any()))
           .thenReturn(Future.successful(Some(HttpResponse(BAD_REQUEST, ""))))
 
         when(mockSubscriptionConnector.createSubscription(any())(any(), any()))
@@ -465,13 +465,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
             .toInstance(mockRegistrationService))
           .build()
 
-        when(mockRegistrationService.sendOrganisationRegistration(any())(any(), any()))
+        when(mockRegistrationService.sendRegistration(any())(any(), any()))
           .thenReturn(Future.successful(None))
 
         when(mockSubscriptionConnector.createSubscription(any())(any(), any()))
           .thenReturn(Future.successful(HttpResponse(NO_CONTENT, "")))
 
-        val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit.url)
+        val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit().url)
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -508,7 +508,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
             .toInstance(mockRegistrationService))
           .build()
 
-        when(mockRegistrationService.sendIndividualRegistration(any())(any(), any()))
+        when(mockRegistrationService.sendRegistration(any())(any(), any()))
           .thenReturn(Future.successful(Some(HttpResponse(NOT_FOUND, ""))))
 
         val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit().url)
@@ -525,7 +525,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
             .toInstance(mockRegistrationService))
           .build()
 
-        when(mockRegistrationService.sendIndividualRegistration(any())(any(), any()))
+        when(mockRegistrationService.sendRegistration(any())(any(), any()))
           .thenReturn(Future.successful(Some(HttpResponse(BAD_REQUEST, ""))))
 
         val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit().url)
@@ -542,7 +542,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
             .toInstance(mockRegistrationService))
           .build()
 
-        when(mockRegistrationService.sendIndividualRegistration(any())(any(), any()))
+        when(mockRegistrationService.sendRegistration(any())(any(), any()))
           .thenReturn(Future.successful(None))
 
         val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit().url)

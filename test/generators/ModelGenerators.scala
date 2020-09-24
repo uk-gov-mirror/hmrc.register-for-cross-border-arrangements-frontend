@@ -128,14 +128,14 @@ trait ModelGenerators {
   )
   }
 
-  implicit val arbitraryRegistration: Arbitrary[Registration] = Arbitrary {for {
+  implicit val arbitraryRegistration: Arbitrary[Register] = Arbitrary {for {
     requestCommon <- arbitrary[RequestCommon]
     name <- arbitrary[String]
     address <- arbitrary[AddressNoId]
     contactDetails <- arbitrary[ContactDetails]
     identification <- Gen.option(arbitrary[Identification])
   } yield
-    Registration(
+    Register(
       RegisterWithoutIDRequest(
         requestCommon,
         RequestDetails(

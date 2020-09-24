@@ -21,8 +21,8 @@ import java.time.LocalDate
 import base.SpecBase
 import connectors.RegistrationConnector
 import generators.Generators
-import models.RegistrationType.{Business, Individual}
-import models.{Address, Country, Name, Organisation, UserAnswers}
+import models.RegistrationType.Individual
+import models.{Address, Country, Name, UserAnswers}
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalacheck.Arbitrary.arbitrary
@@ -86,15 +86,12 @@ class RegistrationServiceSpec extends SpecBase
             .success
             .value
 
-
-
-
           when(mockRegistrationConnector.sendWithoutIDInformation(any())(any(), any()))
             .thenReturn(
               Future.successful(HttpResponse(OK, ""))
             )
 
-          val result = registrationService.sendIndividualRegistration(answers)
+          val result = registrationService.sendRegistration(answers)
 
           whenReady(result){
             _.map(_.status) mustBe Some(OK)

@@ -16,6 +16,7 @@
 
 package models
 
+import models.RegistrationType.Business
 import pages._
 import play.api.libs.json._
 
@@ -23,16 +24,7 @@ import play.api.libs.json._
 case class NoIdOrganisation(organisationName: String)
 
 object NoIdOrganisation {
-  implicit lazy val writes: OWrites[NoIdOrganisation] = OWrites[NoIdOrganisation] {
-    organisation =>
-      Json.obj("organisationName" -> organisation.organisationName)
-  }
   implicit val format: OFormat[NoIdOrganisation] = Json.format[NoIdOrganisation]
-
-  implicit lazy val reads: JsValue => NoIdOrganisation = {
-    (__ \ "organisationName").read[String]
-    organisationName => NoIdOrganisation(organisationName.toString)
-  }
 }
 
 //ToDo This is different to one we are collecting and validating on the form this needs looked at
@@ -146,21 +138,7 @@ object RequestCommon {
 case class RequestParameters(paramName: String, paramValue: String)
 
 object RequestParameters {
-    implicit lazy val writes: OWrites[RequestParameters] = OWrites[RequestParameters] {
-      parameters =>
-        Json.obj(
-          "paramName" -> parameters.paramName,
-          "paramValue" -> parameters.paramValue
-        )
-    }
-
-    implicit lazy val reads: Reads[RequestParameters] = {
-      import play.api.libs.functional.syntax._
-      (
-        (__ \ "paramName").read[String] and
-          (__ \ "paramValue").read[String]
-        ) ((name, value) => RequestParameters(name, value))
-    }
+  implicit val formats = Json.format[RequestParameters]
   }
 }
 
@@ -172,6 +150,15 @@ case class RequestDetails(organisation: Option[NoIdOrganisation], individual: Op
 object RequestDetails {
   implicit val formats = Json.format[RequestDetails]
 }
+
+object Registration{
+  def apply(userAnswers: UserAnswers): Option[RequestDetails] = userAnswers.get(RegistrationTypePage) match {
+    case Some(models.RegistrationType.Individual) => IndRegistration.apply(userAnswers)
+    case Some(Business) => OrgRegistration.apply(userAnswers)
+    case _ => throw new Exception("Cannot retrieve registration type")
+  }
+}
+
 
 object OrgRegistration  {
 
@@ -193,9 +180,7 @@ object OrgRegistration  {
       case _ =>  userAnswers.get(BusinessWithoutIDNamePage)
     }
   }
-
 }
-
 
 object IndRegistration  {
   def apply(userAnswers: UserAnswers): Option[RequestDetails] = for {
@@ -208,14 +193,12 @@ object IndRegistration  {
       ContactDetails(userAnswers.get(ContactTelephoneNumberPage), None, None, userAnswers.get(ContactEmailAddressPage)), None)
   }
 
-
   private def getAddress(userAnswers: UserAnswers): Option[Address] = userAnswers.get(DoYouLiveInTheUKPage) match {
     case Some(true) => {
       userAnswers.get(WhatIsYourAddressUkPage)
     }
     case _ => userAnswers.get(WhatIsYourAddressPage)
   }
-
 }
 
 
@@ -225,10 +208,10 @@ object RegisterWithoutIDRequest{
   implicit val format = Json.format[RegisterWithoutIDRequest]
 }
 
-case class Registration(
+case class Register(
                          registerWithoutIDRequest: RegisterWithoutIDRequest
                        )
 
-object Registration {
-  implicit val format = Json.format[Registration]
+object Register {
+  implicit val format = Json.format[Register]
 }

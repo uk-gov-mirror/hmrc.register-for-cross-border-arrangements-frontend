@@ -20,7 +20,7 @@ import java.util.UUID
 
 import connectors.RegistrationConnector
 import javax.inject.Inject
-import models.{IndRegistration, OrgRegistration, RegisterWithoutIDRequest, RequestCommon, Registration, UserAnswers}
+import models.{IndRegistration, Register, RegisterWithoutIDRequest, RequestCommon, UserAnswers}
 import org.joda.time.{DateTime, DateTimeZone}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
@@ -31,26 +31,14 @@ class RegistrationService @Inject()(registrationConnector: RegistrationConnector
   val acknRef: String = UUID.randomUUID().toString
   val dateTime: String = DateTime.now(DateTimeZone.UTC).toString
 
-  def sendIndividualRegistration(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[HttpResponse]] = {
+  def sendRegistration(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[HttpResponse]] = {
     IndRegistration(userAnswers) match {
       case Some(registration) =>
 
-        val subscribe = Registration(RegisterWithoutIDRequest(
+        val subscribe = Register(RegisterWithoutIDRequest(
           RequestCommon(dateTime, "DAC", acknRef, None),
           registration)
         )
-        registrationConnector.sendWithoutIDInformation(subscribe).map(Some(_))
-      case _ => Future.successful(None)
-    }
-  }
-
-  def sendOrganisationRegistration(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[HttpResponse]] = {
-    OrgRegistration(userAnswers) match {
-      case Some(organisationRegistration) =>
-        val subscribe = Registration(RegisterWithoutIDRequest(
-          RequestCommon(dateTime, "DAC", acknRef, None),
-          organisationRegistration))
-
         registrationConnector.sendWithoutIDInformation(subscribe).map(Some(_))
       case _ => Future.successful(None)
     }

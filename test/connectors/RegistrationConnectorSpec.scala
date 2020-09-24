@@ -21,7 +21,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, urlEqua
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import generators.Generators
 import helpers.WireMockServerHandler
-import models.Registration
+import models.Register
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
@@ -47,7 +47,7 @@ class RegistrationConnectorSpec extends SpecBase
       "must return status as OK for registration" in {
 
 
-        forAll(arbitrary[Registration]) {
+        forAll(arbitrary[Register]) {
           reg =>
             stubResponse(s"/register-for-cross-border-arrangements/registration/02.00.00/noId", OK)
 
@@ -59,7 +59,7 @@ class RegistrationConnectorSpec extends SpecBase
       "must return status as BAD_REQUEST for  registration" in {
 
 
-        forAll(arbitrary[Registration]) {
+        forAll(arbitrary[Register]) {
           reg =>
             stubResponse("/register-for-cross-border-arrangements/registration/02.00.00/noId", BAD_REQUEST)
 
@@ -71,7 +71,7 @@ class RegistrationConnectorSpec extends SpecBase
       "must return status as INTERNAL_SERVER_ERROR for a technical error" in {
 
 
-        forAll(arbitrary[Registration]) {
+        forAll(arbitrary[Register]) {
           reg =>
             stubResponse("/register-for-cross-border-arrangements/registration/02.00.00/noId", INTERNAL_SERVER_ERROR)
 

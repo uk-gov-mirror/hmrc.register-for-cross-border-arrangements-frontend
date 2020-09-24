@@ -18,16 +18,16 @@ package connectors
 
 import config.FrontendAppConfig
 import javax.inject.Inject
-import models.Registration
+import models.Register
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class RegistrationConnector @Inject()(val config: FrontendAppConfig, val http: HttpClient) {
 
-    def sendWithoutIDInformation(registration: Registration)
+    def sendWithoutIDInformation(registration: Register)
                                           (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
       val submissionUrl = s"${config.businessMatchingUrl}/registration/02.00.00/noId"
-      http.POST[Registration, HttpResponse](submissionUrl, registration)
+      http.POST[Register, HttpResponse](submissionUrl, registration)
     }
 }
