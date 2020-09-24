@@ -28,14 +28,12 @@ import scala.concurrent.ExecutionContext
 class ProblemWithServiceController @Inject()(
     override val messagesApi: MessagesApi,
     identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
     notEnrolled: NotEnrolledForDAC6Action,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
+  def onPageLoad: Action[AnyContent] = (identify andThen notEnrolled).async {
     implicit request =>
 
       renderer.render("problemWithService.njk").map(Ok(_))
