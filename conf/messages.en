@@ -476,3 +476,7 @@ selectAddress.checkYourAnswersLabel = Your home address
 selectAddress.error.required = Select your address
 selectAddress.hint.part1 = Select from the list or
 selectAddress.hint.part2 = enter your address manually
+
+problemWithService.title = Sorry, there is a problem with the service
+problemWithService.heading = Sorry, there is a problem with the service
+problemWithService.guidance = Try again later.
