@@ -20,7 +20,7 @@ import java.util.UUID
 
 import connectors.RegistrationConnector
 import javax.inject.Inject
-import models.{IndRegistration, Register, RegisterWithoutIDRequest, RequestCommon, UserAnswers}
+import models.{IndRegistration, Register, RegisterWithoutIDRequest, Registration, RequestCommon, UserAnswers}
 import org.joda.time.{DateTime, DateTimeZone}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
@@ -32,7 +32,7 @@ class RegistrationService @Inject()(registrationConnector: RegistrationConnector
   val dateTime: String = DateTime.now(DateTimeZone.UTC).toString
 
   def sendRegistration(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[HttpResponse]] = {
-    IndRegistration(userAnswers) match {
+    Registration(userAnswers) match {
       case Some(registration) =>
 
         val subscribe = Register(RegisterWithoutIDRequest(
