@@ -412,7 +412,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
         redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/confirm-registration")
       }
 
-      "must redirect to registration unsuccessful when NOT_FOUND response received from registration for organisation" in {
+      "must redirect to problem with service when NOT_FOUND response received from registration for organisation" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(bind[RegistrationService]
@@ -426,10 +426,10 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/unsuccessful-subscription")
+        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/problem-with-service")
       }
 
-      "must redirect to registration unsuccessful when BAD_REQUEST response received from registration for organisation" in {
+      "must redirect to problem with service when BAD_REQUEST response received from registration for organisation" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
 
@@ -451,10 +451,10 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/unsuccessful-subscription")
+        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/problem-with-service")
       }
 
-      "must redirect to registration unsuccessful when None response received from registration for organisation" in {
+      "must redirect to problem with service when None response received from registration for organisation" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(bind[EmailService]
@@ -475,7 +475,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/unsuccessful-subscription")
+        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/problem-with-service")
       }
 
 
@@ -498,10 +498,10 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/unsuccessful-subscription")
+        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/problem-with-service")
       }
 
-      "must redirect to registration unsuccessful when NOT_FOUND response received from registration for individual" in {
+      "must redirect to problem with service when NOT_FOUND response received from registration for individual" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(bind[RegistrationService]
@@ -515,10 +515,10 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/unsuccessful-subscription")
+        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/problem-with-service")
       }
 
-      "must redirect to registration unsuccessful when BAD_REQUEST response received from registration for individual" in {
+      "must redirect to problem with service when BAD_REQUEST response received from registration for individual" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(bind[RegistrationService]
@@ -532,10 +532,10 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/unsuccessful-subscription")
+        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/problem-with-service")
       }
 
-      "must redirect to registration unsuccessful when None response received from registration for individual" in {
+      "must redirect to problem with service when None response received from registration for individual" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(bind[RegistrationService]
@@ -549,7 +549,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/unsuccessful-subscription")
+        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/problem-with-service")
       }
     }
   }

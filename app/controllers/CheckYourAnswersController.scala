@@ -19,8 +19,7 @@ package controllers
 import com.google.inject.Inject
 import connectors.SubscriptionConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction, NotEnrolledForDAC6Action}
-import controllers.routes.UnsuccessfulSubscriptionController
-import models.RegistrationType.{Business, Individual}
+import models.RegistrationType.Individual
 import models.{RegistrationType, UserAnswers}
 import org.slf4j.LoggerFactory
 import pages.{BusinessTypePage, DoYouHaveANationalInsuranceNumberPage, DoYouHaveUTRPage, RegistrationTypePage}
@@ -168,11 +167,11 @@ class CheckYourAnswersController @Inject()(
         case (Some(false), _, Some(false) | None) => registrationService.sendRegistration(request.userAnswers) flatMap {
           case Some(response) => response.status match {
             case OK => createEnrolment(request.userAnswers)
-            case _ => Future.successful(Redirect(UnsuccessfulSubscriptionController.onPageLoad()))
+            case _ => Future.successful(Redirect(routes.ProblemWithServiceController.onPageLoad()))
           }
-          case _ => Future.successful(Redirect(UnsuccessfulSubscriptionController.onPageLoad()))
+          case _ => Future.successful(Redirect(routes.ProblemWithServiceController.onPageLoad()))
         }
-        case _ => Future.successful(Redirect(UnsuccessfulSubscriptionController.onPageLoad()))
+        case _ => Future.successful(Redirect(routes.ProblemWithServiceController.onPageLoad()))
       }
 
   }
@@ -198,7 +197,7 @@ class CheckYourAnswersController @Inject()(
             case e: Exception => Redirect(routes.RegistrationSuccessfulController.onPageLoad())
           }
         } else {
-          Future(InternalServerError("ERROR PAGE TO GO HERE"))
+          Future(Redirect(routes.ProblemWithServiceController.onPageLoad()))
         }
     }
 
