@@ -182,9 +182,9 @@ object OrgRegistration  {
   }
 }
 
-object IndRegistration  {
+object IndRegistration {
   def apply(userAnswers: UserAnswers): Option[RequestDetails] = for {
-    name <-  userAnswers.get(NonUkNamePage)
+    name <- userAnswers.get(NonUkNamePage)
     dob <- userAnswers.get(DateOfBirthPage)
     addressInd <- getAddress(userAnswers)
     address <- AddressNoId(addressInd)
@@ -193,14 +193,25 @@ object IndRegistration  {
       ContactDetails(userAnswers.get(ContactTelephoneNumberPage), None, None, userAnswers.get(ContactEmailAddressPage)), None)
   }
 
-  private def getAddress(userAnswers: UserAnswers): Option[Address] = userAnswers.get(DoYouLiveInTheUKPage) match {
-    case Some(true) => {
-      userAnswers.get(WhatIsYourAddressUkPage)
+  private def getAddress(userAnswers: UserAnswers): Option[Address] = {
+    (userAnswers.get(DoYouLiveInTheUKPage), userAnswers.get(WhatIsYourAddressUkPage).isDefined) match {
+      case (Some(true), true) => userAnswers.get(WhatIsYourAddressUkPage)
+      case (Some(true), false) => toAddress(userAnswers)
+      case (Some(false), false) => userAnswers.get(WhatIsYourAddressPage)
+      case _ => throw new Exception("Cannot get address")
     }
-    case _ => userAnswers.get(WhatIsYourAddressPage)
   }
-}
 
+  private def toAddress(userAnswers: UserAnswers) =
+    userAnswers.get(SelectedAddressLookupPage) map { lookUp =>
+      Address(lookUp.addressLine1.getOrElse(""),
+        lookUp.addressLine2.getOrElse(""),
+        lookUp.addressLine3,
+        lookUp.addressLine4,
+        Some(lookUp.postcode),
+        Country("valid", "UK", "United Kingdom"))
+    }
+}
 
 case class RegisterWithoutIDRequest(requestCommon: RequestCommon, requestDetail: RequestDetails)
 
