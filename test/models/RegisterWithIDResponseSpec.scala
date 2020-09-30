@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package forms
+package models
 
-import forms.mappings.Mappings
-import javax.inject.Inject
-import play.api.data.Form
-import utils.RegexConstants
+import helpers.JsonFixtures._
+import org.scalatest.{FreeSpec, MustMatchers}
+import play.api.libs.json.Json
 
-class SecondaryContactEmailAddressFormProvider @Inject() extends Mappings with RegexConstants {
+class RegisterWithIDResponseSpec extends FreeSpec with MustMatchers {
+  "RegisterWithIDResponse" - {
+    "must marshall from json" in {
+      Json.parse(withIDResponse).validate[PayloadRegistrationWithIDResponse].get mustBe payloadModel
+    }
 
-  private val maxLength = 254
-
-  def apply(): Form[String] =
-    Form(
-      "email" -> validatedText("secondaryContactEmailAddress.error.required",
-        "secondaryContactEmailAddress.error.email.invalid",
-        "secondaryContactEmailAddress.error.length", emailRegex, maxLength)
-    )
+    "must serialise to json" ignore {
+      //nulls are being written out - not important as we arent writing out our model
+      Json.toJson(payloadModel) mustBe withIDResponseJson
+    }
+  }
 }

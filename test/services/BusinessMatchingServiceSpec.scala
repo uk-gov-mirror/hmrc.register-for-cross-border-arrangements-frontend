@@ -19,10 +19,10 @@ package services
 import java.time.LocalDate
 
 import base.SpecBase
-import connectors.BusinessMatchingConnector
+import connectors.RegistrationConnector
 import generators.Generators
 import models.BusinessType._
-import models.{BusinessAddress, BusinessDetails, BusinessType, Name, UniqueTaxpayerReference, UserAnswers}
+import models.{AddressResponse, BusinessAddress, BusinessDetails, BusinessType, ContactDetails, IndividualResponse, Name, OrganisationResponse, PayloadRegistrationWithIDResponse, RegisterWithIDResponse, ResponseCommon, ResponseDetail, UniqueTaxpayerReference, UserAnswers}
 import org.mockito.Matchers._
 import org.mockito.Mockito.{reset, _}
 import org.scalacheck.Arbitrary.arbitrary
@@ -32,10 +32,7 @@ import pages._
 import play.api.Application
 import play.api.inject._
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.{JsValue, Json}
-import play.api.test.Helpers._
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.http.HttpResponse
 import wolfendale.scalacheck.regexp.RegexpGen
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -47,11 +44,11 @@ class BusinessMatchingServiceSpec extends SpecBase
   with Generators
   with ScalaCheckPropertyChecks {
 
-  val mockBusinessMatchingConnector: BusinessMatchingConnector = mock[BusinessMatchingConnector]
+  val mockRegistrationConnector: RegistrationConnector = mock[RegistrationConnector]
 
   override lazy val app: Application = new GuiceApplicationBuilder()
     .overrides(
-      bind[BusinessMatchingConnector].toInstance(mockBusinessMatchingConnector)
+      bind[RegistrationConnector].toInstance(mockRegistrationConnector)
     )
     .build()
 
@@ -69,14 +66,14 @@ class BusinessMatchingServiceSpec extends SpecBase
 
   override def beforeEach: Unit =
     reset(
-      mockBusinessMatchingConnector
+      mockRegistrationConnector
     )
 
   "Business Matching Service" - {
     "when able to construct an individual matching submission" - {
       "should send a request to the business matching connector for an individual" in {
-        forAll(arbitrary[UserAnswers], arbitrary[Name], arbitrary[LocalDate], arbitrary[Nino]){
-          (userAnswers, name, dob, nino) =>
+        forAll(arbitrary[UserAnswers], arbitrary[Name], arbitrary[LocalDate], arbitrary[Nino], arbitrary[PayloadRegistrationWithIDResponse]){
+          (userAnswers, name, dob, nino, response) =>
             val answers = userAnswers
               .set(NamePage, name)
               .success
@@ -88,14 +85,15 @@ class BusinessMatchingServiceSpec extends SpecBase
               .success
               .value
 
-            when(mockBusinessMatchingConnector.sendIndividualMatchingInformation(any(), any())(any(), any()))
+            when(mockRegistrationConnector.registerWithID(any())(any(), any()))
               .thenReturn(
-                Future.successful(HttpResponse(OK, ""))
+                Future.successful(Some(response))
               )
+
             val result = businessMatchingService.sendIndividualMatchingInformation(answers)
 
             whenReady(result){
-              _.map(_.status) mustBe Some(OK)
+              _.map(_.get) mustBe Right(response)
             }
         }
       }
@@ -115,7 +113,7 @@ class BusinessMatchingServiceSpec extends SpecBase
             val result = businessMatchingService.sendIndividualMatchingInformation(answers)
 
             whenReady(result){
-              _ mustBe None
+              _.isLeft mustBe true //ie Exception thrown
             }
         }
       }
@@ -149,29 +147,24 @@ class BusinessMatchingServiceSpec extends SpecBase
               .success
               .value
 
-            val responseJson: JsValue = Json.parse(s"""
-              {
-                "anotherKey" : "DAC6",
-                "organisation": {
-                  "organisationName": "$businessName"
-                },
-                "address" : {
-                  "addressLine1" : "1 TestStreet",
-                  "addressLine2" : "Test",
-                  "postalCode" : "AA11BB",
-                  "countryCode" : "GB"
-                }
-              }
-              """)
+            val payload = PayloadRegistrationWithIDResponse(
+              RegisterWithIDResponse(
+                ResponseCommon("", None, "", None),
+                Some(ResponseDetail("", None, false, false, None, false,
+                OrganisationResponse(businessName, false, None, None),
+                AddressResponse("1 TestStreet", Some("Test"), None, None, Some("AA11BB"), "GB"),
+                ContactDetails(None, None, None, None)))
+              )
+            )
 
             val businessDetails = BusinessDetails(
               businessName,
               BusinessAddress("1 TestStreet", Some("Test"), None, None, "AA11BB", "GB")
             )
 
-            when(mockBusinessMatchingConnector.sendBusinessMatchingInformation(any(), any())(any(), any()))
+            when(mockRegistrationConnector.registerWithID(any())(any(), any()))
               .thenReturn(
-                Future.successful(HttpResponse(OK, responseJson, Map.empty[String,Seq[String]]))
+                Future.successful(Some(payload))
               )
             val result = businessMatchingService.sendBusinessMatchingInformation(answers)
 
@@ -184,6 +177,7 @@ class BusinessMatchingServiceSpec extends SpecBase
       "should send a request to the business matching connector for a sole proprietor" in {
         forAll(arbitrary[UniqueTaxpayerReference]){
           utr =>
+            //TODO: Probably needs a date of birth to construct an individual record
             val answers = UserAnswers(userAnswersId)
               .set(BusinessTypePage, NotSpecified)
               .success
@@ -191,78 +185,38 @@ class BusinessMatchingServiceSpec extends SpecBase
               .set(utrPage(NotSpecified), utr)
               .success
               .value
+              .set(DateOfBirthPage, LocalDate.now())
+              .success
+              .value
               .set(SoleTraderNamePage, Name("Bobby", "Bob"))
               .success
               .value
 
-            val responseJson: JsValue = Json.parse(s"""
-              {
-                "anotherKey" : "DAC6",
-                "organisation": {
-                  "organisationName": "Bobby Bob"
-                },
-                "address" : {
-                  "addressLine1" : "1 TestStreet",
-                  "addressLine2" : "Test",
-                  "postalCode" : "AA11BB",
-                  "countryCode" : "GB"
-                }
-              }
-              """)
+            val payload = PayloadRegistrationWithIDResponse(
+              RegisterWithIDResponse(
+                ResponseCommon("", None, "", None),
+                Some(ResponseDetail("", None, false, false, None, false,
+                  IndividualResponse("Bobby", None, "Bob", None),
+                  AddressResponse("1 TestStreet", Some("Test"), None, None, Some("AA11BB"), "GB"),
+                  ContactDetails(None, None, None, None)))
+              )
+            )
 
             val businessDetails = BusinessDetails(
               "Bobby Bob",
               BusinessAddress("1 TestStreet", Some("Test"), None, None, "AA11BB", "GB")
             )
 
-            when(mockBusinessMatchingConnector.sendSoleProprietorMatchingInformation(any(), any())(any(), any()))
+            when(mockRegistrationConnector.registerWithID(any())(any(), any()))
               .thenReturn(
-                Future.successful(HttpResponse(OK, responseJson, Map.empty[String,Seq[String]]))
+                Future.successful(Some(payload))
               )
+
             val result = businessMatchingService.sendBusinessMatchingInformation(answers)
 
             whenReady(result){ result =>
               result mustBe Some(businessDetails)
             }
-        }
-      }
-
-      "must throw an error if Json validation fails" in {
-        forAll(arbitrary[UserAnswers], arbitrary[UniqueTaxpayerReference], arbitrary[String], arbitrary[Name]){
-          (userAnswers, utr, businessName, soleTraderName) =>
-            val getRandomBusinessTypeNoSoleTrader = Random.shuffle(businessTypesNoSoleTrader).head
-
-            val answers = userAnswers
-              .set(BusinessTypePage, getRandomBusinessTypeNoSoleTrader)
-              .success
-              .value
-              .set(utrPage(getRandomBusinessTypeNoSoleTrader), utr)
-              .success
-              .value
-              .set(BusinessNamePage, businessName)
-              .success
-              .value
-              .set(SoleTraderNamePage, soleTraderName)
-              .success
-              .value
-
-            val invalidJson: JsValue = Json.parse("""
-              {
-                "anotherKey" : "DAC6",
-                "address" : {
-                  "addressLine1" : "1 TestStreet",
-                  "addressLine2" : "Test",
-                  "postalCode" : "AA11BB"
-                }
-              }
-              """)
-
-            when(mockBusinessMatchingConnector.sendBusinessMatchingInformation(any(), any())(any(), any()))
-              .thenReturn(Future.successful(HttpResponse(OK, invalidJson, Map.empty[String,Seq[String]])))
-
-            val result = businessMatchingService.sendBusinessMatchingInformation(answers)
-
-            an[Exception] mustBe thrownBy(await(result))
         }
       }
 
@@ -286,8 +240,8 @@ class BusinessMatchingServiceSpec extends SpecBase
               .value
 
 
-            when(mockBusinessMatchingConnector.sendBusinessMatchingInformation(any(), any())(any(), any()))
-              .thenReturn(Future.successful(HttpResponse(NOT_FOUND, "")))
+            when(mockRegistrationConnector.registerWithID(any())(any(), any()))
+              .thenReturn(Future.successful(None))
 
             val result = businessMatchingService.sendBusinessMatchingInformation(answers)
 

@@ -16,8 +16,8 @@
 
 package pages
 
-import play.api.libs.json.JsPath
 import models.{Address, UserAnswers}
+import play.api.libs.json.JsPath
 
 import scala.util.Try
 

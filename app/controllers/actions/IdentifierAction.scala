@@ -19,7 +19,7 @@ package controllers.actions
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.routes
-import models.requests.{IdentifierRequest, UserRequest}
+import models.requests.UserRequest
 import play.api.mvc.Results._
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
@@ -52,11 +52,11 @@ class AuthenticatedIdentifierAction @Inject()(
     } recover {
       case _: NoActiveSession =>
         Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl)))
-      case _: AuthorisationException =>
-        Redirect(routes.UnauthorisedController.onPageLoad())
       case _: InsufficientEnrolments => Redirect(routes.UnauthorisedController.onPageLoad())
       case _: InsufficientConfidenceLevel => Redirect(routes.UnauthorisedController.onPageLoad())
       case _: UnsupportedAuthProvider => Redirect(routes.UnauthorisedController.onPageLoad())
+      case _: AuthorisationException =>
+        Redirect(routes.UnauthorisedController.onPageLoad())
       case _: UnauthorizedException => Redirect(routes.UnauthorisedController.onPageLoad())
     }
   }

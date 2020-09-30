@@ -18,7 +18,9 @@ package connectors
 
 import config.FrontendAppConfig
 import javax.inject.Inject
-import models.Register
+import models.{PayloadRegisterWithID, PayloadRegistrationWithIDResponse, Register}
+import play.api.http.Status._
+import uk.gov.hmrc.http.HttpReads.is2xx
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -30,4 +32,21 @@ class RegistrationConnector @Inject()(val config: FrontendAppConfig, val http: H
       val submissionUrl = s"${config.businessMatchingUrl}/registration/02.00.00/noId"
       http.POST[Register, HttpResponse](submissionUrl, registration)
     }
+
+  def registerWithID(registration: PayloadRegisterWithID)
+                    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[PayloadRegistrationWithIDResponse]] = {
+    val submissionUrl = s"${config.businessMatchingUrl}/registration/02.00.00/withId"
+    http.POST[PayloadRegisterWithID, HttpResponse](submissionUrl, registration) map {
+      case responseMessage if is2xx(responseMessage.status) =>
+        Some(responseMessage.json.as[PayloadRegistrationWithIDResponse])
+      case responseMessage if responseMessage.status == NOT_FOUND =>
+        None
+      case responseMessage => {
+        //there has been an issue
+        //try to parse as error detail and extract information
+        //shove as a logger message into kibana for support
+        throw new Exception("There has been an error")
+      }
+    }
+  }
 }

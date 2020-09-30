@@ -20,8 +20,8 @@ import java.time.{LocalDate, ZoneOffset}
 
 import forms.behaviours.DateBehaviours
 import helpers.DateHelper
-import play.api.data.FormError
 import helpers.DateHelper._
+import play.api.data.FormError
 
 class DateOfBirthFormProviderSpec extends DateBehaviours {
 

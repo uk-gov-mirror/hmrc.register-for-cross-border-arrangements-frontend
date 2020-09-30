@@ -16,7 +16,10 @@
 
 package models
 
+import java.util.UUID
+
 import models.RegistrationType.Business
+import org.joda.time.{DateTime, DateTimeZone}
 import pages._
 import play.api.libs.json._
 
@@ -67,7 +70,12 @@ object AddressNoId {
   }
 }
 
-case class ContactDetails(phoneNumber: Option[String], mobileNumber: Option[String], faxNumber: Option[String], emailAddress: Option[String])
+case class ContactDetails(
+                           phoneNumber: Option[String],
+                           mobileNumber: Option[String],
+                           faxNumber: Option[String],
+                           emailAddress: Option[String]
+                         )
 
 object ContactDetails {
   implicit val formats = Json.format[ContactDetails]
@@ -94,8 +102,13 @@ case class RequestCommon(
 
 object RequestCommon {
   implicit val format = Json.format[RequestCommon]
-}
 
+  def forService: RequestCommon = {
+    val acknRef: String = UUID.randomUUID().toString
+    val dateTime: String = DateTime.now(DateTimeZone.UTC).toString
+    RequestCommon(dateTime, "DAC", acknRef, None)
+  }
+}
 
 case class RequestDetails(organisation: Option[NoIdOrganisation],
                           individual: Option[Individual],

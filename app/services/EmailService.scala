@@ -19,7 +19,7 @@ package services
 import connectors.EmailConnector
 import javax.inject.{Inject, Singleton}
 import models.{EmailRequest, Name, UserAnswers}
-import pages.{ContactEmailAddressPage, ContactNamePage, NamePage, NonUkNamePage, SecondaryContactEmailAddressPage, SecondaryContactNamePage}
+import pages._
 import uk.gov.hmrc.emailaddress.EmailAddress
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 

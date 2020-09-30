@@ -212,12 +212,30 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
+      "must go from DOB page for a sole trader to the business matching check" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(SoleTraderNamePage, Name("Bobby", "Bobson"))
+                .success
+                .value
+
+            navigator
+              .nextPage(DateOfBirthPage, NormalMode, updatedAnswers)
+              .mustBe(routes.BusinessMatchingController.matchBusiness())
+        }
+      }
+
       "must go from DOB page for an Individual with ID to the business matching check" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
               answers
                 .set(DoYouHaveANationalInsuranceNumberPage, true)
+                .success
+                .value
+                .remove(SoleTraderNamePage)
                 .success
                 .value
 
@@ -233,6 +251,9 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
             val updatedAnswers =
               answers
                 .set(DoYouHaveANationalInsuranceNumberPage, false)
+                .success
+                .value
+                .remove(SoleTraderNamePage)
                 .success
                 .value
 
@@ -333,7 +354,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             navigator
               .nextPage(SoleTraderNamePage, NormalMode, answers)
-              .mustBe(routes.BusinessMatchingController.matchBusiness())
+              .mustBe(routes.DateOfBirthController.onPageLoad(NormalMode))
         }
       }
 

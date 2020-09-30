@@ -24,7 +24,7 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.{ContactEmailAddressPage, ContactNamePage, NamePage, NonUkNamePage, SecondaryContactEmailAddressPage, SecondaryContactNamePage}
+import pages._
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder

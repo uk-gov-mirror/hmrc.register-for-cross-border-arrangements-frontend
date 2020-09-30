@@ -17,7 +17,7 @@
 package controllers.actions
 
 import javax.inject.Inject
-import models.requests.{IdentifierRequest, UserRequest}
+import models.requests.UserRequest
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.Enrolments
 

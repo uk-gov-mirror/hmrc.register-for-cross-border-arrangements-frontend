@@ -40,7 +40,7 @@ class Navigator @Inject()(appConfig: FrontendAppConfig) {
     case NinoPage => _ => Some(routes.NameController.onPageLoad(NormalMode))
     case NamePage => _ => Some(routes.DateOfBirthController.onPageLoad(NormalMode))
     case BusinessNamePage => _ => Some(routes.BusinessMatchingController.matchBusiness())
-    case SoleTraderNamePage => _ => Some(routes.BusinessMatchingController.matchBusiness())
+    case SoleTraderNamePage => _ => Some(routes.DateOfBirthController.onPageLoad(NormalMode))
     case ConfirmBusinessPage => confirmBusinessRoutes(NormalMode)
     case DateOfBirthPage => dateOfBirthRoutes(NormalMode)
     case DoYouLiveInTheUKPage => doYouLiveInTheUKRoutes(NormalMode)
@@ -134,11 +134,16 @@ class Navigator @Inject()(appConfig: FrontendAppConfig) {
       case false => routes.NonUkNameController.onPageLoad(mode)
     }
 
-  private def dateOfBirthRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
-    ua.get(DoYouHaveANationalInsuranceNumberPage) map {
-      case true  => routes.BusinessMatchingController.matchIndividual(mode)
-      case false => routes.DoYouLiveInTheUKController.onPageLoad(mode)
+  private def dateOfBirthRoutes(mode: Mode)(ua: UserAnswers): Option[Call] = {
+    if(ua.get(SoleTraderNamePage).isDefined){
+      Some(routes.BusinessMatchingController.matchBusiness())
+    } else {
+      ua.get(DoYouHaveANationalInsuranceNumberPage) map {
+        case true => routes.BusinessMatchingController.matchIndividual(mode)
+        case false => routes.DoYouLiveInTheUKController.onPageLoad(mode)
+      }
     }
+  }
 
   private def doYouLiveInTheUKRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(DoYouLiveInTheUKPage) map {
