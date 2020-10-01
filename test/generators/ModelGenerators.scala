@@ -123,7 +123,7 @@ trait ModelGenerators {
   } yield RequestCommon(
     receiptDate = receiptDate,
     regime = "DAC",
-    acknowledgementRef = acknowledgementRef,
+    acknowledgementRef,
     None
   )
   }

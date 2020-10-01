@@ -70,81 +70,37 @@ object AddressNoId {
 case class ContactDetails(phoneNumber: Option[String], mobileNumber: Option[String], faxNumber: Option[String], emailAddress: Option[String])
 
 object ContactDetails {
-  implicit lazy val writes: OWrites[ContactDetails] = OWrites[ContactDetails] {
-    details =>
-      Json.obj(
-        "phoneNumber" -> details.phoneNumber,
-        "mobileNumber" -> details.mobileNumber,
-        "faxNumber" -> details.faxNumber,
-        "emailAddress" -> details.emailAddress
-      )
-  }
-
-  implicit lazy val reads: Reads[ContactDetails] = {
-    import play.api.libs.functional.syntax._
-    (
-      (__ \ "phoneNumber").readNullable[String] and
-        (__ \ "mobileNumber").readNullable[String] and
-        (__ \ "faxNumber").readNullable[String] and
-        (__ \ "emailAddress").readNullable[String]
-      )((phone, mobile,fax, email) => ContactDetails(phone, mobile,fax, email))
-  }
+  implicit val formats = Json.format[ContactDetails]
 }
 
 case class Identification(idNumber: String, issuingInstitution: String, issuingCountryCode: String)
 
 object Identification {
-  implicit lazy val writes: OWrites[Identification] = OWrites[Identification] {
-    id =>
-      Json.obj(
-        "idNumber" -> id.idNumber,
-        "issuingInstitution" -> id.issuingInstitution,
-        "issuingCountryCode" -> id.issuingCountryCode
-      )
-  }
-
-  implicit lazy val reads: Reads[Identification] = {
-    import play.api.libs.functional.syntax._
-    (
-      (__ \ "idNumber").read[String] and
-        (__ \ "issuingInstitution").read[String] and
-        (__ \ "issuingCountryCode").read[String]
-      )((number, institution, cc) => Identification(number, institution, cc))
-  }
+  implicit val formats = Json.format[Identification]
 }
-
-case class RequestCommon(receiptDate: String, regime:String, acknowledgementRef: String, parameters: Option[String])
-object RequestCommon {
-  implicit lazy val writes: OWrites[RequestCommon] = OWrites[RequestCommon] {
-    request =>
-      Json.obj(
-        "receiptDate" -> request.receiptDate,
-        "regime" -> "DAC",
-        "acknowledgementReference" -> request.acknowledgementRef,
-        "parameters" -> request.parameters
-      )
-  }
-
-  implicit lazy val reads: Reads[RequestCommon] = {
-    import play.api.libs.functional.syntax._
-    (
-      (__ \ "receiptDate").read[String] and
-        (__ \ "regime").read[String] and
-        (__ \ "acknowledgementReference").read[String] and
-        (__ \ "parameters").readNullable[String]
-      ) ((receipt, regime, ar, param) => RequestCommon(receipt, regime, ar, param))
-  }
 
 case class RequestParameters(paramName: String, paramValue: String)
 
 object RequestParameters {
   implicit val formats = Json.format[RequestParameters]
-  }
+}
+
+case class RequestCommon(
+                          receiptDate: String,
+                          regime:String,
+                          acknowledgementReference: String,
+                          requestParameters: Option[Seq[RequestParameters]]
+                        )
+
+object RequestCommon {
+  implicit val format = Json.format[RequestCommon]
 }
 
 
-
-case class RequestDetails(organisation: Option[NoIdOrganisation], individual: Option[Individual], address: AddressNoId, contactDetails: ContactDetails,
+case class RequestDetails(organisation: Option[NoIdOrganisation],
+                          individual: Option[Individual],
+                          address: AddressNoId,
+                          contactDetails: ContactDetails,
                           identification: Option[Identification])
 
 object RequestDetails {
@@ -153,12 +109,11 @@ object RequestDetails {
 
 object Registration{
   def apply(userAnswers: UserAnswers): Option[RequestDetails] = userAnswers.get(RegistrationTypePage) match {
-    case Some(models.RegistrationType.Individual) => IndRegistration.apply(userAnswers)
-    case Some(Business) => OrgRegistration.apply(userAnswers)
+    case Some(models.RegistrationType.Individual) => IndRegistration(userAnswers)
+    case Some(Business) => OrgRegistration(userAnswers)
     case _ => throw new Exception("Cannot retrieve registration type")
   }
 }
-
 
 object OrgRegistration  {
 
@@ -194,10 +149,9 @@ object IndRegistration {
   }
 
   private def getAddress(userAnswers: UserAnswers): Option[Address] = {
-    (userAnswers.get(DoYouLiveInTheUKPage), userAnswers.get(WhatIsYourAddressUkPage).isDefined) match {
-      case (Some(true), true) => userAnswers.get(WhatIsYourAddressUkPage)
-      case (Some(true), false) => toAddress(userAnswers)
-      case (Some(false), false) => userAnswers.get(WhatIsYourAddressPage)
+    userAnswers.get(DoYouLiveInTheUKPage) match {
+      case Some(true) => userAnswers.get(WhatIsYourAddressUkPage).orElse(toAddress(userAnswers))
+      case Some(false) => userAnswers.get(WhatIsYourAddressPage)
       case _ => throw new Exception("Cannot get address")
     }
   }
