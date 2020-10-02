@@ -18,7 +18,6 @@ package forms
 
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
-import utils.RegexConstants
 
 class NonUkNameFormProviderSpec extends StringFieldBehaviours {
 

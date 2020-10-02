@@ -21,7 +21,7 @@ import java.time.LocalDate
 import base.SpecBase
 import generators.Generators
 import matchers.JsonMatchers
-import models.{BusinessAddress, BusinessDetails, BusinessType, Name, NormalMode, UniqueTaxpayerReference, UserAnswers}
+import models.{BusinessAddress, BusinessDetails, BusinessType, Name, NormalMode, PayloadRegistrationWithIDResponse, RegisterWithIDResponse, ResponseCommon, UniqueTaxpayerReference, UserAnswers}
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
@@ -32,7 +32,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.BusinessMatchingService
 import uk.gov.hmrc.domain.Generator
-import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
@@ -86,7 +85,16 @@ class BusinessMatchingControllerSpec extends SpecBase
           ).build()
 
         when(mockBusinessMatchingService.sendIndividualMatchingInformation(any())(any(), any()))
-          .thenReturn(Future.successful(Some(HttpResponse(OK, ""))))
+          .thenReturn(
+            Future.successful(Right(Some(
+              PayloadRegistrationWithIDResponse(
+                RegisterWithIDResponse(
+                  ResponseCommon("OK", None, "", None),
+                  None
+                )
+              )
+            )))
+          )
 
         val result = route(application, getRequest(individualMatchingRoute)).value
 
@@ -116,7 +124,7 @@ class BusinessMatchingControllerSpec extends SpecBase
           ).build()
 
         when(mockBusinessMatchingService.sendIndividualMatchingInformation(any())(any(), any()))
-          .thenReturn(Future.successful(Some(HttpResponse(NOT_FOUND, ""))))
+          .thenReturn(Future.successful(Right(None)))
 
         val result = route(application, getRequest(individualMatchingRoute)).value
 

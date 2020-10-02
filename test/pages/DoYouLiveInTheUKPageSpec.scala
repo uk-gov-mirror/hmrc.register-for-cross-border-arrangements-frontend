@@ -17,8 +17,8 @@
 package pages
 
 import models.{Address, Country, UserAnswers}
-import pages.behaviours.PageBehaviours
 import org.scalacheck.Arbitrary.arbitrary
+import pages.behaviours.PageBehaviours
 
 
 class DoYouLiveInTheUKPageSpec extends PageBehaviours {

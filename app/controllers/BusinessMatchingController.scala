@@ -47,13 +47,10 @@ class BusinessMatchingController @Inject()(
   def matchIndividual(mode: Mode): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
     implicit request =>
       businessMatchingService.sendIndividualMatchingInformation(request.userAnswers) map {
-        case Some(response) => response.status match {
-          case OK => Redirect(routes.IdentityConfirmedController.onPageLoad()) //TODO: may need more data collected for Cardiff team
-          case _ => Redirect(routes.IndividualNotConfirmedController.onPageLoad())
-        }
-
+        case Right(Some(_)) => Redirect(routes.IdentityConfirmedController.onPageLoad()) //TODO: may need more data collected for Cardiff team
+        case Right(None) => Redirect(routes.IndividualNotConfirmedController.onPageLoad())
         //we are missing a name or a date of birth take them back to fill it in
-        case None => Redirect(routes.NameController.onPageLoad(NormalMode))
+        case Left(_) => Redirect(routes.NameController.onPageLoad(NormalMode))
       }
   }
 

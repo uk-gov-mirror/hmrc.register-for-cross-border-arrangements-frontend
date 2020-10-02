@@ -18,7 +18,6 @@ package controllers
 
 import controllers.actions._
 import forms.DateOfBirthFormProvider
-import helpers.JourneyHelpers.redirectToSummary
 import javax.inject.Inject
 import models.{CheckMode, Mode}
 import navigation.Navigator

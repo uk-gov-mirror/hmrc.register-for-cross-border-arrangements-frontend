@@ -16,20 +16,14 @@
 
 package services
 
-import java.util.UUID
-
 import connectors.RegistrationConnector
 import javax.inject.Inject
 import models.{Register, RegisterWithoutIDRequest, Registration, RequestCommon, UserAnswers}
-import org.joda.time.{DateTime, DateTimeZone}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class RegistrationService @Inject()(registrationConnector: RegistrationConnector){
-
-  val acknRef: String = UUID.randomUUID().toString
-  val dateTime: String = DateTime.now(DateTimeZone.UTC).toString
 
   def sendRegistration(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[HttpResponse]] = {
 
@@ -37,7 +31,7 @@ class RegistrationService @Inject()(registrationConnector: RegistrationConnector
       case Some(registration) =>
 
         val subscribe = Register(RegisterWithoutIDRequest(
-          RequestCommon(dateTime, "DAC", acknRef, None),
+          RequestCommon.forService,
           registration)
         )
         registrationConnector.sendWithoutIDInformation(subscribe).map(Some(_))

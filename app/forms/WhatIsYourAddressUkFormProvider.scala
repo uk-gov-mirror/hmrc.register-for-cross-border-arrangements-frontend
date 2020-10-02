@@ -17,9 +17,9 @@
 package forms
 
 
+import forms.mappings.Mappings
 import javax.inject.Inject
 import models.{Address, Country}
-import forms.mappings.Mappings
 import play.api.data.Form
 import play.api.data.Forms._
 import utils.RegexConstants

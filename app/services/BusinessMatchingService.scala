@@ -16,62 +16,56 @@
 
 package services
 
-import connectors.BusinessMatchingConnector
+import connectors.RegistrationConnector
 import javax.inject.Inject
-import models.{BusinessDetails, BusinessMatchingSubmission, BusinessType, IndividualMatchingSubmission, UserAnswers}
+import models.{BusinessDetails, BusinessType, PayloadRegisterWithID, PayloadRegistrationWithIDResponse, UniqueTaxpayerReference, UserAnswers}
 import pages.{BusinessTypePage, CorporationTaxUTRPage, NinoPage, SelfAssessmentUTRPage}
-import play.api.http.Status._
-import play.api.libs.json.JsResult.Exception
-import play.api.libs.json.{JsError, JsSuccess, JsValue}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class BusinessMatchingService @Inject()(businessMatchingConnector: BusinessMatchingConnector) {
+class BusinessMatchingService @Inject()(registrationConnector: RegistrationConnector) {
 
   def sendIndividualMatchingInformation(userAnswers: UserAnswers)
-                                       (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[HttpResponse]] = {
-
-    (IndividualMatchingSubmission(userAnswers), userAnswers.get(NinoPage)) match {
-      case (Some(individualSubmission), Some(nino)) =>
-        businessMatchingConnector.sendIndividualMatchingInformation(nino, individualSubmission).map(Some(_))
-      case _ => Future.successful(None)
+                                       (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Exception, Option[PayloadRegistrationWithIDResponse]]] =
+    userAnswers.get(NinoPage) match {
+      case Some(nino) =>
+        val payloadForIndividual = PayloadRegisterWithID.createIndividualSubmission(userAnswers, "NINO", nino.nino)
+        payloadForIndividual match {
+          case Some(request) => registrationConnector.registerWithID(request).map(Right(_))
+          case None =>
+            Future.successful(Left(new Exception("Couldn't Create Payload for Register With ID"))            )
+        }
+      case _ => Future.successful(Left(new Exception("Missing Nino Answer")))
     }
-  }
 
   def sendBusinessMatchingInformation(userAnswers: UserAnswers)
                                      (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[BusinessDetails]] = {
 
-    val utr = (userAnswers.get(SelfAssessmentUTRPage), userAnswers.get(CorporationTaxUTRPage)) match {
+    val utr: UniqueTaxpayerReference = (userAnswers.get(SelfAssessmentUTRPage), userAnswers.get(CorporationTaxUTRPage)) match {
       case (Some(utr), _) => utr
       case (_, Some(utr)) => utr
     }
 
     //Note: ETMP data suggests sole trader business partner accounts are individual records
-    userAnswers.get(BusinessTypePage) match {
+    val payload = userAnswers.get(BusinessTypePage) match {
       case Some(BusinessType.NotSpecified) =>
-        businessMatchingConnector.sendSoleProprietorMatchingInformation(utr, BusinessMatchingSubmission(userAnswers).get).map {
-          response =>
-            response.status match {
-              case OK => validateJsonForBusiness(response.json)
-              case _ => None
-            }
-        }
+        PayloadRegisterWithID.createIndividualSubmission(userAnswers, "UTR", utr.uniqueTaxPayerReference)
       case _ =>
-        businessMatchingConnector.sendBusinessMatchingInformation(utr, BusinessMatchingSubmission(userAnswers).get).map {
-          response =>
-            response.status match {
-              case OK => validateJsonForBusiness(response.json)
-              case _ => None
-            }
-        }
+        PayloadRegisterWithID.createBusinessSubmission(userAnswers, "UTR", utr.uniqueTaxPayerReference)
     }
+
+    callEndPoint(payload)
   }
 
-  private def validateJsonForBusiness(value: JsValue): Option[BusinessDetails] = {
-      value.validate[BusinessDetails] match {
-        case JsSuccess(details, _) => Some(details)
-        case JsError(_) => throw Exception(JsError(s"Error encountered retrieving business matching record."))
+  def callEndPoint(payload: Option[PayloadRegisterWithID])
+                  (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[BusinessDetails]] = {
+    payload match {
+      case Some(request) => registrationConnector.registerWithID(request).map {
+        _.flatMap(BusinessDetails.fromRegistrationMatch)
+        //Do we need a logger message for failed extraction?
       }
+      case None => Future.successful(None)
+    }
   }
 }

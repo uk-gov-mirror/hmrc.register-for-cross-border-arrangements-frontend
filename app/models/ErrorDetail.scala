@@ -14,21 +14,25 @@
  * limitations under the License.
  */
 
-package forms
+package models
 
-import forms.mappings.Mappings
-import javax.inject.Inject
-import play.api.data.Form
-import utils.RegexConstants
+import play.api.libs.json.Json
 
-class SecondaryContactEmailAddressFormProvider @Inject() extends Mappings with RegexConstants {
+case class SourceDetail(detail: Seq[String])
 
-  private val maxLength = 254
+object SourceDetail {
+  implicit val format = Json.format[SourceDetail]
+}
 
-  def apply(): Form[String] =
-    Form(
-      "email" -> validatedText("secondaryContactEmailAddress.error.required",
-        "secondaryContactEmailAddress.error.email.invalid",
-        "secondaryContactEmailAddress.error.length", emailRegex, maxLength)
-    )
+case class ErrorDetail(
+                        timestamp: String,
+                        correlationId: String,
+                        errorCode: String,
+                        errorMessage: String,
+                        source: String,
+                        sourceFaultDetail: SourceDetail
+                      )
+
+object ErrorDetail {
+  implicit val format = Json.format[ErrorDetail]
 }

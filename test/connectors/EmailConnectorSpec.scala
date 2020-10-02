@@ -25,9 +25,7 @@ import models.EmailRequest
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
-import play.api.http.Status.OK
-import play.api.http.Status.BAD_REQUEST
-import play.api.http.Status.NOT_FOUND
+import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK}
 import play.api.inject.guice.GuiceApplicationBuilder
 
 class EmailConnectorSpec extends SpecBase

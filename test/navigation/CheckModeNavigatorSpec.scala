@@ -496,6 +496,9 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
                 .set(DateOfBirthPage, LocalDate.now())
                 .success
                 .value
+                .remove(SoleTraderNamePage)
+                .success
+                .value
 
             navigator
               .nextPage(DateOfBirthPage, CheckMode, updatedAnswers)
@@ -512,6 +515,9 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
                 .success
                 .value
                 .set(DateOfBirthPage, LocalDate.now())
+                .success
+                .value
+                .remove(SoleTraderNamePage)
                 .success
                 .value
 

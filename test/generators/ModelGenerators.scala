@@ -18,7 +18,7 @@ package generators
 
 import java.time.LocalDate
 
-import models._
+import models.{PayloadRegistrationWithIDResponse, _}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import uk.gov.hmrc.domain.Nino
@@ -118,12 +118,12 @@ trait ModelGenerators {
 
   implicit val arbitraryRequestCommon: Arbitrary[RequestCommon] = Arbitrary {for {
     receiptDate <- arbitrary[String]
-    acknowledgementRef <- stringsWithMaxLength(32)
+    acknowledgementReference <- stringsWithMaxLength(32)
 
   } yield RequestCommon(
-    receiptDate = receiptDate,
+    receiptDate,
     regime = "DAC",
-    acknowledgementRef,
+    acknowledgementReference,
     None
   )
   }
@@ -191,5 +191,78 @@ trait ModelGenerators {
       issuingInstitution = issuingInstitution,
       issuingCountryCode = issuingCountryCode
     )
+  }
+
+  implicit val arbitraryPayloadRegistrationWithIDResponse: Arbitrary[PayloadRegistrationWithIDResponse] = Arbitrary {
+    for {
+      registrationWithIDResponse <- arbitrary[RegisterWithIDResponse]
+    } yield PayloadRegistrationWithIDResponse(registrationWithIDResponse)
+  }
+
+  implicit val arbitraryRegistrationWithIDResponse: Arbitrary[RegisterWithIDResponse] = Arbitrary {
+    for {
+      responseCommon <- arbitrary[ResponseCommon]
+      responseDetails <- Gen.option(arbitrary[ResponseDetail])
+    } yield RegisterWithIDResponse(responseCommon, responseDetails)
+  }
+
+  implicit val arbitraryResponseCommon: Arbitrary[ResponseCommon] = Arbitrary {
+    for {
+      status <- Gen.oneOf("OK", "NOT_OK")
+      statusText <- Gen.option(arbitrary[String])
+      processingDate <- arbitrary[String]
+      returnParameters <- Gen.option(Gen.listOf(arbitrary[ReturnParameters]))
+    } yield ResponseCommon(status, statusText, processingDate, returnParameters)
+  }
+
+  implicit val arbitraryReturnParameters: Arbitrary[ReturnParameters] = Arbitrary {
+    for {
+      paramName <- arbitrary[String]
+      paramValue <- arbitrary[String]
+    } yield ReturnParameters(paramName, paramValue)
+  }
+
+  implicit val arbitraryResponseDetails: Arbitrary[ResponseDetail] = Arbitrary {
+    for {
+      safeid <- arbitrary[String]
+      arn <- Gen.option(arbitrary[String])
+      isEditable <- arbitrary[Boolean]
+      isAnAgent <- arbitrary[Boolean]
+      isAnASAgent <- Gen.option(arbitrary[Boolean])
+      isAnIndividual <- arbitrary[Boolean]
+      partnerDetails <- Gen.oneOf(arbitrary[IndividualResponse], arbitrary[OrganisationResponse])
+      address <- arbitrary[AddressResponse]
+      contactDetails <- arbitrary[ContactDetails]
+    } yield ResponseDetail(safeid, arn, isEditable, isAnAgent, isAnASAgent,
+      isAnIndividual, partnerDetails, address, contactDetails)
+  }
+
+  implicit val arbitraryIndividualResponse: Arbitrary[IndividualResponse] = Arbitrary {
+    for {
+      firstName <- arbitrary[String]
+      middleName <- Gen.option(arbitrary[String])
+      lastName <- arbitrary[String]
+      dateOfBirth <- Gen.option(arbitrary[String])
+    } yield IndividualResponse(firstName, middleName, lastName, dateOfBirth)
+  }
+
+  implicit val arbitraryOrganisationResponse: Arbitrary[OrganisationResponse] = Arbitrary {
+    for {
+      organisationName <- arbitrary[String]
+      isAGroup <- arbitrary[Boolean]
+      organisationType <- Gen.option(arbitrary[String])
+      code <- Gen.option(arbitrary[String])
+    } yield OrganisationResponse(organisationName, isAGroup, organisationType, code)
+  }
+
+  implicit val arbitraryAddressResponse: Arbitrary[AddressResponse] = Arbitrary {
+    for {
+      addressLine1 <- arbitrary[String]
+      addressLine2 <- Gen.option(arbitrary[String])
+      addressLine3 <- Gen.option(arbitrary[String])
+      addressLine4 <- Gen.option(arbitrary[String])
+      postalCode <- Gen.option(arbitrary[String])
+      countryCode <- arbitrary[String]
+    } yield AddressResponse(addressLine1, addressLine2, addressLine3, addressLine4, postalCode, countryCode)
   }
 }
