@@ -19,15 +19,16 @@ package controllers
 import com.google.inject.Inject
 import connectors.SubscriptionConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction, NotEnrolledForDAC6Action}
-import models.RegistrationType
+import models.RegistrationType.Individual
+import models.{RegistrationType, UserAnswers}
 import org.slf4j.LoggerFactory
-import pages.{BusinessTypePage, RegistrationTypePage}
+import pages.{BusinessTypePage, DoYouHaveANationalInsuranceNumberPage, DoYouHaveUTRPage, RegistrationTypePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import renderer.Renderer
-import services.EmailService
-import uk.gov.hmrc.http.HttpResponse
+import services.{EmailService, RegistrationService}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
 import utils.CheckYourAnswersHelper
@@ -42,6 +43,7 @@ class CheckYourAnswersController @Inject()(
                                             requireData: DataRequiredAction,
                                             val controllerComponents: MessagesControllerComponents,
                                             emailService: EmailService,
+                                            registrationService: RegistrationService,
                                             taxEnrolmentsConnector: SubscriptionConnector,
                                             renderer: Renderer
                                           )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
@@ -137,7 +139,6 @@ class CheckYourAnswersController @Inject()(
           helper.whatIsYourAddressUk
         ).flatten
     }
-
   }
 
   private def buildContactDetails(helper: CheckYourAnswersHelper): Seq[SummaryList.Row] = {
@@ -157,22 +158,23 @@ class CheckYourAnswersController @Inject()(
   def onSubmit(): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
     implicit request =>
 
-      taxEnrolmentsConnector.createSubscription(request.userAnswers).flatMap {
-        subscriptionResponse =>
-          if (subscriptionResponse.status.equals(NO_CONTENT)) {
-           emailService.sendEmail(request.userAnswers).map {
-             emailResponse =>
-               logEmailResponse(emailResponse)
-                Redirect(routes.RegistrationSuccessfulController.onPageLoad())
-           }.recover {
-             case e: Exception => Redirect(routes.RegistrationSuccessfulController.onPageLoad())
-           }
-          } else {
-            Future.successful(Redirect(routes.ProblemWithServiceController.onPageLoad()))
-          }
-      }
-  }
+      (request.userAnswers.get(DoYouHaveUTRPage), request.userAnswers.get(RegistrationTypePage),
+        request.userAnswers.get(DoYouHaveANationalInsuranceNumberPage)) match {
 
+        case (Some(true), None, None) => createEnrolment(request.userAnswers) // TODO: EIS subscription for business with ID
+        case (Some(false), Some(Individual), Some(true)) => createEnrolment(request.userAnswers) // TODO: EIS subscription for individual with ID
+
+        case (Some(false), _, Some(false) | None) => registrationService.sendRegistration(request.userAnswers) flatMap {
+          case Some(response) => response.status match {
+            case OK => createEnrolment(request.userAnswers)
+            case _ => Future.successful(Redirect(routes.ProblemWithServiceController.onPageLoad()))
+          }
+          case _ => Future.successful(Redirect(routes.ProblemWithServiceController.onPageLoad()))
+        }
+        case _ => Future.successful(Redirect(routes.ProblemWithServiceController.onPageLoad()))
+      }
+
+  }
 
   private def logEmailResponse(emailResponse: Option[HttpResponse]): Unit = {
     emailResponse match {
@@ -183,4 +185,21 @@ class CheckYourAnswersController @Inject()(
 
   }
 
+  def createEnrolment(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[Result] = {
+    taxEnrolmentsConnector.createSubscription(userAnswers).flatMap {
+      subscriptionResponse =>
+        if (subscriptionResponse.status.equals(NO_CONTENT)) {
+          emailService.sendEmail(userAnswers).map {
+            emailResponse =>
+              logEmailResponse(emailResponse)
+              Redirect(routes.RegistrationSuccessfulController.onPageLoad())
+          }.recover {
+            case e: Exception => Redirect(routes.RegistrationSuccessfulController.onPageLoad())
+          }
+        } else {
+          Future(Redirect(routes.ProblemWithServiceController.onPageLoad()))
+        }
+    }
+
+  }
 }

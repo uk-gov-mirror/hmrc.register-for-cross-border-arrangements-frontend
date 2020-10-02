@@ -27,7 +27,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.{IndividualUKPostcodePage, SelectAddressPage}
+import pages.{IndividualUKPostcodePage, SelectAddressPage, SelectedAddressLookupPage}
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
@@ -209,6 +209,7 @@ class SelectAddressControllerSpec extends SpecBase
         .success
         .value
 
+
       val application =
         applicationBuilder(userAnswers = Some(answers))
           .overrides(
@@ -219,7 +220,7 @@ class SelectAddressControllerSpec extends SpecBase
 
       val request =
         FakeRequest(POST, selectAddressRoute)
-          .withFormUrlEncodedBody(("value", "Address"))
+          .withFormUrlEncodedBody(("value", "1 Address line 1, Town, ZZ1 1ZZ"))
 
       val result = route(application, request).value
 
@@ -280,7 +281,7 @@ class SelectAddressControllerSpec extends SpecBase
         .thenReturn(Future.successful(addresses))
 
       val answers = UserAnswers(userAnswersId)
-        .set(SelectAddressPage, "Address")
+        .set(SelectAddressPage, "1 Address line 1, Town, ZZ1 1ZZ")
         .success
         .value
 
@@ -294,7 +295,7 @@ class SelectAddressControllerSpec extends SpecBase
 
       val request =
         FakeRequest(POST, selectAddressRoute)
-          .withFormUrlEncodedBody(("value", "Address"))
+          .withFormUrlEncodedBody(("value", "1 Address line 1, Town, ZZ1 1ZZ"))
 
       val result = route(application, request).value
 

@@ -27,7 +27,6 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK}
 import play.api.inject.guice.GuiceApplicationBuilder
-import uk.gov.hmrc.domain.Nino
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class SubscriptionConnectorSpec extends SpecBase
@@ -43,7 +42,7 @@ class SubscriptionConnectorSpec extends SpecBase
 
   lazy val connector: SubscriptionConnector = app.injector.instanceOf[SubscriptionConnector]
 
-  "BusinessMatchingConnector" - {
+  "SubscriptionConnector" - {
     "must return status as OK for submission of valid enrolment request" in {
 
 

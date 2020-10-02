@@ -23,7 +23,7 @@ import helpers.JourneyHelpers.redirectToSummary
 import javax.inject.Inject
 import models.{AddressLookup, Mode}
 import navigation.Navigator
-import pages.{IndividualUKPostcodePage, SelectAddressPage}
+import pages.{IndividualUKPostcodePage, SelectAddressPage, SelectedAddressLookupPage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -114,14 +114,17 @@ class SelectAddressController @Inject()(
             value => {
               val redirectUsers = redirectToSummary(value, SelectAddressPage, mode, request.userAnswers)
 
+              val addressToStore: AddressLookup = addresses.find(formatAddress(_) == value).getOrElse(throw new Exception("Cannot get address"))
+
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(SelectAddressPage, value))
-                _ <- sessionRepository.set(updatedAnswers)
+                updatedAnswers2 <- Future.fromTry(updatedAnswers.set(SelectedAddressLookupPage, addressToStore))
+                _ <- sessionRepository.set(updatedAnswers2)
               } yield {
                 if (redirectUsers) {
                   Redirect(routes.CheckYourAnswersController.onPageLoad())
                 } else {
-                  Redirect(navigator.nextPage(SelectAddressPage, mode, updatedAnswers))
+                  Redirect(navigator.nextPage(SelectAddressPage, mode, updatedAnswers2))
                 }
               }
             }
