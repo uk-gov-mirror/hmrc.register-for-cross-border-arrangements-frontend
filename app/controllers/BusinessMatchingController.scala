@@ -77,7 +77,7 @@ class BusinessMatchingController @Inject()(
             }
           case None => Future.successful(Redirect(routes.BusinessNotConfirmedController.onPageLoad()))
         } recover {
-          case _ => Redirect(routes.BusinessNotConfirmedController.onPageLoad()) //TODO Redirect to error page when it's ready
+          case _ => Redirect(routes.ProblemWithServiceController.onPageLoad())
         }
       } else {
         Future.successful(Redirect(routes.DoYouHaveUTRController.onPageLoad(NormalMode)))

@@ -51,6 +51,7 @@ class ErrorHandler @Inject()(
         renderer.render("problemWithService.njk", Json.obj()).map {
           content =>
             Results.Status(statusCode)(content)
+            Redirect(controllers.routes.ProblemWithServiceController.onPageLoad())
         }
     }
   }
@@ -67,6 +68,7 @@ class ErrorHandler @Inject()(
         renderer.render("problemWithService.njk").map {
           content =>
             InternalServerError(content).withHeaders(CACHE_CONTROL -> "no-cache")
+            Redirect(controllers.routes.ProblemWithServiceController.onPageLoad())
         }
     }
   }
