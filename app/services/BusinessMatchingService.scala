@@ -27,12 +27,17 @@ import scala.concurrent.{ExecutionContext, Future}
 class BusinessMatchingService @Inject()(registrationConnector: RegistrationConnector) {
 
   def sendIndividualMatchingInformation(userAnswers: UserAnswers)
-                                       (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Exception, Option[PayloadRegistrationWithIDResponse]]] =
+                                       (implicit hc: HeaderCarrier,
+                                        ec: ExecutionContext): Future[Either[Exception, (Option[PayloadRegistrationWithIDResponse], Option[String])]] =
     userAnswers.get(NinoPage) match {
       case Some(nino) =>
         val payloadForIndividual = PayloadRegisterWithID.createIndividualSubmission(userAnswers, "NINO", nino.nino)
         payloadForIndividual match {
-          case Some(request) => registrationConnector.registerWithID(request).map(Right(_))
+          case Some(request) => registrationConnector.registerWithID(request).map {
+            response =>
+              val safeId = retrieveSafeID(response)
+              Right((response, safeId))
+          }
           case None =>
             Future.successful(Left(new Exception("Couldn't Create Payload for Register With ID"))            )
         }
@@ -40,7 +45,7 @@ class BusinessMatchingService @Inject()(registrationConnector: RegistrationConne
     }
 
   def sendBusinessMatchingInformation(userAnswers: UserAnswers)
-                                     (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[BusinessDetails]] = {
+                                     (implicit hc: HeaderCarrier, ec: ExecutionContext):  Future[(Option[BusinessDetails], Option[String])] = {
 
     val utr: UniqueTaxpayerReference = (userAnswers.get(SelfAssessmentUTRPage), userAnswers.get(CorporationTaxUTRPage)) match {
       case (Some(utr), _) => utr
@@ -48,7 +53,7 @@ class BusinessMatchingService @Inject()(registrationConnector: RegistrationConne
     }
 
     //Note: ETMP data suggests sole trader business partner accounts are individual records
-    val payload = userAnswers.get(BusinessTypePage) match {
+    val payload: Option[PayloadRegisterWithID] = userAnswers.get(BusinessTypePage) match {
       case Some(BusinessType.NotSpecified) =>
         PayloadRegisterWithID.createIndividualSubmission(userAnswers, "UTR", utr.uniqueTaxPayerReference)
       case _ =>
@@ -59,13 +64,22 @@ class BusinessMatchingService @Inject()(registrationConnector: RegistrationConne
   }
 
   def callEndPoint(payload: Option[PayloadRegisterWithID])
-                  (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[BusinessDetails]] = {
+                  (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[(Option[BusinessDetails], Option[String])] = {
     payload match {
       case Some(request) => registrationConnector.registerWithID(request).map {
-        _.flatMap(BusinessDetails.fromRegistrationMatch)
+        response =>
+          val safeId = retrieveSafeID(response)
+          (response.flatMap(BusinessDetails.fromRegistrationMatch), safeId)
         //Do we need a logger message for failed extraction?
       }
-      case None => Future.successful(None)
+      case _ => Future.successful((None, None))
+    }
+  }
+
+  def retrieveSafeID(payloadRegisterWithIDResponse: Option[PayloadRegistrationWithIDResponse]): Option[String]  = {
+    payloadRegisterWithIDResponse match {
+      case Some(value) => value.registerWithIDResponse.responseDetail.map(_.SAFEID)
+      case _ => throw new Exception("unable to retrieve SafeID")
     }
   }
 }

@@ -17,15 +17,16 @@
 package connectors
 
 import base.SpecBase
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, put, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, put, urlEqualTo}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import generators.Generators
 import helpers.WireMockServerHandler
-import models.UserAnswers
+import models.{CreateSubscriptionForDACResponse, ResponseCommon, ResponseDetailForDACSubscription, SubscriptionForDACResponse, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import pages._
 import play.api.Application
-import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK}
+import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SERVICE_UNAVAILABLE}
 import play.api.inject.guice.GuiceApplicationBuilder
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -48,10 +49,11 @@ class SubscriptionConnectorSpec extends SpecBase
 
 
       forAll(arbitrary[UserAnswers]) {
-        (userAnswers) =>
+        userAnswers =>
+          val updatedUserAnswers = userAnswers.set(SubscriptionIDPage, "XADAC0000123456").success.value
           stubResponse(s"/register-for-cross-border-arrangements/enrolment/create-enrolment", OK)
 
-          val result = connector.createSubscription(userAnswers)
+          val result = connector.createEnrolment(updatedUserAnswers)
           result.futureValue.status mustBe OK
       }
     }
@@ -60,10 +62,11 @@ class SubscriptionConnectorSpec extends SpecBase
 
 
       forAll(arbitrary[UserAnswers]) {
-        (userAnswers) =>
+        userAnswers =>
+          val updatedUserAnswers = userAnswers.set(SubscriptionIDPage, "XADAC0000123456").success.value
           stubResponse(s"/register-for-cross-border-arrangements/enrolment/create-enrolment", BAD_REQUEST)
 
-          val result = connector.createSubscription(userAnswers)
+          val result = connector.createEnrolment(updatedUserAnswers)
           result.futureValue.status mustBe BAD_REQUEST
       }
     }
@@ -72,11 +75,67 @@ class SubscriptionConnectorSpec extends SpecBase
 
 
       forAll(arbitrary[UserAnswers]) {
-        (userAnswers) =>
+        userAnswers =>
+          val updatedUserAnswers = userAnswers.set(SubscriptionIDPage, "XADAC0000123456").success.value
           stubResponse(s"/register-for-cross-border-arrangements/enrolment/create-enrolment", INTERNAL_SERVER_ERROR)
 
-          val result = connector.createSubscription(userAnswers)
+          val result = connector.createEnrolment(updatedUserAnswers)
           result.futureValue.status mustBe INTERNAL_SERVER_ERROR
+      }
+    }
+
+    "when calling createEISSubscription" - {
+
+      "must return status OK for submission of valid registration details" in {
+
+        forAll(arbitrary[UserAnswers], validBusinessName, validEmailAddress, validSafeID) {
+          (userAnswers, businessName, email, safeID) =>
+            val updatedUserAnswers = userAnswers.set(BusinessNamePage, businessName).success.value
+              .set(ContactEmailAddressPage, email).success.value
+              .set(SafeIDPage, safeID).success.value
+              .remove(RegistrationTypePage).success.value
+
+            val response = CreateSubscriptionForDACResponse(
+              SubscriptionForDACResponse(
+                responseCommon = ResponseCommon("OK", None, "2020-09-23T16:12:11Z", None),
+                responseDetail = ResponseDetailForDACSubscription("XADAC0000123456"))
+            )
+
+            val expectedBody =
+              """
+                |{
+                | "createSubscriptionForDACResponse": {
+                |   "responseCommon": {
+                |     "status": "OK",
+                |     "processingDate": "2020-09-23T16:12:11Z"
+                |   },
+                |   "responseDetail": {
+                |      "subscriptionID": "XADAC0000123456"
+                |   }
+                | }
+                |}""".stripMargin
+
+            stubPostResponse("/register-for-cross-border-arrangements/subscription/create-dac-subscription", OK, expectedBody)
+
+            val result = connector.createSubscription(updatedUserAnswers)
+            result.futureValue mustBe Some(response)
+        }
+      }
+
+      "must return None if status is not OK and subscription fails" in {
+
+        forAll(arbitrary[UserAnswers], validBusinessName, validEmailAddress, validSafeID) {
+          (userAnswers, businessName, email, safeID) =>
+            val updatedUserAnswers = userAnswers.set(BusinessNamePage, businessName).success.value
+              .set(ContactEmailAddressPage, email).success.value
+              .set(SafeIDPage, safeID).success.value
+              .remove(RegistrationTypePage).success.value
+
+            stubPostResponse("/register-for-cross-border-arrangements/subscription/create-dac-subscription", SERVICE_UNAVAILABLE, "")
+
+            val result = connector.createSubscription(updatedUserAnswers)
+            result.futureValue mustBe None
+        }
       }
     }
   }
@@ -87,6 +146,16 @@ class SubscriptionConnectorSpec extends SpecBase
         .willReturn(
           aResponse()
             .withStatus(expectedStatus)
+        )
+    )
+
+  private def stubPostResponse(expectedUrl: String, expectedStatus: Int, expectedBody: String): StubMapping =
+    server.stubFor(
+      post(urlEqualTo(expectedUrl))
+        .willReturn(
+          aResponse()
+            .withStatus(expectedStatus)
+            .withBody(expectedBody)
         )
     )
 }

@@ -46,15 +46,22 @@ class BusinessMatchingController @Inject()(
 
   def matchIndividual(mode: Mode): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
     implicit request =>
-      businessMatchingService.sendIndividualMatchingInformation(request.userAnswers) map {
-        case Right(Some(_)) => Redirect(routes.IdentityConfirmedController.onPageLoad()) //TODO: may need more data collected for Cardiff team
-        case Right(None) => Redirect(routes.IndividualNotConfirmedController.onPageLoad())
+      businessMatchingService.sendIndividualMatchingInformation(request.userAnswers).flatMap {
+        case Right((Some(_), Some(id))) =>
+          for {
+            updatedAnswersWithSafeID <- Future.fromTry(request.userAnswers.set(SafeIDPage, id))
+            _                        <- sessionRepository.set(updatedAnswersWithSafeID)
+          } yield {
+            Redirect(routes.IdentityConfirmedController.onPageLoad()) //TODO: may need more data collected for Cardiff team
+          }
+        case Right(_) => Future.successful(Redirect(routes.IndividualNotConfirmedController.onPageLoad()))
         //we are missing a name or a date of birth take them back to fill it in
-        case Left(_) => Redirect(routes.NameController.onPageLoad(NormalMode))
+        case Left(_) => Future.successful(Redirect(routes.NameController.onPageLoad(NormalMode)))
       }
   }
 
-  def matchBusiness(mode: Mode): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
+  def matchBusiness(mode: Mode): Action[AnyContent] =
+    (identify andThen notEnrolled andThen getData andThen requireData).async {
     implicit request =>
 
       /*Note: Needs business type, name and utr to business match
@@ -67,15 +74,17 @@ class BusinessMatchingController @Inject()(
 
       if (utrExist) {
         businessMatchingService.sendBusinessMatchingInformation(request.userAnswers) flatMap {
-          case Some(details) =>
+
+          case (Some(details), Some(id)) =>
             for {
-              updatedAnswers     <- Future.fromTry(request.userAnswers.set(BusinessAddressPage, details.address.toAddress))
-              updatedNameAnswers <- Future.fromTry(updatedAnswers.set(RetrievedNamePage, details.name))
-              _                  <- sessionRepository.set(updatedNameAnswers)
+              updatedAnswersWithBusinessAddress <- Future.fromTry(request.userAnswers.set(BusinessAddressPage, details.address.toAddress))
+              updatedAnswersWithBusinessName <- Future.fromTry(updatedAnswersWithBusinessAddress.set(RetrievedNamePage, details.name))
+              updatedAnswersWithSafeID <- Future.fromTry(updatedAnswersWithBusinessName.set(SafeIDPage, id))
+              _                  <- sessionRepository.set(updatedAnswersWithSafeID)
             } yield {
               Redirect(routes.ConfirmBusinessController.onPageLoad(NormalMode))
             }
-          case None => Future.successful(Redirect(routes.BusinessNotConfirmedController.onPageLoad()))
+          case _ => Future.successful(Redirect(routes.BusinessNotConfirmedController.onPageLoad()))
         } recover {
           case _ => Redirect(routes.BusinessNotConfirmedController.onPageLoad()) //TODO Redirect to error page when it's ready
         }
