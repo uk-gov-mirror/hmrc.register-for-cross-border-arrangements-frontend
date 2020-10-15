@@ -31,12 +31,12 @@
 
           {{ csrf() | safe }}
 
-        <h1 class="govuk-heading-xl">
+        <h1 class="govuk-heading-xl" id="heading">
                 {{ messages("selfAssessmentUTR.heading") }}
         </h1>
 
         <div>
-              <p class="govuk-hint">{{ messages("selfAssessmentUTR.hint") }}
+              <p class="govuk-hint" id="hint-text">{{ messages("selfAssessmentUTR.hint") }}
               <a href="{{lostUTRUrl}}" class="govuk-link" rel="noreferrer noopener" target="_blank">{{messages("selfAssessmentUTR.link")}}</a></p>
         </div>
 
@@ -44,7 +44,11 @@
             id: "selfAssessmentUTR",
             name: "selfAssessmentUTR",
             value: form.selfAssessmentUTR.value,
-            errorMessage: form.selfAssessmentUTR.error
+            errorMessage: form.selfAssessmentUTR.error,
+            attributes: {
+                "aria-labelledby" : "heading",
+                "aria-describedby": "hint-text"
+            }
           }) }}
 
           {{ govukButton({

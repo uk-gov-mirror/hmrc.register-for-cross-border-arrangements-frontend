@@ -31,12 +31,12 @@
 
           {{ csrf() | safe }}
 
-        <h1 class="govuk-heading-xl">
+        <h1 class="govuk-heading-xl" id="heading">
             {{ messages("corporationTaxUTR.heading.corporation") }}
         </h1>
 
         <div>
-              <p class="govuk-hint">{{ messages("corporationTaxUTR.hint") }}
+              <p class="govuk-hint" id="hint-text">{{ messages("corporationTaxUTR.hint") }}
               <a href="{{lostUTRUrl}}" class="govuk-link" rel="noreferrer noopener" target="_blank">{{messages("corporationTaxUTR.link")}}</a></p>
         </div>
 
@@ -44,7 +44,11 @@
             id: "corporationTaxUTR",
             name: "corporationTaxUTR",
             value: form.corporationTaxUTR.value,
-            errorMessage: form.corporationTaxUTR.error
+            errorMessage: form.corporationTaxUTR.error,
+            attributes: {
+                "aria-labelledby" : "heading",
+                "aria-describedby": "hint-text"
+            }
           }) }}
 
           {{ govukButton({
