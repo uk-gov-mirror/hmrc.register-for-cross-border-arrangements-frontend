@@ -48,10 +48,7 @@ class ErrorHandler @Inject()(
       case NOT_FOUND   =>
         renderer.render("notFound.njk", Json.obj()).map(NotFound(_))
       case _           =>
-        renderer.render("problemWithService.njk", Json.obj()).map {
-          content =>
-            Results.Status(statusCode)(content)
-        }
+        Future.successful(Redirect(controllers.routes.ProblemWithServiceController.onPageLoad()))
     }
   }
 
@@ -64,10 +61,7 @@ class ErrorHandler @Inject()(
       case ApplicationException(result, _) =>
         Future.successful(result)
       case _ =>
-        renderer.render("problemWithService.njk").map {
-          content =>
-            InternalServerError(content).withHeaders(CACHE_CONTROL -> "no-cache")
-        }
+        Future.successful(Redirect(controllers.routes.ProblemWithServiceController.onPageLoad()))
     }
   }
 
