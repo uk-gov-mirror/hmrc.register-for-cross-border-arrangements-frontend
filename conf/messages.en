@@ -316,8 +316,10 @@ businessWithoutIDName.error.businessName.invalid = Business name must only inclu
 
 registrationSuccessful.title = Registration successful
 registrationSuccessful.panel = Registration successful
+registrationSuccessful.panel.html = Your User ID
 registrationSuccessful.heading = What happens next
 registrationSuccessful.email = We have sent you a confirmation email.
+registrationSuccessful.subscriptionID.text = You will need to provide the User ID in every file you submit to us.
 registrationSuccessful.submission.text = You can now
 registrationSuccessful.submission.link = disclose cross-border arrangements.
 

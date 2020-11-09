@@ -17,10 +17,12 @@
 package controllers
 
 import base.SpecBase
+import models.UserAnswers
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
+import pages.SubscriptionIDPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -36,7 +38,12 @@ class RegistrationSuccessfulControllerSpec extends SpecBase with MockitoSugar {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(SubscriptionIDPage, "XADAC0000123456")
+        .success
+        .value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, routes.RegistrationSuccessfulController.onPageLoad().url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
@@ -50,5 +57,28 @@ class RegistrationSuccessfulControllerSpec extends SpecBase with MockitoSugar {
 
       application.stop()
     }
+
+    "throw an error then display technical error page if no subscription ID is present" in {
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      val application = applicationBuilder(userAnswers = None).build()
+      val request = FakeRequest(GET, routes.RegistrationSuccessfulController.onPageLoad().url)
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+
+      val result = route(application, request).value
+
+      an[Exception] mustBe thrownBy {
+        status(result) mustEqual OK
+
+        verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
+
+        templateCaptor.getValue mustEqual "internalServerError.njk"
+      }
+
+      application.stop()
+    }
+
   }
 }

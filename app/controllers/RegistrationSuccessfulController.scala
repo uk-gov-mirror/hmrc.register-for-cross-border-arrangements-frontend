@@ -18,12 +18,15 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions._
+import handlers.ErrorHandler
 import javax.inject.Inject
-import play.api.i18n.{I18nSupport, MessagesApi}
+import pages.SubscriptionIDPage
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import uk.gov.hmrc.viewmodels.Html
 
 import scala.concurrent.ExecutionContext
 
@@ -31,17 +34,29 @@ class RegistrationSuccessfulController @Inject()(
     override val messagesApi: MessagesApi,
     appConfig: FrontendAppConfig,
     identify: IdentifierAction,
+    notEnrolled: NotEnrolledForDAC6Action,
+    getData: DataRetrievalAction,
+    requireData: DataRequiredAction,
+    errorHandler: ErrorHandler,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = identify.async {
+  def onPageLoad: Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
     implicit request =>
+      request.userAnswers.get(SubscriptionIDPage) match {
+        case Some(id) =>
+          val json = Json.obj(
+            "subscriptionID" -> confirmationPanelText(id),
+          "submissionUrl" -> appConfig.dacSubmissionsUrl
+        )
+          renderer.render("registrationSuccessful.njk", json).map(Ok(_))
+        case None =>
+          errorHandler.onServerError(request, throw new RuntimeException("Subcription ID missing"))
+      }
+  }
 
-      val json = Json.obj(
-        "submissionUrl" -> appConfig.dacSubmissionsUrl
-      )
-
-      renderer.render("registrationSuccessful.njk", json).map(Ok(_))
+  private def confirmationPanelText(id: String)(implicit messages: Messages): Html = {
+    Html(s"${{ messages("registrationSuccessful.panel.html") }}<div id='userid'><strong>$id</strong></div>")
   }
 }
