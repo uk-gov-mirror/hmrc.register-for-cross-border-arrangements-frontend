@@ -57,6 +57,6 @@ class RegistrationSuccessfulController @Inject()(
   }
 
   private def confirmationPanelText(id: String)(implicit messages: Messages): Html = {
-    Html(s"${{ messages("registrationSuccessful.panel.html") }}<br><strong>$id</strong>")
+    Html(s"${{ messages("registrationSuccessful.panel.html") }}<div id='userid'><strong>$id</strong></div>")
   }
 }
