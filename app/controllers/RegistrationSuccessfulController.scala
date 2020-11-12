@@ -34,7 +34,7 @@ class RegistrationSuccessfulController @Inject()(
     override val messagesApi: MessagesApi,
     appConfig: FrontendAppConfig,
     identify: IdentifierAction,
-    notEnrolled: NotEnrolledForDAC6Action,
+    ignoreSubscription: IgnoreSubscriptionAction,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     errorHandler: ErrorHandler,
@@ -42,7 +42,7 @@ class RegistrationSuccessfulController @Inject()(
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
+  def onPageLoad: Action[AnyContent] = (identify andThen ignoreSubscription andThen getData andThen requireData).async {
     implicit request =>
       request.userAnswers.get(SubscriptionIDPage) match {
         case Some(id) =>
