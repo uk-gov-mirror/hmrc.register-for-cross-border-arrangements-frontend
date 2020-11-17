@@ -21,7 +21,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, put, ur
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import generators.Generators
 import helpers.WireMockServerHandler
-import models.{CreateSubscriptionForDACResponse, ResponseCommon, ResponseDetailForDACSubscription, SubscriptionForDACResponse, UserAnswers}
+import models.{CreateSubscriptionForDACResponse, Name, RegistrationType, ResponseCommon, ResponseDetailForDACSubscription, SubscriptionForDACResponse, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
@@ -88,9 +88,9 @@ class SubscriptionConnectorSpec extends SpecBase
 
       "must return status OK for submission of valid registration details" in {
 
-        forAll(arbitrary[UserAnswers], validBusinessName, validEmailAddress, validSafeID) {
-          (userAnswers, businessName, email, safeID) =>
-            val updatedUserAnswers = userAnswers.set(BusinessNamePage, businessName).success.value
+        forAll(arbitrary[UserAnswers], validPersonalName, validEmailAddress, validSafeID) {
+          (userAnswers, name, email, safeID) =>
+            val updatedUserAnswers = userAnswers.set(ContactNamePage, Name(name, name)).success.value
               .set(ContactEmailAddressPage, email).success.value
               .set(SafeIDPage, safeID).success.value
               .remove(RegistrationTypePage).success.value
@@ -124,12 +124,13 @@ class SubscriptionConnectorSpec extends SpecBase
 
       "must return None if status is not OK and subscription fails" in {
 
-        forAll(arbitrary[UserAnswers], validBusinessName, validEmailAddress, validSafeID) {
-          (userAnswers, businessName, email, safeID) =>
-            val updatedUserAnswers = userAnswers.set(BusinessNamePage, businessName).success.value
+        forAll(arbitrary[UserAnswers], validPersonalName, validEmailAddress, validSafeID) {
+          (userAnswers, name, email, safeID) =>
+            val updatedUserAnswers = userAnswers.set(RegistrationTypePage, RegistrationType.Individual).success.value
+              .set(NamePage, Name(name, name)).success.value
               .set(ContactEmailAddressPage, email).success.value
               .set(SafeIDPage, safeID).success.value
-              .remove(RegistrationTypePage).success.value
+              .remove(HaveSecondContactPage).success.value
 
             stubPostResponse("/register-for-cross-border-arrangements/subscription/create-dac-subscription", SERVICE_UNAVAILABLE, "")
 

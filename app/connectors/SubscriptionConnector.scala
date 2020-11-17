@@ -39,7 +39,7 @@ class SubscriptionConnector @Inject()(val config: FrontendAppConfig, val http: H
     val submissionUrl = s"${config.businessMatchingUrl}/subscription/create-dac-subscription"
     http.POST[CreateSubscriptionForDACRequest, HttpResponse](
       submissionUrl,
-      CreateSubscriptionForDACRequest(SubscriptionForDACRequest.createEnrolment(userAnswers))
+      CreateSubscriptionForDACRequest(SubscriptionForDACRequest.createSubscription(userAnswers))
     ).map {
       response =>
         response.status match {

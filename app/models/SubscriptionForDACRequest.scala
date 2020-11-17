@@ -28,11 +28,10 @@ import scala.util.Random
 case class OrganisationDetails(organisationName: String)
 object OrganisationDetails {
   def buildOrganisationDetails(userAnswers: UserAnswers): OrganisationDetails = {
-    (userAnswers.get(BusinessNamePage), userAnswers.get(BusinessWithoutIDNamePage), userAnswers.get(SoleTraderNamePage)) match {
-      case (Some(name), _, _) => new OrganisationDetails(name)
-      case (_, Some(name), _) => new OrganisationDetails(name)
-      case (_, _, Some(name)) => new OrganisationDetails(s"${name.firstName} ${name.secondName}")
-      case _ => throw new Exception("Organisation name can't be empty when creating a subscription")
+    (userAnswers.get(ContactNamePage), userAnswers.get(SoleTraderNamePage)) match {
+      case (Some(name), _) => new OrganisationDetails(s"${name.firstName} ${name.secondName}")
+      case (_, Some(name)) => new OrganisationDetails(s"${name.firstName} ${name.secondName}")
+      case _ => throw new Exception("Contact name page is empty when creating a subscription for organisation")
     }
   }
 
@@ -177,7 +176,7 @@ object SubscriptionForDACRequest {
 
   implicit val format: OFormat[SubscriptionForDACRequest] = Json.format[SubscriptionForDACRequest]
 
-  def createEnrolment(userAnswers: UserAnswers): SubscriptionForDACRequest = {
+  def createSubscription(userAnswers: UserAnswers): SubscriptionForDACRequest = {
 
     SubscriptionForDACRequest(
       requestCommon = createRequestCommon,
