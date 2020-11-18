@@ -40,21 +40,22 @@ class EmailService @Inject()(emailConnector:EmailConnector)(implicit executionCo
       userAnswers.get(NonUkNamePage)
     }
 
+    val dac6ID: String = userAnswers.get(SubscriptionIDPage).get
     val fullContactName: Option[String] = contactName.map(n => n.firstName + " " + n.secondName)
 
     val secondaryEmailAddress = userAnswers.get(SecondaryContactEmailAddressPage)
     val secondaryName = userAnswers.get(SecondaryContactNamePage)
-    
+
     for {
       primaryResponse <- emailAddress
                           .filter(EmailAddress.isValid)
                           .fold(Future.successful(Option.empty[HttpResponse])) { email =>
-                             emailConnector.sendEmail(EmailRequest.registration(email, fullContactName)).map(Some.apply)}
+                             emailConnector.sendEmail(EmailRequest.registration(email, fullContactName, dac6ID)).map(Some.apply)}
 
       _ <- secondaryEmailAddress
          .filter(EmailAddress.isValid)
           .fold(Future.successful(Option.empty[HttpResponse])) { secondaryEmailAddress =>
-            emailConnector.sendEmail(EmailRequest.registration(secondaryEmailAddress, secondaryName)).map(Some.apply)
+            emailConnector.sendEmail(EmailRequest.registration(secondaryEmailAddress, secondaryName, dac6ID)).map(Some.apply)
             }
     }
       yield primaryResponse
