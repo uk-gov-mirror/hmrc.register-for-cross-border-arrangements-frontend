@@ -115,10 +115,10 @@ class Navigator @Inject()(appConfig: FrontendAppConfig) {
   private def confirmBusinessRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(ConfirmBusinessPage) map {
       case true  => ua.get(BusinessTypePage) match {
-                      case Some(BusinessType.NotSpecified) => routes.ContactEmailAddressController.onPageLoad(mode)
-                      case Some(_) => routes.ContactNameController.onPageLoad(mode)
-                      case None => routes.ContactEmailAddressController.onPageLoad(mode)
-                    }
+        case Some(BusinessType.NotSpecified) => routes.ContactEmailAddressController.onPageLoad(mode)
+        case Some(_) => routes.ContactNameController.onPageLoad(mode)
+        case None => routes.ContactEmailAddressController.onPageLoad(mode)
+      }
       case false  => routes.BusinessNotConfirmedController.onPageLoad()
     }
 

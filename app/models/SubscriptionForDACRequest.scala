@@ -27,11 +27,17 @@ import scala.util.Random
 
 case class OrganisationDetails(organisationName: String)
 object OrganisationDetails {
-  def buildOrganisationDetails(userAnswers: UserAnswers): OrganisationDetails = {
-    (userAnswers.get(ContactNamePage), userAnswers.get(SoleTraderNamePage)) match {
-      case (Some(name), _) => new OrganisationDetails(s"${name.firstName} ${name.secondName}")
-      case (_, Some(name)) => new OrganisationDetails(s"${name.firstName} ${name.secondName}")
+  def buildPrimaryContact(userAnswers: UserAnswers): OrganisationDetails = {
+    userAnswers.get(ContactNamePage) match {
+      case Some(name) => new OrganisationDetails(s"${name.firstName} ${name.secondName}")
       case _ => throw new Exception("Contact name page is empty when creating a subscription for organisation")
+    }
+  }
+
+  def buildSecondaryContact(userAnswers: UserAnswers): OrganisationDetails = {
+    userAnswers.get(SecondaryContactNamePage) match {
+      case Some(name) => new OrganisationDetails(name)
+      case None => throw new Exception("Secondary contact name page is empty after user answered 'Yes' to second contact")
     }
   }
 
@@ -43,10 +49,11 @@ case class IndividualDetails(firstName: String,
                              lastName: String)
 object IndividualDetails {
   def buildIndividualDetails(userAnswers: UserAnswers): IndividualDetails = {
-    (userAnswers.get(NamePage), userAnswers.get(NonUkNamePage)) match {
-      case (Some(name), _) => new IndividualDetails(name.firstName, None, name.secondName)
-      case (_, Some(name)) => new IndividualDetails(name.firstName, None, name.secondName)
-      case _ => throw new Exception("Individual name can't be empty when creating a subscription")
+    (userAnswers.get(NamePage), userAnswers.get(NonUkNamePage), userAnswers.get(SoleTraderNamePage)) match {
+      case (Some(name), _, _) => new IndividualDetails(name.firstName, None, name.secondName)
+      case (_, Some(nonUKName), _) => new IndividualDetails(nonUKName.firstName, None, nonUKName.secondName)
+      case (_, _, Some(soleTraderName)) => new IndividualDetails(soleTraderName.firstName, None, soleTraderName.secondName)
+      case _ => throw new Exception("Individual or sole trader name can't be empty when creating a subscription")
     }
   }
 
@@ -244,7 +251,7 @@ object SubscriptionForDACRequest {
       val secondaryContactNumber = userAnswers.get(SecondaryContactTelephoneNumberPage)
 
       ContactInformationForOrganisation(
-        organisation = OrganisationDetails.buildOrganisationDetails(userAnswers),
+        organisation = OrganisationDetails.buildSecondaryContact(userAnswers),
         email = secondaryEmail,
         phone = secondaryContactNumber,
         mobile = None)
@@ -256,23 +263,25 @@ object SubscriptionForDACRequest {
 
       val contactNumber = userAnswers.get(ContactTelephoneNumberPage)
 
-      val individualRegistration = userAnswers.get(RegistrationTypePage) match {
-        case Some(RegistrationType.Individual) => true
-        case _ => false
-      }
+      val individualOrSoleTrader =
+        (userAnswers.get(RegistrationTypePage), userAnswers.get(BusinessTypePage)) match {
+          case (Some(RegistrationType.Individual), _) => true
+          case (_, Some(BusinessType.NotSpecified)) => true
+          case _ => false
+        }
 
-      if (individualRegistration) {
+      if (individualOrSoleTrader) {
         ContactInformationForIndividual(
           individual = IndividualDetails.buildIndividualDetails(userAnswers),
           email = email,
           phone = contactNumber,
-          mobile = contactNumber)
+          mobile = None)
       } else {
         ContactInformationForOrganisation(
-          organisation = OrganisationDetails.buildOrganisationDetails(userAnswers),
+          organisation = OrganisationDetails.buildPrimaryContact(userAnswers),
           email = email,
           phone = contactNumber,
-          mobile = contactNumber)
+          mobile = None)
       }
     }
   }

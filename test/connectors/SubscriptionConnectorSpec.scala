@@ -92,6 +92,7 @@ class SubscriptionConnectorSpec extends SpecBase
           (userAnswers, name, email, safeID) =>
             val updatedUserAnswers = userAnswers.set(ContactNamePage, Name(name, name)).success.value
               .set(ContactEmailAddressPage, email).success.value
+              .set(HaveSecondContactPage, false).success.value
               .set(SafeIDPage, safeID).success.value
               .remove(RegistrationTypePage).success.value
 
