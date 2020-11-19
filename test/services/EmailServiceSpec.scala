@@ -61,6 +61,9 @@ class EmailServiceSpec extends SpecBase
         .set(ContactEmailAddressPage, "test@test.com")
         .success
         .value
+        .set(SubscriptionIDPage, "XADAC0000123456")
+        .success
+        .value
 
       when(mockEmailConnector.sendEmail(any())(any()))
         .thenReturn(
@@ -84,6 +87,9 @@ class EmailServiceSpec extends SpecBase
         .set(ContactEmailAddressPage, "test@test.com")
         .success
         .value
+        .set(SubscriptionIDPage, "XADAC0000123456")
+        .success
+        .value
 
       when(mockEmailConnector.sendEmail(any())(any()))
         .thenReturn(
@@ -105,6 +111,9 @@ class EmailServiceSpec extends SpecBase
         .success
         .value
         .set(ContactEmailAddressPage, "test@test.com")
+        .success
+        .value
+        .set(SubscriptionIDPage, "XADAC0000123456")
         .success
         .value
 
@@ -136,6 +145,9 @@ class EmailServiceSpec extends SpecBase
         .set(SecondaryContactEmailAddressPage, "test@test.com")
         .success
         .value
+        .set(SubscriptionIDPage, "XADAC0000123456")
+        .success
+        .value
 
       when(mockEmailConnector.sendEmail(any())(any()))
         .thenReturn(
@@ -157,6 +169,9 @@ class EmailServiceSpec extends SpecBase
         .success
         .value
         .set(ContactEmailAddressPage, "test")
+        .success
+        .value
+        .set(SubscriptionIDPage, "XADAC0000123456")
         .success
         .value
 
