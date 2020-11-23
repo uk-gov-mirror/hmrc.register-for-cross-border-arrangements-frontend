@@ -119,11 +119,28 @@ class SubscriptionConnectorSpec extends SpecBase
             stubPostResponse("/register-for-cross-border-arrangements/subscription/create-dac-subscription", OK, expectedBody)
 
             val result = connector.createSubscription(updatedUserAnswers)
-            result.futureValue mustBe Some(response)
+            result.futureValue mustBe response
         }
       }
 
-      "must return None if status is not OK and subscription fails" in {
+      "must throw an exception if unable to create a CreateSubscriptionForDACRequest object e.g. missing secondary name" in {
+
+        forAll(arbitrary[UserAnswers], validPersonalName, validEmailAddress, validSafeID) {
+          (userAnswers, name, email, safeID) =>
+            val updatedUserAnswers = userAnswers.set(ContactNamePage, Name(name, name)).success.value
+              .set(ContactEmailAddressPage, email).success.value
+              .set(HaveSecondContactPage, true).success.value
+              .set(SafeIDPage, safeID).success.value
+              .remove(RegistrationTypePage).success.value
+
+            stubPostResponse("/register-for-cross-border-arrangements/subscription/create-dac-subscription", OK, "")
+
+            val result = connector.createSubscription(updatedUserAnswers)
+            an[Exception] mustBe thrownBy(result.futureValue)
+        }
+      }
+
+      "must throw an exception if status is not OK and subscription fails" in {
 
         forAll(arbitrary[UserAnswers], validPersonalName, validEmailAddress, validSafeID) {
           (userAnswers, name, email, safeID) =>
@@ -136,7 +153,7 @@ class SubscriptionConnectorSpec extends SpecBase
             stubPostResponse("/register-for-cross-border-arrangements/subscription/create-dac-subscription", SERVICE_UNAVAILABLE, "")
 
             val result = connector.createSubscription(updatedUserAnswers)
-            result.futureValue mustBe None
+            an[Exception] mustBe thrownBy(result.futureValue)
         }
       }
     }
