@@ -20,7 +20,7 @@ import base.SpecBase
 import generators.Generators
 import helpers.JsonFixtures._
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.{BusinessNamePage, ContactEmailAddressPage, SafeIDPage}
+import pages.{ContactEmailAddressPage, ContactNamePage, SafeIDPage}
 import play.api.libs.json.{JsString, Json}
 
 import scala.util.matching.Regex
@@ -262,9 +262,9 @@ class SubscriptionForDACRequestSpec extends SpecBase with Generators with ScalaC
       val updatedUserAnswers = userAnswers
         .set(SafeIDPage, "a").success.value
         .set(ContactEmailAddressPage, "hello").success.value
-        .set(BusinessNamePage, "hello").success.value
+        .set(ContactNamePage, Name("Kit", "Kat")).success.value
 
-      val requestCommon = SubscriptionForDACRequest.createEnrolment(updatedUserAnswers).requestCommon
+      val requestCommon = SubscriptionForDACRequest.createSubscription(updatedUserAnswers).requestCommon
       val ackRefLength = requestCommon.acknowledgementReference.length
       ackRefLength >= 1 && ackRefLength <= 32 mustBe true
 

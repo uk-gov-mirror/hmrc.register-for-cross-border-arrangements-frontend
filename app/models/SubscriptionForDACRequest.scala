@@ -18,21 +18,25 @@ package models
 
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import java.util.UUID
 
 import pages._
 import play.api.libs.json._
 
-import scala.util.Random
-
 
 case class OrganisationDetails(organisationName: String)
 object OrganisationDetails {
-  def buildOrganisationDetails(userAnswers: UserAnswers): OrganisationDetails = {
-    (userAnswers.get(BusinessNamePage), userAnswers.get(BusinessWithoutIDNamePage), userAnswers.get(SoleTraderNamePage)) match {
-      case (Some(name), _, _) => new OrganisationDetails(name)
-      case (_, Some(name), _) => new OrganisationDetails(name)
-      case (_, _, Some(name)) => new OrganisationDetails(s"${name.firstName} ${name.secondName}")
-      case _ => throw new Exception("Organisation name can't be empty when creating a subscription")
+  def buildPrimaryContact(userAnswers: UserAnswers): OrganisationDetails = {
+    userAnswers.get(ContactNamePage) match {
+      case Some(name) => new OrganisationDetails(s"${name.firstName} ${name.secondName}")
+      case _ => throw new Exception("Contact name page is empty when creating a subscription for organisation")
+    }
+  }
+
+  def buildSecondaryContact(userAnswers: UserAnswers): OrganisationDetails = {
+    userAnswers.get(SecondaryContactNamePage) match {
+      case Some(name) => new OrganisationDetails(name)
+      case None => throw new Exception("Secondary contact name page is empty after user answered 'Yes' to second contact")
     }
   }
 
@@ -44,10 +48,11 @@ case class IndividualDetails(firstName: String,
                              lastName: String)
 object IndividualDetails {
   def buildIndividualDetails(userAnswers: UserAnswers): IndividualDetails = {
-    (userAnswers.get(NamePage), userAnswers.get(NonUkNamePage)) match {
-      case (Some(name), _) => new IndividualDetails(name.firstName, None, name.secondName)
-      case (_, Some(name)) => new IndividualDetails(name.firstName, None, name.secondName)
-      case _ => throw new Exception("Individual name can't be empty when creating a subscription")
+    (userAnswers.get(NamePage), userAnswers.get(NonUkNamePage), userAnswers.get(SoleTraderNamePage)) match {
+      case (Some(name), _, _) => new IndividualDetails(name.firstName, None, name.secondName)
+      case (_, Some(nonUKName), _) => new IndividualDetails(nonUKName.firstName, None, nonUKName.secondName)
+      case (_, _, Some(soleTraderName)) => new IndividualDetails(soleTraderName.firstName, None, soleTraderName.secondName)
+      case _ => throw new Exception("Individual or sole trader name can't be empty when creating a subscription")
     }
   }
 
@@ -177,7 +182,7 @@ object SubscriptionForDACRequest {
 
   implicit val format: OFormat[SubscriptionForDACRequest] = Json.format[SubscriptionForDACRequest]
 
-  def createEnrolment(userAnswers: UserAnswers): SubscriptionForDACRequest = {
+  def createSubscription(userAnswers: UserAnswers): SubscriptionForDACRequest = {
 
     SubscriptionForDACRequest(
       requestCommon = createRequestCommon,
@@ -189,14 +194,13 @@ object SubscriptionForDACRequest {
     //Format: ISO 8601 YYYY-MM-DDTHH:mm:ssZ e.g. 2020-09-23T16:12:11Z
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
 
-    val r = new Random()
-    val idSize: Int = 1 + r.nextInt(33) //Generate a size between 1 and 32
-    val generateAcknowledgementReference: String = r.alphanumeric.take(idSize).mkString
+    //Generate a 32 chars UUID without hyphens
+    val acknowledgementReference = UUID.randomUUID().toString.replace("-", "")
 
     RequestCommonForSubscription(
       regime = "DAC",
       receiptDate = ZonedDateTime.now().format(formatter),
-      acknowledgementReference = generateAcknowledgementReference,
+      acknowledgementReference = acknowledgementReference,
       originatingSystem = "MDTP",
       requestParameters = None
     )
@@ -245,7 +249,7 @@ object SubscriptionForDACRequest {
       val secondaryContactNumber = userAnswers.get(SecondaryContactTelephoneNumberPage)
 
       ContactInformationForOrganisation(
-        organisation = OrganisationDetails.buildOrganisationDetails(userAnswers),
+        organisation = OrganisationDetails.buildSecondaryContact(userAnswers),
         email = secondaryEmail,
         phone = secondaryContactNumber,
         mobile = None)
@@ -257,23 +261,25 @@ object SubscriptionForDACRequest {
 
       val contactNumber = userAnswers.get(ContactTelephoneNumberPage)
 
-      val individualRegistration = userAnswers.get(RegistrationTypePage) match {
-        case Some(RegistrationType.Individual) => true
-        case _ => false
-      }
+      val individualOrSoleTrader =
+        (userAnswers.get(RegistrationTypePage), userAnswers.get(BusinessTypePage)) match {
+          case (Some(RegistrationType.Individual), _) => true
+          case (_, Some(BusinessType.NotSpecified)) => true
+          case _ => false
+        }
 
-      if (individualRegistration) {
+      if (individualOrSoleTrader) {
         ContactInformationForIndividual(
           individual = IndividualDetails.buildIndividualDetails(userAnswers),
           email = email,
           phone = contactNumber,
-          mobile = contactNumber)
+          mobile = None)
       } else {
         ContactInformationForOrganisation(
-          organisation = OrganisationDetails.buildOrganisationDetails(userAnswers),
+          organisation = OrganisationDetails.buildPrimaryContact(userAnswers),
           email = email,
           phone = contactNumber,
-          mobile = contactNumber)
+          mobile = None)
       }
     }
   }

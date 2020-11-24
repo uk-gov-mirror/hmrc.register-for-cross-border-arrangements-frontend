@@ -19,12 +19,15 @@ package connectors
 import config.FrontendAppConfig
 import javax.inject.Inject
 import models.{CreateSubscriptionForDACRequest, CreateSubscriptionForDACResponse, SubscriptionForDACRequest, SubscriptionInfo, UserAnswers}
+import org.slf4j.LoggerFactory
 import play.api.http.Status.OK
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException, HttpResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class SubscriptionConnector @Inject()(val config: FrontendAppConfig, val http: HttpClient) {
+
+  private val logger = LoggerFactory.getLogger(getClass)
 
   def createEnrolment(userAnswers: UserAnswers)
                      (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
@@ -34,18 +37,25 @@ class SubscriptionConnector @Inject()(val config: FrontendAppConfig, val http: H
   }
 
   def createSubscription(userAnswers: UserAnswers)
-                           (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[CreateSubscriptionForDACResponse]] = {
+                        (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[CreateSubscriptionForDACResponse] = {
 
     val submissionUrl = s"${config.businessMatchingUrl}/subscription/create-dac-subscription"
-    http.POST[CreateSubscriptionForDACRequest, HttpResponse](
-      submissionUrl,
-      CreateSubscriptionForDACRequest(SubscriptionForDACRequest.createEnrolment(userAnswers))
-    ).map {
-      response =>
-        response.status match {
-          case OK => Some(response.json.as[CreateSubscriptionForDACResponse])
-          case _ => None
-        }
+
+    try {
+      http.POST[CreateSubscriptionForDACRequest, HttpResponse](
+        submissionUrl,
+        CreateSubscriptionForDACRequest(SubscriptionForDACRequest.createSubscription(userAnswers))
+      ).flatMap {
+        case response if response.status equals OK =>
+          Future.successful(response.json.as[CreateSubscriptionForDACResponse])
+        case response =>
+          logger.warn(s"Unable to create a subscription to ETMP. ${response.status} response status")
+          Future.failed(new HttpException(response.body, response.status))
+      }
+    } catch {
+      case e: Exception =>
+        logger.warn("Unable to create an ETMP subscription", e)
+        Future.failed(e)
     }
   }
 }

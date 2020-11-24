@@ -218,7 +218,7 @@ class CheckYourAnswersController @Inject()(
         createEnrolment(userAnswersWithSubscriptionID)
     }.recover {
       case e: Exception =>
-        logger.warn("Unable to create an EIS subscription. Redirecting to /register/problem-with-service", e)
+        logger.warn("Unable to create an ETMP subscription. Redirecting to /register/problem-with-service", e)
         Redirect(routes.ProblemWithServiceController.onPageLoad())
     }
   }
@@ -226,14 +226,13 @@ class CheckYourAnswersController @Inject()(
   private def createEISSubscription(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[UserAnswers] = {
     subscriptionConnector.createSubscription(userAnswers).flatMap {
       response =>
-        val subscriptionID = response.get.createSubscriptionForDACResponse.responseDetail.subscriptionID
+        val subscriptionID = response.createSubscriptionForDACResponse.responseDetail.subscriptionID
         for {
           updatedUserAnswers <- Future.fromTry(userAnswers.set(SubscriptionIDPage, subscriptionID))
           _ <- sessionRepository.set(updatedUserAnswers)
         } yield updatedUserAnswers
-    }.recover {
+    }.recoverWith {
       case e: Exception =>
-        logger.warn("Unable to create an EIS subscription", e)
         throw e
     }
   }

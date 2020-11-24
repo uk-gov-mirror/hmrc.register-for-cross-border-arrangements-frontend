@@ -334,7 +334,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
           .build()
 
         when(mockSubscriptionConnector.createSubscription(any())(any(), any()))
-          .thenReturn(Future.successful(Some(dacSubscriptionResponse)))
+          .thenReturn(Future.successful(dacSubscriptionResponse))
 
         when(mockEmailService.sendEmail(any())(any()))
           .thenReturn(Future.successful(Some(HttpResponse(OK, ""))))
@@ -374,7 +374,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
           .thenReturn(Future.successful(Some(HttpResponse(OK, registerWithoutIDResponse))))
 
         when(mockSubscriptionConnector.createSubscription(any())(any(), any()))
-          .thenReturn(Future.successful(Some(dacSubscriptionResponse)))
+          .thenReturn(Future.successful(dacSubscriptionResponse))
 
         when(mockEmailService.sendEmail(any())(any()))
           .thenReturn(Future.successful(Some(HttpResponse(OK, ""))))
@@ -459,31 +459,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
         redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/problem-with-service")
       }
 
-      "must redirect to the problem with service if EIS subscription returns None" in {
-        val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-          .set(DoYouHaveUTRPage, false)
-          .success.value
-
-        val application = applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(bind[RegistrationService]
-            .toInstance(mockRegistrationService),
-            bind[SubscriptionConnector]
-            .toInstance(mockSubscriptionConnector))
-          .build()
-
-        when(mockRegistrationService.sendRegistration(any())(any(), any()))
-          .thenReturn(Future.successful(Some(HttpResponse(OK, registerWithoutIDResponse))))
-
-        when(mockSubscriptionConnector.createSubscription(any())(any(), any()))
-          .thenReturn(Future.successful(None))
-
-        val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit().url)
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/problem-with-service")
-      }
-
       "must redirect to the problem with service if EIS subscription throws an error" in {
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
           .set(DoYouHaveUTRPage, false)
@@ -553,7 +528,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
           .build()
 
         when(mockSubscriptionConnector.createSubscription(any())(any(), any()))
-          .thenReturn(Future.successful(Some(dacSubscriptionResponse)))
+          .thenReturn(Future.successful(dacSubscriptionResponse))
 
         when(mockEmailService.sendEmail(any())(any()))
           .thenReturn(Future.successful(Some(HttpResponse(OK, ""))))
@@ -587,7 +562,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
         .build()
 
       when(mockSubscriptionConnector.createSubscription(any())(any(), any()))
-        .thenReturn(Future.successful(Some(dacSubscriptionResponse)))
+        .thenReturn(Future.successful(dacSubscriptionResponse))
 
       when(mockRegistrationService.sendRegistration(any())(any(), any()))
         .thenReturn(Future.successful(Some(HttpResponse(OK, registerWithoutIDResponse))))
