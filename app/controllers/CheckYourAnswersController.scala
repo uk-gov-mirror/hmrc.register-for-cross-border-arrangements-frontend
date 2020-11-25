@@ -215,7 +215,13 @@ class CheckYourAnswersController @Inject()(
   private def createSubscriptionThenEnrolment(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[Result] = {
     createEISSubscription(userAnswers).flatMap {
       userAnswersWithSubscriptionID =>
-        createEnrolment(userAnswersWithSubscriptionID)
+        emailService.sendEmail(userAnswersWithSubscriptionID).map {
+          emailResponse =>
+            logEmailResponse(emailResponse)
+            Redirect(routes.RegistrationSuccessfulController.onPageLoad())
+        }.recover {
+          case e: Exception => Redirect(routes.RegistrationSuccessfulController.onPageLoad())
+        }
     }.recover {
       case e: Exception =>
         logger.warn("Unable to create an ETMP subscription. Redirecting to /register/problem-with-service", e)
@@ -243,23 +249,5 @@ class CheckYourAnswersController @Inject()(
       case Some(HttpResponse(BAD_REQUEST, _, _)) => logger.warn("Missing email or name parameter")
       case _ => Unit
     }
-  }
-
-  def createEnrolment(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[Result] = {
-    subscriptionConnector.createEnrolment(userAnswers).flatMap {
-      subscriptionResponse =>
-        if (subscriptionResponse.status.equals(NO_CONTENT)) {
-          emailService.sendEmail(userAnswers).map {
-            emailResponse =>
-              logEmailResponse(emailResponse)
-              Redirect(routes.RegistrationSuccessfulController.onPageLoad())
-          }.recover {
-            case e: Exception => Redirect(routes.RegistrationSuccessfulController.onPageLoad())
-          }
-        } else {
-          Future(Redirect(routes.ProblemWithServiceController.onPageLoad()))
-        }
-    }
-
   }
 }

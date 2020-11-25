@@ -45,46 +45,8 @@ class SubscriptionConnectorSpec extends SpecBase
   lazy val connector: SubscriptionConnector = app.injector.instanceOf[SubscriptionConnector]
 
   "SubscriptionConnector" - {
-    "must return status as OK for submission of valid enrolment request" in {
 
-
-      forAll(arbitrary[UserAnswers]) {
-        userAnswers =>
-          val updatedUserAnswers = userAnswers.set(SubscriptionIDPage, "XADAC0000123456").success.value
-          stubResponse(s"/register-for-cross-border-arrangements/enrolment/create-enrolment", OK)
-
-          val result = connector.createEnrolment(updatedUserAnswers)
-          result.futureValue.status mustBe OK
-      }
-    }
-
-    "must return status as BAD_REQUEST for invalid request" in {
-
-
-      forAll(arbitrary[UserAnswers]) {
-        userAnswers =>
-          val updatedUserAnswers = userAnswers.set(SubscriptionIDPage, "XADAC0000123456").success.value
-          stubResponse(s"/register-for-cross-border-arrangements/enrolment/create-enrolment", BAD_REQUEST)
-
-          val result = connector.createEnrolment(updatedUserAnswers)
-          result.futureValue.status mustBe BAD_REQUEST
-      }
-    }
-
-    "must return status as INTERNAL_SERVER_ERROR for technical error incurred" in {
-
-
-      forAll(arbitrary[UserAnswers]) {
-        userAnswers =>
-          val updatedUserAnswers = userAnswers.set(SubscriptionIDPage, "XADAC0000123456").success.value
-          stubResponse(s"/register-for-cross-border-arrangements/enrolment/create-enrolment", INTERNAL_SERVER_ERROR)
-
-          val result = connector.createEnrolment(updatedUserAnswers)
-          result.futureValue.status mustBe INTERNAL_SERVER_ERROR
-      }
-    }
-
-    "when calling createEISSubscription" - {
+      "when calling createEISSubscription" - {
 
       "must return status OK for submission of valid registration details" in {
 

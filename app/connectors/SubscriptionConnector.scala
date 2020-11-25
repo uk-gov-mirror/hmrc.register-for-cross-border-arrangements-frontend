@@ -29,13 +29,6 @@ class SubscriptionConnector @Inject()(val config: FrontendAppConfig, val http: H
 
   private val logger = LoggerFactory.getLogger(getClass)
 
-  def createEnrolment(userAnswers: UserAnswers)
-                     (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
-
-    val submissionUrl = s"${config.businessMatchingUrl}/enrolment/create-enrolment"
-    http.PUT[SubscriptionInfo, HttpResponse](submissionUrl, SubscriptionInfo.createSubscriptionInfo(userAnswers))
-  }
-
   def createSubscription(userAnswers: UserAnswers)
                         (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[CreateSubscriptionForDACResponse] = {
 
