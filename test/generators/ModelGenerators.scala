@@ -20,6 +20,7 @@ import java.time.LocalDate
 
 import models.{PayloadRegistrationWithIDResponse, _}
 import org.scalacheck.Arbitrary.arbitrary
+import org.scalacheck.Gen.alphaStr
 import org.scalacheck.{Arbitrary, Gen}
 import uk.gov.hmrc.domain.Nino
 
@@ -126,6 +127,39 @@ trait ModelGenerators {
     acknowledgementReference,
     None
   )
+  }
+
+  implicit val arbitraryWithIDIndividual: Arbitrary[WithIDIndividual] = Arbitrary {
+    for {
+      firstName <- alphaStr
+      middleName <- Gen.option(alphaStr)
+      lastName <- alphaStr
+      dateOfBirth <- alphaStr
+    } yield WithIDIndividual(firstName, middleName, lastName, dateOfBirth)
+  }
+
+  implicit val arbitraryWithIDOrganisation: Arbitrary[WithIDOrganisation] = Arbitrary {
+    for {
+      organisationName <- alphaStr
+      organisationType <- alphaStr
+    } yield WithIDOrganisation(organisationName, organisationType)
+  }
+
+  implicit val arbitraryRequestWithIDDetails: Arbitrary[RequestWithIDDetails] = Arbitrary {
+    for {
+      idType <- alphaStr
+      idNumber <- alphaStr
+      requiresNameMatch <- arbitrary[Boolean]
+      isAnAgent <- arbitrary[Boolean]
+      partnerDetails <- Gen.oneOf(arbitrary[WithIDIndividual], arbitrary[WithIDOrganisation])
+    } yield RequestWithIDDetails(idType, idNumber, requiresNameMatch, isAnAgent, partnerDetails)
+  }
+
+  implicit val arbitraryPayloadRegisterWithID: Arbitrary[PayloadRegisterWithID] = Arbitrary {
+    for {
+      requestCommon <- arbitrary[RequestCommon]
+      requestWithIDDetails <- arbitrary[RequestWithIDDetails]
+    } yield PayloadRegisterWithID(RegisterWithIDRequest(requestCommon, requestWithIDDetails))
   }
 
   implicit val arbitraryRegistration: Arbitrary[Register] = Arbitrary {for {

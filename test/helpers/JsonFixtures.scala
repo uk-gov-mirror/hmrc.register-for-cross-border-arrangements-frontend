@@ -222,6 +222,40 @@ object JsonFixtures {
   )
   )
 
+  val requestCouldNotBeProcessedResponse: String =
+    """
+      |{
+      |  "errorDetail": {
+      |    "source": "Back End",
+      |    "timestamp": "2020-11-11T13:19:52.307Z",
+      |    "errorMessage": "Request could not be processed",
+      |    "errorCode": "503",
+      |    "correlationId": "36147652-e594-94a4-a229-23f28e20e841",
+      |    "sourceFaultDetail": {
+      |      "detail": [
+      |        "001 - Request could not be processed"
+      |      ]
+      |    }
+      |  }
+      |}""".stripMargin
+
+  val badRequestResponse: String =
+    """
+      |{
+      |  "errorDetail": {
+      |    "timestamp" : "2017-02-14T12:58:44Z",
+      |    "correlationId": "c181e730-2386-4359-8ee0-f911d6e5f3bc",
+      |    "errorCode": "400",
+      |    "errorMessage": "Invalid ID",
+      |    "source": "Back End",
+      |    "sourceFaultDetail":{
+      |      "detail":[
+      |        "001 - Regime missing or invalid"
+      |      ]
+      |    }
+      | }
+      |}""".stripMargin
+
 
   /*********************For creating an EIS subscription below *********************/
 

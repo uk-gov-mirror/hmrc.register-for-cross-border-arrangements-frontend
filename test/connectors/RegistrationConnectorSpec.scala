@@ -20,8 +20,9 @@ import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, urlEqualTo}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import generators.Generators
+import helpers.JsonFixtures.{badRequestResponse, requestCouldNotBeProcessedResponse, withIDResponse}
 import helpers.WireMockServerHandler
-import models.Register
+import models._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
@@ -42,6 +43,8 @@ class RegistrationConnectorSpec extends SpecBase
     .build()
 
   lazy val connector: RegistrationConnector = app.injector.instanceOf[RegistrationConnector]
+
+  val withIDSubmissionUrl: String = "/register-for-cross-border-arrangements/registration/02.00.00/withId"
 
   "registrationConnector" - {
       "must return status as OK for registration" in {
@@ -79,14 +82,104 @@ class RegistrationConnectorSpec extends SpecBase
             result.futureValue.status mustBe INTERNAL_SERVER_ERROR
         }
       }
+
+    "registerWithID" - {
+      "must return PayloadRegistrationWithIDResponse if status is OK" in {
+        forAll(arbitrary[PayloadRegisterWithID]) {
+          request =>
+
+            val expected = PayloadRegistrationWithIDResponse(
+              RegisterWithIDResponse(
+                ResponseCommon("OK", Some("Sample status text"), "2016-08-16T15:55:30Z", Some(Vector(ReturnParameters("SAP_NUMBER", "0123456789")))),
+                Some(ResponseDetail("XE0000123456789", Some("WARN8764123"), isEditable = true, isAnAgent = false, None, isAnIndividual = true,
+                  IndividualResponse("Ron", Some("Madisson"), "Burgundy", Some("1980-12-12")),
+                  AddressResponse("100 Parliament Street", None, None, Some("London"), Some("SW1A 2BQ"), "GB"),
+                  ContactDetails(Some("1111111"), Some("2222222"), Some("1111111"), Some("test@test.org")))
+                )))
+
+            stubResponse(withIDSubmissionUrl, OK, withIDResponse)
+
+            val result = connector.registerWithID(request)
+            result.futureValue mustBe Some(expected)
+        }
+      }
+
+      "must return None if status is NOT_FOUND" in {
+        forAll(arbitrary[PayloadRegisterWithID]) {
+          request =>
+
+            stubResponse(withIDSubmissionUrl, NOT_FOUND)
+
+            val result = connector.registerWithID(request)
+            result.futureValue mustBe None
+        }
+      }
+
+      "must return None if status is not OK and ErrorDetail contains '001 - Request could not be processed' and '503'" in {
+        forAll(arbitrary[PayloadRegisterWithID]) {
+          request =>
+
+            stubResponse(
+              withIDSubmissionUrl, SERVICE_UNAVAILABLE, requestCouldNotBeProcessedResponse)
+
+            val result = connector.registerWithID(request)
+            result.futureValue mustBe None
+        }
+      }
+
+      "must throw an exception if status is not OK" in {
+        forAll(arbitrary[PayloadRegisterWithID]) {
+          request =>
+
+            stubResponse(withIDSubmissionUrl, BAD_REQUEST, badRequestResponse)
+
+            val result = connector.registerWithID(request)
+
+            assertThrows[Exception] {
+              result.futureValue
+            }
+        }
+      }
+
+      "must throw an exception if status is not OK and parsing failed" in {
+        forAll(arbitrary[PayloadRegisterWithID]) {
+          request =>
+
+            val invalidBody =
+              """
+                |{
+                |  "errorDetail": {
+                |    "timestamp" : "2017-02-14T12:58:44Z",
+                |    "correlationId": "c181e730-2386-4359-8ee0-f911d6e5f3bc",
+                |    "errorMessage": "Invalid ID",
+                |    "source": "Back End",
+                |    "sourceFaultDetail":{
+                |      "detail":[
+                |        "001 - Regime missing or invalid"
+                |      ]
+                |    }
+                | }
+                |}""".stripMargin
+
+            stubResponse(withIDSubmissionUrl, BAD_REQUEST, invalidBody)
+
+            val result = connector.registerWithID(request)
+
+            assertThrows[Exception] {
+              result.futureValue
+            }
+        }
+      }
+    }
   }
 
-    private def stubResponse(expectedUrl: String, expectedStatus: Int): StubMapping =
+    private def stubResponse(expectedUrl: String, expectedStatus: Int, expectedBody: String = ""): StubMapping =
       server.stubFor(
         post(urlEqualTo(expectedUrl))
           .willReturn(
             aResponse()
               .withStatus(expectedStatus)
+              .withBody(expectedBody)
           )
       )
 }
