@@ -70,16 +70,14 @@ class BusinessMatchingService @Inject()(registrationConnector: RegistrationConne
         response =>
           val safeId = retrieveSafeID(response)
           (response.flatMap(BusinessDetails.fromRegistrationMatch), safeId)
-        //Do we need a logger message for failed extraction?
       }
       case _ => Future.successful((None, None))
     }
   }
 
   def retrieveSafeID(payloadRegisterWithIDResponse: Option[PayloadRegistrationWithIDResponse]): Option[String]  = {
-    payloadRegisterWithIDResponse match {
-      case Some(value) => value.registerWithIDResponse.responseDetail.map(_.SAFEID)
-      case _ => throw new Exception("unable to retrieve SafeID")
+    payloadRegisterWithIDResponse.flatMap {
+      _.registerWithIDResponse.responseDetail.map(_.SAFEID)
     }
   }
 }

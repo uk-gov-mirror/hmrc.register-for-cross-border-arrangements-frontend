@@ -16,12 +16,12 @@
 
 package models
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 case class SourceDetail(detail: Seq[String])
 
 object SourceDetail {
-  implicit val format = Json.format[SourceDetail]
+  implicit val format: OFormat[SourceDetail] = Json.format[SourceDetail]
 }
 
 case class ErrorDetail(
@@ -34,5 +34,10 @@ case class ErrorDetail(
                       )
 
 object ErrorDetail {
-  implicit val format = Json.format[ErrorDetail]
+  implicit val format: OFormat[ErrorDetail] = Json.format[ErrorDetail]
+}
+
+case class RegisterWithIDErrorResponse(errorDetail: ErrorDetail)
+object RegisterWithIDErrorResponse {
+  implicit val format: OFormat[RegisterWithIDErrorResponse] = Json.format[RegisterWithIDErrorResponse]
 }

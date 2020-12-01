@@ -87,7 +87,7 @@ class BusinessMatchingServiceSpec extends SpecBase
 
             val registerWithSafeId = response.registerWithIDResponse.copy(
               responseDetail = Some(
-                ResponseDetail("XE0001234567890", None, false, false, None, false,
+                ResponseDetail("XE0001234567890", None, isEditable = false, isAnAgent = false, None, isAnIndividual = false,
                   IndividualResponse("Bobby", None, "Bob", None),
                   AddressResponse("1 TestStreet", Some("Test"), None, None, Some("AA11BB"), "GB"),
                   ContactDetails(None, None, None, None)))
@@ -161,8 +161,8 @@ class BusinessMatchingServiceSpec extends SpecBase
             val payload = PayloadRegistrationWithIDResponse(
               RegisterWithIDResponse(
                 ResponseCommon("", None, "", None),
-                Some(ResponseDetail("XE0001234567890", None, false, false, None, false,
-                OrganisationResponse(businessName, false, None, None),
+                Some(ResponseDetail("XE0001234567890", None, isEditable = false, isAnAgent = false, None, isAnIndividual = false,
+                OrganisationResponse(businessName, isAGroup = false, None, None),
                 AddressResponse("1 TestStreet", Some("Test"), Some("Test"), None, Some("AA11BB"), "GB"),
                 ContactDetails(None, None, None, None)))
               )
@@ -206,7 +206,7 @@ class BusinessMatchingServiceSpec extends SpecBase
             val payload = PayloadRegistrationWithIDResponse(
               RegisterWithIDResponse(
                 ResponseCommon("", None, "", None),
-                Some(ResponseDetail("XE0001234567890", None, false, false, None, false,
+                Some(ResponseDetail("XE0001234567890", None, isEditable = false, isAnAgent = false, None, isAnIndividual = false,
                   IndividualResponse("Bobby", None, "Bob", None),
                   AddressResponse("1 TestStreet", Some("Test"), None, None, Some("AA11BB"), "GB"),
                   ContactDetails(None, None, None, None)))
@@ -231,7 +231,7 @@ class BusinessMatchingServiceSpec extends SpecBase
         }
       }
 
-      "should throw exception for retrieval of SafeID if business can't be found" in {
+      "should return (None,None) for retrieval of SafeID if business can't be found" in {
         forAll(arbitrary[UserAnswers], arbitrary[UniqueTaxpayerReference], arbitrary[String], arbitrary[Name]){
           (userAnswers, utr, businessName, soleTraderName) =>
             val getRandomBusinessTypeNoSoleTrader = Random.shuffle(businessTypesNoSoleTrader).head
@@ -255,9 +255,7 @@ class BusinessMatchingServiceSpec extends SpecBase
 
             val result = businessMatchingService.sendBusinessMatchingInformation(answers)
 
-            assertThrows[Exception] {
-              result.futureValue
-            }
+            result.futureValue mustBe (None, None)
         }
       }
     }
@@ -268,21 +266,28 @@ class BusinessMatchingServiceSpec extends SpecBase
         val payload = PayloadRegistrationWithIDResponse(
           RegisterWithIDResponse(
             ResponseCommon("", None, "", None),
-            Some(ResponseDetail("XE0001234567890", None, false, false, None, false,
+            Some(ResponseDetail("XE0001234567890", None, isEditable = false, isAnAgent = false, None, isAnIndividual = false,
               IndividualResponse("Bobby", None, "Bob", None),
               AddressResponse("1 TestStreet", Some("Test"), None, None, Some("AA11BB"), "GB"),
               ContactDetails(None, None, None, None)))
           )
         )
-        businessMatchingService.retrieveSafeID(Some(payload)) mustEqual Some("XE0001234567890")
+        businessMatchingService.retrieveSafeID(Some(payload)) mustBe Some("XE0001234567890")
       }
 
-      "must throw Exception given an invalid payload response" in {
+      "must return None if ID can't be retrieved because of missing Response Detail" in {
 
-        val ex = intercept[Exception] {
-          businessMatchingService.retrieveSafeID(None)
-        }
-        ex.getMessage.mustEqual("unable to retrieve SafeID")
+        val payload = PayloadRegistrationWithIDResponse(
+          RegisterWithIDResponse(
+            ResponseCommon("", None, "", None),
+            None
+          )
+        )
+        businessMatchingService.retrieveSafeID(Some(payload)) mustBe None
+      }
+
+      "must return None if ID can't be retrieved" in {
+        businessMatchingService.retrieveSafeID(None) mustBe None
       }
     }
   }
