@@ -21,15 +21,21 @@ import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, put, ur
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import generators.Generators
 import helpers.WireMockServerHandler
-import models.{CreateSubscriptionForDACResponse, Name, RegistrationType, ResponseCommon, ResponseDetailForDACSubscription, SubscriptionForDACResponse, UserAnswers}
+import models.readSubscription.{ContactInformationForIndividual, ContactInformationForOrganisation, DisplaySubscriptionForDACResponse, IndividualDetails, OrganisationDetails, PrimaryContact, ReadSubscriptionForDACResponse, ResponseDetailForReadSubscription, SecondaryContact}
+import models.{CreateSubscriptionForDACResponse, Name, RegistrationType, ResponseCommon, ResponseDetail, ResponseDetailForDACSubscription, SubscriptionForDACResponse, UserAnswers}
+import org.mockito.Matchers.any
+import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
 import play.api.Application
-import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SERVICE_UNAVAILABLE}
+import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SERVICE_UNAVAILABLE, NOT_FOUND }
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.libs.json.{JsString, JsValue}
+import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class SubscriptionConnectorSpec extends SpecBase
   with WireMockServerHandler
@@ -38,11 +44,37 @@ class SubscriptionConnectorSpec extends SpecBase
 
   override lazy val app: Application = new GuiceApplicationBuilder()
     .configure(
-      conf = "microservice.services.business-matching.port" -> server.port()
+      conf = "microservice.services.business-matching.port" -> server.port(),
+             "microservice.services.cross-border-arrangements.port" -> server.port()
+
     )
     .build()
 
   lazy val connector: SubscriptionConnector = app.injector.instanceOf[SubscriptionConnector]
+
+  val primaryContact: PrimaryContact = PrimaryContact(Seq(
+    ContactInformationForIndividual(
+      individual = IndividualDetails(firstName = "FirstName", lastName = "LastName", middleName = None),
+      email = "email@email.com", phone = Some("07111222333"), mobile = Some("07111222333"))
+  ))
+  val secondaryContact: SecondaryContact = SecondaryContact(Seq(
+    ContactInformationForOrganisation(
+      organisation = OrganisationDetails(organisationName = "Organisation Name"),
+      email = "email@email.com", phone = None, mobile = None)
+  ))
+
+  val responseDetail: ResponseDetailForReadSubscription = ResponseDetailForReadSubscription(
+    subscriptionID = "XE0001234567890",
+    tradingName = Some("Trading Name"),
+    isGBUser = true,
+    primaryContact = primaryContact,
+    secondaryContact = Some(secondaryContact))
+
+  val responseCommon: ResponseCommon = ResponseCommon(
+    status = "OK",
+    statusText = None,
+    processingDate = "2020-08-09T11:23:45Z",
+    returnParameters = None)
 
   "SubscriptionConnector" - {
     "must return status as OK for submission of valid enrolment request" in {
@@ -159,6 +191,54 @@ class SubscriptionConnectorSpec extends SpecBase
             an[Exception] mustBe thrownBy(result.futureValue)
         }
       }
+
+      "must return the correct DisplaySubscriptionForDACResponse" in {
+        forAll(validSafeID) {
+          safeID =>
+            val expectedBody = displaySubscriptionPayload(
+              JsString(safeID), JsString("FirstName"), JsString("LastName"), JsString("Organisation Name"),
+              JsString("email@email.com"), JsString("email@email.com"), JsString("07111222333"))
+
+            val responseDetailUpdate: ResponseDetailForReadSubscription = responseDetail.copy(subscriptionID = safeID)
+
+            val displaySubscriptionForDACResponse: DisplaySubscriptionForDACResponse =
+              DisplaySubscriptionForDACResponse(
+                ReadSubscriptionForDACResponse(responseCommon = responseCommon, responseDetail = responseDetailUpdate)
+              )
+
+            stubPostResponse("/disclose-cross-border-arrangements/subscription/display-subscription", OK, expectedBody)
+
+
+
+            val result = connector.displaySubscriptionDetails(safeID)
+            result.futureValue mustBe Some(displaySubscriptionForDACResponse)
+        }
+      }
+
+      "must None if json returned is invalid" in {
+        forAll(validSafeID) {
+          safeID =>
+
+            val invalidJson = s"""
+                                 |{
+                                 |}""".stripMargin
+            stubPostResponse("/disclose-cross-border-arrangements/subscription/display-subscription", OK, invalidJson)
+
+            val result = connector.displaySubscriptionDetails(safeID)
+            result.futureValue mustBe None
+        }
+      }
+
+      "must None if subscription doesnt exist DisplaySubscriptionForDACResponse" in {
+        forAll(validSafeID) {
+          safeID =>
+
+            stubPostResponse("/disclose-cross-border-arrangements/subscription/display-subscription", NOT_FOUND , "")
+
+            val result = connector.displaySubscriptionDetails(safeID)
+            result.futureValue mustBe None
+        }
+      }
     }
   }
 
@@ -180,4 +260,49 @@ class SubscriptionConnectorSpec extends SpecBase
             .withBody(expectedBody)
         )
     )
+
+ private def displaySubscriptionPayload(subscriptionID: JsString,
+                                 firstName: JsString,
+                                 lastName:JsString,
+                                 organisationName: JsString,
+                                 primaryEmail: JsString,
+                                 secondaryEmail: JsString,
+                                 phone: JsString): String = {
+    s"""
+       |{
+       |  "displaySubscriptionForDACResponse": {
+       |    "responseCommon": {
+       |      "status": "OK",
+       |      "processingDate": "2020-08-09T11:23:45Z"
+       |    },
+       |    "responseDetail": {
+       |      "subscriptionID": $subscriptionID,
+       |      "tradingName": "Trading Name",
+       |      "isGBUser": true,
+       |      "primaryContact": [
+       |        {
+       |          "email": $primaryEmail,
+       |          "phone": $phone,
+       |          "mobile": $phone,
+       |          "individual": {
+       |            "lastName": $lastName,
+       |            "firstName": $firstName
+       |          }
+       |        }
+       |      ],
+       |      "secondaryContact": [
+       |        {
+       |          "email": $secondaryEmail,
+       |          "organisation": {
+       |            "organisationName": $organisationName
+       |          }
+       |        }
+       |      ]
+       |    }
+       |  }
+       |}""".stripMargin
+  }
+
+
+
 }
