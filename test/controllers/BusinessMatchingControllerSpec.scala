@@ -151,7 +151,7 @@ class BusinessMatchingControllerSpec extends SpecBase
         val safeId = "XE0001234567890"
 
         when(mockBusinessMatchingService.sendBusinessMatchingInformation(any())(any(), any()))
-          .thenReturn(Future.successful((Some(businessDetails), Some(safeId))))
+          .thenReturn(Future.successful((Some(businessDetails), Some(safeId), None)))
 
         val result = route(application, getRequest(businessMatchingRoute)).value
 
@@ -184,7 +184,7 @@ class BusinessMatchingControllerSpec extends SpecBase
         val safeId = "XE0001234567890"
 
         when(mockBusinessMatchingService.sendBusinessMatchingInformation(any())(any(), any()))
-          .thenReturn(Future.successful((Some(businessDetails), Some(safeId))))
+          .thenReturn(Future.successful((Some(businessDetails), Some(safeId), None)))
 
         val result = route(application, getRequest(businessMatchingRoute)).value
 
@@ -203,7 +203,7 @@ class BusinessMatchingControllerSpec extends SpecBase
           ).build()
 
         when(mockBusinessMatchingService.sendBusinessMatchingInformation(any())(any(), any()))
-          .thenReturn(Future.successful((None, None)))
+          .thenReturn(Future.successful((None, None, None)))
 
         val result = route(application, getRequest(businessMatchingRoute)).value
 
@@ -249,7 +249,7 @@ class BusinessMatchingControllerSpec extends SpecBase
           ).build()
 
         when(mockBusinessMatchingService.sendBusinessMatchingInformation(any())(any(), any()))
-          .thenReturn(Future.successful((None, None)))
+          .thenReturn(Future.successful((None, None, None)))
 
         val result = route(application, getRequest(businessMatchingRoute)).value
 

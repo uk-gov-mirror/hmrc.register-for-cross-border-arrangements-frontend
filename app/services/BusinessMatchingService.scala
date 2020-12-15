@@ -16,15 +16,17 @@
 
 package services
 
-import connectors.RegistrationConnector
+import connectors.{RegistrationConnector, SubscriptionConnector}
 import javax.inject.Inject
+import models.readSubscription.DisplaySubscriptionForDACResponse
 import models.{BusinessDetails, BusinessType, PayloadRegisterWithID, PayloadRegistrationWithIDResponse, UniqueTaxpayerReference, UserAnswers}
 import pages.{BusinessTypePage, CorporationTaxUTRPage, NinoPage, SelfAssessmentUTRPage}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class BusinessMatchingService @Inject()(registrationConnector: RegistrationConnector) {
+class BusinessMatchingService @Inject()(registrationConnector: RegistrationConnector,
+                                        subscriptionConnector: SubscriptionConnector) {
 
   def sendIndividualMatchingInformation(userAnswers: UserAnswers)
                                        (implicit hc: HeaderCarrier,
@@ -45,7 +47,7 @@ class BusinessMatchingService @Inject()(registrationConnector: RegistrationConne
     }
 
   def sendBusinessMatchingInformation(userAnswers: UserAnswers)
-                                     (implicit hc: HeaderCarrier, ec: ExecutionContext):  Future[(Option[BusinessDetails], Option[String])] = {
+                                     (implicit hc: HeaderCarrier, ec: ExecutionContext):  Future[(Option[BusinessDetails], Option[String], Option[DisplaySubscriptionForDACResponse])] = {
 
     val utr: UniqueTaxpayerReference = (userAnswers.get(SelfAssessmentUTRPage), userAnswers.get(CorporationTaxUTRPage)) match {
       case (Some(utr), _) => utr
@@ -60,7 +62,15 @@ class BusinessMatchingService @Inject()(registrationConnector: RegistrationConne
         PayloadRegisterWithID.createBusinessSubmission(userAnswers, "UTR", utr.uniqueTaxPayerReference)
     }
 
-    callEndPoint(payload)
+    callEndPoint(payload).flatMap{tup => {
+      val existingSubscription = if (tup._2.isDefined) {
+        subscriptionConnector.readSubscriptionDetails(tup._2.get)
+      }else Future(None)
+
+      existingSubscription.map(sub =>
+      (tup._1, tup._2, sub))
+    }
+  }
   }
 
   def callEndPoint(payload: Option[PayloadRegisterWithID])

@@ -80,7 +80,7 @@ class SubscriptionConnectorSpec extends SpecBase
     "must return status as OK for submission of valid enrolment request" in {
 
 
-      forAll(arbitrary[UserAnswers], validSafeID, validSubsrciptionID) {
+      forAll(arbitrary[UserAnswers], validSafeID, validSubscriptionID) {
         (userAnswers, safeId, subscriptionId )=>
           val userAnswerWithSafeId = userAnswers.set(SafeIDPage, safeId).success.value
           val userAnswerWithSubscriptionId = userAnswerWithSafeId.set(SubscriptionIDPage, subscriptionId).success.value
@@ -94,7 +94,7 @@ class SubscriptionConnectorSpec extends SpecBase
     "must return status as BAD_REQUEST for invalid request" in {
 
 
-      forAll(arbitrary[UserAnswers], validSafeID, validSubsrciptionID) {
+      forAll(arbitrary[UserAnswers], validSafeID, validSubscriptionID) {
         (userAnswers, safeId, subscriptionId )=>
           val userAnswerWithSafeId = userAnswers.set(SafeIDPage, safeId).success.value
           val userAnswerWithSubscriptionId = userAnswerWithSafeId.set(SubscriptionIDPage, subscriptionId).success.value
@@ -108,7 +108,7 @@ class SubscriptionConnectorSpec extends SpecBase
     "must return status as INTERNAL_SERVER_ERROR for technical error incurred" in {
 
 
-      forAll(arbitrary[UserAnswers], validSafeID, validSubsrciptionID) {
+      forAll(arbitrary[UserAnswers], validSafeID, validSubscriptionID) {
         (userAnswers, safeId, subscriptionId )=>
           val userAnswerWithSafeId = userAnswers.set(SafeIDPage, safeId).success.value
           val userAnswerWithSubscriptionId = userAnswerWithSafeId.set(SubscriptionIDPage, subscriptionId).success.value
@@ -199,18 +199,18 @@ class SubscriptionConnectorSpec extends SpecBase
               JsString(safeID), JsString("FirstName"), JsString("LastName"), JsString("Organisation Name"),
               JsString("email@email.com"), JsString("email@email.com"), JsString("07111222333"))
 
-            val responseDetailUpdate: ResponseDetailForReadSubscription = responseDetail.copy(subscriptionID = safeID)
+            val responseDetailRead: ResponseDetailForReadSubscription = responseDetail.copy(subscriptionID = safeID)
 
             val displaySubscriptionForDACResponse: DisplaySubscriptionForDACResponse =
               DisplaySubscriptionForDACResponse(
-                ReadSubscriptionForDACResponse(responseCommon = responseCommon, responseDetail = responseDetailUpdate)
+                ReadSubscriptionForDACResponse(responseCommon = responseCommon, responseDetail = responseDetailRead)
               )
 
             stubPostResponse("/disclose-cross-border-arrangements/subscription/display-subscription", OK, expectedBody)
 
 
 
-            val result = connector.displaySubscriptionDetails(safeID)
+            val result = connector.readSubscriptionDetails(safeID)
             result.futureValue mustBe Some(displaySubscriptionForDACResponse)
         }
       }
@@ -224,7 +224,7 @@ class SubscriptionConnectorSpec extends SpecBase
                                  |}""".stripMargin
             stubPostResponse("/disclose-cross-border-arrangements/subscription/display-subscription", OK, invalidJson)
 
-            val result = connector.displaySubscriptionDetails(safeID)
+            val result = connector.readSubscriptionDetails(safeID)
             result.futureValue mustBe None
         }
       }
@@ -235,7 +235,7 @@ class SubscriptionConnectorSpec extends SpecBase
 
             stubPostResponse("/disclose-cross-border-arrangements/subscription/display-subscription", NOT_FOUND , "")
 
-            val result = connector.displaySubscriptionDetails(safeID)
+            val result = connector.readSubscriptionDetails(safeID)
             result.futureValue mustBe None
         }
       }
