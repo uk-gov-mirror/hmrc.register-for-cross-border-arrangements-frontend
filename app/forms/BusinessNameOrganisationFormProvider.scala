@@ -25,6 +25,6 @@ class BusinessNameOrganisationFormProvider @Inject() extends Mappings with Regex
   private val length = 105
   def apply(): Form[String] =
     Form(
-      "value" ->  validatedText("businessName.organisation.error.required","businessName.organisation.error.invalid","businessName.organisation.error.length",apiOrganisationNameRegex, length)
+      "value" ->  maxLengthText("businessName.organisation.error.required","businessName.organisation.error.length", length)
     )
 }
