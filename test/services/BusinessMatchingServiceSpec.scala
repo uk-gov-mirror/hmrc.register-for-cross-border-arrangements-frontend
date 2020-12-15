@@ -130,6 +130,11 @@ class BusinessMatchingServiceSpec extends SpecBase
                 Future.successful(Some(responseWithSafeId))
               )
 
+            when(mockSubscriptionConnector.readSubscriptionDetails(any())(any(), any()))
+              .thenReturn(
+                Future.successful(None)
+              )
+
             val result = businessMatchingService.sendIndividualMatchingInformation(answers)
 
             whenReady(result){
@@ -140,44 +145,59 @@ class BusinessMatchingServiceSpec extends SpecBase
         }
       }
 
-//      "should send a request to the business matching connector for an individual and return " +
-//        "subscription info if this already exists" in {
-//        forAll(arbitrary[UserAnswers], arbitrary[Name], arbitrary[LocalDate], arbitrary[Nino], arbitrary[PayloadRegistrationWithIDResponse]){
-//          (userAnswers, name, dob, nino, response) =>
-//            val answers = userAnswers
-//              .set(NamePage, name)
-//              .success
-//              .value
-//              .set(DateOfBirthPage, dob)
-//              .success
-//              .value
-//              .set(NinoPage, nino)
-//              .success
-//              .value
-//
-//            val registerWithSafeId = response.registerWithIDResponse.copy(
-//              responseDetail = Some(
-//                ResponseDetail("XE0001234567890", None, isEditable = false, isAnAgent = false, None, isAnIndividual = false,
-//                  IndividualResponse("Bobby", None, "Bob", None),
-//                  AddressResponse("1 TestStreet", Some("Test"), None, None, Some("AA11BB"), "GB"),
-//                  ContactDetails(None, None, None, None)))
-//            )
-//            val responseWithSafeId = response.copy(registerWithSafeId)
-//
-//            when(mockRegistrationConnector.registerWithID(any())(any(), any()))
-//              .thenReturn(
-//                Future.successful(Some(responseWithSafeId))
-//              )
-//
-//            val result = businessMatchingService.sendIndividualMatchingInformation(answers)
-//
-//            whenReady(result){
-//              res =>
-//                res.map(_._1.get) mustBe Right(responseWithSafeId)
-//                res.map(_._2.get) mustBe Right("XE0001234567890")
-//            }
-//        }
-//      }
+      "should send a request to the business matching connector for an individual and return " +
+        "subscription info if this already exists" in {
+        forAll(arbitrary[UserAnswers], arbitrary[Name], arbitrary[LocalDate],
+            arbitrary[Nino], arbitrary[PayloadRegistrationWithIDResponse], validSubscriptionID){
+          (userAnswers, name, dob, nino, response, existingSubscriptionID) =>
+            val answers = userAnswers
+              .set(NamePage, name)
+              .success
+              .value
+              .set(DateOfBirthPage, dob)
+              .success
+              .value
+              .set(NinoPage, nino)
+              .success
+              .value
+
+            val registerWithSafeId = response.registerWithIDResponse.copy(
+              responseDetail = Some(
+                ResponseDetail("XE0001234567890", None, isEditable = false, isAnAgent = false, None, isAnIndividual = false,
+                  IndividualResponse("Bobby", None, "Bob", None),
+                  AddressResponse("1 TestStreet", Some("Test"), None, None, Some("AA11BB"), "GB"),
+                  ContactDetails(None, None, None, None)))
+            )
+            val responseWithSafeId = response.copy(registerWithSafeId)
+
+            val responseDetailRead: ResponseDetailForReadSubscription = responseDetail.copy(subscriptionID = existingSubscriptionID)
+
+            val displaySubscriptionForDACResponse: DisplaySubscriptionForDACResponse =
+              DisplaySubscriptionForDACResponse(
+                ReadSubscriptionForDACResponse(responseCommon = responseCommon, responseDetail = responseDetailRead)
+              )
+
+            when(mockRegistrationConnector.registerWithID(any())(any(), any()))
+              .thenReturn(
+                Future.successful(Some(responseWithSafeId))
+              )
+
+            when(mockSubscriptionConnector.readSubscriptionDetails(any())(any(), any()))
+              .thenReturn(
+                Future.successful(Some(displaySubscriptionForDACResponse))
+              )
+
+            val result = businessMatchingService.sendIndividualMatchingInformation(answers)
+
+            whenReady(result){
+              res =>
+                res.map(_._1.get) mustBe Right(responseWithSafeId)
+                res.map(_._2.get) mustBe Right("XE0001234567890")
+                res.map(_._3.get) mustBe Right(displaySubscriptionForDACResponse)
+
+            }
+        }
+      }
    }
 
     "when unable to construct an individual matching submission" - {

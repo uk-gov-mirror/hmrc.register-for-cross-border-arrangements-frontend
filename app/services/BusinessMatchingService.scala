@@ -30,15 +30,17 @@ class BusinessMatchingService @Inject()(registrationConnector: RegistrationConne
 
   def sendIndividualMatchingInformation(userAnswers: UserAnswers)
                                        (implicit hc: HeaderCarrier,
-                                        ec: ExecutionContext): Future[Either[Exception, (Option[PayloadRegistrationWithIDResponse], Option[String])]] =
+                                        ec: ExecutionContext): Future[Either[Exception, (Option[PayloadRegistrationWithIDResponse], Option[String], Option[DisplaySubscriptionForDACResponse])]] =
     userAnswers.get(NinoPage) match {
       case Some(nino) =>
         val payloadForIndividual = PayloadRegisterWithID.createIndividualSubmission(userAnswers, "NINO", nino.nino)
         payloadForIndividual match {
-          case Some(request) => registrationConnector.registerWithID(request).map {
+          case Some(request) => registrationConnector.registerWithID(request).flatMap {
             response =>
               val safeId = retrieveSafeID(response)
-              Right((response, safeId))
+              retrieveExistingSubscriptionDetails(safeId).map { existingSubscription =>
+                Right((response, safeId, existingSubscription))
+              }
           }
           case None =>
             Future.successful(Left(new Exception("Couldn't Create Payload for Register With ID"))            )
@@ -63,12 +65,10 @@ class BusinessMatchingService @Inject()(registrationConnector: RegistrationConne
     }
 
     callEndPoint(payload).flatMap{tup => {
-      val existingSubscription = if (tup._2.isDefined) {
-        subscriptionConnector.readSubscriptionDetails(tup._2.get)
-      }else Future(None)
+      retrieveExistingSubscriptionDetails(tup._2).map { existingSubscription =>
 
-      existingSubscription.map(sub =>
-      (tup._1, tup._2, sub))
+                (tup._1, tup._2, existingSubscription)
+      }
     }
   }
   }
@@ -89,5 +89,14 @@ class BusinessMatchingService @Inject()(registrationConnector: RegistrationConne
     payloadRegisterWithIDResponse.flatMap {
       _.registerWithIDResponse.responseDetail.map(_.SAFEID)
     }
+  }
+
+  private def retrieveExistingSubscriptionDetails(safeId: Option[String])
+   (implicit hc: HeaderCarrier, ec: ExecutionContext):Future[Option[DisplaySubscriptionForDACResponse]] = {
+
+    if (safeId.isDefined) {
+      subscriptionConnector.readSubscriptionDetails(safeId.get)
+    }else Future(None)
+
   }
 }

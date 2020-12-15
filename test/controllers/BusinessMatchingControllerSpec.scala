@@ -94,7 +94,7 @@ class BusinessMatchingControllerSpec extends SpecBase
                   None
                 )
               )
-              ), Some("XE0000123456789"))
+              ), Some("XE0000123456789"), None)
             ))
           )
 
@@ -126,7 +126,7 @@ class BusinessMatchingControllerSpec extends SpecBase
           ).build()
 
         when(mockBusinessMatchingService.sendIndividualMatchingInformation(any())(any(), any()))
-          .thenReturn(Future.successful(Right((None, None))))
+          .thenReturn(Future.successful(Right((None, None, None))))
 
         val result = route(application, getRequest(individualMatchingRoute)).value
 

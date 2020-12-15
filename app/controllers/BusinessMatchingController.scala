@@ -47,7 +47,7 @@ class BusinessMatchingController @Inject()(
   def matchIndividual(mode: Mode): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
     implicit request =>
       businessMatchingService.sendIndividualMatchingInformation(request.userAnswers).flatMap {
-        case Right((Some(_), Some(id))) =>
+        case Right((Some(_), Some(id), _)) =>
           for {
             updatedAnswersWithSafeID <- Future.fromTry(request.userAnswers.set(SafeIDPage, id))
             _                        <- sessionRepository.set(updatedAnswersWithSafeID)
