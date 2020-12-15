@@ -658,7 +658,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
           answers =>
             val updatedAnswers =
               answers
-                .set(ContactNamePage, name)
+                .set(ContactNamePage, "Name Name-Name")
                 .success
                 .value
 

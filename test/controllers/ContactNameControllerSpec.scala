@@ -46,9 +46,8 @@ class ContactNameControllerSpec extends SpecBase with MockitoSugar with Nunjucks
   val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
   val formProvider = new ContactNameFormProvider()
-  val form: Form[Name] = formProvider()
-  val firstName: String = "Dac"
-  val lastName: String = "Junior"
+  val form: Form[String] = formProvider()
+  val name: String = "Name Name Jnr"
 
   lazy val contactNameRoute: String = routes.ContactNameController.onPageLoad(NormalMode).url
 
@@ -86,7 +85,7 @@ class ContactNameControllerSpec extends SpecBase with MockitoSugar with Nunjucks
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(ContactNamePage, Name(firstName, lastName)).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(ContactNamePage, name).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, contactNameRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -100,8 +99,7 @@ class ContactNameControllerSpec extends SpecBase with MockitoSugar with Nunjucks
 
       val filledForm = form.bind(
         Map(
-          "firstName" -> firstName,
-          "lastName" -> lastName
+          "contactName" -> name
         )
       )
 
@@ -130,7 +128,7 @@ class ContactNameControllerSpec extends SpecBase with MockitoSugar with Nunjucks
 
       val request =
         FakeRequest(POST, contactNameRoute)
-          .withFormUrlEncodedBody("firstName" -> firstName, "lastName" -> lastName)
+          .withFormUrlEncodedBody("contactName" -> name)
 
       val result = route(application, request).value
 
@@ -146,8 +144,8 @@ class ContactNameControllerSpec extends SpecBase with MockitoSugar with Nunjucks
         .thenReturn(Future.successful(Html("")))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, contactNameRoute).withFormUrlEncodedBody("firstName" -> "", "lastName" -> "")
-      val boundForm = form.bind(Map("firstName" -> "", "lastName" -> ""))
+      val request = FakeRequest(POST, contactNameRoute).withFormUrlEncodedBody("contactName" -> "")
+      val boundForm = form.bind(Map("contactName" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -171,7 +169,7 @@ class ContactNameControllerSpec extends SpecBase with MockitoSugar with Nunjucks
     "must redirect to the Check your answers page when user doesn't change their answer" in {
 
       val contactNameRoute: String = routes.ContactNameController.onPageLoad(CheckMode).url
-      val userAnswers = UserAnswers(userAnswersId).set(ContactNamePage, Name(firstName, lastName)).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(ContactNamePage, name).success.value
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
@@ -185,7 +183,7 @@ class ContactNameControllerSpec extends SpecBase with MockitoSugar with Nunjucks
 
       val request =
         FakeRequest(POST, contactNameRoute)
-          .withFormUrlEncodedBody("firstName" -> firstName, "lastName" -> lastName)
+          .withFormUrlEncodedBody("contactName" -> name)
 
       val result = route(application, request).value
 
@@ -216,7 +214,7 @@ class ContactNameControllerSpec extends SpecBase with MockitoSugar with Nunjucks
 
       val request =
         FakeRequest(POST, contactNameRoute)
-          .withFormUrlEncodedBody("firstName" -> "value", "lastName" -> "value")
+          .withFormUrlEncodedBody("contactName" -> "value")
 
       val result = route(application, request).value
 

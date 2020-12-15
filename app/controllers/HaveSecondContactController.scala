@@ -57,7 +57,7 @@ class HaveSecondContactController @Inject()(
         else{
 
         val contactName = request.userAnswers.get(ContactNamePage).get
-        val updatedContactName = s"${contactName.firstName} ${contactName.secondName}"
+        val updatedContactName = s"$contactName"
 
           val preparedForm = request.userAnswers.get(HaveSecondContactPage) match {
             case None => form
@@ -81,7 +81,7 @@ class HaveSecondContactController @Inject()(
     implicit request =>
 
       val contactName = request.userAnswers.get(ContactNamePage).get
-      val updatedContactName = s"${contactName.firstName} ${contactName.secondName}"
+      val updatedContactName = s"$contactName"
 
       form.bindFromRequest().fold(
         formWithErrors => {

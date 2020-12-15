@@ -62,7 +62,7 @@ class TelephoneNumberQuestionController @Inject()(
           val (pageTitle, heading) = request.userAnswers.get(ContactNamePage) match {
             case Some(name) =>
               (Messages("telephoneNumberQuestion.business.title"),
-                Messages("telephoneNumberQuestion.business.heading", s"${name.firstName} ${name.secondName}"))
+                Messages("telephoneNumberQuestion.business.heading", s"$name"))
             case None =>
               (Messages("telephoneNumberQuestion.individual.title"),
                 Messages("telephoneNumberQuestion.individual.heading"))
@@ -89,7 +89,7 @@ class TelephoneNumberQuestionController @Inject()(
           val (pageTitle: String, heading: String) = request.userAnswers.get(ContactNamePage) match {
             case Some(name) =>
               (Messages("telephoneNumberQuestion.business.title"),
-                Messages("telephoneNumberQuestion.business.heading", s"${name.firstName} ${name.secondName}"))
+                Messages("telephoneNumberQuestion.business.heading", s"$name"))
             case None =>
               (Messages("telephoneNumberQuestion.individual.title"),
                 Messages("telephoneNumberQuestion.individual.heading"))

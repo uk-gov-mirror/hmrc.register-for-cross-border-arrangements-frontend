@@ -32,16 +32,14 @@ class EmailService @Inject()(emailConnector:EmailConnector)(implicit executionCo
 
     val emailAddress = userAnswers.get(ContactEmailAddressPage)
 
-    val contactName: Option[Name] = if (userAnswers.get(ContactNamePage).isDefined) {
-      userAnswers.get(ContactNamePage)
-    } else if (userAnswers.get(NamePage).isDefined){
-      userAnswers.get(NamePage)
-    } else {
-      userAnswers.get(NonUkNamePage)
+    val contactName = (userAnswers.get(ContactNamePage).isDefined, userAnswers.get(NamePage).isDefined, userAnswers.get(NonUkNamePage).isDefined) match{
+      case (true, false, false) => Some(userAnswers.get(ContactNamePage)).map(n => n.toString)
+      case (false, true, false) => userAnswers.get(NamePage).map(n => n.firstName + " " + n.secondName)
+      case (false, false, true) => userAnswers.get(NonUkNamePage).map(n => n.firstName + " " + n.secondName)
+      case _ => None
     }
 
     val dac6ID: String = userAnswers.get(SubscriptionIDPage).get
-    val fullContactName: Option[String] = contactName.map(n => n.firstName + " " + n.secondName)
 
     val secondaryEmailAddress = userAnswers.get(SecondaryContactEmailAddressPage)
     val secondaryName = userAnswers.get(SecondaryContactNamePage)
@@ -50,7 +48,7 @@ class EmailService @Inject()(emailConnector:EmailConnector)(implicit executionCo
       primaryResponse <- emailAddress
                           .filter(EmailAddress.isValid)
                           .fold(Future.successful(Option.empty[HttpResponse])) { email =>
-                             emailConnector.sendEmail(EmailRequest.registration(email, fullContactName, dac6ID)).map(Some.apply)}
+                             emailConnector.sendEmail(EmailRequest.registration(email, contactName, dac6ID)).map(Some.apply)}
 
       _ <- secondaryEmailAddress
          .filter(EmailAddress.isValid)

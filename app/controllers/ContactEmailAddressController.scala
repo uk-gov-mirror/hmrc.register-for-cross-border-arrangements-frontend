@@ -62,7 +62,7 @@ class ContactEmailAddressController @Inject()(
           val (pageTitle, heading) = request.userAnswers.get(ContactNamePage) match {
             case Some(name) =>
               (Messages("contactEmailAddress.business.title"),
-                Messages("contactEmailAddress.business.heading", s"${name.firstName} ${name.secondName}"))
+                Messages("contactEmailAddress.business.heading", s"$name"))
             case None =>
               (Messages("contactEmailAddress.individual.title"),
                 Messages("contactEmailAddress.individual.heading"))
@@ -85,7 +85,7 @@ class ContactEmailAddressController @Inject()(
       val (pageTitle, heading) = request.userAnswers.get(ContactNamePage) match {
         case Some(name) =>
           (Messages("contactEmailAddress.business.title"),
-            Messages("contactEmailAddress.business.heading", s"${name.firstName} ${name.secondName}"))
+            Messages("contactEmailAddress.business.heading", s"$name"))
         case None =>
           (Messages("contactEmailAddress.individual.title"),
             Messages("contactEmailAddress.individual.heading"))

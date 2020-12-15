@@ -21,77 +21,48 @@ import play.api.data.FormError
 
 class ContactNameFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKeyFirstName = "contactName.error.required.firstName"
-  val lengthKeyFirstName = "contactName.error.length.firstName"
-  val invalidKeyFirstName = "contactName.error.invalid.firstName"
-
-  val requiredKeyLastName = "contactName.error.required.lastName"
-  val lengthKeyLastName = "contactName.error.length.lastName"
-  val invalidKeyLastName = "contactName.error.invalid.lastName"
+  val requiredKey = "contactName.error.required"
+  val lengthKey = "contactName.error.length"
+  val invalidKey = "contactName.error.invalid"
 
   val maxLength = 35
 
   val form = new ContactNameFormProvider()()
 
-  ".firstName" - {
+  ".contactName" - {
 
-    val fieldName = "firstName"
+    val fieldName = "contactName"
 
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      validPersonalName
+      validNonApiName
     )
 
     behave like fieldWithMaxLengthAlpha(
       form,
       fieldName,
       maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKeyFirstName)
+      lengthError = FormError(fieldName, lengthKey)
     )
 
     behave like mandatoryField(
       form,
       fieldName,
-      requiredError = FormError(fieldName, requiredKeyFirstName)
+      requiredError = FormError(fieldName, requiredKey)
+    )
+
+    behave like fieldWithNonEmptyWhitespace(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
     )
 
     behave like fieldWithInvalidData(
       form,
       fieldName,
       "jjdjdj£%^&kfkf",
-      FormError(fieldName, invalidKeyFirstName)
-    )
-  }
-
-  ".lastName" - {
-
-    val fieldName = "lastName"
-
-    behave like fieldThatBindsValidData(
-      form,
-      fieldName,
-      validPersonalName
-    )
-
-    behave like fieldWithMaxLengthAlpha(
-      form,
-      fieldName,
-      maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKeyLastName)
-    )
-
-    behave like mandatoryField(
-      form,
-      fieldName,
-      requiredError = FormError(fieldName, requiredKeyLastName)
-    )
-
-    behave like fieldWithInvalidData(
-      form,
-      fieldName,
-      "jjdjdj£%^&kfkf",
-      FormError(fieldName, invalidKeyLastName)
+      FormError(fieldName, invalidKey)
     )
   }
 }

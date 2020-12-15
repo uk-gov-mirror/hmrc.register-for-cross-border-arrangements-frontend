@@ -121,7 +121,7 @@ class SubscriptionConnectorSpec extends SpecBase
 
         forAll(arbitrary[UserAnswers], validPersonalName, validEmailAddress, validSafeID) {
           (userAnswers, name, email, safeID) =>
-            val updatedUserAnswers = userAnswers.set(ContactNamePage, Name(name, name)).success.value
+            val updatedUserAnswers = userAnswers.set(ContactNamePage, name).success.value
               .set(ContactEmailAddressPage, email).success.value
               .set(HaveSecondContactPage, false).success.value
               .set(SafeIDPage, safeID).success.value
@@ -158,7 +158,7 @@ class SubscriptionConnectorSpec extends SpecBase
 
         forAll(arbitrary[UserAnswers], validPersonalName, validEmailAddress, validSafeID) {
           (userAnswers, name, email, safeID) =>
-            val updatedUserAnswers = userAnswers.set(ContactNamePage, Name(name, name)).success.value
+            val updatedUserAnswers = userAnswers.set(ContactNamePage, name).success.value
               .set(ContactEmailAddressPage, email).success.value
               .set(HaveSecondContactPage, true).success.value
               .set(SafeIDPage, safeID).success.value
