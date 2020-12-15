@@ -22,9 +22,11 @@ import controllers.routes
 import models.requests.UserRequest
 import play.api.mvc.Results._
 import play.api.mvc._
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.{affinityGroup, credentialRole}
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.{HeaderCarrier, UnauthorizedException}
 import uk.gov.hmrc.play.HeaderCarrierConverter
@@ -45,8 +47,10 @@ class AuthenticatedIdentifierAction @Inject()(
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
     authorised(AuthProviders(GovernmentGateway) and ConfidenceLevel.L50)
-      .retrieve(Retrievals.internalId and Retrievals.allEnrolments) {
-        case Some(internalID) ~ enrolments =>
+      .retrieve(Retrievals.internalId and Retrievals.allEnrolments and affinityGroup and credentialRole) {
+        case _ ~ _ ~ Some(Agent) ~ _  | _ ~ _ ~ _ ~ Some(Assistant) =>
+          Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))
+        case Some(internalID) ~ enrolments ~ _ ~ _ =>
           block(UserRequest(enrolments, internalID, request))
         case _ => throw new UnauthorizedException("Unable to retrieve internal Id")
     } recover {
