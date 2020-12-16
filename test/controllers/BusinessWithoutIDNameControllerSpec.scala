@@ -143,34 +143,6 @@ class BusinessWithoutIDNameControllerSpec extends SpecBase with MockitoSugar wit
       application.stop()
     }
 
-    "must return a Bad Request and errors when data that doesn't match the accepted characters is submitted" in {
-
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val request = FakeRequest(POST, businessNameRoute).withFormUrlEncodedBody(("businessWithoutIDName", invalidBusinessName))
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
-      val boundForm = form.bind(Map("businessWithoutIDName" -> invalidBusinessName))
-
-      val result = route(application, request).value
-
-      status(result) mustEqual BAD_REQUEST
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val expectedJson = Json.obj(
-        "form"   -> boundForm,
-        "mode"   -> NormalMode
-      )
-
-      templateCaptor.getValue mustEqual "businessWithoutIDName.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
-
-      application.stop()
-    }
-
     "must return a Bad Request and errors when no data is submitted" in {
 
       when(mockRenderer.render(any(), any())(any()))
