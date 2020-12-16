@@ -28,7 +28,7 @@ case class OrganisationDetails(organisationName: String)
 object OrganisationDetails {
   def buildPrimaryContact(userAnswers: UserAnswers): OrganisationDetails = {
     userAnswers.get(ContactNamePage) match {
-      case Some(name) => new OrganisationDetails(s"$name")
+      case Some(name) => new OrganisationDetails(name)
       case _ => throw new Exception("Contact name page is empty when creating a subscription for organisation")
     }
   }
