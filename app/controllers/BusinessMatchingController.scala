@@ -50,40 +50,17 @@ class BusinessMatchingController @Inject()(
                                           )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
   private val logger = LoggerFactory.getLogger(getClass)
-//
-//  def matchIndividual(mode: Mode): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
-//    implicit request =>
-//      businessMatchingService.sendIndividualMatchingInformation(request.userAnswers).flatMap {
-//        case Right((Some(_), Some(id), _)) =>
-//          for {
-//            updatedAnswersWithSafeID <- Future.fromTry(request.userAnswers.set(SafeIDPage, id))
-//            _                        <- sessionRepository.set(updatedAnswersWithSafeID)
-//          } yield {
-//            Redirect(routes.IdentityConfirmedController.onPageLoad()) //TODO: may need more data collected for Cardiff team
-//          }
-//        case Right(_) => Future.successful(Redirect(routes.IndividualNotConfirmedController.onPageLoad()))
-//        //we are missing a name or a date of birth take them back to fill it in
-//        case Left(_) => Future.successful(Redirect(routes.NameController.onPageLoad(NormalMode)))
-//      }
-//  }
 
   def matchIndividual(mode: Mode): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
     implicit request =>
       businessMatchingService.sendIndividualMatchingInformation(request.userAnswers).flatMap {
         case Right((Some(_), Some(id), existingSubscriptionDetails)) =>
-//          for {
-//            updatedAnswersWithSafeID <- Future.fromTry(request.userAnswers.set(SafeIDPage, id))
-//            _                        <- sessionRepository.set(updatedAnswersWithSafeID)
-//          } yield {
-//            Redirect(routes.IdentityConfirmedController.onPageLoad()) //TODO: may need more data collected for Cardiff team
-//          }
+
           updateIndividualAnswers(request.userAnswers, id).flatMap(updatedUserAnswers =>
               if(existingSubscriptionDetails.isDefined) {
                 createEnrolment(updatedUserAnswers, existingSubscriptionDetails.get.displaySubscriptionForDACResponse.responseDetail.subscriptionID)
               } else Future(Redirect(routes.IdentityConfirmedController.onPageLoad()))
-
           )
-
         case Right(_) => Future.successful(Redirect(routes.IndividualNotConfirmedController.onPageLoad()))
         //we are missing a name or a date of birth take them back to fill it in
         case Left(_) => Future.successful(Redirect(routes.NameController.onPageLoad(NormalMode)))
