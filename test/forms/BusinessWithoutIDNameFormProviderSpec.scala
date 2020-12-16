@@ -28,14 +28,7 @@ class BusinessWithoutIDNameFormProviderSpec extends StringFieldBehaviours {
     val fieldName = "businessWithoutIDName"
     val requiredKey = "businessWithoutIDName.error.businessName.required"
     val lengthKey = "businessWithoutIDName.error.businessName.length"
-    val invalidKey = "businessWithoutIDName.error.businessName.invalid"
     val maxLength = 105
-
-    behave like fieldThatBindsValidData(
-      form,
-      fieldName,
-      validBusinessName
-    )
 
     behave like fieldWithMaxLengthAlpha(
       form,
@@ -50,11 +43,5 @@ class BusinessWithoutIDNameFormProviderSpec extends StringFieldBehaviours {
       requiredError = FormError(fieldName, requiredKey)
     )
 
-    behave like fieldWithInvalidData(
-      form,
-      fieldName,
-      "jjdjdj£%^&kfkf",
-      FormError(fieldName, invalidKey)
-    )
   }
 }

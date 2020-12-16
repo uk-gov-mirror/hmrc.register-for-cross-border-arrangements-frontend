@@ -25,11 +25,9 @@ class BusinessWithoutIDNameFormProvider @Inject() extends Mappings with RegexCon
     val maxLength: Int = 105
 
    def apply(): Form[String] = Form(
-      "businessWithoutIDName" -> validatedText(
+      "businessWithoutIDName" -> maxLengthText(
         "businessWithoutIDName.error.businessName.required",
-          "businessWithoutIDName.error.businessName.invalid",
           "businessWithoutIDName.error.businessName.length",
-                    apiOrganisationNameRegex,
                     maxLength)
    )
  }

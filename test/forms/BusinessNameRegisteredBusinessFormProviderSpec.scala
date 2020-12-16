@@ -33,12 +33,6 @@ class BusinessNameRegisteredBusinessFormProviderSpec extends StringFieldBehaviou
 
     val fieldName = "value"
 
-    behave like fieldThatBindsValidData(
-      form,
-      fieldName,
-      validOrganisationName
-    )
-
     behave like fieldWithMaxLengthAlpha(
       form,
       fieldName,
@@ -56,13 +50,6 @@ class BusinessNameRegisteredBusinessFormProviderSpec extends StringFieldBehaviou
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
-    )
-
-    behave like fieldWithInvalidData(
-      form,
-      fieldName,
-      "jjdjdj£%^&kfkf",
-      FormError(fieldName, invalidKey)
     )
   }
 }
