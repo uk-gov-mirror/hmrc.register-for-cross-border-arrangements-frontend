@@ -33,6 +33,7 @@ import play.api.inject._
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import repositories.SessionRepository
 import services.{BusinessMatchingService, EmailService}
 import uk.gov.hmrc.domain.{Generator, Nino}
 import uk.gov.hmrc.http.HttpResponse
@@ -59,6 +60,8 @@ class BusinessMatchingControllerSpec extends SpecBase
   val mockSubscriptionConnector: SubscriptionConnector = mock[SubscriptionConnector]
 
   val mockEmailService: EmailService = mock[EmailService]
+
+  val mockSessionRepository: SessionRepository = mock[SessionRepository]
 
   val businessUserAnswers: UserAnswers = UserAnswers(userAnswersId)
     .set(BusinessTypePage, BusinessType.UnIncorporatedBody)
@@ -97,6 +100,8 @@ class BusinessMatchingControllerSpec extends SpecBase
     processingDate = "2020-08-09T11:23:45Z",
     returnParameters = None)
 
+  when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
   "BusinessMatching Controller" - {
     "when a correct submission can be created and returns an individual match" - {
 
@@ -115,7 +120,8 @@ class BusinessMatchingControllerSpec extends SpecBase
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
-            bind[BusinessMatchingService].toInstance(mockBusinessMatchingService)
+            bind[BusinessMatchingService].toInstance(mockBusinessMatchingService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
           ).build()
 
         when(mockBusinessMatchingService.sendIndividualMatchingInformation(any())(any(), any()))
@@ -158,7 +164,8 @@ class BusinessMatchingControllerSpec extends SpecBase
               .overrides(
                 bind[BusinessMatchingService].toInstance(mockBusinessMatchingService),
                 bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
-                bind[EmailService].toInstance(mockEmailService)
+                bind[EmailService].toInstance(mockEmailService),
+                bind[SessionRepository].toInstance(mockSessionRepository)
               ).build()
 
             val responseDetailRead: ResponseDetailForReadSubscription = responseDetail.copy(subscriptionID = existingSubscriptionID)
@@ -215,7 +222,8 @@ class BusinessMatchingControllerSpec extends SpecBase
               .overrides(
                 bind[BusinessMatchingService].toInstance(mockBusinessMatchingService),
                 bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
-                bind[EmailService].toInstance(mockEmailService)
+                bind[EmailService].toInstance(mockEmailService),
+                bind[SessionRepository].toInstance(mockSessionRepository)
               ).build()
 
             val responseDetailRead: ResponseDetailForReadSubscription = responseDetail.copy(subscriptionID = existingSubscriptionID)
@@ -271,7 +279,8 @@ class BusinessMatchingControllerSpec extends SpecBase
               .overrides(
                 bind[BusinessMatchingService].toInstance(mockBusinessMatchingService),
                 bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
-                bind[EmailService].toInstance(mockEmailService)
+                bind[EmailService].toInstance(mockEmailService),
+                bind[SessionRepository].toInstance(mockSessionRepository)
               ).build()
 
             val responseDetailRead: ResponseDetailForReadSubscription = responseDetail.copy(subscriptionID = existingSubscriptionID)
@@ -322,7 +331,8 @@ class BusinessMatchingControllerSpec extends SpecBase
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
-            bind[BusinessMatchingService].toInstance(mockBusinessMatchingService)
+            bind[BusinessMatchingService].toInstance(mockBusinessMatchingService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
           ).build()
 
         when(mockBusinessMatchingService.sendIndividualMatchingInformation(any())(any(), any()))
@@ -341,7 +351,8 @@ class BusinessMatchingControllerSpec extends SpecBase
 
         val application = applicationBuilder(userAnswers = Some(businessUserAnswers))
           .overrides(
-            bind[BusinessMatchingService].toInstance(mockBusinessMatchingService)
+            bind[BusinessMatchingService].toInstance(mockBusinessMatchingService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
           ).build()
 
         val businessDetails = BusinessDetails(
@@ -367,7 +378,8 @@ class BusinessMatchingControllerSpec extends SpecBase
               .overrides(
                 bind[BusinessMatchingService].toInstance(mockBusinessMatchingService),
                 bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
-                bind[EmailService].toInstance(mockEmailService)
+                bind[EmailService].toInstance(mockEmailService),
+                bind[SessionRepository].toInstance(mockSessionRepository)
               ).build()
 
             val businessDetails = BusinessDetails(
@@ -409,7 +421,8 @@ class BusinessMatchingControllerSpec extends SpecBase
               .overrides(
                 bind[BusinessMatchingService].toInstance(mockBusinessMatchingService),
                 bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
-                bind[EmailService].toInstance(mockEmailService)
+                bind[EmailService].toInstance(mockEmailService),
+                bind[SessionRepository].toInstance(mockSessionRepository)
               ).build()
 
             val businessDetails = BusinessDetails(
@@ -450,7 +463,8 @@ class BusinessMatchingControllerSpec extends SpecBase
               .overrides(
                 bind[BusinessMatchingService].toInstance(mockBusinessMatchingService),
                 bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
-                bind[EmailService].toInstance(mockEmailService)
+                bind[EmailService].toInstance(mockEmailService),
+                bind[SessionRepository].toInstance(mockSessionRepository)
               ).build()
 
             val businessDetails = BusinessDetails(
@@ -494,7 +508,8 @@ class BusinessMatchingControllerSpec extends SpecBase
 
         val application = applicationBuilder(userAnswers = Some(businessUserAnswers))
           .overrides(
-            bind[BusinessMatchingService].toInstance(mockBusinessMatchingService)
+            bind[BusinessMatchingService].toInstance(mockBusinessMatchingService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
           ).build()
 
         val businessDetails = BusinessDetails(
@@ -519,7 +534,8 @@ class BusinessMatchingControllerSpec extends SpecBase
 
         val application = applicationBuilder(userAnswers = Some(businessUserAnswers))
           .overrides(
-            bind[BusinessMatchingService].toInstance(mockBusinessMatchingService)
+            bind[BusinessMatchingService].toInstance(mockBusinessMatchingService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
           ).build()
 
         when(mockBusinessMatchingService.sendBusinessMatchingInformation(any())(any(), any()))
@@ -538,7 +554,8 @@ class BusinessMatchingControllerSpec extends SpecBase
 
         val application = applicationBuilder(userAnswers = Some(businessUserAnswers))
           .overrides(
-            bind[BusinessMatchingService].toInstance(mockBusinessMatchingService)
+            bind[BusinessMatchingService].toInstance(mockBusinessMatchingService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
           ).build()
 
         when(mockBusinessMatchingService.sendBusinessMatchingInformation(any())(any(), any()))
@@ -565,7 +582,8 @@ class BusinessMatchingControllerSpec extends SpecBase
 
         val application = applicationBuilder(userAnswers = Some(businessUserAnswers))
           .overrides(
-            bind[BusinessMatchingService].toInstance(mockBusinessMatchingService)
+            bind[BusinessMatchingService].toInstance(mockBusinessMatchingService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
           ).build()
 
         when(mockBusinessMatchingService.sendBusinessMatchingInformation(any())(any(), any()))
