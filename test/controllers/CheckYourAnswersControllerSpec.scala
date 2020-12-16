@@ -336,11 +336,12 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
         when(mockSubscriptionConnector.createSubscription(any())(any(), any()))
           .thenReturn(Future.successful(dacSubscriptionResponse))
 
+        when(mockSubscriptionConnector.createEnrolment(any())(any(), any()))
+          .thenReturn(Future.successful(HttpResponse(NO_CONTENT, "")))
+
         when(mockEmailService.sendEmail(any())(any()))
           .thenReturn(Future.successful(Some(HttpResponse(OK, ""))))
 
-        when(mockSubscriptionConnector.createEnrolment(any())(any(), any()))
-          .thenReturn(Future.successful(HttpResponse(NO_CONTENT, "")))
 
         val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit().url)
         val result = route(application, request).value

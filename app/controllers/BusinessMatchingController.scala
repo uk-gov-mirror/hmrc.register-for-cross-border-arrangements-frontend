@@ -16,16 +16,19 @@
 
 package controllers
 
+import connectors.SubscriptionConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction, NotEnrolledForDAC6Action}
 import javax.inject.Inject
-import models.{Mode, NormalMode}
+import models.{BusinessDetails, Mode, NormalMode, UserAnswers}
 import navigation.Navigator
+import org.slf4j.LoggerFactory
 import pages._
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import renderer.Renderer
 import repositories.SessionRepository
-import services.BusinessMatchingService
+import services.{BusinessMatchingService, EmailService}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
@@ -41,23 +44,60 @@ class BusinessMatchingController @Inject()(
                                             requireData: DataRequiredAction,
                                             businessMatchingService: BusinessMatchingService,
                                             val controllerComponents: MessagesControllerComponents,
-                                            renderer: Renderer
+                                            renderer: Renderer,
+                                            subscriptionConnector: SubscriptionConnector,
+                                            emailService: EmailService,
                                           )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
+
+  private val logger = LoggerFactory.getLogger(getClass)
+//
+//  def matchIndividual(mode: Mode): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
+//    implicit request =>
+//      businessMatchingService.sendIndividualMatchingInformation(request.userAnswers).flatMap {
+//        case Right((Some(_), Some(id), _)) =>
+//          for {
+//            updatedAnswersWithSafeID <- Future.fromTry(request.userAnswers.set(SafeIDPage, id))
+//            _                        <- sessionRepository.set(updatedAnswersWithSafeID)
+//          } yield {
+//            Redirect(routes.IdentityConfirmedController.onPageLoad()) //TODO: may need more data collected for Cardiff team
+//          }
+//        case Right(_) => Future.successful(Redirect(routes.IndividualNotConfirmedController.onPageLoad()))
+//        //we are missing a name or a date of birth take them back to fill it in
+//        case Left(_) => Future.successful(Redirect(routes.NameController.onPageLoad(NormalMode)))
+//      }
+//  }
 
   def matchIndividual(mode: Mode): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
     implicit request =>
       businessMatchingService.sendIndividualMatchingInformation(request.userAnswers).flatMap {
-        case Right((Some(_), Some(id), _)) =>
-          for {
-            updatedAnswersWithSafeID <- Future.fromTry(request.userAnswers.set(SafeIDPage, id))
-            _                        <- sessionRepository.set(updatedAnswersWithSafeID)
-          } yield {
-            Redirect(routes.IdentityConfirmedController.onPageLoad()) //TODO: may need more data collected for Cardiff team
-          }
+        case Right((Some(_), Some(id), existingSubscriptionDetails)) =>
+//          for {
+//            updatedAnswersWithSafeID <- Future.fromTry(request.userAnswers.set(SafeIDPage, id))
+//            _                        <- sessionRepository.set(updatedAnswersWithSafeID)
+//          } yield {
+//            Redirect(routes.IdentityConfirmedController.onPageLoad()) //TODO: may need more data collected for Cardiff team
+//          }
+          updateIndividualAnswers(request.userAnswers, id).flatMap(updatedUserAnswers =>
+              if(existingSubscriptionDetails.isDefined) {
+                createEnrolment(updatedUserAnswers, existingSubscriptionDetails.get.displaySubscriptionForDACResponse.responseDetail.subscriptionID)
+              } else Future(Redirect(routes.IdentityConfirmedController.onPageLoad()))
+
+          )
+
         case Right(_) => Future.successful(Redirect(routes.IndividualNotConfirmedController.onPageLoad()))
         //we are missing a name or a date of birth take them back to fill it in
         case Left(_) => Future.successful(Redirect(routes.NameController.onPageLoad(NormalMode)))
       }
+  }
+
+  private def updateIndividualAnswers(userAnswers: UserAnswers, safeId: String): Future[UserAnswers] = {
+    for {
+      updatedAnswersWithSafeID <- Future.fromTry(userAnswers.set(SafeIDPage, safeId))
+      _                        <- sessionRepository.set(updatedAnswersWithSafeID)
+    } yield {
+      updatedAnswersWithSafeID
+    }
+
   }
 
   def matchBusiness(mode: Mode): Action[AnyContent] =
@@ -75,21 +115,63 @@ class BusinessMatchingController @Inject()(
       if (utrExist) {
         businessMatchingService.sendBusinessMatchingInformation(request.userAnswers) flatMap {
 
-          case (Some(details), Some(id), _) =>
-            for {
-              updatedAnswersWithBusinessAddress <- Future.fromTry(request.userAnswers.set(BusinessAddressPage, details.address.toAddress))
-              updatedAnswersWithBusinessName <- Future.fromTry(updatedAnswersWithBusinessAddress.set(RetrievedNamePage, details.name))
-              updatedAnswersWithSafeID <- Future.fromTry(updatedAnswersWithBusinessName.set(SafeIDPage, id))
-              _                  <- sessionRepository.set(updatedAnswersWithSafeID)
-            } yield {
-              Redirect(routes.ConfirmBusinessController.onPageLoad(NormalMode))
+          case (Some(details), Some(id), existingSubscriptionInfo) =>
+            updateUserAnswers(request.userAnswers, details, id).flatMap { updatedUserAnswers =>
+              if (existingSubscriptionInfo.isDefined) {
+                createEnrolment(updatedUserAnswers, existingSubscriptionInfo.get.displaySubscriptionForDACResponse.responseDetail.subscriptionID)
+              } else
+                Future.successful(Redirect(routes.ConfirmBusinessController.onPageLoad(NormalMode)))
+
             }
           case _ => Future.successful(Redirect(routes.BusinessNotConfirmedController.onPageLoad()))
         } recover {
           case _ => Redirect(routes.ProblemWithServiceController.onPageLoad())
         }
+
       } else {
         Future.successful(Redirect(routes.DoYouHaveUTRController.onPageLoad(NormalMode)))
       }
+  }
+
+  def updateUserAnswers(userAnswers: UserAnswers, details: BusinessDetails, id :String): Future[UserAnswers] = {
+   for {
+     updatedAnswersWithBusinessAddress <- Future.fromTry(userAnswers.set(BusinessAddressPage, details.address.toAddress))
+     updatedAnswersWithBusinessName <- Future.fromTry(updatedAnswersWithBusinessAddress.set(RetrievedNamePage, details.name))
+     updatedAnswersWithSafeID <- Future.fromTry(updatedAnswersWithBusinessName.set(SafeIDPage, id))
+     _ <- sessionRepository.set(updatedAnswersWithSafeID)
+   } yield updatedAnswersWithSafeID
+  }
+
+  def createEnrolment(userAnswers: UserAnswers, subscriptionID: String)(implicit hc: HeaderCarrier): Future[Result] = {
+    subscriptionConnector.createEnrolment(userAnswers).flatMap {
+      subscriptionResponse =>
+        addEnrolmentIdToUserAnswers(userAnswers, subscriptionID)
+          if (subscriptionResponse.status.equals(NO_CONTENT)) {
+          emailService.sendEmail(userAnswers).map {
+            emailResponse =>
+              logEmailResponse(emailResponse)
+              Redirect(routes.RegistrationSuccessfulController.onPageLoad())
+          }.recover {
+            case e: Exception => Redirect(routes.RegistrationSuccessfulController.onPageLoad())
+          }
+        } else {
+        Future(Redirect(routes.ProblemWithServiceController.onPageLoad()))
+      }
+    }
+
+  }
+  private def addEnrolmentIdToUserAnswers(userAnswers: UserAnswers, subscriptionID: String): Future[UserAnswers] = {
+
+    for {
+      updatedAnswersWithSafeID <- Future.fromTry(userAnswers.set(SubscriptionIDPage, subscriptionID))
+      _ <- sessionRepository.set(updatedAnswersWithSafeID)
+    } yield updatedAnswersWithSafeID
+  }
+  private def logEmailResponse(emailResponse: Option[HttpResponse]): Unit = {
+    emailResponse match {
+      case Some(HttpResponse(NOT_FOUND, _, _)) => logger.warn("The template cannot be found within the email service")
+      case Some(HttpResponse(BAD_REQUEST, _, _)) => logger.warn("Missing email or name parameter")
+      case _ => Unit
+    }
   }
 }
