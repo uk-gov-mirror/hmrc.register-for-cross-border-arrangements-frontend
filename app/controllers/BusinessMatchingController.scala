@@ -140,10 +140,25 @@ class BusinessMatchingController @Inject()(
     subscriptionConnector.createEnrolment(userAnswers).flatMap {
       subscriptionResponse =>
         addEnrolmentIdToUserAnswers(userAnswers, subscriptionID)
+
+        println("***************************************")
+        println("***************************************")
+        println("***************************************")
+        println("adding enrolment id to session")
+        println("***************************************")
+        println("***************************************")
+        println("***************************************")
           if (subscriptionResponse.status.equals(NO_CONTENT)) {
           emailService.sendEmail(userAnswers).map {
             emailResponse =>
               logEmailResponse(emailResponse)
+              println("***************************************")
+              println("***************************************")
+              println("***************************************")
+              println("redirecting to RegistrationSuccessfulController")
+              println("***************************************")
+              println("***************************************")
+              println("***************************************")
               Redirect(routes.RegistrationSuccessfulController.onPageLoad())
           }.recover {
             case e: Exception => Redirect(routes.RegistrationSuccessfulController.onPageLoad())
@@ -171,8 +186,18 @@ class BusinessMatchingController @Inject()(
     for {
       updatedAnswersWithSafeID <- Future.fromTry(userAnswers.set(SubscriptionIDPage, subscriptionID))
       _ <- sessionRepository.set(updatedAnswersWithSafeID)
-    } yield updatedAnswersWithSafeID
-  }
+    } yield {
+      println("***********************")
+
+    println("***********************")
+      println("***********************")
+      println("in yield")
+      println("***********************")
+      println("***********************")
+      println("***********************")
+      println("***********************")
+      updatedAnswersWithSafeID
+  }}
 
   private def logEmailResponse(emailResponse: Option[HttpResponse]): Unit = {
     emailResponse match {
