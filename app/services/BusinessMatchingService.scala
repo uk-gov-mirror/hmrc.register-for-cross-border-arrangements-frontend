@@ -16,27 +16,31 @@
 
 package services
 
-import connectors.RegistrationConnector
+import connectors.{RegistrationConnector, SubscriptionConnector}
 import javax.inject.Inject
+import models.readSubscription.DisplaySubscriptionForDACResponse
 import models.{BusinessDetails, BusinessType, PayloadRegisterWithID, PayloadRegistrationWithIDResponse, UniqueTaxpayerReference, UserAnswers}
 import pages.{BusinessTypePage, CorporationTaxUTRPage, NinoPage, SelfAssessmentUTRPage}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class BusinessMatchingService @Inject()(registrationConnector: RegistrationConnector) {
+class BusinessMatchingService @Inject()(registrationConnector: RegistrationConnector,
+                                        subscriptionConnector: SubscriptionConnector) {
 
   def sendIndividualMatchingInformation(userAnswers: UserAnswers)
                                        (implicit hc: HeaderCarrier,
-                                        ec: ExecutionContext): Future[Either[Exception, (Option[PayloadRegistrationWithIDResponse], Option[String])]] =
+                                        ec: ExecutionContext): Future[Either[Exception, (Option[PayloadRegistrationWithIDResponse], Option[String], Option[DisplaySubscriptionForDACResponse])]] =
     userAnswers.get(NinoPage) match {
       case Some(nino) =>
         val payloadForIndividual = PayloadRegisterWithID.createIndividualSubmission(userAnswers, "NINO", nino.nino)
         payloadForIndividual match {
-          case Some(request) => registrationConnector.registerWithID(request).map {
+          case Some(request) => registrationConnector.registerWithID(request).flatMap {
             response =>
               val safeId = retrieveSafeID(response)
-              Right((response, safeId))
+              retrieveExistingSubscriptionDetails(safeId).map { existingSubscription =>
+                Right((response, safeId, existingSubscription))
+              }
           }
           case None =>
             Future.successful(Left(new Exception("Couldn't Create Payload for Register With ID"))            )
@@ -45,7 +49,7 @@ class BusinessMatchingService @Inject()(registrationConnector: RegistrationConne
     }
 
   def sendBusinessMatchingInformation(userAnswers: UserAnswers)
-                                     (implicit hc: HeaderCarrier, ec: ExecutionContext):  Future[(Option[BusinessDetails], Option[String])] = {
+                                     (implicit hc: HeaderCarrier, ec: ExecutionContext):  Future[(Option[BusinessDetails], Option[String], Option[DisplaySubscriptionForDACResponse])] = {
 
     val utr: UniqueTaxpayerReference = (userAnswers.get(SelfAssessmentUTRPage), userAnswers.get(CorporationTaxUTRPage)) match {
       case (Some(utr), _) => utr
@@ -60,7 +64,13 @@ class BusinessMatchingService @Inject()(registrationConnector: RegistrationConne
         PayloadRegisterWithID.createBusinessSubmission(userAnswers, "UTR", utr.uniqueTaxPayerReference)
     }
 
-    callEndPoint(payload)
+    callEndPoint(payload).flatMap{tup => {
+      retrieveExistingSubscriptionDetails(tup._2).map { existingSubscription =>
+
+                (tup._1, tup._2, existingSubscription)
+      }
+    }
+  }
   }
 
   def callEndPoint(payload: Option[PayloadRegisterWithID])
@@ -79,5 +89,14 @@ class BusinessMatchingService @Inject()(registrationConnector: RegistrationConne
     payloadRegisterWithIDResponse.flatMap {
       _.registerWithIDResponse.responseDetail.map(_.SAFEID)
     }
+  }
+
+  private def retrieveExistingSubscriptionDetails(safeId: Option[String])
+   (implicit hc: HeaderCarrier, ec: ExecutionContext):Future[Option[DisplaySubscriptionForDACResponse]] = {
+
+    if (safeId.isDefined) {
+      subscriptionConnector.readSubscriptionDetails(safeId.get)
+    }else Future(None)
+
   }
 }

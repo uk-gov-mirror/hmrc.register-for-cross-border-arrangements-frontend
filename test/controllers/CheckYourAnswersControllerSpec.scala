@@ -33,7 +33,8 @@ import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import services.{EmailService, RegistrationService}
+import repositories.SessionRepository
+import services.{BusinessMatchingService, EmailService, RegistrationService}
 import uk.gov.hmrc.domain.{Generator, Nino}
 import uk.gov.hmrc.http.HttpResponse
 
@@ -54,6 +55,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
   val mockEmailService: EmailService = mock[EmailService]
   val mockSubscriptionConnector: SubscriptionConnector = mock[SubscriptionConnector]
   val mockRegistrationService: RegistrationService = mock[RegistrationService]
+  val mockSessionRepository: SessionRepository = mock[SessionRepository]
 
 
   override def beforeEach: Unit =
@@ -64,6 +66,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
       mockRegistrationService
     )
 
+  when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
   "Check Your Answers Controller" - {
 
@@ -98,7 +101,10 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
         .set(SecondaryContactTelephoneNumberPage, "07888888888")
         .success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository)
+        ).build()
 
       val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
 
@@ -154,7 +160,10 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
         .set(TelephoneNumberQuestionPage, false)
         .success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository)
+        ).build()
 
       val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
 
@@ -211,7 +220,10 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
         .set(HaveSecondContactPage, false)
         .success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository)
+        ).build()
 
       val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
 
@@ -267,7 +279,10 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
         .set(TelephoneNumberQuestionPage, false)
         .success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository)
+        ).build()
 
       val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
 
@@ -301,7 +316,10 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
 
     "must redirect to Session Expired for a GET if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val application = applicationBuilder(userAnswers = None)
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository)
+        ).build()
 
       val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
 
@@ -330,17 +348,20 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
           .overrides(bind[EmailService]
             .toInstance(mockEmailService),
             bind[SubscriptionConnector]
-              .toInstance(mockSubscriptionConnector))
+              .toInstance(mockSubscriptionConnector),
+          bind[SessionRepository]
+           toInstance(mockSessionRepository))
           .build()
 
         when(mockSubscriptionConnector.createSubscription(any())(any(), any()))
           .thenReturn(Future.successful(dacSubscriptionResponse))
 
+        when(mockSubscriptionConnector.createEnrolment(any())(any(), any()))
+          .thenReturn(Future.successful(HttpResponse(NO_CONTENT, "")))
+
         when(mockEmailService.sendEmail(any())(any()))
           .thenReturn(Future.successful(Some(HttpResponse(OK, ""))))
 
-        when(mockSubscriptionConnector.createEnrolment(any())(any(), any()))
-          .thenReturn(Future.successful(HttpResponse(NO_CONTENT, "")))
 
         val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit().url)
         val result = route(application, request).value
@@ -365,9 +386,11 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
           .overrides(bind[RegistrationService]
             .toInstance(mockRegistrationService))
           .overrides(bind[EmailService]
-            .toInstance(mockEmailService),
-            bind[SubscriptionConnector]
+            .toInstance(mockEmailService))
+            .overrides(bind[SubscriptionConnector]
             .toInstance(mockSubscriptionConnector))
+          .overrides(bind[SessionRepository]
+            .toInstance(mockSessionRepository))
           .build()
 
         when(mockRegistrationService.sendRegistration(any())(any(), any()))
@@ -400,6 +423,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
         val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(bind[RegistrationService]
             .toInstance(mockRegistrationService))
+          .overrides(bind[SessionRepository]
+            .toInstance(mockSessionRepository))
           .build()
 
         val registrationResponse: String =
@@ -432,6 +457,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
         val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(bind[RegistrationService]
             .toInstance(mockRegistrationService))
+          .overrides(bind[SessionRepository]
+            .toInstance(mockSessionRepository))
           .build()
 
         val invalidRegistrationResponse: String =
@@ -468,7 +495,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
           .overrides(bind[RegistrationService]
             .toInstance(mockRegistrationService),
             bind[SubscriptionConnector]
-              .toInstance(mockSubscriptionConnector))
+              .toInstance(mockSubscriptionConnector),
+              bind[SessionRepository]
+              .toInstance(mockSessionRepository))
           .build()
 
         when(mockRegistrationService.sendRegistration(any())(any(), any()))
@@ -495,7 +524,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
           .overrides(bind[EmailService]
             .toInstance(mockEmailService),
             bind[SubscriptionConnector]
-            .toInstance(mockSubscriptionConnector))
+            .toInstance(mockSubscriptionConnector),
+            bind[SessionRepository]
+            .toInstance(mockSessionRepository))
           .build()
 
         when(mockEmailService.sendEmail(any())(any()))
@@ -524,7 +555,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
           .overrides(bind[EmailService]
             .toInstance(mockEmailService),
             bind[SubscriptionConnector]
-              .toInstance(mockSubscriptionConnector))
+              .toInstance(mockSubscriptionConnector),
+            bind[SessionRepository]
+              .toInstance(mockSessionRepository))
           .build()
 
         when(mockSubscriptionConnector.createSubscription(any())(any(), any()))
@@ -558,7 +591,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
         .overrides(bind[EmailService]
           .toInstance(mockEmailService),
           bind[SubscriptionConnector]
-            .toInstance(mockSubscriptionConnector))
+            .toInstance(mockSubscriptionConnector),
+            bind[SessionRepository]
+            .toInstance(mockSessionRepository))
         .build()
 
       when(mockSubscriptionConnector.createSubscription(any())(any(), any()))
@@ -584,7 +619,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(bind[RegistrationService]
-            .toInstance(mockRegistrationService))
+            .toInstance(mockRegistrationService),
+            bind[SessionRepository]
+            .toInstance(mockSessionRepository))
           .build()
 
         when(mockRegistrationService.sendRegistration(any())(any(), any()))
@@ -604,7 +641,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
           .overrides(bind[SubscriptionConnector]
               .toInstance(mockSubscriptionConnector),
             bind[RegistrationService]
-            .toInstance(mockRegistrationService))
+            .toInstance(mockRegistrationService),
+              bind[SessionRepository]
+            .toInstance(mockSessionRepository))
           .build()
 
         when(mockRegistrationService.sendRegistration(any())(any(), any()))
@@ -629,6 +668,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
               .toInstance(mockSubscriptionConnector))
           .overrides(bind[RegistrationService]
             .toInstance(mockRegistrationService))
+          .overrides(bind[SessionRepository]
+            .toInstance(mockSessionRepository))
           .build()
 
         when(mockRegistrationService.sendRegistration(any())(any(), any()))
@@ -651,7 +692,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
           .overrides(bind[EmailService]
             .toInstance(mockEmailService),
             bind[SubscriptionConnector]
-              .toInstance(mockSubscriptionConnector))
+              .toInstance(mockSubscriptionConnector),
+            bind[SessionRepository]
+              .toInstance(mockSessionRepository))
           .build()
 
         when(mockEmailService.sendEmail(any())(any()))
@@ -671,7 +714,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(bind[RegistrationService]
-            .toInstance(mockRegistrationService))
+            .toInstance(mockRegistrationService),
+            bind[SessionRepository]
+            .toInstance(mockSessionRepository))
           .build()
 
         when(mockRegistrationService.sendRegistration(any())(any(), any()))
@@ -688,7 +733,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(bind[RegistrationService]
-            .toInstance(mockRegistrationService))
+            .toInstance(mockRegistrationService),
+            bind[SessionRepository]
+            .toInstance(mockSessionRepository))
           .build()
 
         when(mockRegistrationService.sendRegistration(any())(any(), any()))
@@ -705,7 +752,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(bind[RegistrationService]
-            .toInstance(mockRegistrationService))
+            .toInstance(mockRegistrationService),
+            bind[SessionRepository]
+            .toInstance(mockSessionRepository))
           .build()
 
         when(mockRegistrationService.sendRegistration(any())(any(), any()))

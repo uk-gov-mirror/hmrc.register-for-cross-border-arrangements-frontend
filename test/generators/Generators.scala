@@ -18,13 +18,16 @@ package generators
 
 import java.time.{Instant, LocalDate, ZoneOffset}
 
+import models.UserAnswers
 import org.scalacheck.Arbitrary._
 import org.scalacheck.Gen._
 import org.scalacheck.{Gen, Shrink}
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import utils.RegexConstants
 import wolfendale.scalacheck.regexp.RegexpGen
 
-trait Generators extends UserAnswersGenerator with PageGenerators with ModelGenerators with UserAnswersEntryGenerators with RegexConstants {
+trait Generators extends UserAnswersGenerator with PageGenerators with ModelGenerators
+                 with UserAnswersEntryGenerators with RegexConstants with ScalaCheckPropertyChecks {
 
   implicit val dontShrink: Shrink[String] = Shrink.shrinkAny
 
@@ -193,5 +196,5 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
 
   def validSafeID: Gen[String] = RegexpGen.from(safeIDRegex)
 
-  def validSubsrciptionID: Gen[String] = RegexpGen.from(subscriptionIDRegex)
+  def validSubscriptionID: Gen[String] = RegexpGen.from(subscriptionIDRegex)
 }
