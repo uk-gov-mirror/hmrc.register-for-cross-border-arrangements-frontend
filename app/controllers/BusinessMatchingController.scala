@@ -120,10 +120,10 @@ class BusinessMatchingController @Inject()(
   }
 
   def createEnrolment(userAnswers: UserAnswers, subscriptionID: String)(implicit hc: HeaderCarrier): Future[Result] = {
-    subscriptionConnector.createEnrolment(userAnswers).flatMap {
-      subscriptionResponse =>
-        addEnrolmentIdToUserAnswers(userAnswers, subscriptionID).flatMap {updatedUserAnswers =>
-          if (subscriptionResponse.status.equals(NO_CONTENT)) {
+    addEnrolmentIdToUserAnswers(userAnswers, subscriptionID).flatMap {updatedUserAnswers =>
+    subscriptionConnector.createEnrolment(updatedUserAnswers).flatMap {
+      enrolmentResponse =>
+          if (enrolmentResponse.status.equals(NO_CONTENT)) {
             emailService.sendEmail(updatedUserAnswers).map {
               emailResponse =>
                 logEmailResponse(emailResponse)
