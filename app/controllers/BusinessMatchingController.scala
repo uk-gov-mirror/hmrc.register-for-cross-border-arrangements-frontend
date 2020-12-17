@@ -92,9 +92,26 @@ class BusinessMatchingController @Inject()(
       if (utrExist) {
         businessMatchingService.sendBusinessMatchingInformation(request.userAnswers) flatMap {
 
+
           case (Some(details), Some(id), existingSubscriptionInfo) =>
+
+            println("*************************************************")
+            println("*************************************************")
+            println("*************************************************")
+            println("existingSubscriptionInfo " + existingSubscriptionInfo)
+            println("*************************************************")
+            println("*************************************************")
+            println("*************************************************")
+
             updateUserAnswers(request.userAnswers, details, id).flatMap { updatedUserAnswers =>
               if (existingSubscriptionInfo.isDefined) {
+                println("*************************************************")
+                println("*************************************************")
+                println("*************************************************")
+                println("in is defined ")
+                println("*************************************************")
+                println("*************************************************")
+                println("*************************************************")
                 createEnrolment(updatedUserAnswers, existingSubscriptionInfo.get.displaySubscriptionForDACResponse.responseDetail.subscriptionID)
               } else
                 Future.successful(Redirect(routes.ConfirmBusinessController.onPageLoad(NormalMode)))
