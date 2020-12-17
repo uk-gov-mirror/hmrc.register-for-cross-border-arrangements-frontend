@@ -63,11 +63,11 @@ class BusinessMatchingControllerSpec extends SpecBase
 
   val mockSessionRepository: SessionRepository = mock[SessionRepository]
 
-  val businessUserAnswers: UserAnswers = UserAnswers(userAnswersId)
+  def createBusinessUserAnswers(utr: String): UserAnswers = UserAnswers(userAnswersId)
     .set(BusinessTypePage, BusinessType.UnIncorporatedBody)
     .success
     .value
-    .set(CorporationTaxUTRPage, UniqueTaxpayerReference("0123456789"))
+    .set(CorporationTaxUTRPage, UniqueTaxpayerReference(utr))
     .success
     .value
     .set(BusinessNamePage, "Business Name")
@@ -350,9 +350,9 @@ class BusinessMatchingControllerSpec extends SpecBase
     "when a correct submission can be created and returns a business match" - {
 
       "must redirect the user to /confirm-business page if business is unincorporated or corporate" in {
-        forAll(validSafeID) {
-          safeId =>
-            val application = applicationBuilder(userAnswers = Some(businessUserAnswers))
+        forAll(validSafeID, validUtr) {
+          (safeId, utr) =>
+            val application = applicationBuilder(userAnswers = Some(createBusinessUserAnswers(utr)))
               .overrides(
                 bind[BusinessMatchingService].toInstance(mockBusinessMatchingService),
                 bind[SessionRepository].toInstance(mockSessionRepository)
@@ -372,10 +372,10 @@ class BusinessMatchingControllerSpec extends SpecBase
         }
       }
       "must create the enrolment redirect the user to registration confirmation when user already subscribed" in {
-        forAll(validSubscriptionID, validSafeID) {
-          (existingSubscriptionID, safeId) =>
+        forAll(validSubscriptionID, validSafeID, validUtr) {
+          (existingSubscriptionID, safeId, utr) =>
 
-            val application = applicationBuilder(userAnswers = Some(businessUserAnswers))
+            val application = applicationBuilder(userAnswers = Some(createBusinessUserAnswers(utr)))
               .overrides(
                 bind[BusinessMatchingService].toInstance(mockBusinessMatchingService),
                 bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
@@ -413,10 +413,10 @@ class BusinessMatchingControllerSpec extends SpecBase
 
 
       "must create the enrolment redirect the user to registration confirmation when user already subscribed even if call to email service fails" in {
-        forAll(validSubscriptionID, validSafeID) {
-          (existingSubscriptionID, safeId) =>
+        forAll(validSubscriptionID, validSafeID, validUtr) {
+          (existingSubscriptionID, safeId, utr) =>
 
-            val application = applicationBuilder(userAnswers = Some(businessUserAnswers))
+            val application = applicationBuilder(userAnswers = Some(createBusinessUserAnswers(utr)))
               .overrides(
                 bind[BusinessMatchingService].toInstance(mockBusinessMatchingService),
                 bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
@@ -453,10 +453,10 @@ class BusinessMatchingControllerSpec extends SpecBase
       }
 
       "must redirect to technical difficulties page if call to create the enrolment fails when user already subscribed" in {
-        forAll(validSubscriptionID, validSafeID) {
-          (existingSubscriptionID, safeId) =>
+        forAll(validSubscriptionID, validSafeID, validUtr) {
+          (existingSubscriptionID, safeId, utr) =>
 
-            val application = applicationBuilder(userAnswers = Some(businessUserAnswers))
+            val application = applicationBuilder(userAnswers = Some(createBusinessUserAnswers(utr)))
               .overrides(
                 bind[BusinessMatchingService].toInstance(mockBusinessMatchingService),
                 bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
@@ -489,13 +489,13 @@ class BusinessMatchingControllerSpec extends SpecBase
         }
       }
       "must redirect the user to /confirm-business page if business is not unincorporated or corporate" in {
-        forAll(validSafeID) {
-          safeId =>
+        forAll(validSafeID, validUtr) {
+          (safeId, utr) =>
             val businessUserAnswers: UserAnswers = UserAnswers(userAnswersId)
               .set(BusinessTypePage, BusinessType.Partnership)
               .success
               .value
-              .set(SelfAssessmentUTRPage, UniqueTaxpayerReference("0123456789"))
+              .set(SelfAssessmentUTRPage, UniqueTaxpayerReference(utr))
               .success
               .value
               .set(BusinessNamePage, "Business Name")
@@ -526,43 +526,45 @@ class BusinessMatchingControllerSpec extends SpecBase
     "when a correct submission can be created and returns no business match" - {
 
       "must redirect the user to the can't find business page" in {
+        forAll(validUtr) {
+          utr =>
+            val application = applicationBuilder(userAnswers = Some(createBusinessUserAnswers(utr)))
+              .overrides(
+                bind[BusinessMatchingService].toInstance(mockBusinessMatchingService),
+                bind[SessionRepository].toInstance(mockSessionRepository)
+              ).build()
 
-        val application = applicationBuilder(userAnswers = Some(businessUserAnswers))
-          .overrides(
-            bind[BusinessMatchingService].toInstance(mockBusinessMatchingService),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          ).build()
+            when(mockBusinessMatchingService.sendBusinessMatchingInformation(any())(any(), any()))
+              .thenReturn(Future.successful((None, None, None)))
 
-        when(mockBusinessMatchingService.sendBusinessMatchingInformation(any())(any(), any()))
-          .thenReturn(Future.successful((None, None, None)))
+            val result = route(application, getRequest(businessMatchingRoute)).value
 
-        val result = route(application, getRequest(businessMatchingRoute)).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(businessMatchNotFoundRoute)
+            status(result) mustEqual SEE_OTHER
+            redirectLocation(result) mustBe Some(businessMatchNotFoundRoute)
+        }
       }
     }
-
     "when a correct submission can be created and returns a business match" - {
 
       "must redirect to the error page if validation fails" in {
+        forAll(validUtr) {
+          utr =>
+            val application = applicationBuilder(userAnswers = Some(createBusinessUserAnswers(utr)))
+              .overrides(
+                bind[BusinessMatchingService].toInstance(mockBusinessMatchingService),
+                bind[SessionRepository].toInstance(mockSessionRepository)
+              ).build()
 
-        val application = applicationBuilder(userAnswers = Some(businessUserAnswers))
-          .overrides(
-            bind[BusinessMatchingService].toInstance(mockBusinessMatchingService),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          ).build()
+            when(mockBusinessMatchingService.sendBusinessMatchingInformation(any())(any(), any()))
+              .thenReturn(Future.failed(new Exception))
 
-        when(mockBusinessMatchingService.sendBusinessMatchingInformation(any())(any(), any()))
-          .thenReturn(Future.failed(new Exception))
+            val result = route(application, getRequest(businessMatchingRoute)).value
 
-        val result = route(application, getRequest(businessMatchingRoute)).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(problemWithServiceRoute)
+            status(result) mustEqual SEE_OTHER
+            redirectLocation(result) mustBe Some(problemWithServiceRoute)
+        }
       }
     }
-
     "when a correct submission can't be created due to missing data required to business match" - {
 
       "must redirect the user to the utr page if it's missing" in {
