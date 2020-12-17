@@ -122,20 +122,20 @@ class BusinessMatchingController @Inject()(
   def createEnrolment(userAnswers: UserAnswers, subscriptionID: String)(implicit hc: HeaderCarrier): Future[Result] = {
     subscriptionConnector.createEnrolment(userAnswers).flatMap {
       subscriptionResponse =>
-        addEnrolmentIdToUserAnswers(userAnswers, subscriptionID)
+        addEnrolmentIdToUserAnswers(userAnswers, subscriptionID).flatMap {updatedUserAnswers =>
           if (subscriptionResponse.status.equals(NO_CONTENT)) {
-          emailService.sendEmail(userAnswers).map {
-            emailResponse =>
-              logEmailResponse(emailResponse)
-              Redirect(routes.RegistrationSuccessfulController.onPageLoad())
-          }.recover {
-            case e: Exception => Redirect(routes.RegistrationSuccessfulController.onPageLoad())
+            emailService.sendEmail(updatedUserAnswers).map {
+              emailResponse =>
+                logEmailResponse(emailResponse)
+                Redirect(routes.RegistrationSuccessfulController.onPageLoad())
+            }.recover {
+              case e: Exception => Redirect(routes.RegistrationSuccessfulController.onPageLoad())
+            }
+          } else {
+            Future(Redirect(routes.ProblemWithServiceController.onPageLoad()))
           }
-        } else {
-        Future(Redirect(routes.ProblemWithServiceController.onPageLoad()))
-      }
+        }
     }
-
   }
   private def addEnrolmentIdToUserAnswers(userAnswers: UserAnswers, subscriptionID: String): Future[UserAnswers] = {
 
