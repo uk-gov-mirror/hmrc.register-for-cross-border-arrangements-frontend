@@ -16,18 +16,18 @@
 
 package pages
 
-import java.time.LocalDate
-
 import models.RegistrationType.{Business, Individual}
 import models.{Address, Country, Name, RegistrationType, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 import uk.gov.hmrc.domain.Generator
 
+import java.time.LocalDate
+
 
 class RegistrationTypePageSpec extends PageBehaviours {
 
-  val address: Address = Address("", "", None, None, None, Country("", "", ""))
+  val address: Address = Address("", None, "", None, None, Country("", "", ""))
   val name: Name = Name("FirstName", "LastName")
 
   "RegistrationTypePage" - {
@@ -62,14 +62,14 @@ class RegistrationTypePageSpec extends PageBehaviours {
             .success
             .value
 
-          result.get(DoYouHaveANationalInsuranceNumberPage) must not be defined
-          result.get(NinoPage) must not be defined
-          result.get(NamePage) must not be defined
-          result.get(DateOfBirthPage) must not be defined
-          result.get(NonUkNamePage) must not be defined
-          result.get(DoYouLiveInTheUKPage) must not be defined
-          result.get(WhatIsYourAddressUkPage) must not be defined
-          result.get(WhatIsYourAddressPage) must not be defined
+          result.get(DoYouHaveANationalInsuranceNumberPage) mustBe None
+          result.get(NinoPage) mustBe None
+          result.get(NamePage) mustBe None
+          result.get(DateOfBirthPage) mustBe None
+          result.get(NonUkNamePage) mustBe None
+          result.get(DoYouLiveInTheUKPage) mustBe None
+          result.get(WhatIsYourAddressUkPage) mustBe None
+          result.get(WhatIsYourAddressPage) mustBe None
       }
     }
 
@@ -84,8 +84,8 @@ class RegistrationTypePageSpec extends PageBehaviours {
             .set(RegistrationTypePage, Individual)
             .success.value
 
-          result.get(BusinessWithoutIDNamePage) must not be defined
-          result.get(BusinessAddressPage) must not be defined
+          result.get(BusinessWithoutIDNamePage) mustBe None
+          result.get(BusinessAddressPage) mustBe None
       }
     }
   }

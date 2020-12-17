@@ -16,13 +16,13 @@
 
 package generators
 
-import java.time.LocalDate
-
 import models.{PayloadRegistrationWithIDResponse, _}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen.alphaStr
 import org.scalacheck.{Arbitrary, Gen}
 import uk.gov.hmrc.domain.Nino
+
+import java.time.LocalDate
 
 trait ModelGenerators {
   self: Generators =>
@@ -43,8 +43,8 @@ trait ModelGenerators {
       Arbitrary {
       for {
         addressLine1 <- arbitrary[String]
-        addressLine2 <- arbitrary[String]
-        addressLine3 <- arbitrary[Option[String]]
+        addressLine2 <- arbitrary[Option[String]]
+        addressLine3 <- arbitrary[String]
         addressLine4 <- arbitrary[Option[String]]
         postCode <- arbitrary[Option[String]]
         country <- arbitrary[Country]

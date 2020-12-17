@@ -46,6 +46,12 @@ class WhatIsYourAddressFormProviderSpec extends StringFieldBehaviours {
       lengthError = FormError(fieldName, lengthKey)
     )
 
+    behave like fieldWithNonEmptyWhitespace(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
+
     behave like mandatoryField(
       form,
       fieldName,
@@ -63,7 +69,6 @@ class WhatIsYourAddressFormProviderSpec extends StringFieldBehaviours {
   ".addressLine2" - {
 
     val fieldName = "addressLine2"
-    val requiredKey = "whatIsYourAddress.error.addressLine2.required"
     val invalidKey = "whatIsYourAddress.error.addressLine2.invalid"
     val lengthKey = "whatIsYourAddress.error.addressLine2.length"
 
@@ -78,12 +83,6 @@ class WhatIsYourAddressFormProviderSpec extends StringFieldBehaviours {
       fieldName,
       maxLength = maxLength,
       lengthError = FormError(fieldName, lengthKey)
-    )
-
-    behave like mandatoryField(
-      form,
-      fieldName,
-      requiredError = FormError(fieldName, requiredKey)
     )
 
     behave like fieldWithInvalidData(
@@ -114,6 +113,18 @@ class WhatIsYourAddressFormProviderSpec extends StringFieldBehaviours {
       lengthError = FormError(fieldName, lengthKey)
     )
 
+    behave like fieldWithNonEmptyWhitespace(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
+
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
+
     behave like fieldWithInvalidData(
       form,
       fieldName,
@@ -125,7 +136,6 @@ class WhatIsYourAddressFormProviderSpec extends StringFieldBehaviours {
   ".addressLine4" - {
 
     val fieldName = "addressLine4"
-    val requiredKey = "whatIsYourAddress.error.addressLine4.required"
     val invalidKey = "whatIsYourAddress.error.addressLine4.invalid"
     val lengthKey = "whatIsYourAddress.error.addressLine4.length"
 
@@ -149,4 +159,33 @@ class WhatIsYourAddressFormProviderSpec extends StringFieldBehaviours {
       FormError(fieldName, invalidKey)
     )
   }
+
+  ".postCode" - {
+
+    val fieldName = "postCode"
+    val requiredKey = "whatIsYourAddress.error.postcode.required"
+    val lengthKey = "whatIsYourAddress.error.postcode.length"
+    val postCodeMaxLength = 10
+
+    behave like fieldThatBindsValidData(
+      form,
+      fieldName,
+      validPostCodes
+    )
+
+    behave like fieldWithMaxLengthAlpha(
+      form,
+      fieldName,
+      maxLength = postCodeMaxLength,
+      lengthError = FormError(fieldName, lengthKey)
+    )
+
+    behave like fieldWithPostCodeRequired(
+      form,
+      fieldName,
+      Seq("JE", "GG", "IM"),
+      invalidError = FormError(fieldName, Seq(requiredKey), Seq())
+    )
+  }
+
 }

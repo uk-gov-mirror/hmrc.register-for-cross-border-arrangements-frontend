@@ -53,7 +53,7 @@ class WhatIsYourAddressControllerSpec extends SpecBase with MockitoSugar with Nu
   val form: Form[Address] = formProvider(Seq(Country("valid","GB","United Kingdom")))
 
   lazy val whatIsYourAddressRoute: String = routes.WhatIsYourAddressController.onPageLoad(NormalMode).url
-  val address: Address = Address("value 1", "value 2", Some("value 3"), Some("value 4"), Some("XX9 9XX"),
+  val address: Address = Address("value 1", Some("value 2"), "value 3", Some("value 4"), Some("XX9 9XX"),
     Country("valid","GB","United Kingdom"))
 
   "WhatIsYourAddress Controller" - {

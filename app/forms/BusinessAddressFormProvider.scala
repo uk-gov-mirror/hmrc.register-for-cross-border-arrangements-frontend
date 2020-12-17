@@ -17,16 +17,17 @@
 package forms
 
 import forms.mappings.Mappings
-import javax.inject.Inject
 import models.{Address, Country}
 import play.api.data.Form
 import play.api.data.Forms._
 import utils.RegexConstants
 
+import javax.inject.Inject
+
 class BusinessAddressFormProvider @Inject() extends Mappings with RegexConstants {
 
   val addressLineLength = 35
-  val postCodeLength = 10
+
   def apply(countryList: Seq[Country]): Form[Address] = Form(
     mapping(
       "addressLine1" ->  validatedText("businessAddress.error.addressLine1.required",
@@ -35,13 +36,13 @@ class BusinessAddressFormProvider @Inject() extends Mappings with RegexConstants
         apiAddressRegex,
         addressLineLength
       ),
-      "addressLine2" ->  validatedText("businessAddress.error.addressLine2.required",
-        "businessAddress.error.addressLine2.invalid",
+      "addressLine2" ->  validatedOptionalText("businessAddress.error.addressLine2.invalid",
         "businessAddress.error.addressLine2.length",
         apiAddressRegex,
         addressLineLength
       ),
-      "addressLine3" -> validatedOptionalText("businessAddress.error.addressLine3.invalid",
+      "addressLine3" -> validatedText("businessAddress.error.addressLine3.required",
+        "businessAddress.error.addressLine3.invalid",
         "businessAddress.error.addressLine3.length",
         apiAddressRegex,
         addressLineLength),
@@ -49,7 +50,11 @@ class BusinessAddressFormProvider @Inject() extends Mappings with RegexConstants
         "businessAddress.error.addressLine4.length",
         apiAddressRegex,
         addressLineLength),
-      "postCode" -> optionalText().verifying(maxLength(postCodeLength,"businessAddress.error.postcode.length")),
+      "postCode" -> optionalPostcode(
+        requiredKey = "businessAddress.error.postcode.required",
+        lengthKey = "businessAddress.error.postcode.length",
+        countryFieldName = "country"
+      ),
       "country" ->  text("businessAddress.error.country.required")
         .verifying("businessAddress.error.country.required", value => countryList.exists(_.code == value))
         .transform[Country](value => countryList.find(_.code == value).get, _.code)

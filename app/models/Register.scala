@@ -32,14 +32,19 @@ object NoIdOrganisation {
 }
 
 //ToDo This is different to one we are collecting and validating on the form this needs looked at
-case class AddressNoId(addressLine1: String, addressLine2:Option[String], addressLine3: String, addressLine4: Option[String], postalCode: Option[String], countryCode: String)
+case class AddressNoId(addressLine1: String,
+                       addressLine2: Option[String],
+                       addressLine3: String,
+                       addressLine4: Option[String],
+                       postalCode: Option[String],
+                       countryCode: String)
 
 object AddressNoId {
   def apply(address: Address): Option[AddressNoId] =
     Some(AddressNoId(
       addressLine1 = address.addressLine1,
-      addressLine2 = Some(address.addressLine2),
-      addressLine3 = address.addressLine3.get,
+      addressLine2 = address.addressLine2,
+      addressLine3 = address.addressLine3,
       addressLine4 = address.addressLine4,
       postalCode = address.postCode,
       countryCode = address.country.code
@@ -177,8 +182,8 @@ object IndRegistration {
   private def toAddress(userAnswers: UserAnswers) =
     userAnswers.get(SelectedAddressLookupPage) map { lookUp =>
       Address(lookUp.addressLine1.getOrElse(""),
-        lookUp.addressLine2.getOrElse(""),
-        lookUp.addressLine3,
+        lookUp.addressLine2,
+        lookUp.addressLine3.getOrElse(""),
         lookUp.addressLine4,
         Some(lookUp.postcode),
         Country("valid", "UK", "United Kingdom"))

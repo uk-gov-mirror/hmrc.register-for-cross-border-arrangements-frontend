@@ -54,7 +54,7 @@ class ConfirmBusinessControllerSpec extends SpecBase with MockitoSugar with Nunj
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val address = Address("", "", None, None, None, Country("", "", ""))
+      val address = Address("", None, "", None, None, Country("", "", ""))
       val userAnswers = UserAnswers(userAnswersId)
         .set(BusinessAddressPage, address)
         .success.value
@@ -88,7 +88,7 @@ class ConfirmBusinessControllerSpec extends SpecBase with MockitoSugar with Nunj
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val address = Address("", "", None, None, None, Country("", "", ""))
+      val address = Address("", None, "", None, None, Country("", "", ""))
       val userAnswers = UserAnswers(userAnswersId)
         .set(BusinessAddressPage, address)
         .success.value
@@ -155,7 +155,7 @@ class ConfirmBusinessControllerSpec extends SpecBase with MockitoSugar with Nunj
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val address = Address("", "", None, None, None, Country("", "", ""))
+      val address = Address("", None, "", None, None, Country("", "", ""))
       val userAnswers = UserAnswers(userAnswersId)
         .set(BusinessAddressPage, address)
         .success.value

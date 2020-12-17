@@ -36,7 +36,7 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
   val navigator: Navigator = new Navigator(mockFrontendConfig)
 
   val name: Name = Name("FirstName", "LastName")
-  val address: Address = Address("", "", None, None, None, Country("", "", ""))
+  val address: Address = Address("", None, "", None, None, Country("", "", ""))
   val utr: UniqueTaxpayerReference = UniqueTaxpayerReference("0123456789")
 
   "Navigator in Check mode" - {

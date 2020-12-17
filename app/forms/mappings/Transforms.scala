@@ -28,4 +28,16 @@ trait Transforms {
       s"$head $tail".toUpperCase
     } else {validPostCode.toUpperCase}
   }
+
+  protected def minimiseSpace(value: String): String =
+    value.replaceAll(" {2,}", " ")
+  private[mappings] def postCodeTransform(value: String): String = {
+    minimiseSpace(value.trim.toUpperCase)
+  }
+  protected def postCodeDataTransform(value: Option[String]): Option[String] = {
+    value.map(postCodeTransform).filter(_.nonEmpty)
+  }
+  protected def countryDataTransform(value: Option[String]): Option[String] = {
+    value.map(s => stripSpaces(s).toUpperCase()).filter(_.nonEmpty)
+  }
 }

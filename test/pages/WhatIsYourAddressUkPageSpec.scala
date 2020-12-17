@@ -38,11 +38,11 @@ class WhatIsYourAddressUkPageSpec extends PageBehaviours {
             .set(SelectAddressPage, "Some UK address")
             .success
             .value
-            .set(WhatIsYourAddressUkPage, Address("", "", None, None, None, Country("", "", "")))
+            .set(WhatIsYourAddressUkPage, Address("", None, "", None, None, Country("", "", "")))
             .success
             .value
 
-          result.get(SelectAddressPage) must not be defined
+          result.get(SelectAddressPage) mustBe None
       }
     }
   }

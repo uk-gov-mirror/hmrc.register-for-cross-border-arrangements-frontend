@@ -186,8 +186,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
           Html(s"""
               $businessName<br><br>
               ${address.addressLine1}<br>
-              ${address.addressLine2}<br>
-              ${address.addressLine3.fold("")(address => s"$address<br>")}
+              ${address.addressLine2.fold("")(address => s"$address<br>")}<br>
+              ${address.addressLine3}
               ${address.addressLine4.fold("")(address => s"$address<br>")}
               ${address.postCode.fold("")(postcode => s"$postcode<br>")}
               ${address.country.description}
@@ -521,8 +521,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
   private def formatAddress(answer: Address): Html = {
     Html(s"""
         ${answer.addressLine1}<br>
-        ${answer.addressLine2}<br>
-        ${answer.addressLine3.fold("")(address => s"$address<br>")}
+        ${answer.addressLine2.fold("")(address => s"$address<br>")}<br>
+        ${answer.addressLine3}
         ${answer.addressLine4.fold("")(address => s"$address<br>")}
         ${answer.postCode.fold("")(postcode => s"$postcode<br>")}
         ${answer.country.description}

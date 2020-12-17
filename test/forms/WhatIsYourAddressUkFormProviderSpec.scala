@@ -46,6 +46,12 @@ class WhatIsYourAddressUkFormProviderSpec extends StringFieldBehaviours {
       lengthError = FormError(fieldName, lengthKey)
     )
 
+    behave like fieldWithNonEmptyWhitespace(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
+
     behave like mandatoryField(
       form,
       fieldName,
@@ -63,7 +69,6 @@ class WhatIsYourAddressUkFormProviderSpec extends StringFieldBehaviours {
   ".addressLine2" - {
 
     val fieldName = "addressLine2"
-    val requiredKey = "whatIsYourUkAddress.error.addressLine2.required"
     val invalidKey = "whatIsYourUkAddress.error.addressLine2.invalid"
     val lengthKey = "whatIsYourUkAddress.error.addressLine2.length"
 
@@ -80,10 +85,71 @@ class WhatIsYourAddressUkFormProviderSpec extends StringFieldBehaviours {
       lengthError = FormError(fieldName, lengthKey)
     )
 
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      "jjdjdj£%^&kfkf",
+      FormError(fieldName, invalidKey)
+    )
+  }
+
+  ".addressLine3" - {
+
+    val fieldName = "addressLine3"
+    val requiredKey = "whatIsYourUkAddress.error.addressLine3.required"
+    val invalidKey = "whatIsYourUkAddress.error.addressLine3.invalid"
+    val lengthKey = "whatIsYourUkAddress.error.addressLine3.length"
+
+    behave like fieldThatBindsValidData(
+      form,
+      fieldName,
+      stringsWithMaxLength(maxLength)
+    )
+
+    behave like fieldWithMaxLengthAlpha(
+      form,
+      fieldName,
+      maxLength = maxLength,
+      lengthError = FormError(fieldName, lengthKey)
+    )
+
+    behave like fieldWithNonEmptyWhitespace(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
+
     behave like mandatoryField(
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
+    )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      "jjdjdj£%^&kfkf",
+      FormError(fieldName, invalidKey)
+    )
+  }
+
+  ".addressLine4" - {
+
+    val fieldName = "addressLine4"
+    val invalidKey = "whatIsYourUkAddress.error.addressLine4.invalid"
+    val lengthKey = "whatIsYourUkAddress.error.addressLine4.length"
+
+    behave like fieldThatBindsValidData(
+      form,
+      fieldName,
+      stringsWithMaxLength(maxLength)
+    )
+
+    behave like fieldWithMaxLengthAlpha(
+      form,
+      fieldName,
+      maxLength = maxLength,
+      lengthError = FormError(fieldName, lengthKey)
     )
 
     behave like fieldWithInvalidData(

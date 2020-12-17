@@ -23,7 +23,7 @@ import pages.behaviours.PageBehaviours
 
 class DoYouLiveInTheUKPageSpec extends PageBehaviours {
 
-  val address: Address = Address("", "", None, None, None, Country("", "", ""))
+  val address: Address = Address("", None, "", None, None, Country("", "", ""))
 
   "DoYouLiveInTheUKPage" - {
 
@@ -44,7 +44,7 @@ class DoYouLiveInTheUKPageSpec extends PageBehaviours {
             .success
             .value
 
-          result.get(WhatIsYourAddressPage) must not be defined
+          result.get(WhatIsYourAddressPage) mustBe None
       }
     }
 
@@ -65,9 +65,9 @@ class DoYouLiveInTheUKPageSpec extends PageBehaviours {
             .success
             .value
 
-          result.get(IndividualUKPostcodePage) must not be defined
-          result.get(SelectAddressPage) must not be defined
-          result.get(WhatIsYourAddressUkPage) must not be defined
+          result.get(IndividualUKPostcodePage) mustBe None
+          result.get(SelectAddressPage) mustBe None
+          result.get(WhatIsYourAddressUkPage) mustBe None
       }
     }
   }
