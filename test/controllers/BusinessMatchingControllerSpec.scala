@@ -87,8 +87,8 @@ class BusinessMatchingControllerSpec extends SpecBase
   ))
 
 
-  val responseDetail: ResponseDetailForReadSubscription = ResponseDetailForReadSubscription(
-    subscriptionID = "XE0001234567890",
+  def createResponseDetail(id: String): ResponseDetailForReadSubscription = ResponseDetailForReadSubscription(
+    subscriptionID = id,
     tradingName = Some("Trading Name"),
     isGBUser = true,
     primaryContact = primaryContact,
@@ -107,47 +107,49 @@ class BusinessMatchingControllerSpec extends SpecBase
 
       "must redirect the user to the check your answers page" in {
 
-        val userAnswers = UserAnswers(userAnswersId)
-          .set(DateOfBirthPage, LocalDate.now())
-          .success
-          .value
-          .set(NamePage, Name("", ""))
-          .success
-          .value
-          .set(NinoPage, (new Generator()).nextNino)
-          .success
-          .value
+        forAll(validSafeID) {
+          safeId =>
+            val userAnswers = UserAnswers(userAnswersId)
+              .set(DateOfBirthPage, LocalDate.now())
+              .success
+              .value
+              .set(NamePage, Name("", ""))
+              .success
+              .value
+              .set(NinoPage, (new Generator()).nextNino)
+              .success
+              .value
 
-        val application = applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[BusinessMatchingService].toInstance(mockBusinessMatchingService),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          ).build()
+            val application = applicationBuilder(userAnswers = Some(userAnswers))
+              .overrides(
+                bind[BusinessMatchingService].toInstance(mockBusinessMatchingService),
+                bind[SessionRepository].toInstance(mockSessionRepository)
+              ).build()
 
-        when(mockBusinessMatchingService.sendIndividualMatchingInformation(any())(any(), any()))
-          .thenReturn(
-            Future.successful(Right((Some(
-              PayloadRegistrationWithIDResponse(
-                RegisterWithIDResponse(
-                  ResponseCommon("OK", None, "", None),
-                  None
-                )
+            when(mockBusinessMatchingService.sendIndividualMatchingInformation(any())(any(), any()))
+              .thenReturn(
+                Future.successful(Right((Some(
+                  PayloadRegistrationWithIDResponse(
+                    RegisterWithIDResponse(
+                      ResponseCommon("OK", None, "", None),
+                      None
+                    )
+                  )
+                ), Some(safeId), None)
+                ))
               )
-            ), Some("XE0000123456789"), None)
-            ))
-          )
 
-        val result = route(application, getRequest(individualMatchingRoute)).value
+            val result = route(application, getRequest(individualMatchingRoute)).value
 
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.IdentityConfirmedController.onPageLoad().url)
+            status(result) mustEqual SEE_OTHER
+            redirectLocation(result) mustBe Some(routes.IdentityConfirmedController.onPageLoad().url)
+        }
       }
-
 
       "must redirect the user to registration confirmation page if user is already subscribed" in {
 
-        forAll(validSubscriptionID) {
-          existingSubscriptionID =>
+        forAll(validSubscriptionID, validSafeID) {
+          (existingSubscriptionID, safeId) =>
 
             val userAnswers = UserAnswers(userAnswersId)
               .set(DateOfBirthPage, LocalDate.now())
@@ -168,7 +170,7 @@ class BusinessMatchingControllerSpec extends SpecBase
                 bind[SessionRepository].toInstance(mockSessionRepository)
               ).build()
 
-            val responseDetailRead: ResponseDetailForReadSubscription = responseDetail.copy(subscriptionID = existingSubscriptionID)
+            val responseDetailRead: ResponseDetailForReadSubscription = createResponseDetail(existingSubscriptionID)
 
             val displaySubscriptionForDACResponse: DisplaySubscriptionForDACResponse =
               DisplaySubscriptionForDACResponse(
@@ -184,7 +186,7 @@ class BusinessMatchingControllerSpec extends SpecBase
                       None
                     )
                   )
-                ), Some("XE0000123456789"), Some(displaySubscriptionForDACResponse))
+                ), Some(safeId), Some(displaySubscriptionForDACResponse))
                 ))
               )
 
@@ -204,8 +206,8 @@ class BusinessMatchingControllerSpec extends SpecBase
 
       "must redirect the user to registration confirmation page if user is already subscribed even if email call fails" in {
 
-        forAll(validSubscriptionID) {
-          existingSubscriptionID =>
+        forAll(validSubscriptionID, validSafeID) {
+          (existingSubscriptionID, safeId) =>
 
             val userAnswers = UserAnswers(userAnswersId)
               .set(DateOfBirthPage, LocalDate.now())
@@ -226,7 +228,7 @@ class BusinessMatchingControllerSpec extends SpecBase
                 bind[SessionRepository].toInstance(mockSessionRepository)
               ).build()
 
-            val responseDetailRead: ResponseDetailForReadSubscription = responseDetail.copy(subscriptionID = existingSubscriptionID)
+            val responseDetailRead: ResponseDetailForReadSubscription = createResponseDetail(existingSubscriptionID)
 
             val displaySubscriptionForDACResponse: DisplaySubscriptionForDACResponse =
               DisplaySubscriptionForDACResponse(
@@ -242,7 +244,7 @@ class BusinessMatchingControllerSpec extends SpecBase
                       None
                     )
                   )
-                ), Some("XE0000123456789"), Some(displaySubscriptionForDACResponse))
+                ), Some(safeId), Some(displaySubscriptionForDACResponse))
                 ))
               )
 
@@ -261,8 +263,8 @@ class BusinessMatchingControllerSpec extends SpecBase
 
       "must redirect the user to tech difficulties page if user is already subscribed and create enrolments call fails" in {
 
-        forAll(validSubscriptionID) {
-          existingSubscriptionID =>
+        forAll(validSubscriptionID, validSafeID) {
+          (existingSubscriptionID, safeId) =>
 
             val userAnswers = UserAnswers(userAnswersId)
               .set(DateOfBirthPage, LocalDate.now())
@@ -283,7 +285,7 @@ class BusinessMatchingControllerSpec extends SpecBase
                 bind[SessionRepository].toInstance(mockSessionRepository)
               ).build()
 
-            val responseDetailRead: ResponseDetailForReadSubscription = responseDetail.copy(subscriptionID = existingSubscriptionID)
+            val responseDetailRead: ResponseDetailForReadSubscription = createResponseDetail(existingSubscriptionID)
 
             val displaySubscriptionForDACResponse: DisplaySubscriptionForDACResponse =
               DisplaySubscriptionForDACResponse(
@@ -299,7 +301,7 @@ class BusinessMatchingControllerSpec extends SpecBase
                       None
                     )
                   )
-                ), Some("XE0000123456789"), Some(displaySubscriptionForDACResponse))
+                ), Some(safeId), Some(displaySubscriptionForDACResponse))
                 ))
               )
 
@@ -348,31 +350,30 @@ class BusinessMatchingControllerSpec extends SpecBase
     "when a correct submission can be created and returns a business match" - {
 
       "must redirect the user to /confirm-business page if business is unincorporated or corporate" in {
+        forAll(validSafeID) {
+          safeId =>
+            val application = applicationBuilder(userAnswers = Some(businessUserAnswers))
+              .overrides(
+                bind[BusinessMatchingService].toInstance(mockBusinessMatchingService),
+                bind[SessionRepository].toInstance(mockSessionRepository)
+              ).build()
 
-        val application = applicationBuilder(userAnswers = Some(businessUserAnswers))
-          .overrides(
-            bind[BusinessMatchingService].toInstance(mockBusinessMatchingService),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          ).build()
+            val businessDetails = BusinessDetails(
+              name = "My Company",
+              address = BusinessAddress("1 Address Street", None, None, None, "NE11 1BB", "GB"))
 
-        val businessDetails = BusinessDetails(
-          name = "My Company",
-          address = BusinessAddress("1 Address Street", None, None, None, "NE11 1BB", "GB"))
+            when(mockBusinessMatchingService.sendBusinessMatchingInformation(any())(any(), any()))
+              .thenReturn(Future.successful((Some(businessDetails), Some(safeId), None)))
 
-        val safeId = "XE0001234567890"
+            val result = route(application, getRequest(businessMatchingRoute)).value
 
-        when(mockBusinessMatchingService.sendBusinessMatchingInformation(any())(any(), any()))
-          .thenReturn(Future.successful((Some(businessDetails), Some(safeId), None)))
-
-        val result = route(application, getRequest(businessMatchingRoute)).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/confirm-business")
+            status(result) mustEqual SEE_OTHER
+            redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/confirm-business")
+        }
       }
-
       "must create the enrolment redirect the user to registration confirmation when user already subscribed" in {
-        forAll(validSubscriptionID) {
-          existingSubscriptionID =>
+        forAll(validSubscriptionID, validSafeID) {
+          (existingSubscriptionID, safeId) =>
 
             val application = applicationBuilder(userAnswers = Some(businessUserAnswers))
               .overrides(
@@ -386,9 +387,7 @@ class BusinessMatchingControllerSpec extends SpecBase
               name = "My Company",
               address = BusinessAddress("1 Address Street", None, None, None, "NE11 1BB", "GB"))
 
-            val safeId = "XE0001234567890"
-
-            val responseDetailRead: ResponseDetailForReadSubscription = responseDetail.copy(subscriptionID = existingSubscriptionID)
+            val responseDetailRead: ResponseDetailForReadSubscription = createResponseDetail(existingSubscriptionID)
 
             val displaySubscriptionForDACResponse: DisplaySubscriptionForDACResponse =
               DisplaySubscriptionForDACResponse(
@@ -408,14 +407,14 @@ class BusinessMatchingControllerSpec extends SpecBase
             val result = route(application, getRequest(businessMatchingRoute)).value
 
             status(result) mustEqual SEE_OTHER
-          redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/confirm-registration")
+            redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/confirm-registration")
         }
       }
 
 
       "must create the enrolment redirect the user to registration confirmation when user already subscribed even if call to email service fails" in {
-        forAll(validSubscriptionID) {
-          existingSubscriptionID =>
+        forAll(validSubscriptionID, validSafeID) {
+          (existingSubscriptionID, safeId) =>
 
             val application = applicationBuilder(userAnswers = Some(businessUserAnswers))
               .overrides(
@@ -429,9 +428,7 @@ class BusinessMatchingControllerSpec extends SpecBase
               name = "My Company",
               address = BusinessAddress("1 Address Street", None, None, None, "NE11 1BB", "GB"))
 
-            val safeId = "XE0001234567890"
-
-            val responseDetailRead: ResponseDetailForReadSubscription = responseDetail.copy(subscriptionID = existingSubscriptionID)
+            val responseDetailRead: ResponseDetailForReadSubscription = createResponseDetail(existingSubscriptionID)
 
             val displaySubscriptionForDACResponse: DisplaySubscriptionForDACResponse =
               DisplaySubscriptionForDACResponse(
@@ -451,13 +448,13 @@ class BusinessMatchingControllerSpec extends SpecBase
             val result = route(application, getRequest(businessMatchingRoute)).value
 
             status(result) mustEqual SEE_OTHER
-          redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/confirm-registration")
+            redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/confirm-registration")
         }
       }
 
       "must redirect to technical difficulties page if call to create the enrolment fails when user already subscribed" in {
-        forAll(validSubscriptionID) {
-          existingSubscriptionID =>
+        forAll(validSubscriptionID, validSafeID) {
+          (existingSubscriptionID, safeId) =>
 
             val application = applicationBuilder(userAnswers = Some(businessUserAnswers))
               .overrides(
@@ -471,9 +468,7 @@ class BusinessMatchingControllerSpec extends SpecBase
               name = "My Company",
               address = BusinessAddress("1 Address Street", None, None, None, "NE11 1BB", "GB"))
 
-            val safeId = "XE0001234567890"
-
-            val responseDetailRead: ResponseDetailForReadSubscription = responseDetail.copy(subscriptionID = existingSubscriptionID)
+            val responseDetailRead: ResponseDetailForReadSubscription = createResponseDetail(existingSubscriptionID)
 
             val displaySubscriptionForDACResponse: DisplaySubscriptionForDACResponse =
               DisplaySubscriptionForDACResponse(
@@ -487,44 +482,44 @@ class BusinessMatchingControllerSpec extends SpecBase
             when(mockSubscriptionConnector.createEnrolment(any())(any(), any()))
               .thenReturn(Future.successful(HttpResponse(BAD_REQUEST, "")))
 
-           val result = route(application, getRequest(businessMatchingRoute)).value
+            val result = route(application, getRequest(businessMatchingRoute)).value
 
             status(result) mustEqual SEE_OTHER
-          redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/problem-with-service")
+            redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/problem-with-service")
         }
       }
       "must redirect the user to /confirm-business page if business is not unincorporated or corporate" in {
+        forAll(validSafeID) {
+          safeId =>
+            val businessUserAnswers: UserAnswers = UserAnswers(userAnswersId)
+              .set(BusinessTypePage, BusinessType.Partnership)
+              .success
+              .value
+              .set(SelfAssessmentUTRPage, UniqueTaxpayerReference("0123456789"))
+              .success
+              .value
+              .set(BusinessNamePage, "Business Name")
+              .success
+              .value
 
-        val businessUserAnswers: UserAnswers = UserAnswers(userAnswersId)
-          .set(BusinessTypePage, BusinessType.Partnership)
-          .success
-          .value
-          .set(SelfAssessmentUTRPage, UniqueTaxpayerReference("0123456789"))
-          .success
-          .value
-          .set(BusinessNamePage, "Business Name")
-          .success
-          .value
+            val application = applicationBuilder(userAnswers = Some(businessUserAnswers))
+              .overrides(
+                bind[BusinessMatchingService].toInstance(mockBusinessMatchingService),
+                bind[SessionRepository].toInstance(mockSessionRepository)
+              ).build()
 
-        val application = applicationBuilder(userAnswers = Some(businessUserAnswers))
-          .overrides(
-            bind[BusinessMatchingService].toInstance(mockBusinessMatchingService),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          ).build()
+            val businessDetails = BusinessDetails(
+              name = "My Company",
+              address = BusinessAddress("1 Address Street", None, None, None, "NE11 1BB", "GB"))
 
-        val businessDetails = BusinessDetails(
-          name = "My Company",
-          address = BusinessAddress("1 Address Street", None, None, None, "NE11 1BB", "GB"))
+            when(mockBusinessMatchingService.sendBusinessMatchingInformation(any())(any(), any()))
+              .thenReturn(Future.successful((Some(businessDetails), Some(safeId), None)))
 
-        val safeId = "XE0001234567890"
+            val result = route(application, getRequest(businessMatchingRoute)).value
 
-        when(mockBusinessMatchingService.sendBusinessMatchingInformation(any())(any(), any()))
-          .thenReturn(Future.successful((Some(businessDetails), Some(safeId), None)))
-
-        val result = route(application, getRequest(businessMatchingRoute)).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/confirm-business")
+            status(result) mustEqual SEE_OTHER
+            redirectLocation(result) mustBe Some("/register-for-cross-border-arrangements/register/confirm-business")
+        }
       }
     }
 
