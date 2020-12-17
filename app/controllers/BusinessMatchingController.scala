@@ -127,11 +127,23 @@ class BusinessMatchingController @Inject()(
             emailService.sendEmail(updatedUserAnswers).map {
               emailResponse =>
                 logEmailResponse(emailResponse)
+                println("***********************************")
+                println("***********************************")
+                println("***********************************")
+                println("redirecting to reg succesfull ")
+                println("***********************************")
+                println("***********************************")
                 Redirect(routes.RegistrationSuccessfulController.onPageLoad())
             }.recover {
               case e: Exception => Redirect(routes.RegistrationSuccessfulController.onPageLoad())
             }
           } else {
+            println("***********************************")
+            println("***********************************")
+            println("***********************************")
+            println("in problem case")
+            println("***********************************")
+            println("***********************************")
             Future(Redirect(routes.ProblemWithServiceController.onPageLoad()))
           }
         }
@@ -142,8 +154,17 @@ class BusinessMatchingController @Inject()(
     for {
       updatedAnswersWithSafeID <- Future.fromTry(userAnswers.set(SubscriptionIDPage, subscriptionID))
       _ <- sessionRepository.set(updatedAnswersWithSafeID)
-    } yield updatedAnswersWithSafeID
-  }
+    } yield {
+
+      println("*********************************")
+      println("*********************************")
+      println("*********************************")
+      println("yield " + updatedAnswersWithSafeID)
+      println("*********************************")
+      println("*********************************")
+      updatedAnswersWithSafeID
+    }
+    }
   private def logEmailResponse(emailResponse: Option[HttpResponse]): Unit = {
     emailResponse match {
       case Some(HttpResponse(NOT_FOUND, _, _)) => logger.warn("The template cannot be found within the email service")

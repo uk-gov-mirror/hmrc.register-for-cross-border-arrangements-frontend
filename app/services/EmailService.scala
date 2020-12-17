@@ -30,6 +30,12 @@ class EmailService @Inject()(emailConnector:EmailConnector)(implicit executionCo
 
   def sendEmail(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[Option[HttpResponse]] = {
 
+    println("*********************************")
+    println("*********************************")
+    println("*********************************")
+    println("sending email " + userAnswers.toString)
+    println("*********************************")
+    println("*********************************")
     val emailAddress = userAnswers.get(ContactEmailAddressPage)
 
     val contactName: Option[Name] = if (userAnswers.get(ContactNamePage).isDefined) {
