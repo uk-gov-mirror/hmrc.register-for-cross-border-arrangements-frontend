@@ -161,6 +161,8 @@ class BusinessMatchingController @Inject()(
 
         Future(Redirect(routes.ProblemWithServiceController.onPageLoad()))
       }
+    }.recover{
+      case e: Exception => Ok(e.getMessage)
     }
 
   }
@@ -171,6 +173,7 @@ class BusinessMatchingController @Inject()(
       _ <- sessionRepository.set(updatedAnswersWithSafeID)
     } yield updatedAnswersWithSafeID
   }
+
   private def logEmailResponse(emailResponse: Option[HttpResponse]): Unit = {
     emailResponse match {
       case Some(HttpResponse(NOT_FOUND, _, _)) => logger.warn("The template cannot be found within the email service")
