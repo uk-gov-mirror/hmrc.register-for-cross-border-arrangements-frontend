@@ -62,7 +62,7 @@ object AddressLookup {
             case 1 =>
               (Some(lines.head), None, None, None)
             case 2 =>
-              (Some(lines.head), Some(lines(1)), None, None)
+              (Some(lines.head), None, Some(lines(1)), None)
             case 3 =>
               (Some(lines.head), Some(lines(1)), Some(lines(2)), None)
             case numberOfLines if numberOfLines >= 4 => (Some(lines.head), Some(lines(1)), Some(lines(2)), Some(lines(3)))

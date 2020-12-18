@@ -84,12 +84,12 @@ class AddressLookupConnectorSpec extends SpecBase
         result.futureValue mustBe Nil
       }
 
-      "must return 200 (OK) status for submission of valid postcode" in {
+      "must return 200 (OK) status for submission of valid postcode. Second line is set as address line 3" in {
 
         stubResponse(addressLookupUrl, OK, addressJson)
 
         val addressLookupResult = Seq(
-          AddressLookup(Some("1 Address line 1 Road"), Some("Address line 2 Road"), None, None, "Town", Some("County"), postcode)
+          AddressLookup(Some("1 Address line 1 Road"), None, Some("Address line 2 Road"), None, "Town", Some("County"), postcode)
         )
 
         val result = connector.addressLookupByPostcode(postcode)
