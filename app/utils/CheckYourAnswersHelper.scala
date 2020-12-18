@@ -521,8 +521,8 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
   private def formatAddress(answer: Address): Html = {
     Html(s"""
         ${answer.addressLine1}<br>
-        ${answer.addressLine2.fold("")(address => s"$address<br>")}<br>
-        ${answer.addressLine3}
+        ${answer.addressLine2.fold("")(address => s"$address<br>")}
+        ${answer.addressLine3}<br>
         ${answer.addressLine4.fold("")(address => s"$address<br>")}
         ${answer.postCode.fold("")(postcode => s"$postcode<br>")}
         ${answer.country.description}

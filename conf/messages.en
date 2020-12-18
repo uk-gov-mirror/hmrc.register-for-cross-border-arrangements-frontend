@@ -381,7 +381,7 @@ whatIsYourUkAddress.postCode = Postcode
 
 whatIsYourUkAddress.checkYourAnswersLabel = Your home address
 whatIsYourUkAddress.error.addressLine1.required = Enter address line 1
-whatIsYourUkAddress.error.addressLine3.required = Enter address line 2
+whatIsYourUkAddress.error.addressLine3.required = Enter City
 whatIsYourUkAddress.error.country.required = Select country
 whatIsYourUkAddress.error.addressLine1.length = Address line 1 must be 35 characters or less
 whatIsYourUkAddress.error.addressLine2.length = Address line 2 must be 35 characters or less
@@ -393,7 +393,7 @@ whatIsYourUkAddress.error.addressLine3.invalid = City must only include letters 
 whatIsYourUkAddress.error.addressLine4.invalid = County (optional) must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
 whatIsYourUkAddress.error.postcode.required = Enter a postcode
 whatIsYourUkAddress.error.postcode.length = Postcode must be 8 characters or less
-whatIsYourUkAddress.error.postcode.invalid = Postcode must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
+whatIsYourUkAddress.error.postcode.invalid = Enter a postcode, like AA1 1AA
 
 confirmBusiness.title = Is this your business?
 confirmBusiness.heading = Is this your business?
