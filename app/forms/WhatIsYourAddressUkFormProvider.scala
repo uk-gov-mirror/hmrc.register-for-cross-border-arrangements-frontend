@@ -18,11 +18,12 @@ package forms
 
 
 import forms.mappings.Mappings
-import javax.inject.Inject
 import models.{Address, Country}
 import play.api.data.Form
 import play.api.data.Forms._
 import utils.RegexConstants
+
+import javax.inject.Inject
 
 class WhatIsYourAddressUkFormProvider @Inject() extends Mappings with RegexConstants {
 
@@ -34,14 +35,15 @@ class WhatIsYourAddressUkFormProvider @Inject() extends Mappings with RegexConst
        "whatIsYourUkAddress.error.addressLine1.invalid",
        "whatIsYourUkAddress.error.addressLine1.length",
        apiAddressRegex, addressLineMaxLength ),
-      "addressLine2" -> validatedText("whatIsYourUkAddress.error.addressLine2.required",
-       "whatIsYourUkAddress.error.addressLine2.invalid",
+      "addressLine2" -> validatedOptionalText("whatIsYourUkAddress.error.addressLine2.invalid",
        "whatIsYourUkAddress.error.addressLine2.length",apiAddressRegex, addressLineMaxLength),
-       "addressLine3" -> validatedOptionalText("whatIsYourUkAddress.error.addressLine3.invalid",
+       "addressLine3" -> validatedText("whatIsYourUkAddress.error.addressLine3.required",
+        "whatIsYourUkAddress.error.addressLine3.invalid",
         "whatIsYourUkAddress.error.addressLine3.length",apiAddressRegex, addressLineMaxLength),
       "addressLine4" -> validatedOptionalText("whatIsYourUkAddress.error.addressLine4.invalid",
         "whatIsYourUkAddress.error.addressLine4.length",apiAddressRegex, addressLineMaxLength),
-       "postCode" -> addressPostcode("whatIsYourUkAddress.error.postcode.invalid", regexPostcode,"whatIsYourUkAddress.error.postcode.required"),
+       "postCode" -> addressPostcode("whatIsYourUkAddress.error.postcode.invalid", regexPostcode,
+        "whatIsYourUkAddress.error.postcode.required"),
        "country" ->  text("whatIsYourUkAddress.error.country.required")
          .verifying("whatIsYourAddress.error.country.required", value => countryList.exists(_.code == value))
          .transform[Country](value => countryList.find(_.code == value).get, _.code)

@@ -16,8 +16,6 @@
 
 package services
 
-import java.time.LocalDate
-
 import base.SpecBase
 import connectors.RegistrationConnector
 import generators.Generators
@@ -36,6 +34,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HttpResponse
 
+import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -57,7 +56,7 @@ class RegistrationServiceSpec extends SpecBase
   "when able to construct a registration object" - {
     "should send a request to the registration connector" in {
 
-      val validNoIdAddress = Address("address1", "address2", Some("address3"), Some("address4"),Some("postcode"), Country("active","GB","UK"))
+      val validNoIdAddress = Address("address1", Some("address2"), "address3", Some("address4"),Some("postcode"), Country("active","GB","UK"))
 
 
       forAll(arbitrary[UserAnswers], validPersonalName, validPersonalName, arbitrary[LocalDate]){

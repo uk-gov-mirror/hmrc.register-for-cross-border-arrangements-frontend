@@ -51,7 +51,7 @@ class BusinessAddressControllerSpec extends SpecBase with MockitoSugar with Nunj
 
   val formProvider = new BusinessAddressFormProvider()
   val form: Form[Address] = formProvider(Seq(Country("valid","GB","United Kingdom")))
-  val address: Address = Address("value 1","value 2",Some("value 3"),Some("value 4"),Some("XX9 9XX"),
+  val address: Address = Address("value 1", Some("value 2"), "value 3", Some("value 4"), Some("XX9 9XX"),
     Country("valid","GB","United Kingdom"))
 
   lazy val businessAddressRoute: String = routes.BusinessAddressController.onPageLoad(NormalMode).url

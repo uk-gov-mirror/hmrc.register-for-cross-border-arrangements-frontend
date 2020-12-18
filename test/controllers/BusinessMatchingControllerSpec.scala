@@ -16,8 +16,6 @@
 
 package controllers
 
-import java.time.LocalDate
-
 import base.SpecBase
 import connectors.SubscriptionConnector
 import generators.Generators
@@ -39,6 +37,7 @@ import uk.gov.hmrc.domain.{Generator, Nino}
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class BusinessMatchingControllerSpec extends SpecBase

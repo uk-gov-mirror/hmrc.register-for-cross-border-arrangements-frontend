@@ -16,13 +16,13 @@
 
 package pages
 
-import java.time.LocalDate
-
 import models.RegistrationType.Individual
 import models.{Address, BusinessType, Country, Name, UniqueTaxpayerReference, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 import uk.gov.hmrc.domain.Generator
+
+import java.time.LocalDate
 
 class DoYouHaveUTRPageSpec extends PageBehaviours {
 
@@ -35,7 +35,7 @@ class DoYouHaveUTRPageSpec extends PageBehaviours {
     beRemovable[Boolean](DoYouHaveUTRPage)
 
     "must remove answers from Individual journey when user changes answer to 'Yes'" in {
-      val address: Address = Address("", "", None, None, None, Country("", "", ""))
+      val address: Address = Address("", None, "", None, None, Country("", "", ""))
 
       forAll(arbitrary[UserAnswers]) {
         answers =>
@@ -65,17 +65,17 @@ class DoYouHaveUTRPageSpec extends PageBehaviours {
             .set(DoYouHaveUTRPage, true)
             .success.value
 
-          result.get(RegistrationTypePage) must not be defined
-          result.get(DoYouHaveANationalInsuranceNumberPage) must not be defined
-          result.get(NinoPage) must not be defined
-          result.get(NamePage) must not be defined
-          result.get(NonUkNamePage) must not be defined
-          result.get(DateOfBirthPage) must not be defined
-          result.get(DoYouLiveInTheUKPage) must not be defined
-          result.get(IndividualUKPostcodePage) must not be defined
-          result.get(SelectAddressPage) must not be defined
-          result.get(WhatIsYourAddressPage) must not be defined
-          result.get(WhatIsYourAddressUkPage) must not be defined
+          result.get(RegistrationTypePage) mustBe None
+          result.get(DoYouHaveANationalInsuranceNumberPage) mustBe None
+          result.get(NinoPage) mustBe None
+          result.get(NamePage) mustBe None
+          result.get(NonUkNamePage) mustBe None
+          result.get(DateOfBirthPage) mustBe None
+          result.get(DoYouLiveInTheUKPage) mustBe None
+          result.get(IndividualUKPostcodePage) mustBe None
+          result.get(SelectAddressPage) mustBe None
+          result.get(WhatIsYourAddressPage) mustBe None
+          result.get(WhatIsYourAddressUkPage) mustBe None
       }
     }
 
@@ -88,7 +88,7 @@ class DoYouHaveUTRPageSpec extends PageBehaviours {
             .set(DoYouHaveUTRPage, true)
             .success.value
 
-          result.get(BusinessWithoutIDNamePage) must not be defined
+          result.get(BusinessWithoutIDNamePage) mustBe None
       }
     }
 
@@ -109,11 +109,11 @@ class DoYouHaveUTRPageSpec extends PageBehaviours {
             .set(DoYouHaveUTRPage, false)
             .success.value
 
-          result.get(BusinessTypePage) must not be defined
-          result.get(CorporationTaxUTRPage) must not be defined
-          result.get(SelfAssessmentUTRPage) must not be defined
-          result.get(BusinessNamePage) must not be defined
-          result.get(ConfirmBusinessPage) must not be defined
+          result.get(BusinessTypePage) mustBe None
+          result.get(CorporationTaxUTRPage) mustBe None
+          result.get(SelfAssessmentUTRPage) mustBe None
+          result.get(BusinessNamePage) mustBe None
+          result.get(ConfirmBusinessPage) mustBe None
       }
     }
   }

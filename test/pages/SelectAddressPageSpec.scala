@@ -34,14 +34,14 @@ class SelectAddressPageSpec extends PageBehaviours {
       forAll(arbitrary[UserAnswers]) {
         answers =>
           val result = answers
-            .set(WhatIsYourAddressUkPage, Address("", "", None, None, None, Country("", "", "")))
+            .set(WhatIsYourAddressUkPage, Address("", None, "", None, None, Country("", "", "")))
             .success
             .value
             .set(SelectAddressPage, "Some UK address")
             .success
             .value
 
-          result.get(WhatIsYourAddressUkPage) must not be defined
+          result.get(WhatIsYourAddressUkPage) mustBe None
       }
     }
   }

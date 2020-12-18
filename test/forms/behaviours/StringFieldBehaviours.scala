@@ -16,6 +16,7 @@
 
 package forms.behaviours
 
+import org.scalacheck.Gen
 import play.api.data.{Form, FormError}
 
 trait StringFieldBehaviours extends FieldBehaviours {
@@ -139,17 +140,30 @@ trait StringFieldBehaviours extends FieldBehaviours {
     }
   }
 
-def fieldWithValidatedRegex(form: Form[_],
-                              fieldName: String,
-                              maxLength: Int,
-                              invalidError: FormError): Unit = {
+  def fieldWithValidatedRegex(form: Form[_],
+                                fieldName: String,
+                                maxLength: Int,
+                                invalidError: FormError): Unit = {
 
-    s"must not bind strings longer than $maxLength characters" in {
+      s"must not bind strings longer than $maxLength characters" in {
 
-      forAll(stringsLongerThan(maxLength) -> "longString") {
-        string =>
-          val result = form.bind(Map(fieldName -> string)).apply(fieldName)
-          result.errors shouldEqual Seq(invalidError)
+        forAll(stringsLongerThan(maxLength) -> "longString") {
+          string =>
+            val result = form.bind(Map(fieldName -> string)).apply(fieldName)
+            result.errors shouldEqual Seq(invalidError)
+        }
+      }
+    }
+
+  def fieldWithPostCodeRequired(form: Form[_],
+                                fieldName: String,
+                                countryCodeList: Seq[String],
+                                invalidError: FormError): Unit = {
+    s"must not bind when postcode is required for a country" in {
+      forAll(Gen.oneOf(countryCodeList)) {
+        country =>
+          val result = form.bind(Map("country" -> country)).apply(fieldName)
+          result.errors.head shouldEqual invalidError
       }
     }
   }

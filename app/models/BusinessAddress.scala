@@ -67,8 +67,8 @@ case class BusinessAddress(
   def toAddress: Address =
     Address(
       addressLine1,
-      addressLine2.getOrElse(""),
-      addressLine3,
+      addressLine2,
+      addressLine3.getOrElse(""),
       addressLine4,
       Some(postCode),
       Country("valid", countryCode, "")

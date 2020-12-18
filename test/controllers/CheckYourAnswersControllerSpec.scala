@@ -42,7 +42,7 @@ import scala.concurrent.Future
 
 class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
 
-  val address: Address = Address("value 1","value 2",Some("value 3"),Some("value 4"),Some("XX9 9XX"),
+  val address: Address = Address("value 1", Some("value 2"), "value 3", Some("value 4"), Some("XX9 9XX"),
     Country("valid","GB","United Kingdom"))
   val nino: Nino = new Generator().nextNino
   val name: Name = Name("FirstName", "LastName")
