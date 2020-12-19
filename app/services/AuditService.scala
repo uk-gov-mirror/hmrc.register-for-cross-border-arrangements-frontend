@@ -34,16 +34,14 @@ class AuditService @Inject()(appConfig: FrontendAppConfig, auditConnector: Audit
   private val refererHeaderKey = "Referer"
   private val logger: Logger = Logger(this.getClass)
 
-  def sendAuditEvent(eventName: String, detail: JsValue)(implicit hc: HeaderCarrier, request: Request[_]): Future[AuditResult] = {
-
-    val path = request.headers.get(refererHeaderKey).getOrElse("NA")
+  def sendAuditEvent(eventName: String, detail: JsValue, transactionName: String, path: String)(implicit hc: HeaderCarrier, request: Request[_]): Future[AuditResult] = {
 
     auditConnector.sendExtendedEvent(ExtendedDataEvent(
       auditSource = appConfig.appName,
       auditType = eventName,
       detail = detail,
       tags = AuditExtensions.auditHeaderCarrier(hc).toAuditDetails()
-        ++ AuditExtensions.auditHeaderCarrier(hc).toAuditTags(eventName, path)
+        ++ AuditExtensions.auditHeaderCarrier(hc).toAuditTags(transactionName, path)
     )) map { ar: AuditResult => ar match {
       case Failure(msg, ex) =>
         ex match {
