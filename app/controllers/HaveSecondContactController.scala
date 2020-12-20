@@ -57,7 +57,6 @@ class HaveSecondContactController @Inject()(
         else{
 
         val contactName = request.userAnswers.get(ContactNamePage).get
-        val updatedContactName = s"${contactName.firstName} ${contactName.secondName}"
 
           val preparedForm = request.userAnswers.get(HaveSecondContactPage) match {
             case None => form
@@ -70,7 +69,7 @@ class HaveSecondContactController @Inject()(
             "form"   -> preparedForm,
             "mode"   -> mode,
             "radios" -> Radios.yesNo(preparedForm("confirm")),
-            "contactName" -> updatedContactName
+            "contactName" -> contactName
           )
 
           renderer.render("haveSecondContact.njk", json).map(Ok(_))
@@ -81,7 +80,6 @@ class HaveSecondContactController @Inject()(
     implicit request =>
 
       val contactName = request.userAnswers.get(ContactNamePage).get
-      val updatedContactName = s"${contactName.firstName} ${contactName.secondName}"
 
       form.bindFromRequest().fold(
         formWithErrors => {
@@ -91,7 +89,7 @@ class HaveSecondContactController @Inject()(
             "form"   -> formWithErrors,
             "mode"   -> mode,
             "radios" -> Radios.yesNo(formWithErrors("confirm")),
-            "contactName" -> updatedContactName
+            "contactName" -> contactName
           )
 
           renderer.render("haveSecondContact.njk", json).map(BadRequest(_))

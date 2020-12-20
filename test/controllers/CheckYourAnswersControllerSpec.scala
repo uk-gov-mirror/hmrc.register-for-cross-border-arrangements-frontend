@@ -45,6 +45,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
   val address: Address = Address("value 1", Some("value 2"), "value 3", Some("value 4"), Some("XX9 9XX"),
     Country("valid","GB","United Kingdom"))
   val nino: Nino = new Generator().nextNino
+  val singleName: String = "Name Name-Name"
   val name: Name = Name("FirstName", "LastName")
   val email: String = "email@email.com"
   val dacSubscriptionResponse: CreateSubscriptionForDACResponse = CreateSubscriptionForDACResponse(
@@ -85,7 +86,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
         .success.value
         .set(ConfirmBusinessPage, true)
         .success.value
-        .set(ContactNamePage, name)
+        .set(ContactNamePage, singleName)
         .success.value
         .set(ContactEmailAddressPage, email)
         .success.value
@@ -210,7 +211,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
         .success.value
         .set(BusinessAddressPage, address)
         .success.value
-        .set(ContactNamePage, name)
+        .set(ContactNamePage, singleName)
         .success.value
         .set(ContactEmailAddressPage, email)
         .success.value

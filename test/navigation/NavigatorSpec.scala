@@ -513,7 +513,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
             val updatedAnswers =
               answers
-                .set(ContactNamePage, Name("firstName", "secondName"))
+                .set(ContactNamePage, "name")
                 .success
                 .value
 

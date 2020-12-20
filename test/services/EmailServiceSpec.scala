@@ -55,7 +55,7 @@ class EmailServiceSpec extends SpecBase
   "Email Service" - {
     "must submit to the email connector when 1 set of business valid details provided" in {
       val userAnswers = UserAnswers(userAnswersId)
-        .set(ContactNamePage, Name("", ""))
+        .set(ContactNamePage, "")
         .success
         .value
         .set(ContactEmailAddressPage, "test@test.com")
@@ -133,7 +133,7 @@ class EmailServiceSpec extends SpecBase
 
     "must submit to the email connector twice when 2 sets of valid details provided" in {
       val userAnswers = UserAnswers(userAnswersId)
-        .set(ContactNamePage, Name("", ""))
+        .set(ContactNamePage, "")
         .success
         .value
         .set(ContactEmailAddressPage, "test@test.com")
@@ -165,7 +165,7 @@ class EmailServiceSpec extends SpecBase
 
     "must fail to submit to the email connector when invalid email address provided" in {
       val userAnswers = UserAnswers(userAnswersId)
-        .set(ContactNamePage, Name("", ""))
+        .set(ContactNamePage, "")
         .success
         .value
         .set(ContactEmailAddressPage, "test")

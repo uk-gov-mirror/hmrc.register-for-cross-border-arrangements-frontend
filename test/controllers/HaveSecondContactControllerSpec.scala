@@ -53,12 +53,13 @@ class HaveSecondContactControllerSpec extends SpecBase with MockitoSugar with Nu
 
   "HaveSecondContact Controller" - {
 
+    val name = "Name"
+
     "must return OK and the correct view for a GET" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val name = Name("test", "test")
       val userAnswers = UserAnswers(userAnswersId).set(ContactNamePage, name).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, haveSecondContactRoute)
@@ -88,7 +89,6 @@ class HaveSecondContactControllerSpec extends SpecBase with MockitoSugar with Nu
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val name = Name("test", "test")
       val userAnswers = UserAnswers(userAnswersId)
         .set(ContactNamePage, name)
         .success.value
@@ -149,7 +149,6 @@ class HaveSecondContactControllerSpec extends SpecBase with MockitoSugar with Nu
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val name = Name("test", "test")
       val userAnswers = UserAnswers(userAnswersId).set(ContactNamePage, name).success.value
 
       val application =
@@ -178,7 +177,6 @@ class HaveSecondContactControllerSpec extends SpecBase with MockitoSugar with Nu
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val name = Name("test", "test")
       val userAnswers = UserAnswers(userAnswersId).set(ContactNamePage, name).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -208,8 +206,6 @@ class HaveSecondContactControllerSpec extends SpecBase with MockitoSugar with Nu
     "must redirect to the Check your answers page when users doesn't change their answer" in {
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val name = Name("test", "test")
 
       val haveSecondContactRoute: String = routes.HaveSecondContactController.onPageLoad(CheckMode).url
       val userAnswers = UserAnswers(userAnswersId)

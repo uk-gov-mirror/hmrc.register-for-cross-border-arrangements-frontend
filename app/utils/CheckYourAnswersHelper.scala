@@ -208,7 +208,7 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
     answer =>
       Row(
         key     = Key(msg"contactName.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(lit"${answer.firstName} ${answer.secondName}"),
+        value   = Value(lit"$answer"),
         actions = List(
           Action(
             content            = msg"site.edit",

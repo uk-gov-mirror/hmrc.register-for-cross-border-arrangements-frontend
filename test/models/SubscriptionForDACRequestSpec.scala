@@ -262,7 +262,7 @@ class SubscriptionForDACRequestSpec extends SpecBase with Generators with ScalaC
       val updatedUserAnswers = userAnswers
         .set(SafeIDPage, "a").success.value
         .set(ContactEmailAddressPage, "hello").success.value
-        .set(ContactNamePage, Name("Kit", "Kat")).success.value
+        .set(ContactNamePage, "Name Name").success.value
 
       val requestCommon = SubscriptionForDACRequest.createSubscription(updatedUserAnswers).requestCommon
       val ackRefLength = requestCommon.acknowledgementReference.length
