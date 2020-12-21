@@ -19,9 +19,9 @@ package controllers
 import controllers.actions._
 import forms.SecondaryContactEmailAddressFormProvider
 import javax.inject.Inject
-import models.Mode
+import models.{CheckMode, Mode}
 import navigation.Navigator
-import pages.{SecondaryContactEmailAddressPage, SecondaryContactNamePage}
+import pages.{SecondaryContactEmailAddressPage, SecondaryContactNamePage, SecondaryContactTelephoneQuestionPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -71,7 +71,6 @@ class SecondaryContactEmailAddressController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
     implicit request =>
-
     val contactName = request.userAnswers.get(SecondaryContactNamePage) match {
         case None => "your second contact"
         case Some(contactName) => s"$contactName"
@@ -79,7 +78,6 @@ class SecondaryContactEmailAddressController @Inject()(
 
       form.bindFromRequest().fold(
         formWithErrors => {
-
           val json = Json.obj(
             "form" -> formWithErrors,
             "mode" -> mode,
@@ -89,12 +87,19 @@ class SecondaryContactEmailAddressController @Inject()(
           renderer.render("secondaryContactEmailAddress.njk", json).map(BadRequest(_))
         },
         value => {
-
+          val redirectToSummary = request.userAnswers.get(SecondaryContactEmailAddressPage) match {
+              case Some(ans) if (ans == value) && (mode == CheckMode) => true
+              case _ => false
+            }
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(SecondaryContactEmailAddressPage, value))
             _              <- sessionRepository.set(updatedAnswers)
           } yield {
+            if (redirectToSummary) {
+              Redirect(routes.CheckYourAnswersController.onPageLoad())
+            } else {
               Redirect(navigator.nextPage(SecondaryContactEmailAddressPage, mode, updatedAnswers))
+            }
           }
         }
       )
