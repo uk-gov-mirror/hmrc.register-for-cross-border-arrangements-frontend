@@ -157,11 +157,7 @@ class CheckYourAnswersController @Inject()(
       helper.secondaryContactTelephoneNumber
     ).flatten
   }
-//
-//  private def secondaryContactPhone(helper: CheckYourAnswersHelper): Seq[SummaryList.Row] = {
-//
-//  }
-
+  
   def onSubmit(): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
     implicit request =>
 
