@@ -16,7 +16,7 @@
 
 package pages
 
-import models.{SecondaryContactPreference, UserAnswers}
+import models.UserAnswers
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 
@@ -37,7 +37,7 @@ class HaveSecondContactPageSpec extends PageBehaviours {
             .set(SecondaryContactNamePage, "Contact name")
             .success
             .value
-            .set(SecondaryContactPreferencePage, SecondaryContactPreference.values.toSet)
+            .set(SecondaryContactTelephoneQuestionPage, true)
             .success
             .value
             .set(SecondaryContactEmailAddressPage, "email@email.com")
@@ -51,7 +51,7 @@ class HaveSecondContactPageSpec extends PageBehaviours {
             .value
 
           result.get(SecondaryContactNamePage) must not be defined
-          result.get(SecondaryContactPreferencePage) must not be defined
+          result.get(SecondaryContactTelephoneQuestionPage) must not be defined
           result.get(SecondaryContactEmailAddressPage) must not be defined
           result.get(SecondaryContactTelephoneNumberPage) must not be defined
       }

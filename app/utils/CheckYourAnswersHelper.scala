@@ -90,24 +90,6 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
       )
   }
 
-  def secondaryContactPreference: Option[Row] = userAnswers.get(SecondaryContactPreferencePage) map {
-    answer =>
-      val formattedAnswer = answer.map(_.toString).mkString(" and ").capitalize
-
-      Row(
-        key     = Key(msg"secondaryContactPreference.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(lit"$formattedAnswer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = routes.SecondaryContactPreferenceController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"secondaryContactPreference.checkYourAnswersLabel")),
-            attributes         = Map("id" -> "change-contact-preferences")
-          )
-        )
-      )
-  }
-
   def secondaryContactName: Option[Row] = userAnswers.get(SecondaryContactNamePage) map {
     answer =>
       Row(

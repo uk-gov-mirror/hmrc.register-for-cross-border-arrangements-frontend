@@ -16,6 +16,8 @@
 
 package pages
 
+import models.UserAnswers
+import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 
 class SecondaryContactTelephoneQuestionPageSpec extends PageBehaviours {
@@ -27,5 +29,21 @@ class SecondaryContactTelephoneQuestionPageSpec extends PageBehaviours {
     beSettable[Boolean](SecondaryContactTelephoneQuestionPage)
 
     beRemovable[Boolean](SecondaryContactTelephoneQuestionPage)
+
+    "must remove secondary contact telephone number when a user changes answer to 'No'" in {
+      forAll(arbitrary[UserAnswers]) {
+        answers =>
+          val result = answers
+            .set(SecondaryContactTelephoneNumberPage, "07888888888")
+            .success
+            .value
+            .set(SecondaryContactTelephoneQuestionPage, false)
+            .success
+            .value
+
+          result.get(SecondaryContactTelephoneNumberPage) must not be defined
+
+      }
+    }
   }
 }

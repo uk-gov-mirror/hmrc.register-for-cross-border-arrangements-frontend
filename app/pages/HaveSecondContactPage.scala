@@ -31,7 +31,7 @@ case object HaveSecondContactPage extends QuestionPage[Boolean] {
     value match {
       case Some(false) =>
         userAnswers.remove(SecondaryContactNamePage)
-          .flatMap(_.remove(SecondaryContactPreferencePage))
+          .flatMap(_.remove(SecondaryContactTelephoneQuestionPage))
           .flatMap(_.remove(SecondaryContactEmailAddressPage))
           .flatMap(_.remove(SecondaryContactTelephoneNumberPage))
       case _ =>

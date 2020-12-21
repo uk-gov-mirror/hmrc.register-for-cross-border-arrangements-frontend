@@ -16,11 +16,13 @@
 
 package controllers
 
+import java.time.LocalDate
+
 import base.SpecBase
 import connectors.SubscriptionConnector
 import helpers.JsonFixtures.registerWithoutIDResponse
 import models.RegistrationType.{Business, Individual}
-import models.{Address, BusinessType, Country, CreateSubscriptionForDACResponse, Name, RegistrationType, ResponseCommon, ResponseDetailForDACSubscription, SecondaryContactPreference, SubscriptionForDACResponse, UserAnswers}
+import models.{Address, BusinessType, Country, CreateSubscriptionForDACResponse, Name, RegistrationType, ResponseCommon, ResponseDetailForDACSubscription, SubscriptionForDACResponse, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
@@ -37,7 +39,6 @@ import uk.gov.hmrc.domain.{Generator, Nino}
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
 
-import java.time.LocalDate
 import scala.concurrent.Future
 
 class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
@@ -96,9 +97,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
         .success.value
         .set(SecondaryContactNamePage, "Secondary Contact")
         .success.value
-        .set(SecondaryContactPreferencePage, SecondaryContactPreference.values.toSet)
-        .success.value
         .set(SecondaryContactEmailAddressPage, email)
+        .success.value
+        .set(SecondaryContactTelephoneQuestionPage, true)
         .success.value
         .set(SecondaryContactTelephoneNumberPage, "07888888888")
         .success.value

@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.SecondaryContactTelephoneQuestionFormProvider
 import javax.inject.Inject
-import models.Mode
+import models.{CheckMode, Mode}
 import navigation.Navigator
 import pages.{SecondaryContactNamePage, SecondaryContactTelephoneQuestionPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -76,19 +76,38 @@ class SecondaryContactTelephoneQuestionController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors => {
 
+          val contactName = request.userAnswers.get(SecondaryContactNamePage) match {
+            case None => "your second contact"
+            case Some(contactName) => s"$contactName"
+          }
+
           val json = Json.obj(
             "form"   -> formWithErrors,
             "mode"   -> mode,
-            "radios" -> Radios.yesNo(formWithErrors("value"))
+            "radios" -> Radios.yesNo(formWithErrors("value")),
+            "contactName" -> contactName
           )
 
           renderer.render("secondaryContactTelephoneQuestion.njk", json).map(BadRequest(_))
         },
-        value =>
+        value => {
+          val redirectToSummary = request.userAnswers.get(SecondaryContactTelephoneQuestionPage) match {
+            case Some(ans) if (ans == value) && (mode == CheckMode) => true
+            case Some(_) if !value && (mode == CheckMode) => true
+            case _ => false
+          }
+
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(SecondaryContactTelephoneQuestionPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(SecondaryContactTelephoneQuestionPage, mode, updatedAnswers))
+            _ <- sessionRepository.set(updatedAnswers)
+          } yield {
+            if (redirectToSummary) {
+              Redirect(routes.CheckYourAnswersController.onPageLoad())
+            } else {
+              Redirect(navigator.nextPage(SecondaryContactTelephoneQuestionPage, mode, updatedAnswers))
+            }
+          }
+        }
       )
   }
 }

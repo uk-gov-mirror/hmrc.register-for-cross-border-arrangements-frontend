@@ -754,7 +754,6 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
-
       "must go from the What is the telephone number for *name* contact page " +
         "to Check your answers page" in {
         forAll(arbitrary[UserAnswers]) {

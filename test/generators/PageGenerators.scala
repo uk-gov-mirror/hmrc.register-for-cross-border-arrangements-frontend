@@ -115,9 +115,6 @@ trait PageGenerators {
   implicit lazy val arbitrarySecondaryContactNamePage: Arbitrary[SecondaryContactNamePage.type] =
     Arbitrary(SecondaryContactNamePage)
 
-  implicit lazy val arbitrarySecondaryContactPreferencePage: Arbitrary[SecondaryContactPreferencePage.type] =
-    Arbitrary(SecondaryContactPreferencePage)
-
   implicit lazy val arbitrarySelectAddressPage: Arbitrary[SelectAddressPage.type] =
     Arbitrary(SelectAddressPage)
 
