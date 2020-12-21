@@ -52,7 +52,6 @@ class SecondaryContactPreferenceController @Inject()(
     implicit request =>
 
       request.userAnswers.get(SecondaryContactNamePage) match {
-        case None => Future(Redirect(routes.HaveSecondContactController.onPageLoad(NormalMode)))
         case Some(secondaryContactName) =>
 
           val preparedForm = request.userAnswers.get(SecondaryContactPreferencePage) match {
@@ -68,6 +67,8 @@ class SecondaryContactPreferenceController @Inject()(
           )
 
           renderer.render("secondaryContactPreference.njk", json).map(Ok(_))
+
+        case _ => Future(Redirect(routes.HaveSecondContactController.onPageLoad(NormalMode)))
       }
   }
 
@@ -77,7 +78,7 @@ class SecondaryContactPreferenceController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors => {
 
-          val secondaryContactName: String = request.userAnswers.get(SecondaryContactNamePage).get
+          val secondaryContactName: String = request.userAnswers.get(SecondaryContactNamePage).getOrElse("your second contact")
 
           val json = Json.obj(
             "form"       -> formWithErrors,

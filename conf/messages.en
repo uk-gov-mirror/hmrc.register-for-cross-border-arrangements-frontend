@@ -480,3 +480,8 @@ selectAddress.hint.part2 = enter your address manually
 problemWithService.title = Sorry, there is a problem with the service
 problemWithService.heading = Sorry, there is a problem with the service
 problemWithService.guidance = Try again later.
+
+secondaryContactTelephoneQuestion.title = Does your second contact have a telephone number?
+secondaryContactTelephoneQuestion.heading = Does {0} have a telephone number?
+secondaryContactTelephoneQuestion.checkYourAnswersLabel = Does your additional contact have a telephone number?
+secondaryContactTelephoneQuestion.error.required = Select yes if your second contact has a telephone number

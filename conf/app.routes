@@ -199,3 +199,8 @@ GET        /register/change-select-address                 controllers.SelectAdd
 POST       /register/change-select-address                 controllers.SelectAddressController.onSubmit(mode: Mode = CheckMode)
 
 GET        /register/problem-with-service                                controllers.ProblemWithServiceController.onPageLoad()
+
+GET        /register/second-contact-have-phone                          controllers.SecondaryContactTelephoneQuestionController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/second-contact-have-phone                          controllers.SecondaryContactTelephoneQuestionController.onSubmit(mode: Mode = NormalMode)
+GET        /register/change-second-contact-have-phone                   controllers.SecondaryContactTelephoneQuestionController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/change-second-contact-have-phone                   controllers.SecondaryContactTelephoneQuestionController.onSubmit(mode: Mode = CheckMode)

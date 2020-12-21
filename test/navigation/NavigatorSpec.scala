@@ -697,42 +697,63 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
         }
       }
 
-          //TODO - change below tests for redirection
-//      "must go from the How can we contact *name*? page " +
-//        "to What is the telephone number for *name*? page " +
-//          "when checkbox email is selected" in {
-//        forAll(arbitrary[UserAnswers]) {
-//          answers =>
-//
-//            val updatedAnswers =
-//              answers
-//                .set(SecondaryContactPreferencePage, SecondaryContactPreference.enumerable.withName("email").toSet)
-//                .success
-//                .value
-//
-//            navigator
-//              .nextPage(SecondaryContactPreferencePage, NormalMode, updatedAnswers)
-//              .mustBe(routes.SecondaryContactEmailAddressController.onPageLoad(NormalMode))
-//        }
-//      }
-//
-//      "must go from the How can we contact *name*? page " +
-//        "to What is the email address for *name*? page " +
-//          "when checkbox telephone is selected " in {
-//        forAll(arbitrary[UserAnswers]) {
-//          answers =>
-//
-//            val updatedAnswers =
-//              answers
-//                .set(SecondaryContactPreferencePage, SecondaryContactPreference.enumerable.withName("telephone").toSet)
-//                .success
-//                .value
-//
-//            navigator
-//              .nextPage(SecondaryContactPreferencePage, NormalMode, updatedAnswers)
-//              .mustBe(routes.SecondaryContactTelephoneNumberController.onPageLoad(NormalMode))
-//        }
-//      }
+      "must go from the What is the email address for *name*? page " +
+        "to does *name*? have a telephone number page" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers
+                .set(SecondaryContactNamePage, "DAC6 Team")
+                .success
+                .value
+
+            navigator
+              .nextPage(SecondaryContactEmailAddressPage, NormalMode, updatedAnswers)
+              .mustBe(routes.SecondaryContactTelephoneQuestionController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from the does *name*? have a telephone number page " +
+        "to what is the telephone number for *name*? page when option 'yes' is selected" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers
+                .set(SecondaryContactNamePage, "DAC6 Team")
+                .success
+                .value
+                .set(SecondaryContactTelephoneQuestionPage, true)
+                .success
+                .value
+
+            navigator
+              .nextPage(SecondaryContactTelephoneQuestionPage, NormalMode, updatedAnswers)
+              .mustBe(routes.SecondaryContactTelephoneNumberController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from the does *name*? have a telephone number page " +
+        "to Check your answers page when option 'no' is selected" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers
+                .set(SecondaryContactNamePage, "DAC6 Team")
+                .success
+                .value
+                .set(SecondaryContactTelephoneQuestionPage, false)
+                .success
+                .value
+
+            navigator
+              .nextPage(SecondaryContactTelephoneQuestionPage, NormalMode, updatedAnswers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+        }
+      }
+
 
       "must go from the What is the telephone number for *name* contact page " +
         "to Check your answers page" in {
@@ -750,6 +771,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
               .mustBe(routes.CheckYourAnswersController.onPageLoad())
         }
       }
+
 
       "must got from Is this your business? page to" - {
         "Contact email address page when answer is 'Yes' is business type not specified" in {
