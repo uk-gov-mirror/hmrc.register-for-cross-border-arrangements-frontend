@@ -133,7 +133,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
       contactDetails.contains("Do they have a telephone number?") mustBe true
       contactDetails.contains("Do you have an additional contact?") mustBe true
       contactDetails.contains("Additional contact name") mustBe true
-      contactDetails.contains("Contact preferences") mustBe true
+      contactDetails.contains("Does your additional contact have a telephone number?") mustBe true
       contactDetails.contains("Additional contact email address") mustBe true
       contactDetails.contains("Additional contact telephone number") mustBe true
 
