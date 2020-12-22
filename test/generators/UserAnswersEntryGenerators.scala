@@ -29,6 +29,14 @@ import wolfendale.scalacheck.regexp.RegexpGen
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
   self: Generators =>
 
+  implicit lazy val arbitrarySecondaryContactTelephoneQuestionUserAnswersEntry: Arbitrary[(SecondaryContactTelephoneQuestionPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[SecondaryContactTelephoneQuestionPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
   implicit lazy val arbitrarySecondaryContactEmailAddressUserAnswersEntry: Arbitrary[(SecondaryContactEmailAddressPage.type, JsValue)] =
     Arbitrary {
       for {
@@ -256,14 +264,6 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
         value <- RegexpGen.from("^[a-zA-Z0-9 '&\\\\/]{1,50}$")
                 .suchThat(_.nonEmpty)
                 .map(Json.toJson(_))
-      } yield (page, value)
-    }
-
-  implicit lazy val arbitrarySecondaryContactPreferenceUserAnswersEntry: Arbitrary[(SecondaryContactPreferencePage.type, JsValue)] =
-    Arbitrary {
-      for {
-        page  <- arbitrary[SecondaryContactPreferencePage.type]
-        value <- arbitrary[SecondaryContactPreference].map(Json.toJson(_))
       } yield (page, value)
     }
 

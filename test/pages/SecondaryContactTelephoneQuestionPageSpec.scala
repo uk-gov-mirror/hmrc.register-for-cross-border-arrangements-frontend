@@ -20,40 +20,29 @@ import models.UserAnswers
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 
-class HaveSecondContactPageSpec extends PageBehaviours {
+class SecondaryContactTelephoneQuestionPageSpec extends PageBehaviours {
 
-  "HaveSecondContactPage" - {
+  "SecondaryContactTelephoneQuestionPage" - {
 
-    beRetrievable[Boolean](HaveSecondContactPage)
+    beRetrievable[Boolean](SecondaryContactTelephoneQuestionPage)
 
-    beSettable[Boolean](HaveSecondContactPage)
+    beSettable[Boolean](SecondaryContactTelephoneQuestionPage)
 
-    beRemovable[Boolean](HaveSecondContactPage)
+    beRemovable[Boolean](SecondaryContactTelephoneQuestionPage)
 
-    "must remove secondary contact details when user changes answer to 'No'" in {
+    "must remove secondary contact telephone number when a user changes answer to 'No'" in {
       forAll(arbitrary[UserAnswers]) {
         answers =>
           val result = answers
-            .set(SecondaryContactNamePage, "Contact name")
-            .success
-            .value
-            .set(SecondaryContactTelephoneQuestionPage, true)
-            .success
-            .value
-            .set(SecondaryContactEmailAddressPage, "email@email.com")
-            .success
-            .value
             .set(SecondaryContactTelephoneNumberPage, "07888888888")
             .success
             .value
-            .set(HaveSecondContactPage, false)
+            .set(SecondaryContactTelephoneQuestionPage, false)
             .success
             .value
 
-          result.get(SecondaryContactNamePage) must not be defined
-          result.get(SecondaryContactTelephoneQuestionPage) must not be defined
-          result.get(SecondaryContactEmailAddressPage) must not be defined
           result.get(SecondaryContactTelephoneNumberPage) must not be defined
+
       }
     }
   }

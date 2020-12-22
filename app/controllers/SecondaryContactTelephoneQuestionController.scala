@@ -17,40 +17,40 @@
 package controllers
 
 import controllers.actions._
-import forms.SecondaryContactEmailAddressFormProvider
+import forms.SecondaryContactTelephoneQuestionFormProvider
 import javax.inject.Inject
 import models.{CheckMode, Mode}
 import navigation.Navigator
-import pages.{SecondaryContactEmailAddressPage, SecondaryContactNamePage, SecondaryContactTelephoneQuestionPage}
+import pages.{SecondaryContactNamePage, SecondaryContactTelephoneQuestionPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.NunjucksSupport
+import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class SecondaryContactEmailAddressController @Inject()(
+class SecondaryContactTelephoneQuestionController @Inject()(
     override val messagesApi: MessagesApi,
     sessionRepository: SessionRepository,
     navigator: Navigator,
     identify: IdentifierAction,
-    notEnrolled: NotEnrolledForDAC6Action,
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
-    formProvider: SecondaryContactEmailAddressFormProvider,
+    notEnrolled: NotEnrolledForDAC6Action,
+    formProvider: SecondaryContactTelephoneQuestionFormProvider,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen notEnrolled andThen  getData andThen requireData).async {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(SecondaryContactEmailAddressPage) match {
+      val preparedForm = request.userAnswers.get(SecondaryContactTelephoneQuestionPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -61,44 +61,50 @@ class SecondaryContactEmailAddressController @Inject()(
       }
 
       val json = Json.obj(
-        "form" -> preparedForm,
-        "mode" -> mode,
+        "form"   -> preparedForm,
+        "mode"   -> mode,
+        "radios" -> Radios.yesNo(preparedForm("value")),
         "contactName" -> contactName
       )
 
-      renderer.render("secondaryContactEmailAddress.njk", json).map(Ok(_))
+      renderer.render("secondaryContactTelephoneQuestion.njk", json).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
     implicit request =>
-    val contactName = request.userAnswers.get(SecondaryContactNamePage) match {
-        case None => "your second contact"
-        case Some(contactName) => s"$contactName"
-      }
 
       form.bindFromRequest().fold(
         formWithErrors => {
+
+          val contactName = request.userAnswers.get(SecondaryContactNamePage) match {
+            case None => "your second contact"
+            case Some(contactName) => s"$contactName"
+          }
+
           val json = Json.obj(
-            "form" -> formWithErrors,
-            "mode" -> mode,
+            "form"   -> formWithErrors,
+            "mode"   -> mode,
+            "radios" -> Radios.yesNo(formWithErrors("value")),
             "contactName" -> contactName
           )
 
-          renderer.render("secondaryContactEmailAddress.njk", json).map(BadRequest(_))
+          renderer.render("secondaryContactTelephoneQuestion.njk", json).map(BadRequest(_))
         },
         value => {
-          val redirectToSummary = request.userAnswers.get(SecondaryContactEmailAddressPage) match {
-              case Some(ans) if (ans == value) && (mode == CheckMode) => true
-              case _ => false
-            }
+          val redirectToSummary = request.userAnswers.get(SecondaryContactTelephoneQuestionPage) match {
+            case Some(ans) if (ans == value) && (mode == CheckMode) => true
+            case Some(_) if !value && (mode == CheckMode) => true
+            case _ => false
+          }
+
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(SecondaryContactEmailAddressPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(SecondaryContactTelephoneQuestionPage, value))
+            _ <- sessionRepository.set(updatedAnswers)
           } yield {
             if (redirectToSummary) {
               Redirect(routes.CheckYourAnswersController.onPageLoad())
             } else {
-              Redirect(navigator.nextPage(SecondaryContactEmailAddressPage, mode, updatedAnswers))
+              Redirect(navigator.nextPage(SecondaryContactTelephoneQuestionPage, mode, updatedAnswers))
             }
           }
         }

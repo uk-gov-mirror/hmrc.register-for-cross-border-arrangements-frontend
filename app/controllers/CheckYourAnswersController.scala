@@ -20,12 +20,12 @@ import com.google.inject.Inject
 import connectors.SubscriptionConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction, NotEnrolledForDAC6Action}
 import models.RegistrationType.Individual
-import models.{CreateSubscriptionForDACRequest, PayloadRegistrationWithoutIDResponse, RegistrationType, SubscriptionAudit, SubscriptionForDACRequest, UserAnswers}
+import models.{PayloadRegistrationWithoutIDResponse, RegistrationType, SubscriptionAudit, SubscriptionForDACRequest, UserAnswers}
 import org.slf4j.LoggerFactory
 import pages._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsError, JsSuccess, Json}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
+import play.api.mvc._
 import renderer.Renderer
 import repositories.SessionRepository
 import services.{AuditService, EmailService, RegistrationService}
@@ -152,12 +152,12 @@ class CheckYourAnswersController @Inject()(
       helper.contactTelephoneNumber,
       helper.haveSecondContact,
       helper.secondaryContactName,
-      helper.secondaryContactPreference,
       helper.secondaryContactEmailAddress,
+      helper.secondaryContactTelephoneQuestion,
       helper.secondaryContactTelephoneNumber
     ).flatten
   }
-
+  
   def onSubmit(): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
     implicit request =>
 

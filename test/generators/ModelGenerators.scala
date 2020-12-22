@@ -112,11 +112,6 @@ trait ModelGenerators {
       Gen.oneOf(BusinessType.values.toSeq)
     }
 
-  implicit lazy val arbitrarySecondaryContactPreference: Arbitrary[SecondaryContactPreference] =
-    Arbitrary {
-      Gen.oneOf(SecondaryContactPreference.values.toSeq)
-    }
-
   implicit val arbitraryRequestCommon: Arbitrary[RequestCommon] = Arbitrary {for {
     receiptDate <- arbitrary[String]
     acknowledgementReference <- stringsWithMaxLength(32)

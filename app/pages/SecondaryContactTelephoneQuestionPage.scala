@@ -16,22 +16,22 @@
 
 package pages
 
-import models.SecondaryContactPreference.{Email, Telephone}
-import models.{SecondaryContactPreference, UserAnswers}
+import models.UserAnswers
 import play.api.libs.json.JsPath
 
 import scala.util.Try
 
-case object SecondaryContactPreferencePage extends QuestionPage[Set[SecondaryContactPreference]] {
+case object SecondaryContactTelephoneQuestionPage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "secondaryContactPreference"
+  override def toString: String = "secondaryContactTelephoneQuestion"
 
-  override def cleanup(value: Option[Set[SecondaryContactPreference]], userAnswers: UserAnswers): Try[UserAnswers] =
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
     value match {
-      case Some(preferences) if !preferences.contains(Telephone) => userAnswers.remove(SecondaryContactTelephoneNumberPage)
-      case Some(preferences) if !preferences.contains(Email) => userAnswers.remove(SecondaryContactEmailAddressPage)
-      case _ => super.cleanup(value, userAnswers)
+      case Some(false) =>
+        userAnswers.remove(SecondaryContactTelephoneNumberPage)
+      case _ =>
+        super.cleanup(value, userAnswers)
     }
 }

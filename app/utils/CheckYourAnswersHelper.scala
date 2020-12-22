@@ -28,6 +28,21 @@ import utils.CheckYourAnswersHelper._
 
 class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
+  def secondaryContactTelephoneQuestion: Option[Row] = userAnswers.get(SecondaryContactTelephoneQuestionPage) map {
+    answer =>
+      Row(
+        key     = Key(msg"secondaryContactTelephoneQuestion.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value   = Value(yesOrNo(answer)),
+        actions = List(
+          Action(
+            content            = msg"site.edit",
+            href               = routes.SecondaryContactTelephoneQuestionController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"secondaryContactTelephoneQuestion.checkYourAnswersLabel"))
+          )
+        )
+      )
+  }
+
   def selectAddress: Option[Row] = userAnswers.get(SelectAddressPage) map {
     answer =>
       Row(
@@ -70,24 +85,6 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
             href               = routes.SecondaryContactEmailAddressController.onPageLoad(CheckMode).url,
             visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"secondaryContactEmailAddress.checkYourAnswersLabel")),
             attributes         = Map("id" -> "change-additional-contact-email-address")
-          )
-        )
-      )
-  }
-
-  def secondaryContactPreference: Option[Row] = userAnswers.get(SecondaryContactPreferencePage) map {
-    answer =>
-      val formattedAnswer = answer.map(_.toString).mkString(" and ").capitalize
-
-      Row(
-        key     = Key(msg"secondaryContactPreference.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value   = Value(lit"$formattedAnswer"),
-        actions = List(
-          Action(
-            content            = msg"site.edit",
-            href               = routes.SecondaryContactPreferenceController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"secondaryContactPreference.checkYourAnswersLabel")),
-            attributes         = Map("id" -> "change-contact-preferences")
           )
         )
       )

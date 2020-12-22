@@ -23,7 +23,7 @@ import config.FrontendAppConfig
 import controllers.routes
 import generators.Generators
 import models.RegistrationType.{Business, Individual}
-import models.{Address, BusinessType, CheckMode, Country, Name, RegistrationType, SecondaryContactPreference, UniqueTaxpayerReference, UserAnswers}
+import models.{Address, BusinessType, CheckMode, Country, Name, RegistrationType, UniqueTaxpayerReference, UserAnswers}
 import org.mockito.Mockito.when
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -802,93 +802,78 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
     }
 
     "must go from What is the name of the individual or team we should contact? page to" - {
-      "How can we contact *name*? page when answer is a name" in {
+      "What is the email address for *name*?" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
               answers
-                .set(SecondaryContactNamePage, "Secondary contact name")
+                .set(SecondaryContactNamePage, "Dac6Team")
                 .success
                 .value
 
             navigator
               .nextPage(SecondaryContactNamePage, CheckMode, updatedAnswers)
-              .mustBe(routes.SecondaryContactPreferenceController.onPageLoad(CheckMode))
-        }
-      }
-    }
-
-    "must go from How can we contact *name*? page to" - {
-      "What is the email address for *name*? when answer is 'Email'" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val updatedAnswers =
-              answers
-                .set(SecondaryContactPreferencePage, SecondaryContactPreference.enumerable.withName("email").toSet)
-                .success
-                .value
-
-            navigator
-              .nextPage(SecondaryContactPreferencePage, CheckMode, updatedAnswers)
               .mustBe(routes.SecondaryContactEmailAddressController.onPageLoad(CheckMode))
-        }
-      }
-
-      "What is the telephone number for *name*? when answer is 'Telephone'" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val updatedAnswers =
-              answers
-                .set(SecondaryContactPreferencePage, SecondaryContactPreference.enumerable.withName("telephone").toSet)
-                .success
-                .value
-
-            navigator
-              .nextPage(SecondaryContactPreferencePage, CheckMode, updatedAnswers)
-              .mustBe(routes.SecondaryContactTelephoneNumberController.onPageLoad(CheckMode))
         }
       }
     }
 
     "must go from What is the email address for *name*? page to" - {
-      "Check your answers page when answer is an email and user only selected email as preference" in {
+      "to does *name*? have a telephone number page" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
               answers
-                .set(SecondaryContactPreferencePage, SecondaryContactPreference.enumerable.withName("email").toSet)
-                .success
-                .value
-                .set(SecondaryContactEmailAddressPage, "email@email.com")
+                .set(SecondaryContactNamePage, "Dac6Team")
                 .success
                 .value
 
             navigator
               .nextPage(SecondaryContactEmailAddressPage, CheckMode, updatedAnswers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad())
-        }
-      }
-
-      "What is the telephone number for *name*? page when answer is an email and " +
-        "user selected email and telephone as preferences" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val preferences = SecondaryContactPreference.values.toSet
-            val updatedAnswers =
-              answers
-                .set(SecondaryContactPreferencePage, preferences)
-                .success
-                .value
-                .set(SecondaryContactEmailAddressPage, "email@email.com")
-                .success
-                .value
-
-            navigator
-              .nextPage(SecondaryContactEmailAddressPage, CheckMode, updatedAnswers)
-              .mustBe(routes.SecondaryContactTelephoneNumberController.onPageLoad(CheckMode))
+              .mustBe(routes.SecondaryContactTelephoneQuestionController.onPageLoad(CheckMode))
         }
       }
     }
+
+      "must go from the does *name*? have a telephone number page " +
+        "to what is the telephone number for *name*? page when option 'yes' is selected" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers
+                .set(SecondaryContactNamePage, "DAC6 Team")
+                .success
+                .value
+                .set(SecondaryContactTelephoneQuestionPage, true)
+                .success
+                .value
+
+            navigator
+              .nextPage(SecondaryContactTelephoneQuestionPage, CheckMode, updatedAnswers)
+              .mustBe(routes.SecondaryContactTelephoneNumberController.onPageLoad(CheckMode))
+        }
+      }
+
+      "must go from the does *name*? have a telephone number page " +
+        "to Check your answers page when option 'no' is selected" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+
+            val updatedAnswers =
+              answers
+                .set(SecondaryContactNamePage, "DAC6 Team")
+                .success
+                .value
+                .set(SecondaryContactTelephoneQuestionPage, false)
+                .success
+                .value
+
+            navigator
+              .nextPage(SecondaryContactTelephoneQuestionPage, CheckMode, updatedAnswers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+        }
+      }
 
     "must go from What is the telephone number for *name*? page to" - {
       "Check your answers page when answer is a telephone number" in {
@@ -919,5 +904,4 @@ class CheckModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with
       }
     }
   }
-
 }

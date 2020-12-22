@@ -16,18 +16,15 @@
 
 package forms
 
-import forms.mappings.Mappings
 import javax.inject.Inject
-import models.SecondaryContactPreference
+
+import forms.mappings.Mappings
 import play.api.data.Form
-import play.api.data.Forms.set
 
-class SecondaryContactPreferenceFormProvider @Inject() extends Mappings {
+class SecondaryContactTelephoneQuestionFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Set[SecondaryContactPreference]] =
+  def apply(): Form[Boolean] =
     Form(
-      "value" -> set(enumerable[SecondaryContactPreference](
-        "secondaryContactPreference.error.required"))
-        .verifying(nonEmptySet("secondaryContactPreference.error.required"))
+      "value" -> boolean("secondaryContactTelephoneQuestion.error.required")
     )
 }

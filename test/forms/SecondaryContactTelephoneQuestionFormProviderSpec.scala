@@ -16,30 +16,30 @@
 
 package forms
 
-import forms.behaviours.CheckboxFieldBehaviours
-import models.SecondaryContactPreference
+import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
 
-class SecondaryContactPreferenceFormProviderSpec extends CheckboxFieldBehaviours {
+class SecondaryContactTelephoneQuestionFormProviderSpec extends BooleanFieldBehaviours {
 
-  val form = new SecondaryContactPreferenceFormProvider()()
+  val requiredKey = "secondaryContactTelephoneQuestion.error.required"
+  val invalidKey = "error.boolean"
+
+  val form = new SecondaryContactTelephoneQuestionFormProvider()()
 
   ".value" - {
 
     val fieldName = "value"
-    val requiredKey = "secondaryContactPreference.error.required"
 
-    behave like checkboxField[SecondaryContactPreference](
+    behave like booleanField(
       form,
       fieldName,
-      validValues  = SecondaryContactPreference.values,
-      invalidError = FormError(s"$fieldName[0]", "error.invalid")
+      invalidError = FormError(fieldName, invalidKey)
     )
 
-    behave like mandatoryCheckboxField(
+    behave like mandatoryField(
       form,
       fieldName,
-      requiredKey
+      requiredError = FormError(fieldName, requiredKey)
     )
   }
 }
