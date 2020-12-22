@@ -45,8 +45,10 @@ class Renderer @Inject()(appConfig: FrontendAppConfig, trackingConfig: TrackingC
       "betaFeedbackUnauthenticatedUrl" -> appConfig.betaFeedbackUnauthenticatedUrl,
       "reportAProblemPartialUrl"       -> appConfig.reportAProblemPartialUrl,
       "reportAProblemNonJSUrl"         -> appConfig.reportAProblemNonJSUrl,
-      "trackingConsentScriptUrl"    -> trackingConfig.trackingUrl().get,
-      "gtmContainer"   -> trackingConfig.gtmContainer.get
+      "trackingConsentScriptUrl"       -> trackingConfig.trackingUrl().get,
+      "gtmContainer"                   -> trackingConfig.gtmContainer.get,
+      "timeout"                        -> appConfig.timeoutSeconds,
+      "countdown"                      -> appConfig.countdownSeconds,
     )
 
 
