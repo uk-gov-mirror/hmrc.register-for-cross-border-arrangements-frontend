@@ -17,21 +17,21 @@
 package controllers
 
 import javax.inject.Inject
+import models.NormalMode
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
-class IndexController @Inject()(
-    val controllerComponents: MessagesControllerComponents,
-    renderer: Renderer
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+class IndexController @Inject()(val controllerComponents: MessagesControllerComponents)
+                               (implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = Action.async {
+  def onPageLoad: Action[AnyContent] = Action {
     implicit request =>
 
-      renderer.render("index.njk").map(Ok(_))
+     Redirect(routes.DoYouHaveUTRController.onPageLoad(NormalMode))
+
   }
 }
