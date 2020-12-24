@@ -229,6 +229,7 @@ class CheckYourAnswersController @Inject()(
       response =>
         val subscriptionID = response.createSubscriptionForDACResponse.responseDetail.subscriptionID
         for {
+          _ <- subscriptionConnector.cacheSubscription(userAnswers, subscriptionID)
           updatedUserAnswers <- Future.fromTry(userAnswers.set(SubscriptionIDPage, subscriptionID))
           _ <- sessionRepository.set(updatedUserAnswers)
           _ <- auditService.sendAuditEvent(

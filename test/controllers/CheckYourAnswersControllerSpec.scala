@@ -366,6 +366,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
         when(mockSubscriptionConnector.createSubscription(any())(any(), any()))
           .thenReturn(Future.successful(dacSubscriptionResponse))
 
+        when(mockSubscriptionConnector.cacheSubscription(any(), any())(any(), any()))
+          .thenReturn(Future.successful(HttpResponse(OK, "")))
+
         when(mockSubscriptionConnector.createEnrolment(any())(any(), any()))
           .thenReturn(Future.successful(HttpResponse(NO_CONTENT, "")))
 
@@ -415,6 +418,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
 
         when(mockSubscriptionConnector.createSubscription(any())(any(), any()))
           .thenReturn(Future.successful(dacSubscriptionResponse))
+
+        when(mockSubscriptionConnector.cacheSubscription(any(), any())(any(), any()))
+          .thenReturn(Future.successful(HttpResponse(OK, "")))
 
         when(mockEmailService.sendEmail(any())(any()))
           .thenReturn(Future.successful(Some(HttpResponse(OK, ""))))
@@ -524,6 +530,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
         when(mockSubscriptionConnector.createSubscription(any())(any(), any()))
           .thenReturn(Future.failed(new Exception("")))
 
+        when(mockSubscriptionConnector.cacheSubscription(any(), any())(any(), any()))
+          .thenReturn(Future.successful(HttpResponse(OK, "")))
+
         val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit().url)
         val result = route(application, request).value
 
@@ -586,6 +595,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
         when(mockSubscriptionConnector.createSubscription(any())(any(), any()))
           .thenReturn(Future.successful(dacSubscriptionResponse))
 
+        when(mockSubscriptionConnector.cacheSubscription(any(), any())(any(), any()))
+          .thenReturn(Future.successful(HttpResponse(OK, "")))
+
         when(mockEmailService.sendEmail(any())(any()))
           .thenReturn(Future.successful(Some(HttpResponse(OK, ""))))
 
@@ -629,6 +641,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
 
       when(mockSubscriptionConnector.createSubscription(any())(any(), any()))
         .thenReturn(Future.successful(dacSubscriptionResponse))
+
+      when(mockSubscriptionConnector.cacheSubscription(any(), any())(any(), any()))
+        .thenReturn(Future.successful(HttpResponse(OK, "")))
 
       when(mockRegistrationService.sendRegistration(any())(any(), any()))
         .thenReturn(Future.successful(Some(HttpResponse(OK, registerWithoutIDResponse))))

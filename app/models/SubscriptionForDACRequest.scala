@@ -291,3 +291,11 @@ case class CreateSubscriptionForDACRequest(createSubscriptionForDACRequest: Subs
 object CreateSubscriptionForDACRequest {
   implicit val format: OFormat[CreateSubscriptionForDACRequest] = Json.format[CreateSubscriptionForDACRequest]
 }
+
+case class CacheCreateSubscriptionForDACRequest(
+                                                 createSubscriptionForDACRequest: SubscriptionForDACRequest,
+                                                 subscriptionID: String
+                                               )
+object CacheCreateSubscriptionForDACRequest {
+  implicit val format: OFormat[CacheCreateSubscriptionForDACRequest] = Json.format[CacheCreateSubscriptionForDACRequest]
+}
