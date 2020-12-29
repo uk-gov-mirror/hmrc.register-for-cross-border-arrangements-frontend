@@ -62,7 +62,7 @@ class IdentifierActionSpec extends FreeSpec with MustMatchers with MockitoSugar 
 
 
   "An Agent" - {
-    "must be taken to the unauthorised controller" in {
+    "must be taken to the agent unauthorised controller" in {
       val retrieval : AuthRetrievals = None ~ emptyEnrolments ~ Some(Agent) ~ None
       when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(retrieval)
 
@@ -70,12 +70,12 @@ class IdentifierActionSpec extends FreeSpec with MustMatchers with MockitoSugar 
       val result = harness.onPageLoad()(FakeRequest("GET", "/"))
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(routes.UnauthorisedAgentController.onPageLoad().url)
     }
   }
 
   "An Assistant" - {
-    "must be taken to the unauthorised controller" in {
+    "must be taken to the unauthorised assistant controller" in {
       val retrieval : AuthRetrievals = None ~ emptyEnrolments ~ None ~ Some(Assistant)
       when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(retrieval)
 
@@ -83,7 +83,7 @@ class IdentifierActionSpec extends FreeSpec with MustMatchers with MockitoSugar 
       val result = harness.onPageLoad()(FakeRequest("GET", "/"))
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad().url)
+      redirectLocation(result) mustBe Some(routes.UnauthorisedAssistantController.onPageLoad().url)
     }
   }
 

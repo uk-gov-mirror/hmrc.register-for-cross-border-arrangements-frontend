@@ -48,8 +48,10 @@ class AuthenticatedIdentifierAction @Inject()(
 
     authorised(AuthProviders(GovernmentGateway) and ConfidenceLevel.L50)
       .retrieve(Retrievals.internalId and Retrievals.allEnrolments and affinityGroup and credentialRole) {
-        case _ ~ _ ~ Some(Agent) ~ _  | _ ~ _ ~ _ ~ Some(Assistant) =>
-          Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))
+        case _ ~ _ ~ Some(Agent) ~ _ =>
+          Future.successful(Redirect(routes.UnauthorisedAgentController.onPageLoad()))
+        case _ ~ _ ~ _ ~ Some(Assistant) =>
+          Future.successful(Redirect(routes.UnauthorisedAssistantController.onPageLoad()))
         case Some(internalID) ~ enrolments ~ _ ~ _ =>
           block(UserRequest(enrolments, internalID, request))
         case _ => throw new UnauthorizedException("Unable to retrieve internal Id")
