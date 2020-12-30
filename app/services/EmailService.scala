@@ -18,7 +18,7 @@ package services
 
 import connectors.EmailConnector
 import javax.inject.{Inject, Singleton}
-import models.{EmailRequest, Name, UserAnswers}
+import models.{EmailRequest, UserAnswers}
 import pages._
 import uk.gov.hmrc.emailaddress.EmailAddress
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
@@ -32,8 +32,8 @@ class EmailService @Inject()(emailConnector:EmailConnector)(implicit executionCo
 
     val emailAddress = userAnswers.get(ContactEmailAddressPage)
 
-    val contactName = (userAnswers.get(ContactNamePage).isDefined, userAnswers.get(NamePage).isDefined, userAnswers.get(NonUkNamePage).isDefined) match{
-      case (true, false, false) => Some(userAnswers.get(ContactNamePage)).map(n => n.toString)
+    val contactName = (userAnswers.get(ContactNamePage).isDefined, userAnswers.get(NamePage).isDefined, userAnswers.get(NonUkNamePage).isDefined) match {
+      case (true, false, false) => userAnswers.get(ContactNamePage).map(n => n)
       case (false, true, false) => userAnswers.get(NamePage).map(n => n.firstName + " " + n.secondName)
       case (false, false, true) => userAnswers.get(NonUkNamePage).map(n => n.firstName + " " + n.secondName)
       case _ => None
