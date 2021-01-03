@@ -13,6 +13,8 @@ GET        /this-service-has-been-reset                   controllers.SessionExp
 GET        /keep-alive                                   controllers.KeepAliveController.keepAlive
 
 GET        /unauthorised                                  controllers.UnauthorisedController.onPageLoad
+GET        /sign-in-problem                               controllers.UnauthorisedAssistantController.onPageLoad
+GET        /no-agent-service-available                    controllers.UnauthorisedAgentController.onPageLoad
 
 GET        /accessibility-statement                       controllers.AccessibilityController.onPageLoad
 

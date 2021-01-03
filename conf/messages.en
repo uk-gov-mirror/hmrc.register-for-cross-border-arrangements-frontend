@@ -57,6 +57,26 @@ session_expired.guidance = The details you have given have been deleted because 
 unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
 
+#Assistant messages
+unauthorisedAssistant.title = There is a problem
+unauthorisedAssistant.heading = There is a problem
+unauthorisedAssistant.paragraph.1 = You’ve signed in as an assistant. To register for the DAC6 service, you must sign in as an administrator.
+unauthorisedAssistant.paragraph.2.a = If you have an administrator account,
+unauthorisedAssistant.paragraph.2.b = sign in
+unauthorisedAssistant.paragraph.2.c = with those Government Gateway details.
+unauthorisedAssistant.paragraph.3 = If you do not have an administrator account, find someone in your organisation who does. They will need to register for the DAC6 service using their Government Gateway sign-in details.
+unauthorisedAssistant.paragraph.4 = When your organisation is registered for DAC6, you will be able to access the service to make disclosures using your own Government Gateway credentials.
+
+#Agent messages
+unauthorisedAgent.title = There is a problem
+unauthorisedAgent.heading = There is a problem
+unauthorisedAgent.paragraph.1 = You’ve signed into the Government Gateway as an agent. The agent service is not available for DAC6.
+unauthorisedAgent.paragraph.2.a = If you want to use the service yourself,
+unauthorisedAgent.paragraph.2.b = sign in
+unauthorisedAgent.paragraph.2.c = with those Government Gateway details.
+unauthorisedAgent.paragraph.3 = You cannot disclose cross-border arrangements for other organisations or individuals, they must do it themselves.
+
+
 #### Compliance statement
 
 ## section one

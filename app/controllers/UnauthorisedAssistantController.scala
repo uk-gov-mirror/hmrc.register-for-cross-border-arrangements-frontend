@@ -16,22 +16,29 @@
 
 package controllers
 
-import javax.inject.Inject
-import models.NormalMode
+import config.FrontendAppConfig
 import play.api.i18n.I18nSupport
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
-import scala.concurrent.{ExecutionContext, Future}
+import javax.inject.Inject
+import scala.concurrent.ExecutionContext
 
-class IndexController @Inject()(val controllerComponents: MessagesControllerComponents)
-                               (implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+class UnauthorisedAssistantController @Inject()(
+    val controllerComponents: MessagesControllerComponents,
+    frontendAppConfig: FrontendAppConfig,
+    renderer: Renderer
+)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = Action {
+  def onPageLoad: Action[AnyContent] = Action.async {
     implicit request =>
 
-     Redirect(routes.DoYouHaveUTRController.onPageLoad(NormalMode))
+      val json = Json.obj(
+        "loginUrl" -> frontendAppConfig.loginUrl
+      )
 
+      renderer.render("unauthorisedAssistant.njk", json).map(Ok(_))
   }
 }
