@@ -17,12 +17,13 @@
 package connectors
 
 import config.FrontendAppConfig
+
 import javax.inject.Inject
 import models.readSubscription.{DisplaySubscriptionDetails, DisplaySubscriptionForDACRequest, DisplaySubscriptionForDACResponse}
-import models.{CreateSubscriptionForDACRequest, CreateSubscriptionForDACResponse, SubscriptionForDACRequest, SubscriptionInfo, UserAnswers}
+import models.{CacheCreateSubscriptionForDACRequest, CreateSubscriptionForDACRequest, CreateSubscriptionForDACResponse, SubscriptionForDACRequest, SubscriptionInfo, UserAnswers}
 import org.slf4j.LoggerFactory
 import play.api.http.Status.OK
-import play.api.libs.json.{JsError, JsSuccess}
+import play.api.libs.json.{JsError, JsSuccess, Json}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException, HttpResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -84,6 +85,16 @@ class SubscriptionConnector @Inject()(val config: FrontendAppConfig, val http: H
             None
         }
     }
+  }
+
+  def cacheSubscription(userAnswers: UserAnswers, subscriptionID: String)
+           (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
+    val submissionUrl = s"${config.crossBorderArrangementsUrl}/disclose-cross-border-arrangements/subscription/cache-subscription"
+
+    http.POST[CacheCreateSubscriptionForDACRequest, HttpResponse](
+      submissionUrl,
+      CacheCreateSubscriptionForDACRequest(SubscriptionForDACRequest.createSubscription(userAnswers), subscriptionID)
+    )
   }
 
 }

@@ -119,8 +119,8 @@ class SubscriptionConnectorSpec extends SpecBase
 
       "must return status OK for submission of valid registration details" in {
 
-        forAll(validPersonalName, validEmailAddress, validSafeID) {
-          (name, email, safeID) =>
+        forAll(validPersonalName, validEmailAddress, validSafeID, validSubscriptionID) {
+          (name, email, safeID, subscriptionID) =>
             val updatedUserAnswers = UserAnswers("internalId")
               .set(ContactNamePage, name).success.value
               .set(ContactEmailAddressPage, email).success.value
@@ -131,11 +131,11 @@ class SubscriptionConnectorSpec extends SpecBase
             val response = CreateSubscriptionForDACResponse(
               SubscriptionForDACResponse(
                 responseCommon = ResponseCommon("OK", None, "2020-09-23T16:12:11Z", None),
-                responseDetail = ResponseDetailForDACSubscription("XADAC0000123456"))
+                responseDetail = ResponseDetailForDACSubscription(subscriptionID))
             )
 
-            val expectedBody =
-              """
+            def expectedBody(subscriptionID: String): String =
+              s"""
                 |{
                 | "createSubscriptionForDACResponse": {
                 |   "responseCommon": {
@@ -143,15 +143,47 @@ class SubscriptionConnectorSpec extends SpecBase
                 |     "processingDate": "2020-09-23T16:12:11Z"
                 |   },
                 |   "responseDetail": {
-                |      "subscriptionID": "XADAC0000123456"
+                |      "subscriptionID": "$subscriptionID"
                 |   }
                 | }
                 |}""".stripMargin
 
-            stubPostResponse("/register-for-cross-border-arrangements/subscription/create-dac-subscription", OK, expectedBody)
+            stubPostResponse("/register-for-cross-border-arrangements/subscription/create-dac-subscription", OK, expectedBody(subscriptionID))
 
             val result = connector.createSubscription(updatedUserAnswers)
             result.futureValue mustBe response
+        }
+      }
+
+      "must return status OK for caching a submission of valid registration details" in {
+
+        forAll(validPersonalName, validEmailAddress, validSafeID, validSubscriptionID) {
+          (name, email, safeID, subscriptionID) =>
+            val updatedUserAnswers = UserAnswers("internalId")
+              .set(ContactNamePage, name).success.value
+              .set(ContactEmailAddressPage, email).success.value
+              .set(HaveSecondContactPage, false).success.value
+              .set(SafeIDPage, safeID).success.value
+              .remove(RegistrationTypePage).success.value
+
+            def expectedBody(subscriptionID: String): String =
+              s"""
+                |{
+                | "createSubscriptionForDACResponse": {
+                |   "responseCommon": {
+                |     "status": "OK",
+                |     "processingDate": "2020-09-23T16:12:11Z"
+                |   },
+                |   "responseDetail": {
+                |      "subscriptionID": "$subscriptionID"
+                |   }
+                | }
+                |}""".stripMargin
+
+            stubPostResponse("/disclose-cross-border-arrangements/subscription/cache-subscription", OK, expectedBody(subscriptionID))
+
+            val result = connector.cacheSubscription(updatedUserAnswers, subscriptionID)
+            result.futureValue.status mustBe OK
         }
       }
 
