@@ -50,7 +50,7 @@ class AuthenticatedIdentifierAction @Inject()(
       .retrieve(Retrievals.internalId and Retrievals.allEnrolments and affinityGroup and credentialRole) {
         case _ ~ _ ~ Some(Agent) ~ _ =>
           Future.successful(Redirect(routes.UnauthorisedAgentController.onPageLoad()))
-        case _ ~ _ ~ _ ~ Some(Assistant) =>
+        case _ ~ enrolments ~ _ ~ Some(Assistant) if !enrolments.enrolments.exists(_.key == "HMRC-DAC6-ORG")  =>
           Future.successful(Redirect(routes.UnauthorisedAssistantController.onPageLoad()))
         case Some(internalID) ~ enrolments ~ _ ~ _ =>
           block(UserRequest(enrolments, internalID, request))

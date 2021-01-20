@@ -85,11 +85,34 @@ class IdentifierActionSpec extends FreeSpec with MustMatchers with MockitoSugar 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(routes.UnauthorisedAssistantController.onPageLoad().url)
     }
+
+    "must be allowed through the refiner if they are enrolled" in {
+
+      val dac6Enrolment = Enrolment(key = "HMRC-DAC6-ORG")
+      val retrieval : AuthRetrievals = Some("internalID") ~ Enrolments(Set(dac6Enrolment)) ~ Some(Organisation) ~ Some(Assistant)
+      when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(retrieval)
+
+      val harness = app.injector.instanceOf[Harness]
+      val result = harness.onPageLoad()(FakeRequest("GET", "/"))
+      status(result) mustBe OK
+
+    }
   }
 
   "A user role for an organisation" - {
     "must be allowed through the refiner" in {
       val retrieval : AuthRetrievals = Some("internalID") ~ emptyEnrolments ~ Some(Organisation) ~ Some(User)
+      when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(retrieval)
+
+      val harness = app.injector.instanceOf[Harness]
+      val result = harness.onPageLoad()(FakeRequest("GET", "/"))
+      status(result) mustBe OK
+    }
+
+    "must be allowed through the refiner if they are enrolled" in {
+
+      val dac6Enrolment = Enrolment(key = "HMRC-DAC6-ORG")
+      val retrieval : AuthRetrievals = Some("internalID") ~ Enrolments(Set(dac6Enrolment)) ~ Some(Organisation) ~ Some(User)
       when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(retrieval)
 
       val harness = app.injector.instanceOf[Harness]
