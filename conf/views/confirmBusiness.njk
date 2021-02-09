@@ -52,7 +52,11 @@
             classes: "govuk-radios--inline",
             name: 'confirm',
             fieldset: {
-            },
+                  legend: {
+                      text: messages('confirmBusiness.heading'),
+                      classes: 'govuk-visually-hidden'
+                  }
+              },
             items: radios,
             errorMessage: form.confirm.error
           }) }}
