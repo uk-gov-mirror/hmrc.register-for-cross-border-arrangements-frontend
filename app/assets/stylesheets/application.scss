@@ -6,3 +6,8 @@ $hmrc-assets-path: "/register-for-cross-border-arrangements/assets/lib/hmrc-fron
 @import "partials/header";
 @import "language-toggles.scss";
 @import "_timeout-dialog.scss";
+
+/* TODO remove when WCGA issue is fixed */
+.hmrc-header.hmrc-header--with-additional-navigation .hmrc-sign-out-nav__link:focus {
+  color: #0B0C0C;
+}
