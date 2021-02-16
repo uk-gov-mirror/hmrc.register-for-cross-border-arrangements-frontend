@@ -49,6 +49,7 @@ class Renderer @Inject()(appConfig: FrontendAppConfig, trackingConfig: TrackingC
       "gtmContainer"                   -> trackingConfig.gtmContainer.get,
       "timeout"                        -> appConfig.timeoutSeconds,
       "countdown"                      -> appConfig.countdownSeconds,
+      "researchBannerEnabled"          -> appConfig.researchBannerEnabled,
     )
 
 
