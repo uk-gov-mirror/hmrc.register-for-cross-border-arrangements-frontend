@@ -47,6 +47,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   lazy val crossBorderArrangementsUrl: String = configuration.get[Service]("microservice.services.cross-border-arrangements").baseUrl
   lazy val addressLookUpUrl: String = configuration.get[Service]("microservice.services.address-lookup").baseUrl
   lazy val sendEmailUrl: String = configuration.get[Service]("microservice.services.email").baseUrl
+  lazy val researchBannerUrl: String = configuration.get[String]("urls.researchBanner")
 
   lazy val dacSubmissionsUrl: String = s"${configuration.get[String]("urls.dac-submissions.host")}${configuration.get[String]("urls.dac-submissions.startUrl")}"
   lazy val lostUTRUrl: String = "https://www.gov.uk/find-lost-utr-number"
@@ -59,6 +60,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
 
   //Toggles
   lazy val addressLookupToggle: Boolean = configuration.get[String]("addressLookupToggle").toBoolean
+
 
   def languageMap: Map[String, Lang] = Map(
     "english" -> Lang("en"),
