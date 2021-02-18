@@ -48,11 +48,12 @@ class RegistrationSuccessfulController @Inject()(
         case Some(id) =>
           val json = Json.obj(
             "subscriptionID" -> confirmationPanelText(id),
-          "submissionUrl" -> appConfig.dacSubmissionsUrl
+          "submissionUrl" -> appConfig.dacSubmissionsUrl,
+          "recruitmentBannerToggle" -> appConfig.recruitmentBannerToggle
         )
           renderer.render("registrationSuccessful.njk", json).map(Ok(_))
         case None =>
-          errorHandler.onServerError(request, throw new RuntimeException("Subcription ID missing"))
+          errorHandler.onServerError(request, throw new RuntimeException("Subscription ID missing"))
       }
   }
 

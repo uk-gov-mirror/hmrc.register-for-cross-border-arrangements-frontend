@@ -1,11 +1,6 @@
 $(document).ready(function() {
 
   // =====================================================
-  // Handle the UR recruitmentBanner
-  // =====================================================
-     recruitmentBanner()
-
-  // =====================================================
   // Initialise show-hide-content
   // Toggles additional content based on radio/checkbox input state
   // =====================================================
@@ -35,7 +30,7 @@ $(document).ready(function() {
   });
 
   //======================================================
-  // Move immediate forcus to any error summary
+  // Move immediate focus to any error summary
   //======================================================
   if ($('.error-summary a').length > 0){
     $('.error-summary').focus();
@@ -156,66 +151,5 @@ $(document).ready(function() {
       $("form").on("keydown", "input[type=number]", function(e) {
           if ( e.which == 38 || e.which == 40 || e.which == 188 )
               e.preventDefault();
- });
-}
-
-function recruitmentBanner()
-{
-    const recruitmentBanner = $("#recruitment-banner")
-
-    if(recruitmentBanner){
-        const recruitmentBannerDismiss = $("#recruitment-banner-dismiss")
-
-        const recruitmentCookieName = "mtdpurr"
-        const hasDismissed = getCookie(recruitmentCookieName)
-
-        if (hasDismissed) {
-            recruitmentBanner.remove()
-        } else {
-            recruitmentBannerDismiss.click(function(event) {
-                event.preventDefault()
-                setCookie(recruitmentCookieName, 'suppress_for_all_services', { days: 30 })
-                recruitmentBanner.remove()
-            })
-            recruitmentBanner.removeClass('js-hidden');
-        }
-    }
-}
-
-function setCookie(name, value, duration, domain) {
-    var secure = window.location.protocol.indexOf('https') ? '' : '; secure'
-    var cookieDomain = ''
-    var expires = ''
-
-    if (domain) {
-        cookieDomain = '; domain=' + domain
-    }
-
-    if (duration) {
-        var date = new Date()
-        date.setTime(date.getTime() + (duration.days * 24 * 60 * 60 * 1000))
-        expires = '; expires=' + date.toGMTString()
-    }
-
-    document.cookie = name + '=' + value + expires + cookieDomain + '; path=/' + secure
-}
-
-function getCookie(name) {
-    var i, c
-    var nameEQ = name + '='
-    var ca = document.cookie.split(';')
-
-    for (i = 0; i < ca.length; i += 1) {
-        c = ca[i]
-
-        while (c.charAt(0) === ' ') {
-            c = c.substring(1, c.length)
-        }
-
-        if (c.indexOf(nameEQ) === 0) {
-            return c.substring(nameEQ.length, c.length)
-        }
-    }
-
-    return null
-}
+        });
+      }
