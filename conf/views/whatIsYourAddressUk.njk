@@ -65,7 +65,7 @@
             id: "addressLine3",
             name: "addressLine3",
             value: form.addressLine3.value,
-            autocomplete: "address-line3",
+            autocomplete: "address-level1",
             errorMessage: form.addressLine3.error
           }) }}
 
@@ -75,8 +75,8 @@
             },
             id: "addressLine4",
             name: "addressLine4",
+            autocomplete: "",
             value: form.addressLine4.value,
-            autocomplete: "address-line4",
             errorMessage: form.addressLine4.error
           }) }}
 
@@ -88,7 +88,7 @@
            id: "postCode",
            name: "postCode",
            value: form.postCode.value,
-          autocomplete: "postal-code",
+           autocomplete: "postal-code",
            errorMessage: form.postCode.error
           }) }}
 
@@ -96,6 +96,7 @@
             classes: "govuk-input--width-20 autocomplete",
             id: "country",
             name: "country",
+            autocomplete: "country-name",
             errorMessage: form.country.error,
             items: countries,
             attributes:{"hidden" : ""}
