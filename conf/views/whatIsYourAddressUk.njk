@@ -96,7 +96,9 @@
             classes: "govuk-input--width-20 autocomplete",
             id: "country",
             name: "country",
-            autocomplete: "country-name",
+            attributes: {
+                 autocomplete: "country-name"
+              },
             errorMessage: form.country.error,
             items: countries,
             attributes:{"hidden" : ""}
