@@ -40,10 +40,12 @@
             classes: "govuk-!-width-three-quarters",
             id: "secondaryContactName",
             name: "secondaryContactName",
+            spellcheck: false,
             hint: {
                 text: messages("secondaryContactName.hint")
              },
             value: form.secondaryContactName.value,
+            autocomplete: "name",
             errorMessage: form.secondaryContactName.error
           }) }}
 
