@@ -364,7 +364,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
           .build()
 
         when(mockSubscriptionConnector.createSubscription(any())(any(), any()))
-          .thenReturn(Future.successful(dacSubscriptionResponse))
+          .thenReturn(Future.successful(Right("XADAC0000123456")))
 
         when(mockSubscriptionConnector.cacheSubscription(any(), any())(any(), any()))
           .thenReturn(Future.successful(HttpResponse(OK, "")))
@@ -417,7 +417,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
           .thenReturn(Future.successful(Some(HttpResponse(OK, registerWithoutIDResponse))))
 
         when(mockSubscriptionConnector.createSubscription(any())(any(), any()))
-          .thenReturn(Future.successful(dacSubscriptionResponse))
+          .thenReturn(Future.successful(Right("XADAC0000123456")))
 
         when(mockSubscriptionConnector.cacheSubscription(any(), any())(any(), any()))
           .thenReturn(Future.successful(HttpResponse(OK, "")))
@@ -593,7 +593,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
           .build()
 
         when(mockSubscriptionConnector.createSubscription(any())(any(), any()))
-          .thenReturn(Future.successful(dacSubscriptionResponse))
+          .thenReturn(Future.successful(Right("XADAC0000123456")))
 
         when(mockSubscriptionConnector.cacheSubscription(any(), any())(any(), any()))
           .thenReturn(Future.successful(HttpResponse(OK, "")))
@@ -640,7 +640,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
         .build()
 
       when(mockSubscriptionConnector.createSubscription(any())(any(), any()))
-        .thenReturn(Future.successful(dacSubscriptionResponse))
+        .thenReturn(Future.successful(Right("XADAC0000123456")))
 
       when(mockSubscriptionConnector.cacheSubscription(any(), any())(any(), any()))
         .thenReturn(Future.successful(HttpResponse(OK, "")))

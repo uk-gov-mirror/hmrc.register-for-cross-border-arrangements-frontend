@@ -17,12 +17,14 @@
 package connectors
 
 import config.FrontendAppConfig
+import models.error.RegisterError
+import models.error.RegisterError.DuplicateSubmisisonError
 
 import javax.inject.Inject
 import models.readSubscription.{DisplaySubscriptionDetails, DisplaySubscriptionForDACRequest, DisplaySubscriptionForDACResponse}
-import models.{CacheCreateSubscriptionForDACRequest, CreateSubscriptionForDACRequest, CreateSubscriptionForDACResponse, SubscriptionForDACRequest, SubscriptionInfo, UserAnswers}
+import models.{CacheCreateSubscriptionForDACRequest, CreateSubscriptionForDACRequest, CreateSubscriptionForDACResponse, ErrorDetail, SubscriptionForDACRequest, SubscriptionForDACResponse, SubscriptionInfo, UserAnswers}
 import org.slf4j.LoggerFactory
-import play.api.http.Status.OK
+import play.api.http.Status.{CONFLICT, OK}
 import play.api.libs.json.{JsError, JsSuccess, Json}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException, HttpResponse}
 
@@ -42,7 +44,7 @@ class SubscriptionConnector @Inject()(val config: FrontendAppConfig, val http: H
   }
 
   def createSubscription(userAnswers: UserAnswers)
-                        (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[CreateSubscriptionForDACResponse] = {
+                        (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[RegisterError, String]] = {
 
     val submissionUrl = s"${config.businessMatchingUrl}/subscription/create-dac-subscription"
     try {
@@ -50,8 +52,12 @@ class SubscriptionConnector @Inject()(val config: FrontendAppConfig, val http: H
         submissionUrl,
         CreateSubscriptionForDACRequest(SubscriptionForDACRequest.createSubscription(userAnswers))
       ).flatMap {
-        case response if response.status equals OK =>
-          Future.successful(response.json.as[CreateSubscriptionForDACResponse])
+        case response if response.status equals OK => {
+          val subscription = response.json.as[CreateSubscriptionForDACResponse].createSubscriptionForDACResponse
+          Future.successful(Right(subscription.responseDetail.subscriptionID))
+        }
+        case response if response.status equals CONFLICT =>
+          Future.successful(Left(DuplicateSubmisisonError))
         case response =>
           logger.warn(s"Unable to create a subscription to ETMP. ${response.status} response status")
           Future.failed(new HttpException(response.body, response.status))

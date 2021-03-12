@@ -20,6 +20,8 @@ import com.google.inject.Inject
 import connectors.SubscriptionConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction, NotEnrolledForDAC6Action}
 import models.RegistrationType.Individual
+import models.error.RegisterError
+import models.error.RegisterError.DuplicateSubmisisonError
 import models.{PayloadRegistrationWithoutIDResponse, RegistrationType, SubscriptionAudit, SubscriptionForDACRequest, UserAnswers}
 import org.slf4j.LoggerFactory
 import pages._
@@ -185,14 +187,7 @@ class CheckYourAnswersController @Inject()(
     response.map(_.json.validate[PayloadRegistrationWithoutIDResponse]) match {
       case Some(JsSuccess(registerWithoutIDResponse, _)) if registerWithoutIDResponse.registerWithoutIDResponse.responseDetail.isDefined =>
         //Without id journeys
-        updateUserAnswersWithSafeID(userAnswers, registerWithoutIDResponse).flatMap {
-          userAnswersWithSafeID =>
-            createSubscriptionThenEnrolment(userAnswersWithSafeID)
-        }.recover {
-          case e: Exception =>
-            logger.warn("Unable to update UserAnswers with SafeID", e)
-            Redirect(routes.ProblemWithServiceController.onPageLoad())
-        }
+        updateUserAnswersWithSafeID(userAnswers, registerWithoutIDResponse).flatMap (createSubscriptionThenEnrolment)
       case Some(JsSuccess(_, _)) =>
         logger.warn("Response detail is missing from PayloadRegistrationWithoutIDResponse")
         Future.successful(Redirect(routes.ProblemWithServiceController.onPageLoad()))
@@ -213,37 +208,44 @@ class CheckYourAnswersController @Inject()(
       } yield updatedUserAnswers
   }
 
-  private def createSubscriptionThenEnrolment(userAnswers: UserAnswers)(implicit request: Request[_]): Future[Result] = {
+  private def createSubscriptionThenEnrolment(userAnswers: UserAnswers)(implicit request: Request[_]): Future[Result] =
     createEISSubscription(userAnswers).flatMap {
-      userAnswersWithSubscriptionID =>
-        createEnrolment(userAnswersWithSubscriptionID)
-    }.recover {
-      case e: Exception =>
-        logger.warn("Unable to create an ETMP subscription. Redirecting to /register/problem-with-service", e)
-        Redirect(routes.ProblemWithServiceController.onPageLoad())
+      either => {
+        either.fold(
+          error => {
+            logger.warn("Unable to create subscription", error)
+            error match {
+              case DuplicateSubmisisonError => Future.successful(Redirect(routes.ThisOrganisationHasAlreadyBeenRegisteredController.onPageLoad()))
+              case _                        => Future.successful(Redirect(routes.ProblemWithServiceController.onPageLoad()))
+            }
+          },
+          userAnswers =>
+            for {
+              enrolment <- createEnrolment(userAnswers)
+            } yield enrolment
+        )
+      }
     }
-  }
 
-  private def createEISSubscription(userAnswers: UserAnswers)(implicit request: Request[_]): Future[UserAnswers] = {
+  private def createEISSubscription(userAnswers: UserAnswers)(implicit request: Request[_]): Future[Either[RegisterError, UserAnswers]] =
     subscriptionConnector.createSubscription(userAnswers).flatMap {
-      response =>
-        val subscriptionID = response.createSubscriptionForDACResponse.responseDetail.subscriptionID
-        for {
-          _ <- subscriptionConnector.cacheSubscription(userAnswers, subscriptionID)
-          updatedUserAnswers <- Future.fromTry(userAnswers.set(SubscriptionIDPage, subscriptionID))
-          _ <- sessionRepository.set(updatedUserAnswers)
-          _ <- auditService.sendAuditEvent(
-            "SubscriptionSubmission",
-            Json.toJson(SubscriptionAudit.fromRequestDetail(SubscriptionForDACRequest.createSubscription(userAnswers).requestDetail)),
-            "/register-for-cross-border-arrangements/subscription",
-            "/register-for-cross-border-arrangements/subscription"
-          )
-        } yield updatedUserAnswers
-    }.recoverWith {
-      case e: Exception =>
-        throw e
+      either =>
+        either.fold(
+          error          => Future.successful(Left(error)),
+          subscriptionID =>
+            for {
+              _ <- subscriptionConnector.cacheSubscription(userAnswers, subscriptionID)
+              updatedUserAnswers <- Future.fromTry(userAnswers.set(SubscriptionIDPage, subscriptionID))
+              _ <- sessionRepository.set(updatedUserAnswers)
+              _ <- auditService.sendAuditEvent(
+                "SubscriptionSubmission",
+                Json.toJson(SubscriptionAudit.fromRequestDetail(SubscriptionForDACRequest.createSubscription(userAnswers).requestDetail)),
+                "/register-for-cross-border-arrangements/subscription",
+                "/register-for-cross-border-arrangements/subscription"
+              )
+            } yield Right(updatedUserAnswers)
+        )
     }
-  }
 
   private def logEmailResponse(emailResponse: Option[HttpResponse]): Unit = {
     emailResponse match {

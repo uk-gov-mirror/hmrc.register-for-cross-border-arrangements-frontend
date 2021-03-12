@@ -509,3 +509,9 @@ secondaryContactTelephoneQuestion.title = Does your second contact have a teleph
 secondaryContactTelephoneQuestion.heading = Does {0} have a telephone number?
 secondaryContactTelephoneQuestion.checkYourAnswersLabel = Does your additional contact have a telephone number?
 secondaryContactTelephoneQuestion.error.required = Select yes if your second contact has a telephone number
+
+thisOrganisationHasAlreadyBeenRegistered.title = This organisation has already been registered
+thisOrganisationHasAlreadyBeenRegistered.heading = This organisation has already been registered
+thisOrganisationHasAlreadyBeenRegistered.p1 = You need to check with your organisation which Government Gateway sign-in details have been used to disclose cross-border arrangements for DAC6.
+thisOrganisationHasAlreadyBeenRegistered.link = Contact the cross-border arrangements helpline if you need to speak to someone about your disclosures (opens in new tab).
+
