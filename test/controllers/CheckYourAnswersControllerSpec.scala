@@ -24,7 +24,7 @@ import models.{Address, BusinessType, Country, CreateSubscriptionForDACResponse,
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
-import org.scalacheck.Gen
+import generators.Generators
 import org.scalatest.BeforeAndAfterEach
 import pages._
 import play.api.inject.bind
@@ -41,7 +41,7 @@ import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
+class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach with Generators {
 
   val address: Address = Address("value 1", Some("value 2"), "value 3", Some("value 4"), Some("XX9 9XX"),
     Country("valid","GB","United Kingdom"))
@@ -60,7 +60,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
   val mockSessionRepository: SessionRepository = mock[SessionRepository]
   val mockAuditService : AuditService = mock[AuditService]
 
-  val safeID = Gen.oneOf(List("XADAC0000123456", "XE0001122334455", "XE0001234567890")).sample.get
+  val safeID = validSafeID.sample.get
 
   def registerWithoutIDResponse(safeID: String = "XE0000123456789"): String =
     s"""
@@ -433,7 +433,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
           .thenReturn(Future.successful(Some(HttpResponse(OK, registerWithoutIDResponse(safeID)))))
 
         when(mockSubscriptionConnector.createSubscription(any())(any(), any()))
-          .thenReturn(Future.successful(Right("XADAC0000123456")))
+          .thenReturn(Future.successful(Right(safeID)))
 
         when(mockSubscriptionConnector.cacheSubscription(any(), any())(any(), any()))
           .thenReturn(Future.successful(HttpResponse(OK, "")))
@@ -609,7 +609,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
           .build()
 
         when(mockSubscriptionConnector.createSubscription(any())(any(), any()))
-          .thenReturn(Future.successful(Right("XADAC0000123456")))
+          .thenReturn(Future.successful(Right(safeID)))
 
         when(mockSubscriptionConnector.cacheSubscription(any(), any())(any(), any()))
           .thenReturn(Future.successful(HttpResponse(OK, "")))
@@ -656,7 +656,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
         .build()
 
       when(mockSubscriptionConnector.createSubscription(any())(any(), any()))
-        .thenReturn(Future.successful(Right("XADAC0000123456")))
+        .thenReturn(Future.successful(Right(safeID)))
 
       when(mockSubscriptionConnector.cacheSubscription(any(), any())(any(), any()))
         .thenReturn(Future.successful(HttpResponse(OK, "")))
