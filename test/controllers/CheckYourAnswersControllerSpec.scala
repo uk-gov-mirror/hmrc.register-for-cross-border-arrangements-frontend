@@ -17,11 +17,11 @@
 package controllers
 
 import java.time.LocalDate
-
 import base.SpecBase
 import connectors.SubscriptionConnector
 import helpers.JsonFixtures.registerWithoutIDResponse
 import models.RegistrationType.{Business, Individual}
+import models.error.RegisterError.UnableToCreateEMTPSubscriptionError
 import models.{Address, BusinessType, Country, CreateSubscriptionForDACResponse, Name, RegistrationType, ResponseCommon, ResponseDetailForDACSubscription, SubscriptionForDACResponse, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
@@ -528,7 +528,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
           .thenReturn(Future.successful(Some(HttpResponse(OK, registerWithoutIDResponse))))
 
         when(mockSubscriptionConnector.createSubscription(any())(any(), any()))
-          .thenReturn(Future.failed(new Exception("")))
+          .thenReturn(Future.successful(Left(UnableToCreateEMTPSubscriptionError)))
 
         when(mockSubscriptionConnector.cacheSubscription(any(), any())(any(), any()))
           .thenReturn(Future.successful(HttpResponse(OK, "")))
@@ -559,7 +559,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
           .thenReturn(Future.successful(Some(HttpResponse(OK, ""))))
 
         when(mockSubscriptionConnector.createSubscription(any())(any(), any()))
-          .thenReturn(Future.failed(new Exception("")))
+          .thenReturn(Future.successful(Left(UnableToCreateEMTPSubscriptionError)))
 
         val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit().url)
         val result = route(application, request).value

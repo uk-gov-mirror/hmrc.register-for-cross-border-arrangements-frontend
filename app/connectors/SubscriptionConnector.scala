@@ -18,7 +18,7 @@ package connectors
 
 import config.FrontendAppConfig
 import models.error.RegisterError
-import models.error.RegisterError.DuplicateSubmisisonError
+import models.error.RegisterError.{DuplicateSubmisisonError, UnableToCreateEMTPSubscriptionError}
 
 import javax.inject.Inject
 import models.readSubscription.{DisplaySubscriptionDetails, DisplaySubscriptionForDACRequest, DisplaySubscriptionForDACResponse}
@@ -29,6 +29,7 @@ import play.api.libs.json.{JsError, JsSuccess, Json}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException, HttpResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 class SubscriptionConnector @Inject()(val config: FrontendAppConfig, val http: HttpClient) {
 
@@ -53,19 +54,22 @@ class SubscriptionConnector @Inject()(val config: FrontendAppConfig, val http: H
         CreateSubscriptionForDACRequest(SubscriptionForDACRequest.createSubscription(userAnswers))
       ).flatMap {
         case response if response.status equals OK => {
-          val subscription = response.json.as[CreateSubscriptionForDACResponse].createSubscriptionForDACResponse
-          Future.successful(Right(subscription.responseDetail.subscriptionID))
+          Future.successful{
+            Try(response.json.as[CreateSubscriptionForDACResponse].createSubscriptionForDACResponse).map { subscription =>
+              subscription.responseDetail.subscriptionID
+            }.toOption.toRight(UnableToCreateEMTPSubscriptionError)
+          }
         }
         case response if response.status equals CONFLICT =>
           Future.successful(Left(DuplicateSubmisisonError))
         case response =>
           logger.warn(s"Unable to create a subscription to ETMP. ${response.status} response status")
-          Future.failed(new HttpException(response.body, response.status))
+          Future.successful(Left(UnableToCreateEMTPSubscriptionError))
       }
     } catch {
       case e: Exception =>
         logger.warn("Unable to create an ETMP subscription", e)
-        Future.failed(e)
+        Future.successful(Left(UnableToCreateEMTPSubscriptionError))
     }
   }
 
