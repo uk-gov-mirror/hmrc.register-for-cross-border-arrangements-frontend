@@ -203,4 +203,4 @@ POST       /register/second-contact-have-phone                          controll
 GET        /register/change-second-contact-have-phone                   controllers.SecondaryContactTelephoneQuestionController.onPageLoad(mode: Mode = CheckMode)
 POST       /register/change-second-contact-have-phone                   controllers.SecondaryContactTelephoneQuestionController.onSubmit(mode: Mode = CheckMode)
 
-GET        /register/problem-duplicate-business           controllers.ThisOrganisationHasAlreadyBeenRegisteredController.onPageLoad()
+GET        /register/org-already-registered                controllers.ThisOrganisationHasAlreadyBeenRegisteredController.onPageLoad()
