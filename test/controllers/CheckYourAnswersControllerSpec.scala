@@ -16,16 +16,15 @@
 
 package controllers
 
-import java.time.LocalDate
 import base.SpecBase
 import connectors.SubscriptionConnector
-import helpers.JsonFixtures.registerWithoutIDResponse
 import models.RegistrationType.{Business, Individual}
 import models.error.RegisterError.UnableToCreateEMTPSubscriptionError
 import models.{Address, BusinessType, Country, CreateSubscriptionForDACResponse, Name, RegistrationType, ResponseCommon, ResponseDetailForDACSubscription, SubscriptionForDACResponse, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
+import org.scalacheck.Gen
 import org.scalatest.BeforeAndAfterEach
 import pages._
 import play.api.inject.bind
@@ -39,6 +38,7 @@ import uk.gov.hmrc.domain.{Generator, Nino}
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
@@ -60,6 +60,23 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
   val mockSessionRepository: SessionRepository = mock[SessionRepository]
   val mockAuditService : AuditService = mock[AuditService]
 
+  val safeID = Gen.oneOf(List("XADAC0000123456", "XE0001122334455", "XE0001234567890")).sample.get
+
+  def registerWithoutIDResponse(safeID: String = "XE0000123456789"): String =
+    s"""
+       |{
+       |  "registerWithoutIDResponse": {
+       |    "responseCommon": {
+       |      "status": "OK",
+       |      "statusText": "Success",
+       |      "processingDate": "2020-09-01T01:00:00Z"
+       |    },
+       |    "responseDetail": {
+       |      "SAFEID": "$safeID"
+       |    }
+       |  }
+       |}
+       |""".stripMargin
 
   override def beforeEach: Unit =
     reset(
@@ -353,7 +370,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
           .set(NamePage, Name("", ""))
           .success.value
 
-
         val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
             bind[EmailService].toInstance(mockEmailService),
@@ -364,7 +380,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
           .build()
 
         when(mockSubscriptionConnector.createSubscription(any())(any(), any()))
-          .thenReturn(Future.successful(Right("XADAC0000123456")))
+          .thenReturn(Future.successful(Right(safeID)))
 
         when(mockSubscriptionConnector.cacheSubscription(any(), any())(any(), any()))
           .thenReturn(Future.successful(HttpResponse(OK, "")))
@@ -414,7 +430,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
           .build()
 
         when(mockRegistrationService.sendRegistration(any())(any(), any()))
-          .thenReturn(Future.successful(Some(HttpResponse(OK, registerWithoutIDResponse))))
+          .thenReturn(Future.successful(Some(HttpResponse(OK, registerWithoutIDResponse(safeID)))))
 
         when(mockSubscriptionConnector.createSubscription(any())(any(), any()))
           .thenReturn(Future.successful(Right("XADAC0000123456")))
@@ -525,7 +541,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
           .build()
 
         when(mockRegistrationService.sendRegistration(any())(any(), any()))
-          .thenReturn(Future.successful(Some(HttpResponse(OK, registerWithoutIDResponse))))
+          .thenReturn(Future.successful(Some(HttpResponse(OK, registerWithoutIDResponse(safeID)))))
 
         when(mockSubscriptionConnector.createSubscription(any())(any(), any()))
           .thenReturn(Future.successful(Left(UnableToCreateEMTPSubscriptionError)))
@@ -646,7 +662,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
         .thenReturn(Future.successful(HttpResponse(OK, "")))
 
       when(mockRegistrationService.sendRegistration(any())(any(), any()))
-        .thenReturn(Future.successful(Some(HttpResponse(OK, registerWithoutIDResponse))))
+        .thenReturn(Future.successful(Some(HttpResponse(OK, registerWithoutIDResponse(safeID)))))
 
       when(mockEmailService.sendEmail(any())(any()))
         .thenReturn(Future.successful(Some(HttpResponse(OK, ""))))
