@@ -17,16 +17,19 @@
 package connectors
 
 import config.FrontendAppConfig
+import models.error.RegisterError
+import models.error.RegisterError.{DuplicateSubmisisonError, UnableToCreateEMTPSubscriptionError}
 
 import javax.inject.Inject
 import models.readSubscription.{DisplaySubscriptionDetails, DisplaySubscriptionForDACRequest, DisplaySubscriptionForDACResponse}
-import models.{CacheCreateSubscriptionForDACRequest, CreateSubscriptionForDACRequest, CreateSubscriptionForDACResponse, SubscriptionForDACRequest, SubscriptionInfo, UserAnswers}
+import models.{CacheCreateSubscriptionForDACRequest, CreateSubscriptionForDACRequest, CreateSubscriptionForDACResponse, ErrorDetail, SubscriptionForDACRequest, SubscriptionForDACResponse, SubscriptionInfo, UserAnswers}
 import org.slf4j.LoggerFactory
-import play.api.http.Status.OK
+import play.api.http.Status.{CONFLICT, OK}
 import play.api.libs.json.{JsError, JsSuccess, Json}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException, HttpResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 class SubscriptionConnector @Inject()(val config: FrontendAppConfig, val http: HttpClient) {
 
@@ -42,7 +45,7 @@ class SubscriptionConnector @Inject()(val config: FrontendAppConfig, val http: H
   }
 
   def createSubscription(userAnswers: UserAnswers)
-                        (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[CreateSubscriptionForDACResponse] = {
+                        (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[RegisterError, String]] = {
 
     val submissionUrl = s"${config.businessMatchingUrl}/subscription/create-dac-subscription"
     try {
@@ -50,16 +53,23 @@ class SubscriptionConnector @Inject()(val config: FrontendAppConfig, val http: H
         submissionUrl,
         CreateSubscriptionForDACRequest(SubscriptionForDACRequest.createSubscription(userAnswers))
       ).flatMap {
-        case response if response.status equals OK =>
-          Future.successful(response.json.as[CreateSubscriptionForDACResponse])
+        case response if response.status equals OK => {
+          Future.successful{
+            Try(response.json.as[CreateSubscriptionForDACResponse].createSubscriptionForDACResponse).map { subscription =>
+              subscription.responseDetail.subscriptionID
+            }.toOption.toRight(UnableToCreateEMTPSubscriptionError)
+          }
+        }
+        case response if response.status equals CONFLICT =>
+          Future.successful(Left(DuplicateSubmisisonError))
         case response =>
           logger.warn(s"Unable to create a subscription to ETMP. ${response.status} response status")
-          Future.failed(new HttpException(response.body, response.status))
+          Future.successful(Left(UnableToCreateEMTPSubscriptionError))
       }
     } catch {
       case e: Exception =>
         logger.warn("Unable to create an ETMP subscription", e)
-        Future.failed(e)
+        Future.successful(Left(UnableToCreateEMTPSubscriptionError))
     }
   }
 

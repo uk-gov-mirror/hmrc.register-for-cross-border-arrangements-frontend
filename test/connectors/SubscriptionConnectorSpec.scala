@@ -21,6 +21,8 @@ import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, put, ur
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import generators.Generators
 import helpers.WireMockServerHandler
+import models.error.RegisterError
+import models.error.RegisterError.UnableToCreateEMTPSubscriptionError
 import models.readSubscription._
 import models.{CreateSubscriptionForDACResponse, Name, RegistrationType, ResponseCommon, ResponseDetailForDACSubscription, SubscriptionForDACResponse, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
@@ -32,6 +34,9 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.JsString
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+import scala.util.Success
+import scala.xml.Elem
 
 class SubscriptionConnectorSpec extends SpecBase
   with WireMockServerHandler
@@ -151,7 +156,7 @@ class SubscriptionConnectorSpec extends SpecBase
             stubPostResponse("/register-for-cross-border-arrangements/subscription/create-dac-subscription", OK, expectedBody(subscriptionID))
 
             val result = connector.createSubscription(updatedUserAnswers)
-            result.futureValue mustBe response
+            result.futureValue mustBe Right(subscriptionID)
         }
       }
 
@@ -187,7 +192,7 @@ class SubscriptionConnectorSpec extends SpecBase
         }
       }
 
-      "must throw an exception if unable to create a CreateSubscriptionForDACRequest object e.g. missing secondary name" in {
+      "must return an error if unable to create a CreateSubscriptionForDACRequest object e.g. missing secondary name" in {
 
         forAll(arbitrary[UserAnswers], validPersonalName, validEmailAddress, validSafeID) {
           (userAnswers, name, email, safeID) =>
@@ -199,12 +204,12 @@ class SubscriptionConnectorSpec extends SpecBase
 
             stubPostResponse("/register-for-cross-border-arrangements/subscription/create-dac-subscription", OK, "")
 
-            val result = connector.createSubscription(updatedUserAnswers)
-            an[Exception] mustBe thrownBy(result.futureValue)
+            val result: Future[Either[RegisterError, String]] = connector.createSubscription(updatedUserAnswers)
+            result.futureValue mustBe(Left(UnableToCreateEMTPSubscriptionError))
         }
       }
 
-      "must throw an exception if status is not OK and subscription fails" in {
+      "must return an error if status is not OK and subscription fails" in {
 
         forAll(arbitrary[UserAnswers], validPersonalName, validEmailAddress, validSafeID) {
           (userAnswers, name, email, safeID) =>
@@ -217,7 +222,7 @@ class SubscriptionConnectorSpec extends SpecBase
             stubPostResponse("/register-for-cross-border-arrangements/subscription/create-dac-subscription", SERVICE_UNAVAILABLE, "")
 
             val result = connector.createSubscription(updatedUserAnswers)
-            an[Exception] mustBe thrownBy(result.futureValue)
+            result.futureValue mustBe(Left(UnableToCreateEMTPSubscriptionError))
         }
       }
 
@@ -331,7 +336,4 @@ class SubscriptionConnectorSpec extends SpecBase
        |  }
        |}""".stripMargin
   }
-
-
-
 }
