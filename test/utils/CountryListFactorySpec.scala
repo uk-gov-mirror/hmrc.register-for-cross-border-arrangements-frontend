@@ -42,7 +42,7 @@ class CountryListFactorySpec extends SpecBase {
 
       val factory = sut(env, conf)
 
-      factory.getCountyList() mustBe Some(Seq(Country("valid", "XX", "Somewhere")))
+      factory.getCountryList mustBe Some(Seq(Country("valid", "XX", "Somewhere")))
     }
 
     "return None when country list cannot be loaded from environment" in {
@@ -54,7 +54,7 @@ class CountryListFactorySpec extends SpecBase {
 
       val factory = sut(env, conf)
 
-      factory.getCountyList() mustBe None
+      factory.getCountryList mustBe None
     }
 
   }

@@ -130,7 +130,7 @@ class WhatIsYourAddressUkControllerSpec extends SpecBase with MockitoSugar with 
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      when(mockCountryFactory.getCountyList()).thenReturn(Some(Seq(Country("valid","GB","United Kingdom"),Country("valid","ES","Spain"))))
+      when(mockCountryFactory.getCountryList).thenReturn(Some(Seq(Country("valid","GB","United Kingdom"),Country("valid","ES","Spain"))))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
@@ -187,7 +187,7 @@ class WhatIsYourAddressUkControllerSpec extends SpecBase with MockitoSugar with 
       val userAnswers = UserAnswers(userAnswersId).set(WhatIsYourAddressUkPage, address).success.value
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-      when(mockCountryFactory.getCountyList()).thenReturn(Some(Seq(Country("valid","GB","United Kingdom"),Country("valid","ES","Spain"))))
+      when(mockCountryFactory.getCountryList).thenReturn(Some(Seq(Country("valid","GB","United Kingdom"),Country("valid","ES","Spain"))))
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))

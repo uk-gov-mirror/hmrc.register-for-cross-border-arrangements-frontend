@@ -98,15 +98,19 @@
                     },
                     id: "country",
                     name: "country",
+
                     attributes: {
-                        autocomplete: "country-name"
-                      },
+                      "autocomplete"   : "country-name"
+                      , "aria-labelledby": "country"
+                      , "hidden"         : ""
+                    },
                     errorMessage: form.country.error,
                     items: countries
                   }) }}
 
                   {{ govukButton({
-                    text: messages("site.continue")
+                    text: messages("site.continue"),
+                    attributes: {id:"submit"}
                   }) }}
 
                 </form>

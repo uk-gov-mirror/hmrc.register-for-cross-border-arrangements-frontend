@@ -66,7 +66,7 @@ class WhatIsYourAddressControllerSpec extends SpecBase with MockitoSugar with Nu
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).overrides(
         bind[CountryListFactory].toInstance(mockCountryFactory)).build()
 
-      when(mockCountryFactory.getCountyList()).thenReturn(Some(Seq(Country("valid","GB","United Kingdom"))))
+      when(mockCountryFactory.getCountryList).thenReturn(Some(Seq(Country("valid","GB","United Kingdom"))))
       val request = FakeRequest(GET, whatIsYourAddressRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
@@ -93,7 +93,7 @@ class WhatIsYourAddressControllerSpec extends SpecBase with MockitoSugar with Nu
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      when(mockCountryFactory.getCountyList()).thenReturn(Some(Seq(Country("valid","GB","United Kingdom"),Country("valid","ES","Spain"))))
+      when(mockCountryFactory.getCountryList).thenReturn(Some(Seq(Country("valid","GB","United Kingdom"),Country("valid","ES","Spain"))))
 
       val userAnswers = UserAnswers(userAnswersId).set(WhatIsYourAddressPage, address).success.value
 
