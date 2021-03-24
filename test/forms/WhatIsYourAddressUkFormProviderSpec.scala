@@ -180,11 +180,11 @@ class WhatIsYourAddressUkFormProviderSpec extends StringFieldBehaviours {
       invalidError = FormError(fieldName, Seq(invalidKey))
     )
 
-   behave like mandatoryField(
-     form,
-     fieldName,
-     requiredError = FormError(fieldName, requiredKey)
-   )
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
 
   }
 }
