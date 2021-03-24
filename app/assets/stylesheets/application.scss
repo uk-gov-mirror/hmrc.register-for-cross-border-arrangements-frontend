@@ -8,6 +8,10 @@ $hmrc-assets-path: "/register-for-cross-border-arrangements/assets/lib/hmrc-fron
 @import "_timeout-dialog.scss";
 @import "_recruitmentBanner.scss";
 
+svg.autocomplete__dropdown-arrow-down {
+  pointer-events: none;
+}
+
 /* TODO remove when WCGA issue is fixed */
 .hmrc-header.hmrc-header--with-additional-navigation .hmrc-sign-out-nav__link:focus {
   color: #0B0C0C;

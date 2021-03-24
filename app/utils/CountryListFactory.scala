@@ -26,5 +26,8 @@ class CountryListFactory @Inject()(environment: Environment, appConfig: Frontend
 
   def uk: Country = Country("valid","GB","United Kingdom")
 
-  def getCountyList(): Option[Seq[Country]] = environment.resourceAsStream(appConfig.countryCodeJson) map (Json.parse(_)) map (_.as[Seq[Country]])
+  def getCountryList: Option[Seq[Country]] = environment.resourceAsStream(appConfig.countryCodeJson) map Json.parse map {
+    _.as[Seq[Country]].sortWith((country, country2) => country.description < country2.description)
+  }
+
 }

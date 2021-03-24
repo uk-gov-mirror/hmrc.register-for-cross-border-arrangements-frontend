@@ -50,7 +50,7 @@ class BusinessAddressController @Inject()(override val messagesApi: MessagesApi,
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
     implicit request =>
 
-      val countries = countryListFactory.getCountyList().getOrElse(throw new Exception("Cannot retrieve country list"))
+      val countries = countryListFactory.getCountryList.getOrElse(throw new Exception("Cannot retrieve country list"))
       val form = formProvider(countries)
 
       val preparedForm = request.userAnswers.get(BusinessAddressPage) match {
@@ -85,7 +85,7 @@ class BusinessAddressController @Inject()(override val messagesApi: MessagesApi,
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
     implicit request =>
 
-      val countries = countryListFactory.getCountyList().getOrElse(throw new Exception("Cannot retrieve country list"))
+      val countries = countryListFactory.getCountryList.getOrElse(throw new Exception("Cannot retrieve country list"))
       val form = formProvider(countries)
 
       form.bindFromRequest().fold(
