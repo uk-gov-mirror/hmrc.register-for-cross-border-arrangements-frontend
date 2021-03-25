@@ -402,6 +402,7 @@ whatIsYourUkAddress.addressLine2 = Address line 2 (optional)
 whatIsYourUkAddress.addressLine3 = City
 whatIsYourUkAddress.addressLine4 = County (optional)
 whatIsYourUkAddress.postCode = Postcode
+whatIsYourUkAddress.countryCode = Country
 
 whatIsYourUkAddress.checkYourAnswersLabel = Your home address
 whatIsYourUkAddress.error.addressLine1.required = Enter address line 1
