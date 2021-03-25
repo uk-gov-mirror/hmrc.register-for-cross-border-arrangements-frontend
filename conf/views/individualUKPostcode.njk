@@ -37,12 +37,19 @@
               isPageHeading: true,
               classes: "govuk-label--xl"
             },
+            classes: "govuk-input--width-10",
             id: "postCode",
-            name: "value",
-            value: form.value.value,
+            name: "postCode",
+            value: form.postCode.value,
             autocomplete: "postal-code",
-            errorMessage: form.value.error
+            errorMessage: form.postCode.error
           }) }}
+
+          <p class="govuk-body">
+            <a id="manualAddressLink" class="govuk-link" href="{{manualAddressURL}}">
+              {{ messages("individualUKPostcode.manualLink") }}
+            </a>
+          </p>
 
           {{ govukButton({
             text: messages("individualUKPostcode.button"),

@@ -19,10 +19,11 @@ package controllers
 import controllers.actions._
 import forms.WhatIsYourAddressUkFormProvider
 import helpers.JourneyHelpers.redirectToSummary
+
 import javax.inject.Inject
-import models.Mode
+import models.{Address, Country, Mode}
 import navigation.Navigator
-import pages.WhatIsYourAddressUkPage
+import pages.{IndividualUKPostcodePage, WhatIsYourAddressUkPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -54,10 +55,14 @@ class WhatIsYourAddressUkController @Inject()(
       val countries = Seq(countryListFactory.uk)
       val form = formProvider(countries)
 
-      val preparedForm = request.userAnswers.get(WhatIsYourAddressUkPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
+      val preparedForm =
+        (request.userAnswers.get(WhatIsYourAddressUkPage), request.userAnswers.get(IndividualUKPostcodePage)) match {
+          case (None, Some(postCode)) =>
+            val addressWithPostCode = Address("", None, "", None, Some(postCode), Country("valid","GB","United Kingdom"))
+            form.fill(addressWithPostCode)
+          case (Some(value), _) => form.fill(value)
+          case _ => form
+        }
 
       val json = Json.obj(
         "form" -> preparedForm,

@@ -24,7 +24,7 @@ import utils.RegexConstants
 class IndividualUKPostcodeFormProvider @Inject() extends Mappings with RegexConstants {
   def apply(): Form[String] =
     Form(
-      "value" -> requiredRegexOnlyText("individualUKPostcode.error.required",
+      "postCode" -> requiredRegexOnlyText("individualUKPostcode.error.required",
         "individualUKPostcode.error.invalid",regexPostcode)
     )
 }
