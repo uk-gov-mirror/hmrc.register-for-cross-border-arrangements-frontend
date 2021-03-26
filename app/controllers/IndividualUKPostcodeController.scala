@@ -23,7 +23,7 @@ import forms.IndividualUKPostcodeFormProvider
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
-import pages.IndividualUKPostcodePage
+import pages.{AddressLookupPage, IndividualUKPostcodePage}
 import play.api.data.FormError
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -102,11 +102,12 @@ class IndividualUKPostcodeController @Inject()(
               } yield {
                 renderer.render("individualUKPostcode.njk", json).map(BadRequest(_))
               }}.flatten
-            case _ =>
+            case addresses =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(IndividualUKPostcodePage, postCode))
-                _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(IndividualUKPostcodePage, mode, updatedAnswers))
+                updatedAnswers              <- Future.fromTry(request.userAnswers.set(IndividualUKPostcodePage, postCode))
+                updatedAnswersWithAddresses <- Future.fromTry(updatedAnswers.set(AddressLookupPage, addresses))
+                _                           <- sessionRepository.set(updatedAnswersWithAddresses)
+              } yield Redirect(navigator.nextPage(IndividualUKPostcodePage, mode, updatedAnswersWithAddresses))
           }
         }
       )

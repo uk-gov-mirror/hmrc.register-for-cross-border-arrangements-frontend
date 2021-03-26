@@ -27,7 +27,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.{IndividualUKPostcodePage, SelectAddressPage}
+import pages.{AddressLookupPage, SelectAddressPage}
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
@@ -72,19 +72,13 @@ class SelectAddressControllerSpec extends SpecBase
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-      when(mockAddressLookupConnector.addressLookupByPostcode(any())(any(), any()))
-        .thenReturn(Future.successful(addresses))
 
       val answers = UserAnswers(userAnswersId)
-        .set(IndividualUKPostcodePage, "ZZ1 1ZZ")
+        .set(AddressLookupPage, addresses)
         .success
         .value
 
-      val application = applicationBuilder(userAnswers = Some(answers))
-        .overrides(
-          bind[AddressLookupConnector].toInstance(mockAddressLookupConnector)
-        ).build()
-
+      val application = applicationBuilder(userAnswers = Some(answers)).build()
       val request = FakeRequest(GET, selectAddressRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
@@ -112,22 +106,16 @@ class SelectAddressControllerSpec extends SpecBase
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-      when(mockAddressLookupConnector.addressLookupByPostcode(any())(any(), any()))
-        .thenReturn(Future.successful(addresses))
 
       val userAnswers = UserAnswers(userAnswersId)
         .set(SelectAddressPage, "1 Address line 1, Town, ZZ1 1ZZ")
         .success
         .value
-        .set(IndividualUKPostcodePage, "ZZ1 1ZZ")
+        .set(AddressLookupPage, addresses)
         .success
         .value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(
-          bind[AddressLookupConnector].toInstance(mockAddressLookupConnector)
-        ).build()
-
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       val request = FakeRequest(GET, selectAddressRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
@@ -154,41 +142,8 @@ class SelectAddressControllerSpec extends SpecBase
     }
 
     "must redirect to manual UK address page if there are no address matches" in {
-      when(mockAddressLookupConnector.addressLookupByPostcode(any())(any(), any()))
-        .thenReturn(Future.successful(Seq()))
 
-      val answers = UserAnswers(userAnswersId)
-        .set(IndividualUKPostcodePage, "ZZ1 1UU")
-        .success
-        .value
-
-      val application = applicationBuilder(userAnswers = Some(answers))
-        .overrides(
-          bind[AddressLookupConnector].toInstance(mockAddressLookupConnector)
-        ).build()
-
-      val request = FakeRequest(GET, selectAddressRoute)
-
-      val result = route(application, request).value
-
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual routes.WhatIsYourAddressUkController.onPageLoad(NormalMode).url
-    }
-
-    "must redirect to manual UK address page if address lookup fails" in {
-
-      when(mockAddressLookupConnector.addressLookupByPostcode(any())(any(), any()))
-        .thenReturn(Future.failed(new Exception))
-
-      val answers = UserAnswers(userAnswersId)
-        .set(IndividualUKPostcodePage, "ZZ1 1UU")
-        .success
-        .value
-
-      val application = applicationBuilder(userAnswers = Some(answers))
-        .overrides(
-          bind[AddressLookupConnector].toInstance(mockAddressLookupConnector)
-        ).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       val request = FakeRequest(GET, selectAddressRoute)
 
@@ -201,11 +156,9 @@ class SelectAddressControllerSpec extends SpecBase
     "must redirect to the next page when valid data is submitted" in {
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-      when(mockAddressLookupConnector.addressLookupByPostcode(any())(any(), any()))
-        .thenReturn(Future.successful(addresses))
 
       val answers = UserAnswers(userAnswersId)
-        .set(IndividualUKPostcodePage, "ZZ1 1ZZ")
+        .set(AddressLookupPage, addresses)
         .success
         .value
 
@@ -214,8 +167,7 @@ class SelectAddressControllerSpec extends SpecBase
         applicationBuilder(userAnswers = Some(answers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute, appConfig = mockFrontendAppConfig)),
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[AddressLookupConnector].toInstance(mockAddressLookupConnector)
+            bind[SessionRepository].toInstance(mockSessionRepository)
           ).build()
 
       val request =
@@ -235,19 +187,13 @@ class SelectAddressControllerSpec extends SpecBase
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-      when(mockAddressLookupConnector.addressLookupByPostcode(any())(any(), any()))
-        .thenReturn(Future.successful(addresses))
 
       val answers = UserAnswers(userAnswersId)
-        .set(IndividualUKPostcodePage, "ZZ1 1ZZ")
+        .set(AddressLookupPage, addresses)
         .success
         .value
 
-      val application = applicationBuilder(userAnswers = Some(answers))
-        .overrides(
-          bind[AddressLookupConnector].toInstance(mockAddressLookupConnector)
-        ).build()
-
+      val application = applicationBuilder(userAnswers = Some(answers)).build()
       val request = FakeRequest(POST, selectAddressRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -277,11 +223,12 @@ class SelectAddressControllerSpec extends SpecBase
       val selectAddressRoute: String = routes.SelectAddressController.onPageLoad(CheckMode).url
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-      when(mockAddressLookupConnector.addressLookupByPostcode(any())(any(), any()))
-        .thenReturn(Future.successful(addresses))
 
       val answers = UserAnswers(userAnswersId)
         .set(SelectAddressPage, "1 Address line 1, Town, ZZ1 1ZZ")
+        .success
+        .value
+        .set(AddressLookupPage, addresses)
         .success
         .value
 
@@ -289,8 +236,7 @@ class SelectAddressControllerSpec extends SpecBase
         applicationBuilder(userAnswers = Some(answers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute, appConfig = mockFrontendAppConfig)),
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[AddressLookupConnector].toInstance(mockAddressLookupConnector)
+            bind[SessionRepository].toInstance(mockSessionRepository)
           ).build()
 
       val request =
