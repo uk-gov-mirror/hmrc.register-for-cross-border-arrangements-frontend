@@ -16,14 +16,12 @@
 
 package controllers
 
-import connectors.AddressLookupConnector
 import controllers.actions._
 import forms.SelectAddressFormProvider
 import helpers.JourneyHelpers.redirectToSummary
-import javax.inject.Inject
 import models.{AddressLookup, Mode}
 import navigation.Navigator
-import pages.{IndividualUKPostcodePage, SelectAddressPage, SelectedAddressLookupPage}
+import pages.{AddressLookupPage, SelectAddressPage, SelectedAddressLookupPage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -33,6 +31,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, _}
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class SelectAddressController @Inject()(
@@ -44,7 +43,6 @@ class SelectAddressController @Inject()(
     getData: DataRetrievalAction,
     requireData: DataRequiredAction,
     formProvider: SelectAddressFormProvider,
-    addressLookupConnector: AddressLookupConnector,
     val controllerComponents: MessagesControllerComponents,
     renderer: Renderer
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with NunjucksSupport {
@@ -54,45 +52,35 @@ class SelectAddressController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
     implicit request =>
     val manualAddressURL: String = routes.WhatIsYourAddressUkController.onPageLoad(mode).url
-    val postCode = request.userAnswers.get(IndividualUKPostcodePage) match {
-      case Some(postCode) => postCode.replaceAll(" ", "").toUpperCase
-      case None => ""
-    }
 
-    addressLookupConnector.addressLookupByPostcode(postCode) flatMap {
-      case Nil => Future.successful(Redirect(routes.WhatIsYourAddressUkController.onPageLoad(mode)))
-      case addresses =>
-        val preparedForm: Form[String] = request.userAnswers.get(SelectAddressPage) match {
-          case None => form
-          case Some(value) => form.fill(value)
-        }
-        val addressItems: Seq[Radios.Radio] = addresses.map(address =>
-          Radios.Radio(label = msg"${formatAddress(address)}", value = s"${formatAddress(address)}"))
-        val radios = Radios(field = preparedForm("value"), items = addressItems)
+      request.userAnswers.get(AddressLookupPage) match {
+        case Some(addresses) =>
+          val preparedForm: Form[String] = request.userAnswers.get(SelectAddressPage) match {
+            case None => form
+            case Some(value) => form.fill(value)
+          }
+          val addressItems: Seq[Radios.Radio] = addresses.map(address =>
+            Radios.Radio(label = msg"${formatAddress(address)}", value = s"${formatAddress(address)}"))
+          val radios = Radios(field = preparedForm("value"), items = addressItems)
 
-        val json = Json.obj(
-          "form" -> preparedForm,
-          "mode" -> mode,
-          "manualAddressURL" -> manualAddressURL,
-          "radios" -> radios
-        )
+          val json = Json.obj(
+            "form" -> preparedForm,
+            "mode" -> mode,
+            "manualAddressURL" -> manualAddressURL,
+            "radios" -> radios
+          )
 
-        renderer.render("selectAddress.njk", json).map(Ok(_))
-    } recover {
-      case _: Exception => Redirect(routes.WhatIsYourAddressUkController.onPageLoad(mode))
-    }
+          renderer.render("selectAddress.njk", json).map(Ok(_))
+        case None => Future.successful(Redirect(routes.WhatIsYourAddressUkController.onPageLoad(mode)))
+      }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen notEnrolled andThen getData andThen requireData).async {
     implicit request =>
       val manualAddressURL: String = routes.WhatIsYourAddressUkController.onPageLoad(mode).url
-      val postCode = request.userAnswers.get(IndividualUKPostcodePage) match {
-        case Some(postCode) => postCode.replaceAll(" ", "").toUpperCase
-        case None => ""
-      }
 
-      addressLookupConnector.addressLookupByPostcode(postCode) flatMap {
-        addresses =>
+      request.userAnswers.get(AddressLookupPage) match {
+        case Some(addresses) =>
           val addressItems: Seq[Radios.Radio] = addresses.map(address =>
             Radios.Radio(label = msg"${formatAddress(address)}", value = s"${formatAddress(address)}")
           )
@@ -129,8 +117,7 @@ class SelectAddressController @Inject()(
               }
             }
           )
-      } recover {
-        case _: Exception => Redirect(routes.WhatIsYourAddressUkController.onPageLoad(mode))
+        case None => Future.successful(Redirect(routes.WhatIsYourAddressUkController.onPageLoad(mode)))
       }
   }
 

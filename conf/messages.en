@@ -281,9 +281,11 @@ individualUKPostcode.title = What is your postcode?
 individualUKPostcode.heading = What is your postcode?
 individualUKPostcode.checkYourAnswersLabel = What is your postcode?
 individualUKPostcode.button = Find address
+individualUKPostcode.manualLink = Or enter the address manually
 individualUKPostcode.error.required = Enter your postcode
 individualUKPostcode.error.length = Your postcode must be 8 characters or less
 individualUKPostcode.error.invalid = Enter a postcode, like AA1 1AA
+individualUKPostcode.error.notFound = Address not found - enter a different postcode or enter the address manually
 
 whatIsYourAddress.title = What is your home address?
 whatIsYourAddress.heading = What is your home address?

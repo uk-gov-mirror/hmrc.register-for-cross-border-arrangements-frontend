@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-package forms
+package pages
 
-import forms.mappings.Mappings
-import javax.inject.Inject
-import play.api.data.Form
-import utils.RegexConstants
+import models.AddressLookup
+import play.api.libs.json.JsPath
 
-class IndividualUKPostcodeFormProvider @Inject() extends Mappings with RegexConstants {
-  def apply(): Form[String] =
-    Form(
-      "postCode" -> requiredRegexOnlyText("individualUKPostcode.error.required",
-        "individualUKPostcode.error.invalid",regexPostcode)
-    )
+case object AddressLookupPage extends QuestionPage[Seq[AddressLookup]] {
+
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "addressLookup"
 }
