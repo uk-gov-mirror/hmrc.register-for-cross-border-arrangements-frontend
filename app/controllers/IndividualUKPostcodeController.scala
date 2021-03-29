@@ -83,7 +83,10 @@ class IndividualUKPostcodeController @Inject()(
             "manualAddressURL" -> manualAddressURL
           )
 
-          renderer.render("individualUKPostcode.njk", json).map(BadRequest(_))
+          {for {
+            updatedAnswers <- Future.fromTry(request.userAnswers.remove(IndividualUKPostcodePage))
+            _              <- sessionRepository.set(updatedAnswers)
+          } yield renderer.render("individualUKPostcode.njk", json).map(BadRequest(_))}.flatten
         },
         postCode => {
           addressLookupConnector.addressLookupByPostcode(postCode).flatMap {
@@ -99,9 +102,7 @@ class IndividualUKPostcodeController @Inject()(
               {for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(IndividualUKPostcodePage, postCode))
                 _              <- sessionRepository.set(updatedAnswers)
-              } yield {
-                renderer.render("individualUKPostcode.njk", json).map(BadRequest(_))
-              }}.flatten
+              } yield renderer.render("individualUKPostcode.njk", json).map(BadRequest(_))}.flatten
             case addresses =>
               for {
                 updatedAnswers              <- Future.fromTry(request.userAnswers.set(IndividualUKPostcodePage, postCode))
