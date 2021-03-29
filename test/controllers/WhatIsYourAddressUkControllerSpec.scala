@@ -26,7 +26,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.WhatIsYourAddressUkPage
+import pages.{IndividualUKPostcodePage, WhatIsYourAddressUkPage}
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
@@ -48,12 +48,13 @@ class WhatIsYourAddressUkControllerSpec extends SpecBase with MockitoSugar with 
 
   val mockCountryFactory: CountryListFactory = mock[CountryListFactory]
 
+  val country = Country("valid","GB","United Kingdom")
+  val address = Address("value 1", Some("value 2"), "value 3", Some("value 4"), Some("XX9 9XX"), country)
+
   val formProvider = new WhatIsYourAddressUkFormProvider()
-  val form: Form[Address] = formProvider(Seq(Country("valid","GB","United Kingdom")))
+  val form: Form[Address] = formProvider(Seq(country))
 
   lazy val whatIsYourAddressUkRoute: String = routes.WhatIsYourAddressUkController.onPageLoad(NormalMode).url
-  val address = Address("value 1", Some("value 2"), "value 3", Some("value 4"), Some("XX9 9XX"),
-    Country("valid","GB","United Kingdom"))
 
   "WhatIsYourAddressUk Controller" - {
 
@@ -89,7 +90,7 @@ class WhatIsYourAddressUkControllerSpec extends SpecBase with MockitoSugar with 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      when(mockCountryFactory.uk).thenReturn(Country("valid","GB","United Kingdom"))
+      when(mockCountryFactory.uk).thenReturn(country)
 
       val userAnswers = UserAnswers(userAnswersId).set(WhatIsYourAddressUkPage, address).success.value
 
@@ -126,11 +127,46 @@ class WhatIsYourAddressUkControllerSpec extends SpecBase with MockitoSugar with 
       application.stop()
     }
 
+    "must populate the view with the postcode on a GET if postcode lookup failed previously" in {
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      when(mockCountryFactory.uk).thenReturn(country)
+
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(IndividualUKPostcodePage, "XX9 9XX").success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(bind[CountryListFactory].toInstance(mockCountryFactory)).build()
+      val request = FakeRequest(GET, whatIsYourAddressUkRoute)
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+
+      val result = route(application, request).value
+
+      status(result) mustEqual OK
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      val filledForm = form.fill(Address("", None, "", None, Some("XX9 9XX"), country))
+
+      val expectedJson = Json.obj(
+        "form" -> filledForm,
+        "mode" -> NormalMode
+      )
+
+      templateCaptor.getValue mustEqual "whatIsYourAddressUk.njk"
+      jsonCaptor.getValue must containJson(expectedJson)
+
+      application.stop()
+    }
+
     "must redirect to the next page when valid data is submitted" in {
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      when(mockCountryFactory.getCountryList).thenReturn(Some(Seq(Country("valid","GB","United Kingdom"),Country("valid","ES","Spain"))))
+      when(mockCountryFactory.getCountryList).thenReturn(Some(Seq(country,Country("valid","ES","Spain"))))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
@@ -187,7 +223,7 @@ class WhatIsYourAddressUkControllerSpec extends SpecBase with MockitoSugar with 
       val userAnswers = UserAnswers(userAnswersId).set(WhatIsYourAddressUkPage, address).success.value
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-      when(mockCountryFactory.getCountryList).thenReturn(Some(Seq(Country("valid","GB","United Kingdom"),Country("valid","ES","Spain"))))
+      when(mockCountryFactory.getCountryList).thenReturn(Some(Seq(country, Country("valid","ES","Spain"))))
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))

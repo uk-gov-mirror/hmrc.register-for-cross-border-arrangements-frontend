@@ -19,7 +19,6 @@ package controllers
 import connectors.AddressLookupConnector
 import controllers.actions._
 import forms.IndividualUKPostcodeFormProvider
-
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
