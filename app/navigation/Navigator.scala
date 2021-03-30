@@ -80,7 +80,7 @@ class Navigator @Inject()(appConfig: FrontendAppConfig) {
     case CorporationTaxUTRPage => businessNameRoutes(CheckMode)
     case SelfAssessmentUTRPage => businessNameRoutes(CheckMode)
     case BusinessNamePage => _ => Some(routes.BusinessMatchingController.matchBusiness())
-    case SoleTraderNamePage => _ => Some(routes.BusinessMatchingController.matchBusiness())
+    case SoleTraderNamePage => _ => Some(routes.DateOfBirthController.onPageLoad(CheckMode))
     case ConfirmBusinessPage => confirmBusinessRoutes(CheckMode)
     case BusinessAddressPage => _ => Some(routes.ContactNameController.onPageLoad(CheckMode))
     case ContactNamePage => _ => Some(routes.ContactEmailAddressController.onPageLoad(CheckMode))

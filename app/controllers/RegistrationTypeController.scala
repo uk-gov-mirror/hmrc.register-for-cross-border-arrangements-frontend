@@ -19,8 +19,9 @@ package controllers
 import controllers.actions._
 import forms.RegistrationTypeFormProvider
 import helpers.JourneyHelpers.redirectToSummary
+
 import javax.inject.Inject
-import models.{Mode, RegistrationType}
+import models.{Mode, RegistrationType, UserAnswersHelper}
 import navigation.Navigator
 import pages.RegistrationTypePage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -83,7 +84,7 @@ class RegistrationTypeController @Inject()(
           val redirectUsers = redirectToSummary(registrationType, RegistrationTypePage, mode, request.userAnswers)
 
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(RegistrationTypePage, registrationType))
+            updatedAnswers <- UserAnswersHelper.updateUserAnswersIfValueChanged(request.userAnswers, RegistrationTypePage, registrationType)
             _              <- sessionRepository.set(updatedAnswers)
           } yield {
             if (redirectUsers) {
