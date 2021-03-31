@@ -203,14 +203,14 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach wi
 
       templateCaptor.getValue mustEqual "check-your-answers.njk"
       header.contains("checkYourAnswers.individualDetails.h2") mustBe true
-      businessDetails.contains("Do you have UK Unique Taxpayer Reference?") mustBe true
+      businessDetails.contains("Do you have a UK Unique Taxpayer Reference?") mustBe true
       businessDetails.contains("Registering as") mustBe true
       businessDetails.contains("Do you have a National Insurance number?") mustBe true
       businessDetails.contains("Your National Insurance number") mustBe true
       businessDetails.contains("Your name") mustBe true
       businessDetails.contains("Your date of birth") mustBe true
       contactDetails.contains("Email address") mustBe true
-      contactDetails.contains("Do they have a telephone number?") mustBe true
+      contactDetails.contains("Do you have a telephone number?") mustBe true
 
       application.stop()
     }
@@ -263,7 +263,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach wi
 
       templateCaptor.getValue mustEqual "check-your-answers.njk"
       header.contains("checkYourAnswers.businessDetails.h2") mustBe true
-      businessDetails.contains("Do you have UK Unique Taxpayer Reference?") mustBe true
+      businessDetails.contains("Do you have a UK Unique Taxpayer Reference?") mustBe true
       businessDetails.contains("Registering as") mustBe true
       businessDetails.contains("Legal name of business") mustBe true
       businessDetails.contains("Main business address") mustBe true
@@ -322,14 +322,14 @@ class CheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach wi
 
       templateCaptor.getValue mustEqual "check-your-answers.njk"
       header.contains("checkYourAnswers.individualDetails.h2") mustBe true
-      businessDetails.contains("Do you have UK Unique Taxpayer Reference?") mustBe true
+      businessDetails.contains("Do you have a UK Unique Taxpayer Reference?") mustBe true
       businessDetails.contains("Do you have a National Insurance number?") mustBe true
       businessDetails.contains("Your name") mustBe true
       businessDetails.contains("Your date of birth") mustBe true
       businessDetails.contains("Do you live in the United Kingdom?") mustBe true
       businessDetails.contains("Your home address") mustBe true
       contactDetails.contains("Email address") mustBe true
-      contactDetails.contains("Do they have a telephone number?") mustBe true
+      contactDetails.contains("Do you have a telephone number?") mustBe true
 
       application.stop()
     }

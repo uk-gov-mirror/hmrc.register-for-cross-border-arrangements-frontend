@@ -19,6 +19,7 @@ package utils
 import java.time.format.DateTimeFormatter
 
 import controllers.routes
+import helpers.JourneyHelpers
 import models.{Address, BusinessType, CheckMode, UserAnswers}
 import pages._
 import uk.gov.hmrc.viewmodels.SummaryList._
@@ -141,14 +142,21 @@ class CheckYourAnswersHelper(userAnswers: UserAnswers) {
 
   def telephoneNumberQuestion: Option[Row] = userAnswers.get(TelephoneNumberQuestionPage) map {
     answer =>
+      val checkYourAnswersLabel =
+        if (JourneyHelpers.isOrganisationJourney(userAnswers)) {
+          msg"telephoneNumberQuestion.organisation.checkYourAnswersLabel"
+        } else {
+          msg"telephoneNumberQuestion.individual.checkYourAnswersLabel"
+        }
+
       Row(
-        key     = Key(msg"telephoneNumberQuestion.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        key     = Key(checkYourAnswersLabel, classes = Seq("govuk-!-width-one-half")),
         value   = Value(yesOrNo(answer)),
         actions = List(
           Action(
             content            = msg"site.edit",
             href               = routes.TelephoneNumberQuestionController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"telephoneNumberQuestion.checkYourAnswersLabel")),
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(checkYourAnswersLabel)),
             attributes         = Map("id" -> "change-do-you-have-a-telephone")
 
           )
