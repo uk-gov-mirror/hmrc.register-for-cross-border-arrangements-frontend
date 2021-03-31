@@ -178,7 +178,7 @@ registrationType.error.required = Select what you are registering as
 doYouHaveUTR.title =  Do you have a UK Unique Taxpayer Reference (UTR)?
 doYouHaveUTR.heading = Do you have a UK Unique Taxpayer Reference (UTR)?
 doYouHaveUTR.guidance = This is a 10 digit number issued by HMRC and is used to identify individual taxpayers. It will be on tax returns and other letters about Self Assessment or Corporation Tax.
-doYouHaveUTR.checkYourAnswersLabel = Do you have UK Unique Taxpayer Reference?
+doYouHaveUTR.checkYourAnswersLabel = Do you have a UK Unique Taxpayer Reference?
 doYouHaveUTR.error.required = Select yes if you have a UK Unique Taxpayer Reference (UTR)
 
 doYouHaveANationalInsuranceNumber.title = Do you have a National Insurance number?
@@ -451,7 +451,8 @@ telephoneNumberQuestion.business.title = Do they have a telephone number?
 telephoneNumberQuestion.business.heading = Does {0} have a telephone number?
 telephoneNumberQuestion.individual.title = Do you have a telephone number?
 telephoneNumberQuestion.individual.heading = Do you have a telephone number?
-telephoneNumberQuestion.checkYourAnswersLabel = Do they have a telephone number?
+telephoneNumberQuestion.organisation.checkYourAnswersLabel = Do they have a telephone number?
+telephoneNumberQuestion.individual.checkYourAnswersLabel = Do you have a telephone number?
 telephoneNumberQuestion.error.required = Select yes if there is a telephone number
 
 contactTelephoneNumber.individual.title = What is your telephone number?
