@@ -35,15 +35,23 @@
         }) }}
 
         <div class="govuk-body">
-            <p>{{ messages("registrationSuccessful.subscriptionID.text") }}</p>
+          <p>{{ messages("registrationSuccessful.subscriptionID.text") }}</p>
 
-            <h2 class="govuk-heading-m">
-              {{ messages("registrationSuccessful.heading") }}
-            </h2>
+          <h2 class="govuk-heading-m">
+            {{ messages("registrationSuccessful.heading") }}
+          </h2>
 
-            <p>{{ messages("registrationSuccessful.email") }}</p>
-            <p>{{ messages("registrationSuccessful.submission.text") }}
-            <a href={{submissionUrl}} class="govuk-link">{{messages("registrationSuccessful.submission.link")}}</a></p>
+          <p>{{ messages("registrationSuccessful.email") }}</p>
+          <p>
+            {{ messages("registrationSuccessful.submission.text") }}
+            <a href={{submissionUrl}} class="govuk-link">{{messages("registrationSuccessful.submission.link")}}</a>
+          </p>
+          <p>
+            <a class='govuk-link' id='feedback-link' href='{{betaFeedbackSurvey}}' rel='noreferrer noopener' target='_blank'>
+              {{ messages("registrationSuccessful.survey.link") }}
+            </a>
+            {{ messages("registrationSuccessful.survey.text") }}
+          </p>
         </div>
       </div>
     </div>

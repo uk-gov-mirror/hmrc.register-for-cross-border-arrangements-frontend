@@ -348,9 +348,11 @@ registrationSuccessful.panel = Registration successful
 registrationSuccessful.panel.html = Your User ID
 registrationSuccessful.heading = What happens next
 registrationSuccessful.email = We have sent you a confirmation email.
-registrationSuccessful.subscriptionID.text = You will need to provide the User ID in every file you submit to us.
+registrationSuccessful.subscriptionID.text = If you use the file upload service, you will need to provide your User ID in every file you submit to HMRC.
 registrationSuccessful.submission.text = You can now
 registrationSuccessful.submission.link = disclose cross-border arrangements.
+registrationSuccessful.survey.link = What did you think of this service?
+registrationSuccessful.survey.text = (opens in a new tab)
 
 businessName.registered.hint = This is the registered name on your incorporation certificate.
 businessName.partnership.hint = This is the name that you registered with HMRC
