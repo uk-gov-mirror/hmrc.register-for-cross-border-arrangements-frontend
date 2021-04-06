@@ -17,7 +17,7 @@
 package pages
 
 import models.RegistrationType.{Business, Individual}
-import models.{Address, Country, Name, RegistrationType, UserAnswers}
+import models.{Address, AddressLookup, Country, Name, RegistrationType, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 import uk.gov.hmrc.domain.Generator
@@ -28,6 +28,9 @@ import java.time.LocalDate
 class RegistrationTypePageSpec extends PageBehaviours {
 
   val address: Address = Address("", None, "", None, None, Country("", "", ""))
+  val addlookup: AddressLookup = AddressLookup(None, None, None, None, "town", None,"pcode")
+
+
   val name: Name = Name("FirstName", "LastName")
 
   "RegistrationTypePage" - {
@@ -58,6 +61,27 @@ class RegistrationTypePageSpec extends PageBehaviours {
             .success.value
             .set(WhatIsYourAddressPage, address)
             .success.value
+            .set(SelectAddressPage, "add")
+            .success
+            .value
+            .set(PostCodePage, "ZZ1Z 7AB")
+            .success
+            .value
+            .set(SelectedAddressLookupPage, addlookup )
+            .success
+            .value
+            .set(IndividualUKPostcodePage, "pc" )
+            .success
+            .value
+            .set(ContactEmailAddressPage, "test@test.com")
+            .success
+            .value
+            .set(TelephoneNumberQuestionPage, true)
+            .success
+            .value
+            .set(ContactTelephoneNumberPage, "99")
+            .success
+            .value
             .set(RegistrationTypePage, Business)
             .success
             .value
@@ -70,6 +94,14 @@ class RegistrationTypePageSpec extends PageBehaviours {
           result.get(DoYouLiveInTheUKPage) mustBe None
           result.get(WhatIsYourAddressUkPage) mustBe None
           result.get(WhatIsYourAddressPage) mustBe None
+          result.get(SelectAddressPage) mustBe None
+          result.get(PostCodePage) mustBe None
+          result.get(SelectedAddressLookupPage) mustBe None
+          result.get(IndividualUKPostcodePage) mustBe None
+          result.get(ContactEmailAddressPage) mustBe None
+          result.get(TelephoneNumberQuestionPage) mustBe None
+          result.get(ContactTelephoneNumberPage) mustBe None
+
       }
     }
 
@@ -81,11 +113,44 @@ class RegistrationTypePageSpec extends PageBehaviours {
             .success.value
             .set(BusinessAddressPage, address)
             .success.value
+            .set(ContactEmailAddressPage, "test@test.com")
+            .success
+            .value
+            .set(TelephoneNumberQuestionPage, true)
+            .success
+            .value
+            .set(ContactTelephoneNumberPage, "99")
+            .success
+            .value
+            .set(HaveSecondContactPage, true)
+            .success
+            .value
+            .set(SecondaryContactNamePage, "xx")
+            .success
+            .value
+            .set(SecondaryContactEmailAddressPage, "test@test.com")
+            .success
+            .value
+            .set(SecondaryContactTelephoneQuestionPage, true)
+            .success
+            .value
+            .set(SecondaryContactTelephoneNumberPage, "99")
+            .success
+            .value
+
             .set(RegistrationTypePage, Individual)
             .success.value
 
           result.get(BusinessWithoutIDNamePage) mustBe None
           result.get(BusinessAddressPage) mustBe None
+          result.get(ContactEmailAddressPage) mustBe None
+          result.get(TelephoneNumberQuestionPage) mustBe None
+          result.get(ContactTelephoneNumberPage) mustBe None
+          result.get(HaveSecondContactPage) mustBe None
+          result.get(SecondaryContactNamePage) mustBe None
+          result.get(SecondaryContactEmailAddressPage) mustBe None
+          result.get(SecondaryContactTelephoneQuestionPage) mustBe None
+          result.get(SecondaryContactTelephoneNumberPage) mustBe None
       }
     }
   }

@@ -63,6 +63,9 @@ class RegistrationServiceSpec extends SpecBase
 
         (userAnswers, firstName, lastName, dob) =>
           val answers = userAnswers
+            .set(RegistrationTypePage, Individual)
+            .success
+            .value
             .set(NonUkNamePage, Name(firstName, lastName))
             .success
             .value
@@ -76,9 +79,6 @@ class RegistrationServiceSpec extends SpecBase
             .success
             .value
             .set(ContactEmailAddressPage, "test@test.com")
-            .success
-            .value
-            .set(RegistrationTypePage, Individual)
             .success
             .value
             .set(DoYouLiveInTheUKPage, false)

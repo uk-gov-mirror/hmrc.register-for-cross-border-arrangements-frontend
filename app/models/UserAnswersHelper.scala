@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package pages
+package models
 
-import models.UserAnswers
-import play.api.libs.json.JsPath
+import pages.QuestionPage
+import play.api.libs.json.{Reads, Writes}
 
-import scala.util.Try
+import scala.concurrent.Future
 
-case object DoYouHaveUTRPage extends QuestionPage[Boolean] {
-
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "doYouHaveUTR"
-
-  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
-    PageLists.allAfterHaveUTRPages.foldLeft(Try(userAnswers))(PageLists.removePage)
-
+object UserAnswersHelper {
+   def updateUserAnswersIfValueChanged[A](userAnswers: UserAnswers, page: QuestionPage[A], value: A)
+                                         (implicit rds: Reads[A], wrs: Writes[A]): Future[UserAnswers] =
+    userAnswers.get(page) match {
+      case Some(oldValue)  if oldValue == value => Future.successful(userAnswers)
+      case _ =>  Future.fromTry(userAnswers.set(page, value))
+    }
 }

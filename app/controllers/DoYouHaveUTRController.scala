@@ -19,8 +19,9 @@ package controllers
 import controllers.actions._
 import forms.DoYouHaveUTRFormProvider
 import helpers.JourneyHelpers.redirectToSummary
+
 import javax.inject.Inject
-import models.{Mode, UserAnswers}
+import models.{Mode, UserAnswers, UserAnswersHelper}
 import navigation.Navigator
 import pages.DoYouHaveUTRPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -86,7 +87,7 @@ class DoYouHaveUTRController @Inject()(
           val redirectUsers = redirectToSummary(value, DoYouHaveUTRPage, mode, userAnswers)
 
           for {
-            updatedAnswers <- Future.fromTry(userAnswers.set(DoYouHaveUTRPage, value))
+            updatedAnswers <- UserAnswersHelper.updateUserAnswersIfValueChanged(userAnswers, DoYouHaveUTRPage, value)
             _              <- sessionRepository.set(updatedAnswers)
           } yield {
             if (redirectUsers) {

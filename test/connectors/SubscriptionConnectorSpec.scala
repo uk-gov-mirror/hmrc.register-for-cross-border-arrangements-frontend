@@ -127,11 +127,11 @@ class SubscriptionConnectorSpec extends SpecBase
         forAll(validPersonalName, validEmailAddress, validSafeID, validSubscriptionID) {
           (name, email, safeID, subscriptionID) =>
             val updatedUserAnswers = UserAnswers("internalId")
+              .remove(RegistrationTypePage).success.value
               .set(ContactNamePage, name).success.value
               .set(ContactEmailAddressPage, email).success.value
               .set(HaveSecondContactPage, false).success.value
               .set(SafeIDPage, safeID).success.value
-              .remove(RegistrationTypePage).success.value
 
             val response = CreateSubscriptionForDACResponse(
               SubscriptionForDACResponse(
@@ -165,11 +165,11 @@ class SubscriptionConnectorSpec extends SpecBase
         forAll(validPersonalName, validEmailAddress, validSafeID, validSubscriptionID) {
           (name, email, safeID, subscriptionID) =>
             val updatedUserAnswers = UserAnswers("internalId")
+              .remove(RegistrationTypePage).success.value
               .set(ContactNamePage, name).success.value
               .set(ContactEmailAddressPage, email).success.value
               .set(HaveSecondContactPage, false).success.value
               .set(SafeIDPage, safeID).success.value
-              .remove(RegistrationTypePage).success.value
 
             def expectedBody(subscriptionID: String): String =
               s"""
@@ -197,10 +197,10 @@ class SubscriptionConnectorSpec extends SpecBase
         forAll(arbitrary[UserAnswers], validPersonalName, validEmailAddress, validSafeID) {
           (userAnswers, name, email, safeID) =>
             val updatedUserAnswers = userAnswers.set(ContactNamePage, name).success.value
+              .remove(RegistrationTypePage).success.value
               .set(ContactEmailAddressPage, email).success.value
               .set(HaveSecondContactPage, true).success.value
               .set(SafeIDPage, safeID).success.value
-              .remove(RegistrationTypePage).success.value
 
             stubPostResponse("/register-for-cross-border-arrangements/subscription/create-dac-subscription", OK, "")
 
