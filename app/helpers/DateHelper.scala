@@ -22,7 +22,6 @@ import java.time.format.DateTimeFormatter
 object DateHelper {
 
   val dateFormatterDMY: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
-
   def today: LocalDate = LocalDate.now()
   def formatDateToString(date: LocalDate): String = date.format(dateFormatterDMY)
 

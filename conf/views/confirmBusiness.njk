@@ -11,12 +11,13 @@
   {{ title(messages("confirmBusiness.title"), form.errors) }}
 {% endblock %}
 
-{% block mainContent %}
-
- {{ govukBackLink({
+{% block beforeContent %}
+  {{ govukBackLink({
     text: messages("site.back")
   }) }}
+{% endblock %}
 
+{% block mainContent %}
   <div class="govuk-main-wrapper">
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
